@@ -1,6 +1,6 @@
 #include "include/tree.cuh"
 
-int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoints, double epsilon, int maxBinAmount,  int * pointArray, int *** rpointBinNumbers, unsigned int * binSizes, unsigned int * binAmounts, int *nonEmptyBins){
+int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoints, double epsilon, int maxBinAmount,  int * pointArray, int *** rpointBinNumbers, unsigned int * binSizes, unsigned int * binAmounts){
 
 	int maxRP = MAXRP;
 	int numRPperLayer = 64;
@@ -190,7 +190,6 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 				int runningTotal = 0;
 				for(int i = 0; i < binCounts[currentLayer]; i++){
-                    if(layerBins[minSumIdx][i] != 0){*nonEmptyBins++;}
 					runningTotal += layerBins[minSumIdx][i];
 					bins[currentLayer][i] = runningTotal;
 					
@@ -328,5 +327,70 @@ int searchTree_linear(int * tree, int numRP, int * searchAddress, int * binSizes
 		range[1] = numPoints;
 		return location;
 	}
+
+}
+
+void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int * addIndexes, int ** rangeIndexes, int ** rangeSizes, int * numValidRanges, int * calcPerAdd ){
+    
+    int*tempIndexes = (int*)malloc(sizeof(int)*binSizes[numLayers-1]);
+
+    int nonEmptyBins = 0;
+    for(int i = 0; i < binSizes[numLayers-1]-1; i++){
+        if(tree[numLayers-1][i] < tree[numLayers-1][i+1]){
+            addIndexes[nonEmptyBins] = i;
+            nonEmptyBins++;
+        }
+    }
+
+    if(tree[numLayers-1][binSizes[numLayers-1]-1] != numPoints){
+        addIndexes[nonEmptyBins] = binSizes[numLayers-1]-1;
+        nonEmptyBins++;
+    }
+
+
+
+    rangeIndexes = (int**)malloc(sizeof(int*)*nonEmptyBins);
+    rangeSizes = (int **)malloc(sizeof(int*)*nonEmptyBins);
+
+    numValidRanges = (int *)malloc(sizeof(int)*nonEmptyBins);
+    calcPerAdd = (int*)malloc(sizeof(int)*nonEmptyBins);
+    addIndexes = (int*)malloc(sizeof(int)*nonEmptyBins);
+
+    for(int i = 0; i < nonEmptyBins; i++){
+        addIndexes[i] = tempIndexes[i];
+    }
+
+    free(tempIndexes);
+
+
+
+    for(int i = 0; i < nonEmptyBins; i++){
+
+        int * binNumbers = pointBinNumbers[tree[numLayers-1][addIndexes[i]]]; //may need to add 1 for inclusive
+
+    }
+
+}
+
+int fullDepthSearch()
+
+
+void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbers, int numLayers, int * numCals, int * numberRanges){
+
+    int numSearches = pow(3,numLayers);
+    int localNumCals = 0;
+    int localNumRanges = 0;
+    int* tempRangeIndexes = (int*)malloc(sizeof(int)*numSearches);
+    int* tempRangeSizes = (int*)malloc(sizeof(int)*numSearches);
+
+
+
+
+
+
+
+
+    free(tempRangeIndexes);
+    free(tempRangeSizes);
 
 }
