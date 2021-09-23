@@ -1,6 +1,6 @@
 #include "include/tree.cuh"
 
-int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoints, double epsilon, int maxBinAmount,  int * pointArray, int *** rpointBinNumbers, unsigned int * binSizes, unsigned int * binAmounts){
+int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoints, double epsilon, int maxBinAmount,  int * pointArray, int *** rpointBinNumbers, unsigned int * binSizes, unsigned int * binAmounts, int *nonEmptyBins){
 
 	int maxRP = MAXRP;
 	int numRPperLayer = 64;
@@ -22,7 +22,6 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 	double * sumSqrsTemp = (double*)malloc(sizeof(double)*numRPperLayer);
 	double * sumSqrsLayers = (double*)malloc(sizeof(double)*maxRP);
-
 
 	bool check = true;
 	int currentLayer = 0;
@@ -191,6 +190,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 				int runningTotal = 0;
 				for(int i = 0; i < binCounts[currentLayer]; i++){
+                    if(layerBins[minSumIdx][i] != 0){*nonEmptyBins++;}
 					runningTotal += layerBins[minSumIdx][i];
 					bins[currentLayer][i] = runningTotal;
 					
