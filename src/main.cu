@@ -40,10 +40,10 @@ int main(int argc, char*argv[]){
 
 	double* A = (double*)read_buffer;//reinterpret as doubles
 
-	int num_points = size/sizeof(double)/dim;
+	int numPoints = size/sizeof(double)/dim;
 
 
-	printf("\nNumber points: %d ", num_points);
+	printf("\nNumber points: %d ", numPoints);
 	printf("\nNumber Dimensions: %d ", dim);
 	printf("\nNumber Threads Per Point: %d ", tpp);
 	printf("\nNumber Concurent Streams: %d", concurent_streams);
@@ -53,11 +53,11 @@ int main(int argc, char*argv[]){
 
 
 	int *dimension_order = (int*)malloc(sizeof(int)*dim);
-	double * dim_ordered_data = (double*)malloc(sizeof(double)*num_points*dim);
+	double * dim_ordered_data = (double*)malloc(sizeof(double)*numPoints*dim);
 
-    dimension_order = stddev(A, dim, num_points);
+    dimension_order = stddev(A, dim, numPoints);
     #pragma omp parallel for
-    for(int i = 0; i < num_points; i++){
+    for(int i = 0; i < numPoints; i++){
         for(int j = 0; j < dim; j++){
             dim_ordered_data[i*dim + j] = A[i*dim + dimension_order[j]];
         }
@@ -70,8 +70,8 @@ int main(int argc, char*argv[]){
 
 
 	//build tree
-	int * point_array = (int*)malloc(sizeof(int)*num_points);
-	for (int i = 0; i < num_points; i++){
+	int * pointArray = (int*)malloc(sizeof(int)*numPoints);
+	for (int i = 0; i < numPoints; i++){
 		point_array[i] = i;
 	}
 
@@ -81,32 +81,45 @@ int main(int argc, char*argv[]){
 	unsigned int binSizes[MAXRP];
 	unsigned int binAmounts[MAXRP];
 	int maxBinAmount = MAX_BIN;
-	int ** binArrays;
-	int rps = buildTree(
-					&binArrays,
+	int ** tree;
+	int numLayers = buildTree(
+					&tree,
 					A,
 					dim,
-					num_points,
+					numPoints,
 					epsilon,
 					maxBinAmount,
-					point_array,
+					pointArray,
 					&pointBinNumbers,
 					binSizes,
 					binAmounts);
 
 
-    double * point_ordered_data = (double *)malloc(sizeof(double)*num_points*dim);
+    double * point_ordered_data = (double *)malloc(sizeof(double)*numPoints*dim);
     #pragma omp parallel for
-	for(int i = 0; i < num_points; i++){
+	for(int i = 0; i < numPoints; i++){
 		for(int j = 0; j < dim; j++){
-			point_ordered_data[i*dim+j] = A[point_array[i]*dim+j];
+			point_ordered_data[i*dim+j] = A[pointArray[i]*dim+j];
 		}
 	}
 	A = point_ordered_data;
 
 
+    int * addIndexes;
+    int ** rangeIndexes;
+    int ** rangeSizes;
+    int * numValidRanges;
+    int * calcPerAdd;
+    int nonEmptyBins = generateRanges(tree, numPoints, pointArray, pointBinNumbers, numLayers, binSizes, binAmounts, &addIndexes, &rangeIndexes, &rangeSizes, &numValidRanges, &calcPerAdd);
 
+    long long sumCalcs = 0;
+    long long sumAdds = 0;
+    for(int i = 0; i < nonEmptyBins; i++){
+        sumCalcs += calcPerAdd[i];
+        sumAdds += numValidRanges[i];
+    }
 
+    printf("Number non-empty bins: %d\nNumber of calcs: %ld\nNumber Address for calcs: %ld\n", nonEmptyBins, sumCalcs, sumAdds);
 
     double time2 = omp_get_wtime();
 

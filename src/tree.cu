@@ -283,7 +283,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 }
 
 
-void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int * addIndexes, int *** rangeIndexes, int *** rangeSizes, int * numValidRanges, int * calcPerAdd ){
+int generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int ** addIndexes, int *** rangeIndexes, int *** rangeSizes, int ** numValidRanges, int ** calcPerAdd ){
     
     int*tempIndexes = (int*)malloc(sizeof(int)*binSizes[numLayers-1]);
 
@@ -305,7 +305,7 @@ void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBin
     *rangeIndexes = (int**)malloc(sizeof(int*)*nonEmptyBins);
     *rangeSizes = (int **)malloc(sizeof(int*)*nonEmptyBins);
 
-    numValidRanges = (int *)malloc(sizeof(int)*nonEmptyBins);
+    *numValidRanges = (int *)malloc(sizeof(int)*nonEmptyBins);
     calcPerAdd = (int*)malloc(sizeof(int)*nonEmptyBins);
     addIndexes = (int*)malloc(sizeof(int)*nonEmptyBins);
 
@@ -324,13 +324,19 @@ void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBin
 		int numSearches = pow(3,numLayers);
 		int * tempRangeIndexes;
 		int * tempRangeSizes;
+		int numCalcs;
+		int numranges;
 
-		treeTraversal(tree, binSizes, binAmounts, binNumbers, numLayers, numPoints, &calcPerAdd[i], &numValidRanges[i], &tempRangeIndexes, &tempRangeSizes);
+		treeTraversal(tree, binSizes, binAmounts, binNumbers, numLayers, numPoints, &numCalcs, &numRanges, &tempRangeIndexes, &tempRangeSizes);
 
+		*calcPerAdd[i] = numCalcs;
+		*numValidRanges[i] = numRanges;
 		*rangeIndexes[i] = tempRangeIndexes;
 		*rangeSizes[i] = tempRangeSizes;
 
     }
+
+	return nonEmptyBins;
 
 }
 

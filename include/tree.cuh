@@ -11,4 +11,5 @@ void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbe
 
 int depthSearch(int ** tree, int * binSizes, int * binAmounts, int numLayers, int currentLayer, int initalOffset, int numPoints, int * searchBins, int * rangeIndexResult);
 
-void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int * addIndexes, int *** rangeIndexes, int *** rangeSizes, int * numValidRanges, int * calcPerAdd );
+
+int generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int ** addIndexes, int *** rangeIndexes, int *** rangeSizes, int ** numValidRanges, int ** calcPerAdd );
