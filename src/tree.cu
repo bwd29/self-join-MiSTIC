@@ -410,7 +410,7 @@ void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbe
 			}
 
 
-			if(i < numlayers - 1){
+			if(i < numLayers - 1){
 				offset = (tree[i][binNumbers[i]]-1) * binAmounts[i+1];
 			}
 		
