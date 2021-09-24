@@ -352,7 +352,7 @@ int depthSearch(int ** tree, int * binSizes, int * binAmounts, int numLayers, in
 
 	//for final layer need ranges
 	int index = searchBins[numLayers-1]+offset;
-	if((index < binsSizes[numlayer-1]-1 && tree[numLayers-1][index] < tree[numLayers-1][index-1]) || (index == binSizes[numLayers-1]-1 && tree[numLayers-1][index] < numPoints)){
+	if((index < binSizes[numlayers-1]-1 && tree[numLayers-1][index] < tree[numLayers-1][index-1]) || (index == binSizes[numLayers-1]-1 && tree[numLayers-1][index] < numPoints)){
 		*rangeIndexResult = index;
 	}else{
 		return -1;
@@ -392,7 +392,7 @@ void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbe
 			}
 
 			//search right
-			if(binNumbers[i] < binSizes -1){
+			if(binNumbers[i] < binSizes[i] -1){
 				//create bins for full depth search
 				int searchBins[numLayers-1-i];
 				for(int j = i; j < numLayers-i; j++){
@@ -421,12 +421,12 @@ void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbe
 	localNumRanges++;
 
 	//allocate for "returns"
-	*rangeIndexes = (int*)malloc(sizeof(int)*numLocalRanges);
+	*rangeIndexes = (int*)malloc(sizeof(int)*localNumRanges);
 	*rangeSizes = (int*)malloc(sizeof(int)*numLocalRanges);
 
 	//get number of calcs / load in array values
-	for(int i = 0; i < numLocalRanges; i++){
-		rangeIndexes[i] = tempRangeIndexes[i];
+	for(int i = 0; i < localNumRanges; i++){
+		*rangeIndexes[i] = tempRangeIndexes[i];
 		int size;
 		if(tempRangeIndexes[i] == binSizes[numLayers-1]-1){
 			size = numPoints - tree[numLayers-1][tempRangeIndexes[i]];
@@ -434,7 +434,7 @@ void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbe
 			size = tree[numLayers-1][tempRangeIndexes[i+1]] - tree[numLayers-1][tempRangeIndexes[i]];
 		}
 
-		rangeSizes[i] = size;
+		*rangeSizes[i] = size;
 		localNumCalcs += size;
 	}
 
