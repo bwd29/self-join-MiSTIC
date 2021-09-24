@@ -9,7 +9,7 @@ obj = $(src:src/*.cu = .o)
 main: $(obj)
 	$(NVCC) $(CUDAFLAGS) -o build/$@ $^ $(LIBDIRS)
 
-.PHONY: clean
+
 clean:
 	rm -f build/main build/*.o
 	
