@@ -290,13 +290,13 @@ int generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinN
     int nonEmptyBins = 0;
     for(int i = 0; i < binSizes[numLayers-1]-1; i++){
         if(tree[numLayers-1][i] < tree[numLayers-1][i+1]){
-            addIndexes[nonEmptyBins] = i;
+            tempIndexes[nonEmptyBins] = i;
             nonEmptyBins++;
         }
     }
 
     if(tree[numLayers-1][binSizes[numLayers-1]-1] != numPoints){
-        addIndexes[nonEmptyBins] = binSizes[numLayers-1]-1;
+        tempIndexes[nonEmptyBins] = binSizes[numLayers-1]-1;
         nonEmptyBins++;
     }
 
@@ -307,10 +307,10 @@ int generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinN
 
     *numValidRanges = (int *)malloc(sizeof(int)*nonEmptyBins);
     calcPerAdd = (int*)malloc(sizeof(int)*nonEmptyBins);
-    addIndexes = (int*)malloc(sizeof(int)*nonEmptyBins);
+    *addIndexes = (int*)malloc(sizeof(int)*nonEmptyBins);
 
     for(int i = 0; i < nonEmptyBins; i++){
-        addIndexes[i] = tempIndexes[i];
+        *addIndexes[i] = tempIndexes[i];
     }
 
     free(tempIndexes);
@@ -319,13 +319,13 @@ int generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinN
 	// #pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
-        int * binNumbers = pointBinNumbers[tree[numLayers-1][addIndexes[i]]]; //may need to add 1 for inclusive
+        int * binNumbers = pointBinNumbers[tree[numLayers-1][*addIndexes[i]]]; //may need to add 1 for inclusive
 
 		int numSearches = pow(3,numLayers);
 		int * tempRangeIndexes;
 		int * tempRangeSizes;
 		int numCalcs;
-		int numranges;
+		int numRanges;
 
 		treeTraversal(tree, binSizes, binAmounts, binNumbers, numLayers, numPoints, &numCalcs, &numRanges, &tempRangeIndexes, &tempRangeSizes);
 
