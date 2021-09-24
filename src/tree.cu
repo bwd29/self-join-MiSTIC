@@ -340,7 +340,7 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
 
 }
 
-int depthSearch(int ** tree, int * binSizes, int * binAmounts, int numLayers, int currentLayer, int initalOffset, int numPoints, int * searchBins, int * rangeIndexResult){
+int depthSearch(int ** tree, unsigned int * binSizes, unsigned int * binAmounts, int numLayers, int currentLayer, int initalOffset, int numPoints, int * searchBins, int * rangeIndexResult){
 	
 	
 	int offset = initalOffset;
@@ -368,7 +368,7 @@ int depthSearch(int ** tree, int * binSizes, int * binAmounts, int numLayers, in
 
 }
 
-void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbers, int numLayers, int numPoints, int * numCalcs, int * numberRanges, int ** rangeIndexes, int ** rangeSizes){
+void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmounts, int * binNumbers, int numLayers, int numPoints, int * numCalcs, int * numberRanges, int ** rangeIndexes, int ** rangeSizes){
 
     int numSearches = pow(3,numLayers);
     int localNumCalcs = 0;
