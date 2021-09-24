@@ -55,16 +55,15 @@ int main(int argc, char*argv[]){
 	int *dimension_order = (int*)malloc(sizeof(int)*dim);
 	double * dim_ordered_data = (double*)malloc(sizeof(double)*num_points*dim);
 
-	if(DIM_ORDERING){
-		dimension_order = stddev(A, dim, num_points);
-		#pragma omp parallel for
-		for(int i = 0; i < num_points; i++){
-			for(int j = 0; j < dim; j++){
-				dim_ordered_data[i*dim + j] = A[i*dim + dimension_order[j]];
-			}
-		}
-		A = dim_ordered_data;;
-	}
+    dimension_order = stddev(A, dim, num_points);
+    #pragma omp parallel for
+    for(int i = 0; i < num_points; i++){
+        for(int j = 0; j < dim; j++){
+            dim_ordered_data[i*dim + j] = A[i*dim + dimension_order[j]];
+        }
+    }
+    A = dim_ordered_data;;
+
 
 
 	double time1 = omp_get_wtime();
