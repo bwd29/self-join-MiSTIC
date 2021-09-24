@@ -334,6 +334,16 @@ void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBin
     
     int*tempIndexes = (int*)malloc(sizeof(int)*binSizes[numLayers-1]);
 
+	//linearize tree
+	int * tree_bins = (int*)calloc(total_bins,sizeof(int));
+	unsigned int tree_count = 0;
+	for(int i = 0; i < rps; i++){
+]		for(int j = 0; j < binSizes[i]; j++){
+			tree_bins[tree_count] = binArrays[i][j];
+			tree_count++;
+		}
+	}
+
     int nonEmptyBins = 0;
     for(int i = 0; i < binSizes[numLayers-1]-1; i++){
         if(tree[numLayers-1][i] < tree[numLayers-1][i+1]){
@@ -363,37 +373,125 @@ void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBin
     free(tempIndexes);
 
 
-
+	// #pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
         int * binNumbers = pointBinNumbers[tree[numLayers-1][addIndexes[i]]]; //may need to add 1 for inclusive
 
-		// frome here
+		treeTraversal(tree, binSizes, binAmounts, binNumbers, numLayers, numPoints, &calcPerAdd[i], &numValidRanges[i], &rangeIndexes[i], &rangeSizes[i]);
+
     }
 
 }
 
-int fullDepthSearch(){}
+int depthSearch(int ** tree, int * binSizes, int * binAmounts, int numLayers, int currentLayer, int initalOffset, int numPoints, int * searchBins, int * rangeIndexResult){
+	
+	
+	int offset = initalOffset;
+	//starting at current layer
+	for(int i = currentLayer; i < numLayers-1; i++){
+		//get child
+		int child = tree[i][offset + searchBins[i]];
 
-void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbers, int numLayers, int * numCals, int * numberRanges, int * rangeIndexes, int* rangeSizes){
+		if (child == 0){
+			return -1;
+		}
+
+		offset = (tree[i][searchBins[i]]-1)*binAmounts[i+1];
+	}
+
+	//for final layer need ranges
+	int index = searchBins[numLayers-1]+offset;
+	if((index < binsSizes[numlayer-1]-1 && tree[numLayers-1][index] < tree[numLayers-1][index-1]) || (index == binSizes[numLayers-1]-1 && tree[numLayers-1][index] < numPoints)){
+		*rangeIndexResult = index;
+	}else{
+		return -1;
+	}
+
+	return 1;
+
+}
+
+void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbers, int numLayers, int numPoints, int * numCalcs, int * numberRanges, int ** rangeIndexes, int ** rangeSizes){
 
     int numSearches = pow(3,numLayers);
-    int localNumCals = 0;
+    int localNumCalcs = 0;
     int localNumRanges = 0;
     int* tempRangeIndexes = (int*)malloc(sizeof(int)*numSearches);
-    int* tempRangeSizes = (int*)malloc(sizeof(int)*numSearches);
+	int offset = 0;
 
 	for(int i = 0; i < numlayers; i++){
 
-			//frome here
+			//search left
+			if(binNumbers[i] > 0 && tree[i][binNumbers[i]-1] != 0){
+				//create bins for full depth search
+				int searchBins[numLayers-1-i];
+				for(int j = i; j < numLayers-i; j++){
+					searchBins[j] = binNumbers[j];
+				}
+
+				searchBins[0] = searchBins[0] - 1; //moving to the left
+
+				//launch search
+
+				int searchResults = depthSearch(tree, binSizes, binAmounts, numLayers, i, offset, numPoints, searchBins, &tempRangeIndexes[localNumRanges]);
+				if(searchResults > 0){
+					localNumRanges++;
+				}
+
+			}
+
+			//search right
+			if(binNumbers[i] < binSizes -1){
+				//create bins for full depth search
+				int searchBins[numLayers-1-i];
+				for(int j = i; j < numLayers-i; j++){
+					searchBins[j] = binNumbers[j];
+				}
+
+				searchBins[0] = searchBins[0] + 1; //moving to the right
+
+				//launch search
+
+				int searchResults = depthSearch(tree, binSizes, binAmounts, numLayers, i, offset, numPoints, searchBins, &tempRangeIndexes[localNumRanges]);
+				if(searchResults > 0){
+					localNumRanges++;
+				}
+			}
+
+
+			if(i < numlayers - 1){
+				offset = (tree[i][binNumbers[i]]-1) * binAmounts[i+1];
+			}
+		
 	}
 
+	//get home bin values
+	tempRangeIndexes[localNumRanges] = offset+binNumbers[numLayers-1];
+	localNumRanges++;
 
+	//allocate for "returns"
+	*rangeIndexes = (int*)malloc(sizeof(int)*numLocalRanges);
+	*rangeSizes = (int*)malloc(sizeof(int)*numLocalRanges);
 
+	//get number of calcs / load in array values
+	for(int i = 0; i < numLocalRanges; i++){
+		rangeIndexes[i] = tempRangeIndexes[i];
+		int size;
+		if(tempRangeIndexes[i] == binSizes[numLayers-1]-1){
+			size = numPoints - tree[numLayers-1][tempRangeIndexes[i]];
+		}else{
+			size = tree[numLayers-1][tempRangeIndexes[i+1]] - tree[numLayers-1][tempRangeIndexes[i]];
+		}
 
+		rangeSizes[i] = size;
+		localNumCalcs += size;
+	}
+
+	*numberRanges = localNumRanges;
+	*numCalcs = localNumCalcs;
 
 
     free(tempRangeIndexes);
-    free(tempRangeSizes);
 
 }
