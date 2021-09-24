@@ -306,7 +306,7 @@ int generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinN
     *rangeSizes = (int **)malloc(sizeof(int*)*nonEmptyBins);
 
     *numValidRanges = (int *)malloc(sizeof(int)*nonEmptyBins);
-    calcPerAdd = (int*)malloc(sizeof(int)*nonEmptyBins);
+    *calcPerAdd = (int*)malloc(sizeof(int)*nonEmptyBins);
     *addIndexes = (int*)malloc(sizeof(int)*nonEmptyBins);
 
     for(int i = 0; i < nonEmptyBins; i++){
