@@ -368,14 +368,14 @@ void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBin
 
         int * binNumbers = pointBinNumbers[tree[numLayers-1][addIndexes[i]]]; //may need to add 1 for inclusive
 
+		// frome here
     }
 
 }
 
-int fullDepthSearch()
+int fullDepthSearch(){}
 
-
-void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbers, int numLayers, int * numCals, int * numberRanges){
+void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbers, int numLayers, int * numCals, int * numberRanges, int * rangeIndexes, int* rangeSizes){
 
     int numSearches = pow(3,numLayers);
     int localNumCals = 0;
@@ -383,7 +383,10 @@ void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbe
     int* tempRangeIndexes = (int*)malloc(sizeof(int)*numSearches);
     int* tempRangeSizes = (int*)malloc(sizeof(int)*numSearches);
 
+	for(int i = 0; i < numlayers; i++){
 
+			//frome here
+	}
 
 
 
