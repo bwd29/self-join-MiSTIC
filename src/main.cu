@@ -72,14 +72,14 @@ int main(int argc, char*argv[]){
 	//build tree
 	int * pointArray = (int*)malloc(sizeof(int)*numPoints);
 	for (int i = 0; i < numPoints; i++){
-		point_array[i] = i;
+		pointArray[i] = i;
 	}
 
 
 	int ** pointBinNumbers;
 
-	unsigned int binSizes[MAXRP];
-	unsigned int binAmounts[MAXRP];
+	unsigned int * binSizes = (unsigned int*)malloc(sizeof(unsigned int)*MAXRP);
+	unsigned int * binAmounts = (unsigned int*)malloc(sizeof(unsigned int)*MAXRP);
 	int maxBinAmount = MAX_BIN;
 	int ** tree;
 	int numLayers = buildTree(
@@ -110,7 +110,7 @@ int main(int argc, char*argv[]){
     int ** rangeSizes;
     int * numValidRanges;
     int * calcPerAdd;
-    int nonEmptyBins = generateRanges(tree, numPoints, pointArray, pointBinNumbers, numLayers, binSizes, binAmounts, &addIndexes, &rangeIndexes, &rangeSizes, &numValidRanges, &calcPerAdd);
+    int nonEmptyBins = generateRanges(tree, numPoints, pointBinNumbers, numLayers, binSizes, binAmounts, &addIndexes, &rangeIndexes, &rangeSizes, &numValidRanges, &calcPerAdd);
 
     long long sumCalcs = 0;
     long long sumAdds = 0;

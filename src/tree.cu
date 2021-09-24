@@ -283,7 +283,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 }
 
 
-int generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int ** addIndexes, int *** rangeIndexes, int *** rangeSizes, int ** numValidRanges, int ** calcPerAdd ){
+int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLayers, unsigned int * binSizes, unsigned int * binAmounts, int ** addIndexes, int *** rangeIndexes, int *** rangeSizes, int ** numValidRanges, int ** calcPerAdd ){
     
     int*tempIndexes = (int*)malloc(sizeof(int)*binSizes[numLayers-1]);
 
