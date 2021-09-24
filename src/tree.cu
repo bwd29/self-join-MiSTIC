@@ -287,16 +287,6 @@ void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBin
     
     int*tempIndexes = (int*)malloc(sizeof(int)*binSizes[numLayers-1]);
 
-	//linearize tree
-	int * tree_bins = (int*)calloc(total_bins,sizeof(int));
-	unsigned int tree_count = 0;
-	for(int i = 0; i < rps; i++){
-]		for(int j = 0; j < binSizes[i]; j++){
-			tree_bins[tree_count] = binArrays[i][j];
-			tree_count++;
-		}
-	}
-
     int nonEmptyBins = 0;
     for(int i = 0; i < binSizes[numLayers-1]-1; i++){
         if(tree[numLayers-1][i] < tree[numLayers-1][i+1]){
