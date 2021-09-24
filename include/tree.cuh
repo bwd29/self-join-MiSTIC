@@ -7,6 +7,8 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 void generateRanges(int ** tree,int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int * addIndexes, int ** rangeIndexes, int ** rangeSizes, int * numValidRanges, int * calcPerAdd );
 
-void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbers, int numLayers, int numPoints, int * numCals, int * numberRanges, int * rangeIndexes, int* rangeSizes);
+void treeTraversal(int ** tree, int * binSizes, int * binAmounts, int * binNumbers, int numLayers, int numPoints, int * numCalcs, int * numberRanges, int ** rangeIndexes, int ** rangeSizes);
 
 int depthSearch(int ** tree, int * binSizes, int * binAmounts, int numLayers, int currentLayer, int initalOffset, int numPoints, int * searchBins, int * rangeIndexResult);
+
+void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int * addIndexes, int *** rangeIndexes, int *** rangeSizes, int * numValidRanges, int * calcPerAdd );

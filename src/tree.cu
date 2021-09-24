@@ -283,54 +283,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 }
 
 
-
-__device__ 
-int searchTree_linear(int * tree, int numRP, int * searchAddress, int * binSizes, int * binAmounts,  int numPoints, int * range){
-
-	if(tree[searchAddress[0]] == 0){
-		// printf("2\n");
-		return -2;
-	}
-
-	int bin_totals_sizes = binSizes[0];
-	int location = searchAddress[1] + binSizes[0] + (tree[searchAddress[0]] -1) * binAmounts[1];
-	// printf("Location 1: %d = %d+%d+(%d-1)*%d, searching: %d %d %d\n", location,searchAddress[1],binSizes[0],tree[searchAddress[0]],binAmounts[1], searchAddress[0],searchAddress[1],searchAddress[2]);
-
-	for(int i = 1; i < numRP-1; i++){
-
-		if(tree[location] == 0){
-			return -10*i;
-		}
-
-		bin_totals_sizes += binSizes[i];
-		location = bin_totals_sizes + (tree[location] -1) * binAmounts[i+1] + searchAddress[i+1];
-			
-	}
-
-	if(tree[location] == 0){
-		// printf("6\n");
-		return -6;
-	}
-
-	if(location != 0 && (tree[location] == tree[location-1])){
-		return -7;
-	}
-
-	bin_totals_sizes += binSizes[numRP-1];
-
-	if(location + 1 < bin_totals_sizes){
-		range[0] = tree[location-1];
-		range[1] = tree[location ];
-		return location;
-	}else{
-		range[0] = tree[location-1];
-		range[1] = numPoints;
-		return location;
-	}
-
-}
-
-void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int * addIndexes, int ** rangeIndexes, int ** rangeSizes, int * numValidRanges, int * calcPerAdd ){
+void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBinNumbers, int numLayers, int * binSizes, int * binAmounts, int * addIndexes, int *** rangeIndexes, int *** rangeSizes, int * numValidRanges, int * calcPerAdd ){
     
     int*tempIndexes = (int*)malloc(sizeof(int)*binSizes[numLayers-1]);
 
@@ -359,8 +312,8 @@ void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBin
 
 
 
-    rangeIndexes = (int**)malloc(sizeof(int*)*nonEmptyBins);
-    rangeSizes = (int **)malloc(sizeof(int*)*nonEmptyBins);
+    *rangeIndexes = (int**)malloc(sizeof(int*)*nonEmptyBins);
+    *rangeSizes = (int **)malloc(sizeof(int*)*nonEmptyBins);
 
     numValidRanges = (int *)malloc(sizeof(int)*nonEmptyBins);
     calcPerAdd = (int*)malloc(sizeof(int)*nonEmptyBins);
@@ -378,7 +331,14 @@ void generateRanges(int ** tree, int numPoints, int* pointArray, int ** pointBin
 
         int * binNumbers = pointBinNumbers[tree[numLayers-1][addIndexes[i]]]; //may need to add 1 for inclusive
 
-		treeTraversal(tree, binSizes, binAmounts, binNumbers, numLayers, numPoints, &calcPerAdd[i], &numValidRanges[i], &rangeIndexes[i], &rangeSizes[i]);
+		int numSearches = pow(3,numLayers);
+		int * tempRangeIndexes;
+		int * tempRangeSizes;
+
+		treeTraversal(tree, binSizes, binAmounts, binNumbers, numLayers, numPoints, &calcPerAdd[i], &numValidRanges[i], &tempRangeIndexes, &tempRangeSizes);
+
+		*rangeIndexes[i] = tempRangeIndexes;
+		*rangeSizes[i] = tempRangeSizes;
 
     }
 
