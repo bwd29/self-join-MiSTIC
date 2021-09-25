@@ -104,6 +104,7 @@ int main(int argc, char*argv[]){
 	}
 	A = point_ordered_data;
 
+	printf("Last Bin Size: %d\nTree Check: %d\n",binSizes[numLayers-1], tree[numLayers-1][binSizes[numLayers-1]-1]);
 
     int * addIndexes;
     int ** rangeIndexes;
@@ -119,7 +120,7 @@ int main(int argc, char*argv[]){
         sumAdds += numValidRanges[i];
     }
 
-    printf("Number non-empty bins: %d\nNumber of calcs: %ld\nNumber Address for calcs: %ld\n", nonEmptyBins, sumCalcs, sumAdds);
+    printf("Number non-empty bins: %d\nNumber of calcs: %lld\nNumber Address for calcs: %lld\n", nonEmptyBins, sumCalcs, sumAdds);
 
     double time2 = omp_get_wtime();
 

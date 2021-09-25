@@ -80,8 +80,8 @@ double * createRPArray(double * data, int numRP, int dim, unsigned long long num
 		}
 	}
 
-	delete(testRPArray);
-	delete(distmat);
+	// delete(testRPArray);
+	// delete(distmat);
 
     return RPArray;
 }
