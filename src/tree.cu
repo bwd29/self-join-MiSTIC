@@ -219,18 +219,12 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 		free(layerBinNonEmpty);
 		free(layerNumBins);
 		free(skipBins);
+		free(RPArray);
 	}
 
 	int numRP = currentLayer;
 	// selectedRP = &numRP;
 	printf("Selected %d reference points\n", numRP);
-
-	// unsigned int * binSizes = (unsigned int*)malloc(sizeof(unsigned int)*numRP);
-	// unsigned int * binAmounts = (unsigned int*)malloc(sizeof(unsigned int)*numRP);
-
-
-
-
 
     // sort the point arrays from bottom to top using a stable sort
 	thrust::host_vector<int*> pointVector(numPoints);
@@ -277,22 +271,16 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 		for(int j = 0; j < numRP; j++){
 			pointBinNumbers[i][j] = pointVector[i][j+1];
 		}
+		free(pointVector[i]);
 	}
 
-	// for(int i = 0; i < binSizes[numRP-1]; i++){
-	// 	printf("%d,",bins[numRP-1][i]);
-	// }
-	// printf("\n");
+	for(int i = 0; i < maxRP; i++){
+		free(pointBinOffsets[i]);
+	}
+	free(pointBinOffsets);
+	free(binCounts);
+	free(binNonEmpty);
 
-
-    // delete(bins);
-    // free(RPArray);
-
-	// return(binArrays);
-	// return(bins); 
-	// *rbinAmounts = binAmounts;
-
-	// *rbinSizes = binSizes;
 
 	*rbins = bins;
 	*rpointBinNumbers = pointBinNumbers;

@@ -49,7 +49,8 @@ double * createRPArray(double * data, int numRP, int dim, unsigned long long num
 
 	int sample_size = numPoints*SAMPLE_PER;
 
-	double * testRPArray = new double[TEST_RP*dim];
+	// double * testRPArray = new double[TEST_RP*dim];
+	double * testRPArray = (double*)malloc(sizeof(double)*TEST_RP*dim);
 
 	//randomly place the rps
 	// #pragma omp parallel for
@@ -58,7 +59,8 @@ double * createRPArray(double * data, int numRP, int dim, unsigned long long num
 	}
 
 	//get the distances
-	double *distmat = new double[TEST_RP*sample_size];
+	// double *distmat = new double[TEST_RP*sample_size];
+	double* distmat = (double*)malloc(sizeof(double)*TEST_RP*sample_size);
 
 	// #pragma omp parallel for
 	for(int i = 0; i < sample_size; i++){
@@ -80,8 +82,8 @@ double * createRPArray(double * data, int numRP, int dim, unsigned long long num
 		}
 	}
 
-	// delete(testRPArray);
-	// delete(distmat);
+	free(testRPArray);
+	free(distmat);
 
     return RPArray;
 }
