@@ -33,7 +33,7 @@ int main(int argc, char*argv[]){
 	char * read_buffer = (char*)malloc(sizeof(char)*size);
 	file.read(read_buffer, size*sizeof(double));
 	file.close();
-	free(read_buffer);
+
 
 	double time00 = omp_get_wtime();
 	printf("\nTime to read in file: %f\n", time00-time0);
@@ -52,22 +52,18 @@ int main(int argc, char*argv[]){
 	// numPoints = 1000;
 ////////////////////////////////
 
-	int *dimension_order = (int*)malloc(sizeof(int)*dim);
-	double * dim_ordered_data = (double*)malloc(sizeof(double)*numPoints*dim);
+	int *dimensionOrder = (int*)malloc(sizeof(int)*dim);
+	double * dimOrderedData = (double*)malloc(sizeof(double)*numPoints*dim);
 
-    dimension_order = stddev(A, dim, numPoints);
+    dimensionOrder = stddev(A, dim, numPoints);
     #pragma omp parallel for
     for(int i = 0; i < numPoints; i++){
         for(int j = 0; j < dim; j++){
-            dim_ordered_data[i*dim + j] = A[i*dim + dimension_order[j]];
+            dimOrderedData[i*dim + j] = A[i*dim + dimensionOrder[j]];
         }
     }
-	free(dimension_order);
-    A = dim_ordered_data;
 
-	
-
-
+    // A = dim_ordered_data;
 
 	double time1 = omp_get_wtime();
 
@@ -87,7 +83,7 @@ int main(int argc, char*argv[]){
 	int ** tree;
 	int numLayers = buildTree(
 					&tree,
-					A,
+					dimOrderedData,
 					dim,
 					numPoints,
 					epsilon,
@@ -102,7 +98,7 @@ int main(int argc, char*argv[]){
     #pragma omp parallel for
 	for(int i = 0; i < numPoints; i++){
 		for(int j = 0; j < dim; j++){
-			data[i*dim+j] = A[pointArray[i]*dim+j];
+			data[i*dim+j] = dimOrderedData[pointArray[i]*dim+j];
 		}
 	}
 
@@ -177,7 +173,9 @@ int main(int argc, char*argv[]){
 	free(binAmounts);
 	free(pointArray);
 	free(data);
-
+	free(dimensionOrder);
+	free(read_buffer);
+	free(dimOrderedData);
 
     return 1;
 
