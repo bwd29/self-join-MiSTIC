@@ -207,6 +207,18 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 		} 
 
 		currentLayer++;
+
+		free(distMat);
+		for(int i = 0; i < numRPperLayer; i++){
+			free(layerBins[i]);
+			free(layerBinOffsets[i]);
+		}
+		free(layerBins);
+		free(layerBinOffsets);
+		free(layerBinCount);
+		free(layerBinNonEmpty);
+		free(layerNumBins);
+		free(skipBins);
 	}
 
 	int numRP = currentLayer;
