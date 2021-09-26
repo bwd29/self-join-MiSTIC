@@ -5,7 +5,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 	int maxRP = MAXRP;
 	int numRPperLayer = RPPERLAYER;
 	double layerDifReq = 1;
-	srand(omp_get_wtime());
+	// srand(omp_get_wtime());
 	int ** bins = (int **)malloc(sizeof(int*)*maxRP);
 	int * binCounts = (int*)malloc(sizeof(int)*maxRP);
 	int * binNonEmpty = (int*)malloc(sizeof(int)*maxRP);
@@ -48,6 +48,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 		int * layerBinNonEmpty = (int*)malloc(numRPperLayer*sizeof(int));
 		int ** layerBinOffsets = (int**)malloc(sizeof(int*)*numRPperLayer);
 		int * layerNumBins = (int*)malloc(sizeof(int)*numRPperLayer);
+		int * skipBins = (int*)malloc(sizeof(int)*numRPperLayer);
 
 
 		for(int i = 0; i < numRPperLayer; i ++){
@@ -60,17 +61,22 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 			layerBinNonEmpty[i] = 0;
 
 			double maxDistance = 0; 
+			double minDistance = euclideanDistance(&data[0*dim], dim , &RPArray[i*dim]);
 			for(int j = 0; j < numPoints; j++){
 				distMat[i*numPoints + j] = euclideanDistance(&data[j*dim], dim , &RPArray[i*dim]);
 				if(distMat[i*numPoints + j] > maxDistance){
 					maxDistance = distMat[i*numPoints + j];
+				}
+				if(distMat[i*numPoints + j] < minDistance){
+					minDistance = distMat[i*numPoints + j];
 				}
 			}
 
 
 
 			// printf("Max dist = %f, ",maxDistance);
-			layerNumBins[i] = ceil(maxDistance / epsilon);
+			skipBins[i] = floor(minDistance/epsilon) - 1;
+			layerNumBins[i] = ceil(maxDistance / epsilon) + 1 - skipBins[i];
 			if(currentLayer == 0){
 				layerBinCount[i] = layerNumBins[i];
 			} else {
@@ -87,7 +93,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 			if(currentLayer == 0){
 				for(int j = 0; j < numPoints; j++){
-					int binNumber = floor(distMat[i*numPoints + j] / epsilon);
+					int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
 					if(layerBins[i][binNumber] == 0){
 						layerBinNonEmpty[i]++;
 					}
@@ -101,7 +107,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 					int part3 = layerNumBins[i];//binNonEmpty[currentLayer-1];
 					// int offset = (bins[ currentLayer - 1 ][ pointBinOffsets[currentLayer-1][j] ] - 1)*binNonEmpty[currentLayer-1];
 					int offset = part2*part3;
-					int binNumber = floor(distMat[i*numPoints + j] / epsilon);
+					int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
 
 					// if(offset+binNumber > layerBinCount[i] && checkers == true) {
 					// 	checkers = false;
@@ -179,7 +185,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 		binAmounts[currentLayer] = layerNumBins[minSumIdx];
 
 		for(int i = 0; i < numPoints; i++){
-			pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon);
+			pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon)-skipBins[minSumIdx];
 		}
 
 		// printf("Finishing up layer\n");
@@ -289,7 +295,7 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
 
     int nonEmptyBins = 0;
     for(int i = 0; i < binSizes[numLayers-1]-1; i++){
-        if(tree[numLayers-1][i] < tree[numLayers-1][i+1]){
+        if(tree[numLayers-1][i-1] < tree[numLayers-1][i]){
             tempIndexes[nonEmptyBins] = i;
             nonEmptyBins++;
         }
@@ -316,12 +322,17 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
     // free(tempIndexes);
 
 
-	#pragma omp parallel for
+	// #pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
-        int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ] ];
+        int * binNumbers = (int*)malloc(sizeof(int)*numLayers);
+		printf("Index: %d at add loc %d BinNUmbers: ", i, tempAddIndexes[i]);
+		for(int j = 0; j < numLayers; j++){
+			binNumbers[j] = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ] -1 ][j];
+			printf("%d, ", binNumbers[j]);
+		}
+		printf("\n");
 
-		int numSearches = pow(3,numLayers);
 		int * tempRangeIndexes;
 		int * tempRangeSizes;
 		int numCalcs;
@@ -366,7 +377,7 @@ int depthSearch(int ** tree, unsigned int * binSizes, unsigned int * binAmounts,
 
 	//for final layer need ranges
 	int index = searchBins[numLayers-1]+offset;
-	if((index < binSizes[numLayers-1] - 1 && tree[numLayers-1][index] < tree[numLayers-1][index+1]) || (index == binSizes[numLayers-1]-1 && tree[numLayers-1][index] < numPoints)){
+	if(tree[numLayers-1][index] < tree[numLayers-1][index+1]){
 		*rangeIndexResult = index;
 	}else{
 		return -1;
@@ -387,7 +398,7 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 	for(int i = 0; i < numLayers-1; i++){
 
 			//search left
-			if(binNumbers[i] > 0 && tree[i][binNumbers[i]-1] != 0){
+			if(tree[i][binNumbers[i] + offset-1] != 0){
 				//create bins for full depth search
 				int searchBins[numLayers-1-i];
 				for(int j = i; j < numLayers-i; j++){
@@ -407,7 +418,7 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 			}
 
 			//search right
-			if(binNumbers[i] < binSizes[i] -1 && tree[i][binNumbers[i]+1] != 0){
+			if(tree[i][binNumbers[i]+offset+1] != 0){
 				//create bins for full depth search
 				int searchBins[numLayers-1-i];
 				for(int j = i; j < numLayers-i; j++){
@@ -427,10 +438,11 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 
 
 			// if(i < numLayers - 1){
-				offset = (tree[i][binNumbers[i]]-1) * binAmounts[i+1];
-				if(offset < 0){
-					printf("!!! tree value at [%d,%d]: %d binAmounts: %d\n", i,binNumbers[i], (tree[i][binNumbers[i]]-1),binAmounts[i+1]);
-				}
+				offset = (tree[i][binNumbers[i]+offset]-1) * binAmounts[i+1];
+				// if(offset < 0){
+				// 	printf("!!! tree value at [%d,%d]: %d binAmounts: %d\n", i,binNumbers[i], (tree[i][binNumbers[i]]-1),binAmounts[i+1]);
+				// }
+				// printf("Offset for layer %d: %d\n", i, offset);
 			// }
 		
 	}
@@ -438,17 +450,16 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 
 	//get home bin values and adjacent in last layer
 	//check left
-	if(offset+binNumbers[numLayers-1] -1 >= 0 && tree[numLayers-1][offset+binNumbers[numLayers-1] -1] < tree[numLayers-1][offset+binNumbers[numLayers-1]]){
+	if(tree[numLayers-1][offset+binNumbers[numLayers-1] -1] < tree[numLayers-1][offset+binNumbers[numLayers-1]]){
 		tempRangeIndexes[localNumRanges] = offset+binNumbers[numLayers-1]-1;
 		localNumRanges++;
 	}
 
 	//check right
-	if(offset+binNumbers[numLayers-1] + 1 < binSizes[numLayers-1]-1){
-		if( tree[numLayers-1][offset+binNumbers[numLayers-1]] < tree[numLayers-1][offset+binNumbers[numLayers-1]+1]){
-			tempRangeIndexes[localNumRanges] = offset+binNumbers[numLayers-1]+1;
-			localNumRanges++;
-		}
+	if(tree[numLayers-1][offset+binNumbers[numLayers-1]] < tree[numLayers-1][offset+binNumbers[numLayers-1]+1]){
+		tempRangeIndexes[localNumRanges] = offset+binNumbers[numLayers-1]+1;
+		localNumRanges++;
+	
 	}
 
 	tempRangeIndexes[localNumRanges] = offset+binNumbers[numLayers-1];
@@ -458,12 +469,8 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 	// if(tempRangeIndexes[localNumRanges - 1]+1 > binSizes[numLayers-1] -1){
 	// 	printf("!!! temprange is too large:%d offset: %d, binNumber %d, binAmounts:%d\n", tempRangeIndexes[localNumRanges - 1]+1, offset, binNumbers[numLayers-1],binAmounts[numLayers-1]);
 	// }
-	int numHomePoints;
-	if(tempRangeIndexes[localNumRanges - 1] == binSizes[numLayers-1]-1){
-		numHomePoints = numPoints - tree[numLayers-1][tempRangeIndexes[localNumRanges - 1]];
-	} else {
-		numHomePoints = tree[numLayers-1][tempRangeIndexes[localNumRanges - 1]+1] - tree[numLayers-1][tempRangeIndexes[localNumRanges - 1]];
-	}
+	int numHomePoints = tree[numLayers-1][tempRangeIndexes[localNumRanges - 1]+1] - tree[numLayers-1][tempRangeIndexes[localNumRanges - 1]];
+	
 	//allocate for "returns"
 	int * localRangeIndexes = (int*)malloc(sizeof(int)*localNumRanges);
 	int * localRangeSizes = (int*)malloc(sizeof(int)*localNumRanges);
@@ -471,13 +478,7 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 	//get number of calcs / load in array values
 	for(int i = 0; i < localNumRanges; i++){
 		localRangeIndexes[i] = tempRangeIndexes[i];
-		int size;
-		if(tempRangeIndexes[i] == binSizes[numLayers-1]-1){
-			size = numPoints - tree[numLayers-1][tempRangeIndexes[i]];
-		}else{
-			size = tree[numLayers-1][tempRangeIndexes[i]+1] - tree[numLayers-1][tempRangeIndexes[i]];
-		}
-
+		int size = tree[numLayers-1][tempRangeIndexes[i]+1] - tree[numLayers-1][tempRangeIndexes[i]];
 		localRangeSizes[i] = size;
 		localNumCalcs += size;
 	}

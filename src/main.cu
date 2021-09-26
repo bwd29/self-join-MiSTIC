@@ -50,8 +50,9 @@ int main(int argc, char*argv[]){
 	printf("\nDistance Threshold: %f \n*********************************\n\n", epsilon);
 
  ////////////////////////////////
-	numPoints = 1000;
+	numPoints = 20;
 ////////////////////////////////
+
 	int *dimension_order = (int*)malloc(sizeof(int)*dim);
 	double * dim_ordered_data = (double*)malloc(sizeof(double)*numPoints*dim);
 
@@ -115,6 +116,14 @@ int main(int argc, char*argv[]){
 		}
 	}
 	printf("\n");
+
+	for(int i = 0; i < numPoints; i++){
+		printf("point %d Binnumbers: ", i);
+		for(int j = 0; j < numLayers; j++){
+			printf("%d, ", pointBinNumbers[i][j]);
+		}
+		printf("\n");
+	}
 
 
     int * addIndexes;
