@@ -280,7 +280,8 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 	free(pointBinOffsets);
 	free(binCounts);
 	free(binNonEmpty);
-
+	free(sumSqrsLayers);
+	free(sumSqrsTemp);
 
 	*rbins = bins;
 	*rpointBinNumbers = pointBinNumbers;

@@ -30,9 +30,10 @@ int main(int argc, char*argv[]){
 	file.seekg(0, std::ios::end); 
 	size_t size = file.tellg();  
 	file.seekg(0, std::ios::beg); 
-	char * read_buffer = new char[size];
+	char * read_buffer = (char*)malloc(sizeof(char)*size);
 	file.read(read_buffer, size*sizeof(double));
 	file.close();
+	free(read_buffer);
 
 	double time00 = omp_get_wtime();
 	printf("\nTime to read in file: %f\n", time00-time0);
@@ -61,6 +62,7 @@ int main(int argc, char*argv[]){
             dim_ordered_data[i*dim + j] = A[i*dim + dimension_order[j]];
         }
     }
+	free(dimension_order);
     A = dim_ordered_data;
 
 	
