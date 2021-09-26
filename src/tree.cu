@@ -319,7 +319,7 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
 	#pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
-        int * binNumbers = pointBinNumbers[tree[numLayers-1][tempAddIndexes[i]]]; //may need to add 1 for inclusive
+        int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ] ];
 
 		int numSearches = pow(3,numLayers);
 		int * tempRangeIndexes;
@@ -428,6 +428,9 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 
 			// if(i < numLayers - 1){
 				offset = (tree[i][binNumbers[i]]-1) * binAmounts[i+1];
+				if(offset < 0){
+					printf("!!! tree value at [%d,%d]: %d binAmounts: %d\n", i,binNumbers[i], (tree[i][binNumbers[i]]-1),binAmounts[i+1]);
+				}
 			// }
 		
 	}
@@ -452,9 +455,9 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 	localNumRanges++;
 
 	//get number of points in home address
-	if(tempRangeIndexes[localNumRanges - 1]+1 > binSizes[numLayers-1] -1){
-		printf("!!! temprange is too large:%d offset: %d, binNumber %d, binAmounts:%d\n", tempRangeIndexes[localNumRanges - 1]+1, offset, binNumbers[numLayers-1],binAmounts[numLayers-1]);
-	}
+	// if(tempRangeIndexes[localNumRanges - 1]+1 > binSizes[numLayers-1] -1){
+	// 	printf("!!! temprange is too large:%d offset: %d, binNumber %d, binAmounts:%d\n", tempRangeIndexes[localNumRanges - 1]+1, offset, binNumbers[numLayers-1],binAmounts[numLayers-1]);
+	// }
 	int numHomePoints;
 	if(tempRangeIndexes[localNumRanges - 1] == binSizes[numLayers-1]-1){
 		numHomePoints = numPoints - tree[numLayers-1][tempRangeIndexes[localNumRanges - 1]];

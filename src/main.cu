@@ -49,9 +49,9 @@ int main(int argc, char*argv[]){
 	printf("\nNumber Concurent Streams: %d", concurent_streams);
 	printf("\nDistance Threshold: %f \n*********************************\n\n", epsilon);
 
-
-
-
+ ////////////////////////////////
+	numPoints = 1000;
+////////////////////////////////
 	int *dimension_order = (int*)malloc(sizeof(int)*dim);
 	double * dim_ordered_data = (double*)malloc(sizeof(double)*numPoints*dim);
 
@@ -62,7 +62,9 @@ int main(int argc, char*argv[]){
             dim_ordered_data[i*dim + j] = A[i*dim + dimension_order[j]];
         }
     }
-    A = dim_ordered_data;;
+    A = dim_ordered_data;
+
+	
 
 
 
@@ -105,6 +107,15 @@ int main(int argc, char*argv[]){
 	A = point_ordered_data;
 
 	printf("Last Bin Size: %d\nTree Check: %d\n",binSizes[numLayers-1], tree[numLayers-1][binSizes[numLayers-1]-1]);
+
+	for(int i = 0; i < numLayers; i++){
+		printf("\n%d: ",i);
+		for(int j = 0; j < binSizes[i]; j++){
+			printf("%d:%d, ", j,tree[i][j]);
+		}
+	}
+	printf("\n");
+
 
     int * addIndexes;
     int ** rangeIndexes;
