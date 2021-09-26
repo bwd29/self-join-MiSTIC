@@ -158,6 +158,7 @@ int main(int argc, char*argv[]){
 	for(int i = 0; i < numLayers; i++){
 		free(tree[i]);
 	}
+	free(tree);
 	for(int i = 0; i < numPoints; i++){
 		free(pointBinNumbers[i]);
 	}
@@ -174,7 +175,7 @@ int main(int argc, char*argv[]){
 	free(pointArray);
 	free(data);
 	free(dimensionOrder);
-	free(read_buffer);
+	// free(read_buffer);
 	free(dimOrderedData);
 
     return 1;

@@ -84,6 +84,7 @@ double * createRPArray(double * data, int numRP, int dim, unsigned long long num
 
 	free(testRPArray);
 	free(distmat);
+	free(order);
 
     return RPArray;
 }
