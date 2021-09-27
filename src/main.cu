@@ -100,13 +100,17 @@ int main(int argc, char*argv[]){
 
 	printf("Last Bin Size: %d\nTree Check: %d\n",binSizes[numLayers-1], tree[numLayers-1][binSizes[numLayers-1]-1]);
 
+	double time2 = omp_get_wtime();
+
+    printf("Time to build tree: %f\n", time2-time1);
 
     int * addIndexes;
     int ** rangeIndexes;
     unsigned int ** rangeSizes;
     int * numValidRanges;
     unsigned long long * calcPerAdd;
-    int nonEmptyBins = generateRanges(tree, numPoints, pointBinNumbers, numLayers, binSizes, binAmounts, &addIndexes, &rangeIndexes, &rangeSizes, &numValidRanges, &calcPerAdd);
+	unsigned int *numPointsInAdd;
+    int nonEmptyBins = generateRanges(tree, numPoints, pointBinNumbers, numLayers, binSizes, binAmounts, &addIndexes, &rangeIndexes, &rangeSizes, &numValidRanges, &calcPerAdd, &numPointsInAdd);
 
     unsigned long long sumCalcs = 0;
     unsigned long long sumAdds = 0;
@@ -117,11 +121,10 @@ int main(int argc, char*argv[]){
 
     printf("Number non-empty bins: %d\nNumber of calcs: %llu\nNumber Address for calcs: %llu\n", nonEmptyBins, sumCalcs, sumAdds);
 
-    double time2 = omp_get_wtime();
 
-    printf("Time to build tree: %f\n", time2-time1);
+	double time3 = omp_get_wtime();
 
-
+	printf("Tree search time: %f\n", time3-time2);
 
 
 

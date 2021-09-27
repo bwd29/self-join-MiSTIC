@@ -13,6 +13,6 @@ const int MAXRP = 6;
 
 const int MINRP = 5;
 
-const int RPPERLAYER = 16;
+const int RPPERLAYER = 32;
 
 const int RAND = true;

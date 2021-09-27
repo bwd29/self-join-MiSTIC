@@ -290,7 +290,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 }
 
 
-int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLayers, unsigned int * binSizes, unsigned int * binAmounts, int ** addIndexes, int *** rangeIndexes, unsigned int *** rangeSizes, int ** numValidRanges, unsigned long long ** calcPerAdd ){
+int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLayers, unsigned int * binSizes, unsigned int * binAmounts, int ** addIndexes, int *** rangeIndexes, unsigned int *** rangeSizes, int ** numValidRanges, unsigned long long ** calcPerAdd, unsigned int ** numPointsInAdd ){
     
     int*tempIndexes = (int*)malloc(sizeof(int)*binSizes[numLayers-1]);
 
@@ -315,6 +315,7 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
     int * tempNumValidRanges = (int *)malloc(sizeof(int)*nonEmptyBins);
 	unsigned long long * tempCalcPerAdd = (unsigned long long*)malloc(sizeof(unsigned long long)*nonEmptyBins);
     int * tempAddIndexes = (int*)malloc(sizeof(int)*nonEmptyBins);
+	unsigned int * tempNumPointsInAdd = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins);
 
     for(int i = 0; i < nonEmptyBins; i++){
         tempAddIndexes[i] = tempIndexes[i];
@@ -323,8 +324,8 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
     free(tempIndexes);
 
 	int numSearches = pow(3,numLayers);
-	
-	// #pragma omp parallel for
+
+	#pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
 		int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ] -1 ];
@@ -335,11 +336,13 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
 		unsigned long long numCalcs;
 		int numRanges;
 		int tempAdd[numLayers];
+		unsigned int localNumPointsInAdd;
 
-		treeTraversal(tempAdd, tree, binSizes, binAmounts, binNumbers, numLayers, &numCalcs, &numRanges, localRangeIndexes[i], localRangeSizes[i]);
+		treeTraversal(tempAdd, tree, binSizes, binAmounts, binNumbers, numLayers, &numCalcs, &numRanges, localRangeIndexes[i], localRangeSizes[i], &localNumPointsInAdd);
 
 		tempCalcPerAdd[i] = numCalcs;
 		tempNumValidRanges[i] = numRanges;
+		tempNumPointsInAdd[i] = localNumPointsInAdd;
 
 
     }
@@ -350,6 +353,7 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
 	*numValidRanges = tempNumValidRanges;
 	*rangeSizes = localRangeSizes;
 	*rangeIndexes = localRangeIndexes;
+	*numPointsInAdd = tempNumPointsInAdd;
 
 	return nonEmptyBins;
 
@@ -381,7 +385,7 @@ int depthSearch(int ** tree, unsigned int * binAmounts, int numLayers, int * sea
 }
 
 __host__ __device__
-void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned int * binAmounts, int * binNumbers, int numLayers, unsigned long long * numCalcs, int * numberRanges, int * rangeIndexes, unsigned int * rangeSizes){
+void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned int * binAmounts, int * binNumbers, int numLayers, unsigned long long * numCalcs, int * numberRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd){
 
     unsigned long long localNumCalcs = 0;
     int localNumRanges = 0;
@@ -409,6 +413,7 @@ void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned
 
 	*numberRanges = localNumRanges;
 	*numCalcs = localNumCalcs*numHomePoints;
+	*numPointsInAdd = numHomePoints;
 
 
 }
