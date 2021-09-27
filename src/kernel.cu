@@ -34,19 +34,23 @@ void launchKernel(double epsilon, int * addIndexes, int ** rangeIndexes, int ** 
     for(int i = 0; i < nonEmptyBins; i++){
         if (sum + calcPerAdd[i] < calcsPerThread*threadsPerBatch || sum == 0){
             sum += calcPerAdd[i];
-            numThreadsPerBatch[batchCount] += numThreadsPerAddress[i];
             addCount++;
         }else{
             numCalcsPerBatch[count] = sum;
-            sum = calcPerAdd[i];
             numAddPerBatch[batchCount] = addCount;
-            addCount = 0;
+            
+            sum = calcPerAdd[i];
+
+            addCount = 1;
+            batchCount++;
         }
+
+        numThreadsPerBatch[batchCount] += numThreadsPerAddress[i];
+
     }
 
     numCalcsPerBatch[numBatches-1] = sum; //for last
     numAddPerBatch[numBatches-1] = addCount;
-
 
     for(int i = 0; i < numBatches; i++){
 
