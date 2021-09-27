@@ -119,6 +119,11 @@ int main(int argc, char*argv[]){
         sumAdds += numValidRanges[i];
     }
 
+	int * addIndexRange = (int*)malloc(sizeof(int)*nonEmptyBins);
+	for(int i = 0; i < nonEmptyBins; i++){
+		addIndexRange[i] = tree[numLayers-1][addIndexes[i]];
+	}
+
     printf("Number non-empty bins: %d\nNumber of calcs: %llu\nNumber Address for calcs: %llu\n", nonEmptyBins, sumCalcs, sumAdds);
 
 
