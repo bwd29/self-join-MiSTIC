@@ -285,7 +285,6 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 	*rbins = bins;
 	*rpointBinNumbers = pointBinNumbers;
-	// printf("\n!!%d\n", pointBinNumbers[0][0]);
 
 	return(numRP);
 }
@@ -324,7 +323,7 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
     free(tempIndexes);
 
 
-	#pragma omp parallel for
+	// #pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
 		int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ] -1 ];
@@ -433,13 +432,8 @@ void treeTraversal(int ** tree, unsigned int * binSizes, unsigned int * binAmoun
 			}
 
 
-			// if(i < numLayers - 1){
-				offset = (tree[i][binNumbers[i]+offset]-1) * binAmounts[i+1];
-				// if(offset < 0){
-				// 	printf("!!! tree value at [%d,%d]: %d binAmounts: %d\n", i,binNumbers[i], (tree[i][binNumbers[i]]-1),binAmounts[i+1]);
-				// }
-				// printf("Offset for layer %d: %d\n", i, offset);
-			// }
+			offset = (tree[i][binNumbers[i]+offset]-1) * binAmounts[i+1];
+
 		
 	}
 

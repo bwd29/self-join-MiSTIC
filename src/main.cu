@@ -48,9 +48,6 @@ int main(int argc, char*argv[]){
 	printf("\nNumber Concurent Streams: %d", concurent_streams);
 	printf("\nDistance Threshold: %f \n*********************************\n\n", epsilon);
 
- ////////////////////////////////
-	// numPoints = 1000;
-////////////////////////////////
 
 	int *dimensionOrder = (int*)malloc(sizeof(int)*dim);
 	double * dimOrderedData = (double*)malloc(sizeof(double)*numPoints*dim);
@@ -141,6 +138,16 @@ int main(int argc, char*argv[]){
     double time2 = omp_get_wtime();
 
     printf("Time to build tree: %f\n", time2-time1);
+
+
+
+
+
+
+
+
+
+
 
 
 

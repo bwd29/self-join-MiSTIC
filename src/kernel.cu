@@ -1,7 +1,15 @@
 #include "include/kernel.cuh"
 
 
+void launchKernel(int * addIndexes, int ** rangeIndexes, int ** rangeSizes, int * numValidRanges, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
 
+
+
+
+
+
+
+}
 // __global__
 // void distanceClalcs(){
 

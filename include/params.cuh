@@ -9,10 +9,10 @@ const double SAMPLE_PER = 0.1;
 
 const int MAX_BIN = 100000; 
  
-const int MAXRP = 4;
+const int MAXRP = 5;
 
-const int MINRP = 3;
+const int MINRP = 4;
 
-const int RPPERLAYER = 10;
+const int RPPERLAYER = 16;
 
 const int RAND = true;
