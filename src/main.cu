@@ -60,8 +60,6 @@ int main(int argc, char*argv[]){
         }
     }
 
-    // A = dim_ordered_data;
-
 	double time1 = omp_get_wtime();
 
 
@@ -101,22 +99,6 @@ int main(int argc, char*argv[]){
 
 
 	printf("Last Bin Size: %d\nTree Check: %d\n",binSizes[numLayers-1], tree[numLayers-1][binSizes[numLayers-1]-1]);
-
-	// for(int i = 0; i < numLayers; i++){
-	// 	printf("\n%d: ",i);
-	// 	for(int j = 0; j < binSizes[i]; j++){
-	// 		printf("%d:%d, ", j,tree[i][j]);
-	// 	}
-	// }
-	// printf("\n");
-
-	// for(int i = 0; i < numPoints; i++){
-	// 	printf("point %d Binnumbers: ", i);
-	// 	for(int j = 0; j < numLayers; j++){
-	// 		printf("%d, ", pointBinNumbers[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
 
 
     int * addIndexes;
