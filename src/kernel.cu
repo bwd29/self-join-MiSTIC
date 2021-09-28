@@ -1,19 +1,16 @@
 #include "include/kernel.cuh"
 
 
-void launchKernel(double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * pointArray, int ** rangeIndexes, int ** rangeSizes, int * numValidRanges, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
+void launchKernel(double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
  
-
     double epsilon2 = epsilon*epsilon;
     unsigned int calcsPerThread = 1000000; //placeholdr value of 1 mil
 
     int * numThreadsPerAddress = (int *)malloc(sizeof(int)*nonEmptyBins);
 
-
     int numBatches = 1;
     unsigned int threadsPerBatch = KERNEL_BLOCKS * BLOCK_SIZE;
     unsigned long long sum = 0;
-
 
     for(int i = 0; i < nonEmptyBins; i++){
         numThreadsPerAddress[i] = ceil(calcPerAdd[i] / calcsPerThread);
@@ -81,21 +78,19 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
         }
 
 
+        printf("BatchNumber: %d/%d, Calcs: %llu, Adds: %d, threads: %d\n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i]);
         //launch distance kernel
-        distanceCalculationsKernel<<<KERNEL_BLOCKS, BLOCK_SIZE>>>();
+        // distanceCalculationsKernel<<<KERNEL_BLOCKS, BLOCK_SIZE>>>();
 
         //transfer back reuslts
         
-
     }
-
-
 
 }
 
 
 __device__ 
-void distanceCalculationsKernel(int * addAssign, int * threadOffsets, const double epsilon2, const int dim, const int numThreadsPerBatch, int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int ** rangeIndexes, int ** rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long *keyValueIndex, unsigned int * point_a, unsigned int * point_b){
+void distanceCalculationsKernel(int * addAssign, int * threadOffsets, const double epsilon2, const int dim, const int numThreadsPerBatch, int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int ** rangeIndexes, unsigned int ** rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long *keyValueIndex, unsigned int * point_a, unsigned int * point_b){
 
     unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
 
