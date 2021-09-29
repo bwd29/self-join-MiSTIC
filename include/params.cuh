@@ -16,3 +16,5 @@ const int MINRP = 5;
 const int RPPERLAYER = 10;
 
 const int RAND = true;
+
+const int resultsSize = 100000000; // 400MB

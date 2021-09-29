@@ -1,10 +1,10 @@
 #include "include/kernel.cuh"
 
 
-void launchKernel(double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
+void launchKernel(double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * addIndexRange, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
  
     double epsilon2 = epsilon*epsilon;
-    unsigned long long calcsPerThread = 100000; //placeholder value of 1 mil
+    unsigned long long calcsPerThread = 100000; //placeholder value of 100k
 
     unsigned long long * numThreadsPerAddress = (unsigned long long *)malloc(sizeof(unsigned long long)*nonEmptyBins);
 
@@ -21,12 +21,8 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
             numBatches++;
         }
     }
-    // if(numBatches == 0) numBatches =1;
     numBatches++;
 
-    // printf("working with %d batches\n ",numBatches);
-
-    
     unsigned long long * numCalcsPerBatch = (unsigned long long*)malloc(sizeof(unsigned long long)*numBatches);
     unsigned int * numAddPerBatch = (unsigned int*)malloc(sizeof(unsigned int)*numBatches);
     unsigned long long * numThreadsPerBatch = (unsigned long long*)calloc(numBatches,sizeof(unsigned long long));
@@ -34,10 +30,9 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
     int batchCount = 0;
     int addCount = 0;
     for(int i = 0; i < nonEmptyBins; i++){
-        // if(batchCount > numBatches-1) printf("batch count too high!\n");
-        numThreadsPerBatch[batchCount] += numThreadsPerAddress[i];
         
         if (sum + calcPerAdd[i] < calcsPerThread*threadsPerBatch || sum == 0){
+            numThreadsPerBatch[batchCount] += numThreadsPerAddress[i];
             sum += calcPerAdd[i];
             addCount++;
         }else{
@@ -47,24 +42,81 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
             sum = calcPerAdd[i];
 
             addCount = 1;
-           
             batchCount++;
-            // printf("current batch %d\n", batchCount);
+
+            numThreadsPerBatch[batchCount] += numThreadsPerAddress[i];
 
         }
-
-        
-
     }
-
-
-
-
-
-
 
     numCalcsPerBatch[numBatches-1] = sum; //for last
     numAddPerBatch[numBatches-1] = addCount;
+
+////////////////////////////////////////////////
+double * d_data;
+assert(cudaSuccess == cudaMalloc((void**)&d_data, sizeof(double)*numPoints*dim));
+assert(cudaSuccess ==  cudaMemcpy(d_data, data, sizeof(double)*numPoints*dim, cudaMemcpyHostToDevice));
+
+int * d_numThreadsPerAddress;
+assert(cudaSuccess == cudaMalloc((void**)&d_numThreadsPerAddress, sizeof(unsigned long long)*nonEmptyBins));
+assert(cudaSuccess ==  cudaMemcpy(d_numThreadsPerAddress, numThreadsPerAddress, sizeof(unsigned long long)*nonEmptyBins, cudaMemcpyHostToDevice));
+
+int * d_addIndexes;
+assert(cudaSuccess == cudaMalloc((void**)&d_addIndexes, sizeof(int)*nonEmptyBins));
+assert(cudaSuccess ==  cudaMemcpy(d_addIndexes, addIndexes, sizeof(int)*nonEmptyBins, cudaMemcpyHostToDevice));
+
+
+int * d_numValidRanges;
+assert(cudaSuccess == cudaMalloc((void**)&d_numValidRanges, sizeof(int)*nonEmptyBins));
+assert(cudaSuccess ==  cudaMemcpy(d_numValidRanges, numValidRanges, sizeof(int)*nonEmptyBins, cudaMemcpyHostToDevice));
+
+
+int ** d_rangeIndexes; //double check this for errors
+assert(cudaSuccess == cudaMalloc((void**)&d_rangeIndexes, sizeof(int*)*nonEmptyBins));
+for(int i = 0; i < nonEmptyBins; i++){
+    assert(cudaSuccess == cudaMalloc((void**)&d_rangeIndexes[i], sizeof(int)*numValidRanges[i]));
+    assert(cudaSuccess ==  cudaMemcpy(d_rangeIndexes[i], rangeIndexes[i], sizeof(int)*numValidRanges[i], cudaMemcpyHostToDevice));
+}
+
+unsigned int ** d_rangeSizes;
+assert(cudaSuccess == cudaMalloc((void**)&d_rangeSizes, sizeof(unsigned int*)*nonEmptyBins));
+for(int i = 0; i < nonEmptyBins; i++){
+    assert(cudaSuccess == cudaMalloc((void**)&d_rangeSizes[i], sizeof(unsigned int)*numValidRanges[i]));
+    assert(cudaSuccess ==  cudaMemcpy(d_rangeSizes[i], rangeSizes[i], sizeof(unsigned int)*numValidRanges[i], cudaMemcpyHostToDevice));
+
+}
+
+unsigned int * d_numPointsInAdd;
+assert(cudaSuccess == cudaMalloc((void**)&d_numPointsInAdd, sizeof(unsigned int)*nonEmptyBins));
+assert(cudaSuccess ==  cudaMemcpy(d_numPointsInAdd, numPointsInAdd, sizeof(unsigned int)*nonEmptyBins, cudaMemcpyHostToDevice));
+
+
+int * d_addIndexRange;
+assert(cudaSuccess == cudaMalloc((void**)&d_addIndexRange, sizeof(int)*nonEmptyBins));
+assert(cudaSuccess ==  cudaMemcpy(d_addIndexRange, addIndexRange, sizeof(int)*nonEmptyBins, cudaMemcpyHostToDevice));
+
+
+int * d_pointArray;
+assert(cudaSuccess == cudaMalloc((void**)&d_pointArray, sizeof(int)*numPoints));
+assert(cudaSuccess ==  cudaMemcpy(d_pointArray, pointArray, sizeof(int)*numPoints, cudaMemcpyHostToDevice));
+
+
+unsigned long long * keyValueIndex = (unsigned long long *)calloc(numBatches, sizeof(unsigned long long ));
+unsigned long long * d_keyValueIndex;
+assert(cudaSuccess == cudaMalloc((void**)&d_keyValueIndex, sizeof(unsigned long long)*numBatches));
+assert(cudaSuccess ==  cudaMemcpy(d_keyValueIndex, keyValueIndex, sizeof(unsigned long long)*numBatches, cudaMemcpyHostToDevice));
+
+
+unsigned int * pointA;
+assert(cudaSuccess == cudaMalloc((void**)&pointA, sizeof(unsigned int)*resultsSize));
+
+unsigned int * pointB;
+assert(cudaSuccess == cudaMalloc((void**)&pointB, sizeof(unsigned int)*resultsSize));
+
+
+
+///////////////////////////////////////////////
+    
 
     for(int i = 0; i < numBatches; i++){
 
@@ -89,10 +141,28 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
             offsetCount++;
         }
 
+        /////////////////////////////////////////////////////////
 
-        printf("BatchNumber: %d/%d, Calcs: %llu, Adds: %d, threads: %llu\n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i]);
+        int * d_addAssign;
+        assert(cudaSuccess == cudaMalloc((void**)&d_addAssign, sizeof(int)*numThreadsPerBatch[i]));
+
+        int * d_threadOffsets;
+        assert(cudaSuccess == cudaMalloc((void**)&d_threadOffsets, sizeof(int)*numThreadsPerBatch[i]));
+
+        /////////////////////////////////////////////////////////
+
+        unsigned int totalBlocks = ceil(numThreadsPerBatch[i] / BLOCK_SIZE);
+
+
+        printf("BatchNumber: %d/%d, Calcs: %llu, Adds: %d, threads: %llu, blocks:%d\n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i], totalBlocks);
+        
+        
+        
+        
+        
         //launch distance kernel
-        // distanceCalculationsKernel<<<KERNEL_BLOCKS, BLOCK_SIZE>>>();
+        //distanceCalculationsKernel<<<KERNEL_BLOCKS, BLOCK_SIZE>>>(int * addAssign, int * threadOffsets, const double epsilon2, const int dim, const int numThreadsPerBatch, int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int ** rangeIndexes, unsigned int ** rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long *keyValueIndex, unsigned int * point_a, unsigned int * point_b);
+
 
         //transfer back reuslts
 
@@ -128,7 +198,7 @@ void distanceCalculationsKernel(int * addAssign, int * threadOffsets, const doub
                 //store point
                 unsigned int index = atomicAdd(keyValueIndex,(unsigned int)1);
                 point_a[index] = p1; //stores the first point Number
-                point_b[index] = p2; // this store the cooresponding point number to form a pair
+                point_b[index] = p2; // this stores the cooresponding point number to form a pair
             }
         }
     }
