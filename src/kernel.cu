@@ -4,7 +4,7 @@
 void launchKernel(double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
  
     double epsilon2 = epsilon*epsilon;
-    unsigned long long calcsPerThread = 1000000; //placeholder value of 1 mil
+    unsigned long long calcsPerThread = 100000; //placeholder value of 1 mil
 
     unsigned long long * numThreadsPerAddress = (unsigned long long *)malloc(sizeof(unsigned long long)*nonEmptyBins);
 
@@ -24,7 +24,7 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
     // if(numBatches == 0) numBatches =1;
     numBatches++;
 
-    printf("working with %d batches\n ",numBatches);
+    // printf("working with %d batches\n ",numBatches);
 
     
     unsigned long long * numCalcsPerBatch = (unsigned long long*)malloc(sizeof(unsigned long long)*numBatches);
@@ -34,7 +34,7 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
     int batchCount = 0;
     int addCount = 0;
     for(int i = 0; i < nonEmptyBins; i++){
-        if(batchCount > numBatches-1) printf("batch count too high!\n");
+        // if(batchCount > numBatches-1) printf("batch count too high!\n");
         numThreadsPerBatch[batchCount] += numThreadsPerAddress[i];
         
         if (sum + calcPerAdd[i] < calcsPerThread*threadsPerBatch || sum == 0){
@@ -49,7 +49,7 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
             addCount = 1;
            
             batchCount++;
-            printf("current batch %d\n", batchCount);
+            // printf("current batch %d\n", batchCount);
 
         }
 
@@ -79,8 +79,8 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
         unsigned int offsetCount = 0;
 
         for(unsigned int j = 0; j < numThreadsPerBatch[i]; j++){
-            if(currentAdd > nonEmptyBins) printf("current add is to large!");
-            if ( j > numThreadsPerAddress[currentAdd]){
+            // if(currentAdd > nonEmptyBins) printf("current add is to large!");
+            if ( offsetCount > numThreadsPerAddress[currentAdd]){
                 currentAdd++;
                 offsetCount = 0;
             }
