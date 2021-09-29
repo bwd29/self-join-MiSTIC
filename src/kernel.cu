@@ -4,7 +4,7 @@
 void launchKernel(int numLayers, double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * addIndexRange, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
  
     double epsilon2 = epsilon*epsilon;
-    unsigned long long calcsPerThread = 100000; //placeholder value of 100k
+    unsigned long long calcsPerThread = 1000; //placeholder value of 100k
 
     int numSearches = pow(3,numLayers);
     unsigned long long * numThreadsPerAddress = (unsigned long long *)malloc(sizeof(unsigned long long)*nonEmptyBins);
@@ -114,10 +114,14 @@ assert(cudaSuccess == cudaMalloc((void**)&d_pointArray, sizeof(int)*numPoints));
 assert(cudaSuccess ==  cudaMemcpy(d_pointArray, pointArray, sizeof(int)*numPoints, cudaMemcpyHostToDevice));
 
 
-unsigned long long * keyValueIndex = (unsigned long long *)calloc(numBatches, sizeof(unsigned long long ));
-unsigned long long * d_keyValueIndex;
-assert(cudaSuccess == cudaMalloc((void**)&d_keyValueIndex, sizeof(unsigned long long)*numBatches));
-assert(cudaSuccess ==  cudaMemcpy(d_keyValueIndex, keyValueIndex, sizeof(unsigned long long)*numBatches, cudaMemcpyHostToDevice));
+unsigned long long int * keyValueIndex;
+assert(cudaSuccess == cudaMallocHost((void**)&keyValueIndex, sizeof(unsigned long long int)*numBatches));
+for(int i = 0; i < numBatches; i++){
+    keyValueIndex[i] = 0;
+}
+unsigned long long int * d_keyValueIndex;
+assert(cudaSuccess == cudaMalloc((void**)&d_keyValueIndex, sizeof(unsigned long long int)*numBatches));
+assert(cudaSuccess ==  cudaMemcpy(d_keyValueIndex, keyValueIndex, sizeof(unsigned long long int)*numBatches, cudaMemcpyHostToDevice));
 
 
 unsigned int * d_pointA;
@@ -145,7 +149,6 @@ assert(cudaSuccess == cudaMalloc((void**)&d_pointB, sizeof(unsigned int)*results
         unsigned int offsetCount = 0;
 
         for(unsigned int j = 0; j < numThreadsPerBatch[i]; j++){
-            // if(currentAdd > nonEmptyBins) printf("current add is to large!");
             if ( offsetCount > numThreadsPerAddress[currentAdd]){
                 currentAdd++;
                 offsetCount = 0;
@@ -168,19 +171,25 @@ assert(cudaSuccess == cudaMalloc((void**)&d_pointB, sizeof(unsigned int)*results
 
         /////////////////////////////////////////////////////////
 
-        const unsigned int totalBlocks = ceil(numThreadsPerBatch[i] / BLOCK_SIZE);
+        cudaDeviceSynchronize();
+
+        unsigned int totalBlocks = ceil(numThreadsPerBatch[i] / (unsigned long long)BLOCK_SIZE);
 
 
-        printf("BatchNumber: %d/%d, Calcs: %llu, Adds: %d, threads: %llu, blocks:%d\n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i], totalBlocks);
+        printf("BatchNumber: %d/%d, Calcs: %llu, Adds: %d, threads: %llu, blocks:%d\n ", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i], totalBlocks);
         
         
         
         
         
         //launch distance kernel
-        distanceCalculationsKernel<<<totalBlocks, BLOCK_SIZE>>>(d_numSearches, d_addAssign, d_threadOffsets, d_epsilon2, d_dim, d_numThreadsPerBatch, d_numThreadsPerAddress, d_data, d_addIndexes, d_numValidRanges, d_rangeIndexes, d_rangeSizes, d_numPointsInAdd, d_addIndexRange, d_pointArray, d_keyValueIndex, d_pointA, d_pointB);
+        distanceCalculationsKernel<<<totalBlocks, BLOCK_SIZE>>>(d_numSearches, d_addAssign, d_threadOffsets, d_epsilon2, d_dim, d_numThreadsPerBatch, d_numThreadsPerAddress, d_data, d_addIndexes, d_numValidRanges, d_rangeIndexes, d_rangeSizes, d_numPointsInAdd, d_addIndexRange, d_pointArray, &d_keyValueIndex[i], d_pointA, d_pointB);
 
+        cudaDeviceSynchronize(); 
 
+        assert(cudaSuccess ==  cudaMemcpy(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long int), cudaMemcpyDeviceToHost));
+
+        printf("Results: %llu\n", keyValueIndex[i]);
         //transfer back reuslts
 
         free(addAssign);
@@ -196,7 +205,7 @@ assert(cudaSuccess == cudaMalloc((void**)&d_pointB, sizeof(unsigned int)*results
 }
 
 __global__ 
-void distanceCalculationsKernel(const int numSearches, int * addAssign, int * threadOffsets, const double epsilon2, const int dim, const int numThreadsPerBatch, int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long *keyValueIndex, unsigned int * point_a, unsigned int * point_b){
+void distanceCalculationsKernel(const int numSearches, int * addAssign, int * threadOffsets, const double epsilon2, const int dim, const int numThreadsPerBatch, int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long int *keyValueIndex, unsigned int * point_a, unsigned int * point_b){
 
     unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
 
@@ -207,16 +216,22 @@ void distanceCalculationsKernel(const int numSearches, int * addAssign, int * th
     int currentAdd = addAssign[tid];
     int threadOffset = threadOffsets[tid];
 
+    if(tid == 80) printf("current add: %d, offset: %d\n", currentAdd, threadOffset);
+
+
     for(int i = 0; i < numValidRanges[currentAdd]; i++){
-        for(int j = 0; j < rangeSizes[currentAdd*numSearches + i] * numPointsInAdd[currentAdd] + threadOffset; j += numThreadsPerAddress[currentAdd]){
-            unsigned int p1 = pointArray[addIndexRange[currentAdd] + j/rangeSizes[currentAdd*numSearches + i]];
-            unsigned int p2 = pointArray[rangeIndexes[currentAdd*numSearches + i] + j % rangeSizes[currentAdd*numSearches + i]];
-            if (distanceCheck(epsilon2, dim, &data[p1], &data[p2])){
-                //store point
-                unsigned int index = atomicAdd(keyValueIndex,(unsigned int)1);
-                point_a[index] = p1; //stores the first point Number
-                point_b[index] = p2; // this stores the cooresponding point number to form a pair
-            }
+        unsigned long long int numCalcs = rangeSizes[currentAdd*numSearches + i] * numPointsInAdd[currentAdd];
+        if(tid == 80) printf("current range: %d, calcs: %llu\n", i, numCalcs);
+
+        for(unsigned long long int j = threadOffset; j < numCalcs; j += numThreadsPerAddress[currentAdd]){
+        //     unsigned int p1 = pointArray[addIndexRange[currentAdd] + j/rangeSizes[currentAdd*numSearches + i]];
+        //     unsigned int p2 = pointArray[rangeIndexes[currentAdd*numSearches + i] + j % rangeSizes[currentAdd*numSearches + i]];
+            // if (distanceCheck(epsilon2, dim, &data[p1], &data[p2])){
+            //     //store point
+                unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
+            //     point_a[index] = p1; //stores the first point Number
+            //     point_b[index] = p2; // this stores the cooresponding point number to form a pair
+            // }
         }
     }
 }
