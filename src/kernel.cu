@@ -4,12 +4,12 @@
 void launchKernel(double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
  
     double epsilon2 = epsilon*epsilon;
-    unsigned int calcsPerThread = 1000000; //placeholdr value of 1 mil
+    unsigned long long calcsPerThread = 1000000; //placeholder value of 1 mil
 
-    int * numThreadsPerAddress = (int *)malloc(sizeof(int)*nonEmptyBins);
+    unsigned long long * numThreadsPerAddress = (unsigned long long *)malloc(sizeof(unsigned long long)*nonEmptyBins);
 
-    int numBatches = 1;
-    unsigned int threadsPerBatch = KERNEL_BLOCKS * BLOCK_SIZE;
+    int numBatches = 0;
+    unsigned long long threadsPerBatch = KERNEL_BLOCKS * BLOCK_SIZE;
     unsigned long long sum = 0;
 
     for(int i = 0; i < nonEmptyBins; i++){
@@ -21,14 +21,22 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
             numBatches++;
         }
     }
+    // if(numBatches == 0) numBatches =1;
+    numBatches++;
 
+    printf("working with %d batches\n ",numBatches);
+
+    
     unsigned long long * numCalcsPerBatch = (unsigned long long*)malloc(sizeof(unsigned long long)*numBatches);
     unsigned int * numAddPerBatch = (unsigned int*)malloc(sizeof(unsigned int)*numBatches);
-    unsigned int * numThreadsPerBatch = (unsigned int*)malloc(sizeof(unsigned int)*numBatches);
+    unsigned long long * numThreadsPerBatch = (unsigned long long*)calloc(numBatches,sizeof(unsigned long long));
     sum = 0;
     int batchCount = 0;
     int addCount = 0;
     for(int i = 0; i < nonEmptyBins; i++){
+        if(batchCount > numBatches-1) printf("batch count too high!\n");
+        numThreadsPerBatch[batchCount] += numThreadsPerAddress[i];
+        
         if (sum + calcPerAdd[i] < calcsPerThread*threadsPerBatch || sum == 0){
             sum += calcPerAdd[i];
             addCount++;
@@ -39,13 +47,15 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
             sum = calcPerAdd[i];
 
             addCount = 1;
+           
             batchCount++;
+            printf("current batch %d\n", batchCount);
+
         }
 
-        numThreadsPerBatch[batchCount] += numThreadsPerAddress[i];
+        
 
     }
-
 
 
 
@@ -65,9 +75,11 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
         //compute which thread does wich add
         int * addAssign = (int * )malloc(sizeof(int)*numThreadsPerBatch[i]);
         int * threadOffsets = (int*)malloc(sizeof(int)*numThreadsPerBatch[i]);
-        int currentAdd = 0;
-        int offsetCount = 0;
-        for(int j = 0; j < numThreadsPerBatch[i]; j++){
+        unsigned int currentAdd = 0;
+        unsigned int offsetCount = 0;
+
+        for(unsigned int j = 0; j < numThreadsPerBatch[i]; j++){
+            if(currentAdd > nonEmptyBins) printf("current add is to large!");
             if ( j > numThreadsPerAddress[currentAdd]){
                 currentAdd++;
                 offsetCount = 0;
@@ -78,16 +90,23 @@ void launchKernel(double * data, int dim, int numPoints, double epsilon, int * a
         }
 
 
-        printf("BatchNumber: %d/%d, Calcs: %llu, Adds: %d, threads: %d\n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i]);
+        printf("BatchNumber: %d/%d, Calcs: %llu, Adds: %d, threads: %llu\n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i]);
         //launch distance kernel
         // distanceCalculationsKernel<<<KERNEL_BLOCKS, BLOCK_SIZE>>>();
 
         //transfer back reuslts
+
+        free(addAssign);
+        free(threadOffsets);
         
     }
 
-}
+    free(numCalcsPerBatch);
+    free(numAddPerBatch);
+    free(numThreadsPerBatch);
+    free(numThreadsPerAddress);
 
+}
 
 __device__ 
 void distanceCalculationsKernel(int * addAssign, int * threadOffsets, const double epsilon2, const int dim, const int numThreadsPerBatch, int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int ** rangeIndexes, unsigned int ** rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long *keyValueIndex, unsigned int * point_a, unsigned int * point_b){
