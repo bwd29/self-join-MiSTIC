@@ -145,9 +145,12 @@ assert(cudaSuccess == cudaMalloc((void**)&pointB, sizeof(unsigned int)*resultsSi
 
         int * d_addAssign;
         assert(cudaSuccess == cudaMalloc((void**)&d_addAssign, sizeof(int)*numThreadsPerBatch[i]));
+        assert(cudaSuccess ==  cudaMemcpy(d_addAssign, addAssign, sizeof(int)*numThreadsPerBatch[i], cudaMemcpyHostToDevice));
+
 
         int * d_threadOffsets;
         assert(cudaSuccess == cudaMalloc((void**)&d_threadOffsets, sizeof(int)*numThreadsPerBatch[i]));
+        assert(cudaSuccess ==  cudaMemcpy(d_threadOffsets, threadOffsets, sizeof(int)*numThreadsPerBatch[i], cudaMemcpyHostToDevice));
 
         /////////////////////////////////////////////////////////
 
