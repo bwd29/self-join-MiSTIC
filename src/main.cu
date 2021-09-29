@@ -132,7 +132,7 @@ int main(int argc, char*argv[]){
 	printf("Tree search time: %f\n", time3-time2);
 
 
-	launchKernel(data, dim ,numPoints, epsilon, addIndexes, addIndexRange, pointArray, rangeIndexes, rangeSizes, numValidRanges, numPointsInAdd, calcPerAdd, nonEmptyBins, sumCalcs, sumAdds);
+	launchKernel(numLayers, data, dim ,numPoints, epsilon, addIndexes, addIndexRange, pointArray, rangeIndexes, rangeSizes, numValidRanges, numPointsInAdd, calcPerAdd, nonEmptyBins, sumCalcs, sumAdds);
 
 
 
