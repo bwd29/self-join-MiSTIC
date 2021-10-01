@@ -1,7 +1,7 @@
 #pragma once
 
 const int BLOCK_SIZE = 1024; 
-const int KERNEL_BLOCKS = 32;
+const int KERNEL_BLOCKS = 128;
 const int BRUTE = false;
 const int RANDOM = false;
 const int TEST_RP = 100; 
