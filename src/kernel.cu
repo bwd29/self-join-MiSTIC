@@ -4,7 +4,7 @@
 void launchKernel(int numLayers, double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * addIndexRange, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds){
  
     double epsilon2 = epsilon*epsilon;
-    unsigned long long calcsPerThread = 1000; //placeholder value of 100k
+    unsigned long long calcsPerThread = 100000; //placeholder value of 100k
 
     int numSearches = pow(3,numLayers);
     unsigned long long * numThreadsPerAddress = (unsigned long long *)malloc(sizeof(unsigned long long)*nonEmptyBins);
@@ -13,9 +13,10 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
     unsigned long long threadsPerBatch = KERNEL_BLOCKS * BLOCK_SIZE;
     unsigned long long sum = 0;
 
-    printf("add 1 calcs: %llu\n", calcPerAdd[1]);
+    // printf("add 0 calcs: %llu, num Points in that add: %u\n", calcPerAdd[0], numPointsInAdd[0]);
     for(int i = 0; i < nonEmptyBins; i++){
-        numThreadsPerAddress[i] = ceil(calcPerAdd[i] / calcsPerThread);
+        numThreadsPerAddress[i] = ceil(calcPerAdd[i]*1.0 / calcsPerThread);
+        if(numThreadsPerAddress[i] == 0) printf("\nERROR: Threads per address at %d: %llu, cals per add: %llu\n",i, numThreadsPerAddress[i], calcPerAdd[i]);
         if (sum + calcPerAdd[i] < calcsPerThread*threadsPerBatch || sum == 0){
             sum += calcPerAdd[i];
         }else{
@@ -133,9 +134,9 @@ assert(cudaSuccess == cudaMalloc((void**)&d_pointB, sizeof(unsigned int)*results
         unsigned int currentAdd = 0;
         unsigned int offsetCount = 0;
 
-        printf("Threads in address 1: %llu\n", numThreadsPerAddress[0]);
+        // printf("Threads in address 0: %llu\n", numThreadsPerAddress[0]);
 
-        for(unsigned int j = 0; j < numThreadsPerBatch[i]; j++){
+        for(int j = 0; j < numThreadsPerBatch[i]; j++){
             if ( offsetCount > numThreadsPerAddress[currentAdd]){
                 currentAdd++;
                 offsetCount = 0;
@@ -203,13 +204,10 @@ void distanceCalculationsKernel(const int numSearches, int * addAssign, int * th
     int currentAdd = addAssign[tid];
     int threadOffset = threadOffsets[tid];
 
-    if(tid == 81) printf("current add: %d, offset: %d, threads in add: %d\n", currentAdd, threadOffset, numThreadsPerAddress[currentAdd]);
-
+    // if(threadOffset == 0 && numThreadsPerAddress[currentAdd] == 0) printf("Tid: %u, Add: %d\n", tid, currentAdd);
 
     for(int i = 0; i < numValidRanges[currentAdd]; i++){
         unsigned long long int numCalcs = rangeSizes[currentAdd*numSearches + i] * numPointsInAdd[currentAdd];
-        if(tid == 81) printf("current range: %d, calcs: %llu\n", i, numCalcs);
-
         for(unsigned long long int j = threadOffset; j < numCalcs; j += numThreadsPerAddress[currentAdd]){
         //     unsigned int p1 = pointArray[addIndexRange[currentAdd] + j/rangeSizes[currentAdd*numSearches + i]];
         //     unsigned int p2 = pointArray[rangeIndexes[currentAdd*numSearches + i] + j % rangeSizes[currentAdd*numSearches + i]];
