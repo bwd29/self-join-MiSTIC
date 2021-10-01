@@ -45,9 +45,9 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
 
     }
 
-    for(int i = 0; i < numBatches; i++){
-        printf("Batch: %d, numThreads: %u, numAdds: %u, numCalcs: %llu\n",i, numThreadsPerBatch[i],numAddPerBatch[i], numCalcsPerBatch[i]);
-    }
+    // for(int i = 0; i < numBatches; i++){
+    //     printf("Batch: %d, numThreads: %u, numAdds: %u, numCalcs: %llu\n",i, numThreadsPerBatch[i],numAddPerBatch[i], numCalcsPerBatch[i]);
+    // }
 
 
 
@@ -143,7 +143,7 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
 
         batchFirstAdd += numAddPerBatch[i];
 
-        printf("\nBatch: %d, ThreadCount: %u, ThreadsPerBatch: %u\n",i,threadCount, numThreadsPerBatch[i]);
+        // printf("\nBatch: %d, ThreadCount: %u, ThreadsPerBatch: %u\n",i,threadCount, numThreadsPerBatch[i]);
 
         /////////////////////////////////////////////////////////
 
@@ -184,6 +184,13 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
         
     }
 
+    unsigned long long totals = 0;
+    for(int i = 0; i < numBatches; i++){
+        totals += keyValueIndex[i];
+    }
+
+    printf("Total results Set Size: %llu\n", totals);
+
     free(numCalcsPerBatch);
     free(numAddPerBatch);
     free(numThreadsPerBatch);
@@ -211,8 +218,8 @@ void distanceCalculationsKernel(const int numSearches, int * addAssign, int * th
              if (distanceCheck(epsilon2, dim, &data[p1], &data[p2])){
                  //store point
                 unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
-                 point_a[index] = p1; //stores the first point Number
-                 point_b[index] = p2; // this stores the cooresponding point number to form a pair
+                point_a[index] = p1; //stores the first point Number
+                point_b[index] = p2; // this stores the cooresponding point number to form a pair
              }
         }
     }

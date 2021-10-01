@@ -78,6 +78,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 			// printf("Max dist = %f, ",maxDistance);
 			skipBins[i] = floor(minDistance/epsilon) - 1;
 			layerNumBins[i] = ceil(maxDistance / epsilon) + 1 - skipBins[i];
+			// layerNumBins[i] = ceil(maxDistance / epsilon) + 1;
 			if(currentLayer == 0){
 				layerBinCount[i] = layerNumBins[i];
 			} else {
@@ -95,6 +96,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 			if(currentLayer == 0){
 				for(int j = 0; j < numPoints; j++){
 					int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
+					// int binNumber = floor(distMat[i*numPoints + j] / epsilon);
 					if(layerBins[i][binNumber] == 0){
 						layerBinNonEmpty[i]++;
 					}
@@ -109,6 +111,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 					// int offset = (bins[ currentLayer - 1 ][ pointBinOffsets[currentLayer-1][j] ] - 1)*binNonEmpty[currentLayer-1];
 					int offset = part2*part3;
 					int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
+					// int binNumber = floor(distMat[i*numPoints + j] / epsilon);
 
 					// if(offset+binNumber > layerBinCount[i] && checkers == true) {
 					// 	checkers = false;
@@ -187,6 +190,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 		for(int i = 0; i < numPoints; i++){
 			pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon)-skipBins[minSumIdx];
+			// pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon);
 		}
 
 		// printf("Finishing up layer\n");
