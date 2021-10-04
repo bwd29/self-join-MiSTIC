@@ -1,15 +1,5 @@
 #pragma once
-#include "include/params.cuh"
-#include <stdio.h>
-#include <cuda_runtime.h>
-#include <assert.h>
-#include <time.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include "omp.h"
-#include <unistd.h>
-#include <math.h>
+
 #include <thrust/host_vector.h>
 #include <thrust/sort.h>
 #include <thrust/device_vector.h> 
@@ -20,10 +10,8 @@
 #include <thrust/system/omp/execution_policy.h>
 #include <thrust/execution_policy.h>
 #include <thrust/system/cuda/execution_policy.h>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <algorithm>   
+ 
+#include "include/params.cuh"
 
 struct result{
     int pid;

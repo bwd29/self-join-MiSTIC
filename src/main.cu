@@ -96,7 +96,7 @@ int main(int argc, char*argv[]){
     #pragma omp parallel for
 	for(int i = 0; i < numPoints; i++){
 		for(int j = 0; j < dim; j++){
-			data[i*dim+j] = dimOrderedData[pointArray[i]*dim+j];
+			data[i+numPoints*j] = dimOrderedData[pointArray[i]*dim+j];
 		}
 	}
 

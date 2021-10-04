@@ -123,6 +123,7 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
         const int d_dim = dim;
         const unsigned int d_numThreadsPerBatch = numThreadsPerBatch[i];
         const int d_numSearches = pow(3,numLayers);
+        const unsigned int d_numPoints = numPoints;
 
         //compute which thread does wich add
         int * addAssign = (int * )malloc(sizeof(int)*numThreadsPerBatch[i]);
@@ -170,7 +171,7 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
         
         
         //launch distance kernel
-        distanceCalculationsKernel<<<totalBlocks, BLOCK_SIZE>>>(d_numSearches, d_addAssign, d_threadOffsets, d_epsilon2, d_dim, d_numThreadsPerBatch, d_numThreadsPerAddress, d_data, d_addIndexes, d_numValidRanges, d_rangeIndexes, d_rangeSizes, d_numPointsInAdd, d_addIndexRange, d_pointArray, &d_keyValueIndex[i], d_pointA, d_pointB);
+        distanceCalculationsKernel<<<totalBlocks, BLOCK_SIZE>>>(d_numPoints, d_numSearches, d_addAssign, d_threadOffsets, d_epsilon2, d_dim, d_numThreadsPerBatch, d_numThreadsPerAddress, d_data, d_addIndexes, d_numValidRanges, d_rangeIndexes, d_rangeSizes, d_numPointsInAdd, d_addIndexRange, d_pointArray, &d_keyValueIndex[i], d_pointA, d_pointB);
 
         cudaDeviceSynchronize(); 
 
@@ -199,37 +200,38 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
 }
 
 __global__ 
-void distanceCalculationsKernel(const int numSearches, int * addAssign, int * threadOffsets, const double epsilon2, const int dim, const unsigned int numThreadsPerBatch, unsigned int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long int *keyValueIndex, unsigned int * point_a, unsigned int * point_b){
+void distanceCalculationsKernel(const unsigned int numPoints, const int numSearches, int * addAssign, int * threadOffsets, const double epsilon2, const int dim, const unsigned int numThreadsPerBatch, unsigned int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long int *keyValueIndex, unsigned int * point_a, unsigned int * point_b){
 
     unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
 
-    if(tid > numThreadsPerBatch){
+    if(tid >= numThreadsPerBatch){
         return;
     }
 
-    int currentAdd = addAssign[tid];
+    int currentAdd = addAssign[tid]; 
     int threadOffset = threadOffsets[tid];
 
     for(int i = 0; i < numValidRanges[currentAdd]; i++){
         unsigned long long int numCalcs = rangeSizes[currentAdd*numSearches + i] * numPointsInAdd[currentAdd];
         for(unsigned long long int j = threadOffset; j < numCalcs; j += numThreadsPerAddress[currentAdd]){
-             unsigned int p1 = pointArray[addIndexRange[currentAdd] + j/rangeSizes[currentAdd*numSearches + i]];
-             unsigned int p2 = pointArray[rangeIndexes[currentAdd*numSearches + i] + j % rangeSizes[currentAdd*numSearches + i]];
-             if (distanceCheck(epsilon2, dim, &data[p1], &data[p2])){
-                 //store point
+            //  unsigned int p1 = pointArray[addIndexRange[currentAdd] + j/rangeSizes[currentAdd*numSearches + i]];
+            //  unsigned int p2 = pointArray[rangeIndexes[currentAdd*numSearches + i] + j % rangeSizes[currentAdd*numSearches + i]];
+            //  if (distanceCheck(epsilon2, dim, data, p1, p2, numPoints)){
+            //      //store point
                 unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
-                point_a[index] = p1; //stores the first point Number
-                point_b[index] = p2; // this stores the cooresponding point number to form a pair
-             }
+            //     point_a[index] = p1; //stores the first point Number
+            //     point_b[index] = p2; // this stores the coresponding point number to form a pair
+            //  }
         }
     }
 }
 
 __device__ //may need to switch to inline
-bool distanceCheck(double epsilon2, double dim, double * p1, double * p2){
+bool distanceCheck(double epsilon2, double dim, double * data, unsigned int p1, unsigned int p2, unsigned int numPoints){
     double sum = 0;
     for(int i = 0; i < dim; i++){
-        sum += pow(p1[i]-p2[i],2);
+        sum+=pow(data[i*numPoints + p1] - data[i*numPoints + p2], 2);
+        // sum += pow(p1[i]-p2[i],2);
         if(sum >= epsilon2) return false;
     }
 

@@ -306,10 +306,10 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
         }
     }
 
-    if(tree[numLayers-1][binSizes[numLayers-1]-1] != numPoints){
-        tempIndexes[nonEmptyBins] = binSizes[numLayers-1]-1;
-        nonEmptyBins++;
-    }
+    // if(tree[numLayers-1][binSizes[numLayers-1]-1] != numPoints){
+    //     tempIndexes[nonEmptyBins] = binSizes[numLayers-1]-1;
+    //     nonEmptyBins++;
+    // }
 
 
 
@@ -406,7 +406,7 @@ void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned
 
 	}
 
-	int numHomePoints = tree[numLayers-1][rangeIndexes[localNumRanges - 1]+1] - tree[numLayers-1][rangeIndexes[localNumRanges - 1]];
+	int numHomePoints = tree[numLayers-1][rangeIndexes[0]+1] - tree[numLayers-1][rangeIndexes[0]];
 
 	//get number of calcs / load in array values
 	for(int i = 0; i < localNumRanges; i++){

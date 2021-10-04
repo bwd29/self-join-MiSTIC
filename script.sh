@@ -1,11 +1,15 @@
 #!/bin/bash
 #SBATCH --job-name=tree    
-#SBATCH --output=/home/bwd29/TREE/results/newres.out
-#SBATCH --error=/home/bwd29/TREE/results/newerro.err
-#SBATCH --time=15:00				# 2 min
+#SBATCH --output=/home/bwd29/TREE/results/newres3.out
+#SBATCH --error=/home/bwd29/TREE/results/newerror.err
+#SBATCH --time=30:00				# 2 min
 #SBATCH --mem=0 
 #SBATCH --nodes=1
 #SBATCH --exclusive
+#SBATCH --partition=gowanlock
+#SBATCH --account=gowanlock_condo
+#SBATCH -w cn2  
+
 
 module load cuda
 
@@ -71,3 +75,5 @@ done
 # do
 #         ./build/main /scratch/bwd29/data/TINY_Normalized.bin 384 $j
 # done
+
+echo "Completed!"
