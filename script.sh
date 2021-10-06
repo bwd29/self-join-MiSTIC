@@ -2,7 +2,7 @@
 #SBATCH --job-name=tree    
 #SBATCH --output=/home/bwd29/TREE/results/newres3.out
 #SBATCH --error=/home/bwd29/TREE/results/newerror.err
-#SBATCH --time=30:00				# 2 min
+#SBATCH --time=300:00				# 2 min
 #SBATCH --mem=0 
 #SBATCH --nodes=1
 #SBATCH --exclusive
@@ -19,7 +19,7 @@ echo "MSD ________________________________________________________________"
 echo "MSD ________________________________________________________________"
 echo "MSD ________________________________________________________________"
 
-for j in 0.007 0.007525 0.00805 0.008575 0.0091  
+for j in 0.007 #0.007525 0.00805 0.008575 0.0091  
 do
     ./build/main /scratch/bwd29/data/MSD.bin 90 $j
 done

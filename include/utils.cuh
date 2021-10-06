@@ -24,3 +24,4 @@ double euclideanDistance(double * dataPoint, int dim, double * RP);
 double * createRPArray(double * data, int numRP, int dim, unsigned long long numPoints);
 
 int * stddev( double * A, int dim, int num_points);
+int brute_force( int num_points, int dim, double epsilon, double *A);

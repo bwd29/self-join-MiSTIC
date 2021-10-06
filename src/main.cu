@@ -43,13 +43,15 @@ int main(int argc, char*argv[]){
 	int numPoints = size/sizeof(double)/dim;
 
 	//////////////
-	// numPoints = 100;
+	numPoints = 500;
 	////////////
 
 	printf("\nNumber points: %d ", numPoints);
 	printf("\nNumber Dimensions: %d ", dim);
 	printf("\nNumber Concurent Streams: %d", concurent_streams);
 	printf("\nDistance Threshold: %f \n*********************************\n\n", epsilon);
+
+	if(numPoints <= 10000) 	brute_force( numPoints, dim, epsilon, A);
 
 	double time1 = omp_get_wtime();
 
@@ -127,6 +129,16 @@ int main(int argc, char*argv[]){
 		addIndexRange[i] = tree[numLayers-1][addIndexes[i]];
 	}
 
+	unsigned int numSearches = pow(3, numLayers);
+	int * linearRangeIndexes = (int*)malloc(sizeof(int)*nonEmptyBins*numSearches);
+	unsigned int * linearRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins*numSearches);
+	for(int i = 0; i < nonEmptyBins; i++){
+		for(int j = 0; j < numValidRanges[i];j++){
+			linearRangeIndexes[i*numSearches + j] = tree[numLayers-1][rangeIndexes[i][j]];
+			linearRangeSizes[i*numSearches + j] = rangeSizes[i][j];
+		}
+	}
+
     printf("Number non-empty bins: %d\nNumber of calcs: %llu\nNumber Address for calcs: %llu\n", nonEmptyBins, sumCalcs, sumAdds);
 
 
@@ -135,7 +147,7 @@ int main(int argc, char*argv[]){
 	printf("Tree search time: %f\n", time3-time2);
 
 
-	launchKernel(numLayers, data, dim ,numPoints, epsilon, addIndexes, addIndexRange, pointArray, rangeIndexes, rangeSizes, numValidRanges, numPointsInAdd, calcPerAdd, nonEmptyBins, sumCalcs, sumAdds);
+	launchKernel(numLayers, data, dim ,numPoints, epsilon, addIndexes, addIndexRange, pointArray, rangeIndexes, rangeSizes, numValidRanges, numPointsInAdd, calcPerAdd, nonEmptyBins, sumCalcs, sumAdds, linearRangeIndexes, linearRangeSizes);
 
 
 

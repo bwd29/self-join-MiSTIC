@@ -76,9 +76,9 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 
 			// printf("Max dist = %f, ",maxDistance);
-			skipBins[i] = floor(minDistance/epsilon) - 1;
-			layerNumBins[i] = ceil(maxDistance / epsilon) + 1 - skipBins[i];
-			// layerNumBins[i] = ceil(maxDistance / epsilon) + 1;
+			// skipBins[i] = floor(minDistance/epsilon) - 1;
+			// layerNumBins[i] = ceil(maxDistance / epsilon) + 1 - skipBins[i];
+			layerNumBins[i] = ceil(maxDistance / epsilon) + 1;
 			if(currentLayer == 0){
 				layerBinCount[i] = layerNumBins[i];
 			} else {
@@ -95,8 +95,8 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 			if(currentLayer == 0){
 				for(int j = 0; j < numPoints; j++){
-					int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
-					// int binNumber = floor(distMat[i*numPoints + j] / epsilon);
+					// int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
+					int binNumber = floor(distMat[i*numPoints + j] / epsilon);
 					if(layerBins[i][binNumber] == 0){
 						layerBinNonEmpty[i]++;
 					}
@@ -110,8 +110,8 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 					int part3 = layerNumBins[i];//binNonEmpty[currentLayer-1];
 					// int offset = (bins[ currentLayer - 1 ][ pointBinOffsets[currentLayer-1][j] ] - 1)*binNonEmpty[currentLayer-1];
 					int offset = part2*part3;
-					int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
-					// int binNumber = floor(distMat[i*numPoints + j] / epsilon);
+					// int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
+					int binNumber = floor(distMat[i*numPoints + j] / epsilon);
 
 					// if(offset+binNumber > layerBinCount[i] && checkers == true) {
 					// 	checkers = false;
@@ -189,8 +189,8 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 		binAmounts[currentLayer] = layerNumBins[minSumIdx];
 
 		for(int i = 0; i < numPoints; i++){
-			pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon)-skipBins[minSumIdx];
-			// pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon);
+			// pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon)-skipBins[minSumIdx];
+			pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon);
 		}
 
 		// printf("Finishing up layer\n");
@@ -322,27 +322,27 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
 	unsigned int * tempNumPointsInAdd = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins);
 
     for(int i = 0; i < nonEmptyBins; i++){
-        tempAddIndexes[i] = tempIndexes[i];
+        tempAddIndexes[i] = tempIndexes[i]-1;
     }
 
     free(tempIndexes);
 
-	int numSearches = pow(3,numLayers);
+	unsigned int numSearches = pow(3,numLayers);
 
 	#pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
-		int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ] -1 ];
+		int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ]  ];
 
-		localRangeIndexes[i] = (int*)malloc(sizeof(int)*numSearches);
-		localRangeSizes[i] = (unsigned int *)malloc(sizeof(unsigned int)*numSearches);
+		// localRangeIndexes[i] = (int*)malloc(sizeof(int)*numSearches);
+		// localRangeSizes[i] = (unsigned int *)malloc(sizeof(unsigned int)*numSearches);
 
 		unsigned long long numCalcs;
 		int numRanges;
 		int tempAdd[numLayers];
 		unsigned int localNumPointsInAdd;
 
-		treeTraversal(tempAdd, tree, binSizes, binAmounts, binNumbers, numLayers, &numCalcs, &numRanges, localRangeIndexes[i], localRangeSizes[i], &localNumPointsInAdd);
+		treeTraversal(tempAdd, tree, binSizes, binAmounts, binNumbers, numLayers, &numCalcs, &numRanges, &localRangeIndexes[i], &localRangeSizes[i], &localNumPointsInAdd, numSearches);
 
 		tempCalcPerAdd[i] = numCalcs;
 		tempNumValidRanges[i] = numRanges;
@@ -389,31 +389,37 @@ int depthSearch(int ** tree, unsigned int * binAmounts, int numLayers, int * sea
 }
 
 __host__ __device__
-void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned int * binAmounts, int * binNumbers, int numLayers, unsigned long long * numCalcs, int * numberRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd){
+void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned int * binAmounts, int * binNumbers, int numLayers, unsigned long long * numCalcs, int * numberRanges, int ** rangeIndexes, unsigned int ** rangeSizes, unsigned int * numPointsInAdd, unsigned int numSearches){
 
     unsigned long long localNumCalcs = 0;
     int localNumRanges = 0;
+
+	int * localRangeIndexes = (int*)malloc(sizeof(int)*numSearches);
+	unsigned int * localRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*numSearches);
 	
 	//permute through bin variations (3^r) and run depth searches
-	for(int i = 0; i < pow(3,numLayers); i++){
+	for(int i = 0; i < numSearches; i++){
 		for(int j = 0; j < numLayers; j++){
 			tempAdd[j] = binNumbers[j] + ((int)(i / pow(3, j) ) % 3)-1;
 		}
 
-		if(depthSearch(tree, binAmounts, numLayers, tempAdd, &rangeIndexes[localNumRanges]) > 0){
+		if(depthSearch(tree, binAmounts, numLayers, tempAdd, &localRangeIndexes[localNumRanges]) > 0){
 			localNumRanges++;
 		}
 
 	}
 
-	int numHomePoints = tree[numLayers-1][rangeIndexes[0]+1] - tree[numLayers-1][rangeIndexes[0]];
+	int numHomePoints = tree[numLayers-1][localRangeIndexes[0]+1] - tree[numLayers-1][localRangeIndexes[0]];
 
 	//get number of calcs / load in array values
 	for(int i = 0; i < localNumRanges; i++){
-		unsigned int size = tree[numLayers-1][rangeIndexes[i]+1] - tree[numLayers-1][rangeIndexes[i]];
-		rangeSizes[i] = size;
+		unsigned int size = tree[numLayers-1][localRangeIndexes[i]+1] - tree[numLayers-1][localRangeIndexes[i]];
+		localRangeSizes[i] = size;
 		localNumCalcs += (unsigned long long)size;
 	}
+
+	*rangeIndexes = localRangeIndexes;
+	*rangeSizes = localRangeSizes;
 
 	*numberRanges = localNumRanges;
 	*numCalcs = localNumCalcs*numHomePoints;
