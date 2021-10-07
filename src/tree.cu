@@ -306,10 +306,10 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
         }
     }
 
-    // if(tree[numLayers-1][binSizes[numLayers-1]-1] != numPoints){
-    //     tempIndexes[nonEmptyBins] = binSizes[numLayers-1]-1;
-    //     nonEmptyBins++;
-    // }
+    if(tree[numLayers-1][binSizes[numLayers-1]-1] != numPoints){
+        tempIndexes[nonEmptyBins] = binSizes[numLayers-1]-1;
+        nonEmptyBins++;
+    }
 
 
 
@@ -393,10 +393,9 @@ void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned
 
     unsigned long long localNumCalcs = 0;
     int localNumRanges = 0;
-
 	int * localRangeIndexes = (int*)malloc(sizeof(int)*numSearches);
 	unsigned int * localRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*numSearches);
-	
+	int numHomePoints;
 	//permute through bin variations (3^r) and run depth searches
 	for(int i = 0; i < numSearches; i++){
 		for(int j = 0; j < numLayers; j++){
@@ -407,10 +406,11 @@ void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned
 			localNumRanges++;
 		}
 
+		if(i == numSearches /2){
+			numHomePoints = tree[numLayers-1][localRangeIndexes[localNumRanges-1]+1] - tree[numLayers-1][localRangeIndexes[localNumRanges-1]];
+		}
+
 	}
-
-	int numHomePoints = tree[numLayers-1][localRangeIndexes[0]+1] - tree[numLayers-1][localRangeIndexes[0]];
-
 	//get number of calcs / load in array values
 	for(int i = 0; i < localNumRanges; i++){
 		unsigned int size = tree[numLayers-1][localRangeIndexes[i]+1] - tree[numLayers-1][localRangeIndexes[i]];

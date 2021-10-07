@@ -4,7 +4,7 @@
 // #include "include/utils.cuh"
 
 __device__ //may need to switch to inline
-bool distanceCheck(double epsilon2, double dim, double * data, unsigned int p1, unsigned int p2, unsigned int numPoints);
+bool distanceCheck(double epsilon2, int dim, double * data, unsigned int p1, unsigned int p2, unsigned int numPoints);
 
 
 __global__

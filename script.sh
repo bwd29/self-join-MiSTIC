@@ -21,7 +21,7 @@ echo "MSD ________________________________________________________________"
 
 for j in 0.007 #0.007525 0.00805 0.008575 0.0091  
 do
-    ./build/main /scratch/bwd29/data/MSD.bin 90 $j
+    cuda-memcheck ./build/main /scratch/bwd29/data/MSD.bin 90 $j
 done
 
 

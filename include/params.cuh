@@ -15,6 +15,8 @@
 #include <fstream>
 #include <algorithm>  
 
+#define DATANORM true
+
 const int BLOCK_SIZE = 32; 
 const int KERNEL_BLOCKS = 1024;
 const int BRUTE = false;

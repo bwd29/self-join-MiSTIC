@@ -43,7 +43,7 @@ int main(int argc, char*argv[]){
 	int numPoints = size/sizeof(double)/dim;
 
 	//////////////
-	numPoints = 500;
+	// numPoints = 1000;
 	////////////
 
 	printf("\nNumber points: %d ", numPoints);
@@ -98,7 +98,11 @@ int main(int argc, char*argv[]){
     #pragma omp parallel for
 	for(int i = 0; i < numPoints; i++){
 		for(int j = 0; j < dim; j++){
+			#if DATANORM
 			data[i+numPoints*j] = dimOrderedData[pointArray[i]*dim+j];
+			#else
+			data[i*dim+j] = dimOrderedData[pointArray[i]*dim+j];
+			#endif
 		}
 	}
 
@@ -127,6 +131,7 @@ int main(int argc, char*argv[]){
 	int * addIndexRange = (int*)malloc(sizeof(int)*nonEmptyBins);
 	for(int i = 0; i < nonEmptyBins; i++){
 		addIndexRange[i] = tree[numLayers-1][addIndexes[i]];
+		// printf("%d\n", addIndexRange[i]);
 	}
 
 	unsigned int numSearches = pow(3, numLayers);
