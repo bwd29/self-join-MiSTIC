@@ -147,7 +147,7 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
         for(int j = 0; j < numAddPerBatch[i]; j++){
             if(numThreadsPerAddress[batchFirstAdd + j] == 0) {
                 printf("ERROR: add %d has 0 threads\n", j + batchFirstAdd);
-                exit(0);
+                // exit(0);
             }
             for(int k = 0; k < numThreadsPerAddress[batchFirstAdd + j]; k++){
                 addAssign[threadCount] = j + batchFirstAdd;
@@ -234,13 +234,13 @@ void distanceCalculationsKernel(unsigned int *numPoints, unsigned int *numSearch
 
             // unsigned int p1 = pointArray[addIndexRange[currentAdd] + j/numPointsInAdd[currentAdd]];
             // unsigned int p1 = pointArray[addIndexRange[currentAdd] + j / rangeSizes[currentAdd*(*numSearches) + i]];
-            if(pointLocation1 > *numPoints) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
+            // if(pointLocation1 > *numPoints) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
  
             unsigned int p1 = pointArray[pointLocation1];
 
             // unsigned int p2 = pointArray[rangeIndexes[currentAdd*(*numSearches) + i] + j % rangeSizes[currentAdd*(*numSearches) + i]];
             unsigned int p2 = pointArray[pointLocation2];
-            if(pointLocation2 > *numPoints) printf("ERROR 2: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u %u, j: %llu, rangeVal: %d\n", tid, currentAdd, threadOffset, pointLocation1, pointLocation2,j,rangeIndexes[currentAdd*(*numSearches) + i]);
+            // if(pointLocation2 > *numPoints) printf("ERROR 2: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u %u, j: %llu, rangeVal: %d\n", tid, currentAdd, threadOffset, pointLocation1, pointLocation2,j,rangeIndexes[currentAdd*(*numSearches) + i]);
 
 
             if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
