@@ -334,7 +334,7 @@ int generateRanges(int ** tree, int numPoints, int ** pointBinNumbers, int numLa
 
 	unsigned int numSearches = pow(3,numLayers);
 
-	// #pragma omp parallel for
+	#pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
 		int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ]];

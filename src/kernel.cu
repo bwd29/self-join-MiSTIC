@@ -256,11 +256,11 @@ __device__ //may need to switch to inline
 bool distanceCheck(double epsilon2, int dim, double * data, unsigned int p1, unsigned int p2, unsigned int numPoints){
     double sum = 0;
     for(int i = 0; i < dim; i++){
-        #if DATANORM
-        sum+=pow(data[i*numPoints + p1] - data[i*numPoints + p2], 2);
-        #else
+        // #if DATANORM
+        // sum += pow(data[i*numPoints + p1] - data[i*numPoints + p2], 2);
+        // #else
         sum += pow(data[p1*dim+i]-data[p2*dim+i],2);
-        #endif
+        // #endif
         if(sum > epsilon2) return false;
     }
 
