@@ -4,7 +4,7 @@
 void launchKernel(int numLayers, double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * addIndexRange, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds, int * linearRangeIndexes, unsigned int * linearRangeSizes){
  
     double epsilon2 = epsilon*epsilon;
-    unsigned long long calcsPerThread = 100000; 
+    unsigned long long calcsPerThread = 1000000; 
 
     unsigned int numSearches = pow(3,numLayers);
     unsigned int * numThreadsPerAddress = (unsigned int *)malloc(sizeof(unsigned int)*nonEmptyBins);
