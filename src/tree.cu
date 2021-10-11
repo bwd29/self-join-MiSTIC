@@ -76,7 +76,7 @@ int buildTree(int *** rbins, double * data, int dim, unsigned long long numPoint
 
 
 			// printf("Max dist = %f, ",maxDistance);
-			skipBins[i] = floor(minDistance/epsilon) - 1;
+			skipBins[i] = floor(minDistance/epsilon) - 2;
 			layerNumBins[i] = ceil(maxDistance / epsilon) + 2 - skipBins[i];
 			// layerNumBins[i] = ceil(maxDistance / epsilon) + 1;
 			if(currentLayer == 0){
@@ -384,7 +384,11 @@ int depthSearch(int ** tree, unsigned int * binAmounts, int numLayers, int * sea
 
 	//for final layer need ranges
 	int index = searchBins[numLayers-1]+offset-1;///////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 	if(tree[numLayers-1][index] < tree[numLayers-1][index+1]){
+
+		// printf("%d :: %d\n", tree[numLayers-1][index],tree[numLayers-1][index+1] );
+
 		return index;
 	}else{
 		// printf("%d :: %d\n", tree[numLayers-1][index],tree[numLayers-1][index+1] );
@@ -402,13 +406,22 @@ void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned
 	unsigned int * localRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*numSearches);
 	//permute through bin variations (3^r) and run depth searches
 	for(int i = 0; i < numSearches; i++){
+		// printf("modded: ");
 		for(int j = 0; j < numLayers; j++){
 			tempAdd[j] = binNumbers[j] + ((int)(i / pow(3, j) ) % 3)-1;
+			// printf("%d:%d, ", tempAdd[j], binNumbers[j]);
 		}
+		// printf("\n");
+
+		
 
 		int index = depthSearch(tree, binAmounts, numLayers, tempAdd);
-		if(index > 0){
+		if(index >= 0){
 			localRangeIndexes[localNumRanges] = index;
+			unsigned int size = tree[numLayers-1][index+1] - tree[numLayers-1][index];
+			// printf("size: %u\n", size);
+			localRangeSizes[localNumRanges] = size;
+			localNumCalcs += size;
 			localNumRanges++;
 		}
 
@@ -429,11 +442,11 @@ void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned
 	}
 
 	//get number of calcs / load in array values
-	for(int i = 0; i < localNumRanges; i++){
-		unsigned int size = tree[numLayers-1][localRangeIndexes[i]+1] - tree[numLayers-1][localRangeIndexes[i]];
-		localRangeSizes[i] = size;
-		localNumCalcs += size;
-	}
+	// for(int i = 0; i < localNumRanges; i++){
+	// 	unsigned int size = tree[numLayers-1][localRangeIndexes[i]+1] - tree[numLayers-1][localRangeIndexes[i]];
+	// 	localRangeSizes[i] = size;
+	// 	localNumCalcs += size;
+	// }
 
 	*rangeIndexes = localRangeIndexes;
 	*rangeSizes = localRangeSizes;
