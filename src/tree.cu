@@ -390,6 +390,7 @@ int depthSearch(int ** tree, unsigned int * binAmounts, int numLayers, int * sea
 		// printf("%d :: %d\n", tree[numLayers-1][index],tree[numLayers-1][index+1] );
 
 		return index;
+
 	}else{
 		// printf("%d :: %d\n", tree[numLayers-1][index],tree[numLayers-1][index+1] );
 		return -1;
@@ -408,7 +409,7 @@ void treeTraversal(int * tempAdd, int ** tree, unsigned int * binSizes, unsigned
 	for(int i = 0; i < numSearches; i++){
 		// printf("modded: ");
 		for(int j = 0; j < numLayers; j++){
-			tempAdd[j] = binNumbers[j] + ((int)(i / pow(3, j) ) % 3)-1;
+			tempAdd[j] = binNumbers[j] + (i / (int)pow(3, j) % 3)-1;
 			// printf("%d:%d, ", tempAdd[j], binNumbers[j]);
 		}
 		// printf("\n");

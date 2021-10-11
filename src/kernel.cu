@@ -4,7 +4,7 @@
 void launchKernel(int numLayers, double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * addIndexRange, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds, int * linearRangeIndexes, unsigned int * linearRangeSizes){
  
     double epsilon2 = epsilon*epsilon;
-    unsigned long long calcsPerThread = 100000; 
+    unsigned long long calcsPerThread = 1000; 
 
     unsigned int numSearches = pow(3,numLayers);
     unsigned int * numThreadsPerAddress = (unsigned int *)malloc(sizeof(unsigned int)*nonEmptyBins);
@@ -135,6 +135,8 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
 
 
     ///////////////////////////////////////////////
+
+    printf("numSearches: %d\n", numSearches);
     
     int batchFirstAdd = 0;
     for(int i = 0; i < numBatches; i++){
@@ -175,7 +177,7 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
 
         cudaDeviceSynchronize();
 
-        unsigned int totalBlocks = ceil(numThreadsPerBatch[i]*1.0 / (unsigned long long)BLOCK_SIZE);
+        unsigned int totalBlocks = ceil(numThreadsPerBatch[i]*1.0 / BLOCK_SIZE);
 
 
         printf("BatchNumber: %d/%d, Calcs: %llu, Adds: %d, threads: %u, blocks:%d\n ", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i], totalBlocks);
@@ -232,15 +234,12 @@ void distanceCalculationsKernel(unsigned int *numPoints, unsigned int *numSearch
             unsigned int pointLocation1 = addIndexRange[currentAdd] + j / rangeSizes[currentAdd*(*numSearches) + i];
             unsigned int pointLocation2 = rangeIndexes[currentAdd*(*numSearches) + i] + j % rangeSizes[currentAdd*(*numSearches) + i];
 
-            // unsigned int p1 = pointArray[addIndexRange[currentAdd] + j/numPointsInAdd[currentAdd]];
-            // unsigned int p1 = pointArray[addIndexRange[currentAdd] + j / rangeSizes[currentAdd*(*numSearches) + i]];
-            if(pointLocation1 > *numPoints) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
- 
-            unsigned int p1 = pointArray[pointLocation1];
 
-            // unsigned int p2 = pointArray[rangeIndexes[currentAdd*(*numSearches) + i] + j % rangeSizes[currentAdd*(*numSearches) + i]];
-            unsigned int p2 = pointArray[pointLocation2];
+            if(pointLocation1 > *numPoints) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
             if(pointLocation2 > *numPoints) printf("ERROR 2: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u %u, j: %llu, rangeVal: %d, size: %u\n", tid, currentAdd, threadOffset, pointLocation1, pointLocation2,j,rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
+
+            unsigned int p1 = pointArray[pointLocation1];
+            unsigned int p2 = pointArray[pointLocation2];
 
 
             if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
@@ -262,7 +261,7 @@ bool distanceCheck(double epsilon2, int dim, double * data, unsigned int p1, uns
         #else
         sum += pow(data[p1*dim+i]-data[p2*dim+i],2);
         #endif
-        if(sum >= epsilon2) return false;
+        if(sum > epsilon2) return false;
     }
 
     return true;
