@@ -25,3 +25,4 @@ double * createRPArray(double * data, int numRP, int dim, unsigned long long num
 
 int * stddev( double * A, int dim, int num_points);
 int brute_force( int num_points, int dim, double epsilon, double *A);
+

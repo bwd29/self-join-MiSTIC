@@ -1,5 +1,17 @@
 #include "include/kernel.cuh"
 
+bool compPair(const std::pair<int, int> &x, const std::pair<int, int> &y){
+    if(x.first < y.first){
+        return true;
+    }
+
+    if(x.first == y.first && x.second < y.second){
+        return true;
+    }
+
+    return false;
+
+}
 
 void launchKernel(int numLayers, double * data, int dim, unsigned int numPoints, double epsilon, int * addIndexes, int * addIndexRange, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds, int * linearRangeIndexes, unsigned int * linearRangeSizes){
  
@@ -139,7 +151,8 @@ void launchKernel(int numLayers, double * data, int dim, unsigned int numPoints,
 
     printf("numSearches: %d\n", numSearches);
     
-    
+    std::vector<int> hostPointA;
+    std::vector<int> hostPointB;
 
     int batchFirstAdd = 0;
 
@@ -195,7 +208,8 @@ void launchKernel(int numLayers, double * data, int dim, unsigned int numPoints,
         //launch distance kernel
         // distanceCalculationsKernel<<<totalBlocks, BLOCK_SIZE>>>(d_numPoints, d_numSearches, d_addAssign, d_threadOffsets, d_epsilon2, d_dim, &d_numThreadsPerBatch[i], d_numThreadsPerAddress, d_data, d_addIndexes, d_numValidRanges, d_rangeIndexes, d_rangeSizes, d_numPointsInAdd, d_addIndexRange, d_pointArray, &d_keyValueIndex[i], d_pointA, d_pointB);
 
-        distanceCalculationsKernel_CPU(totalBlocks, 
+        #if HOST
+            distanceCalculationsKernel_CPU(totalBlocks, 
                                         &numPoints,
                                         &numSearches, 
                                         addAssign, 
@@ -212,8 +226,15 @@ void launchKernel(int numLayers, double * data, int dim, unsigned int numPoints,
                                         numPointsInAdd, 
                                         addIndexRange, 
                                         pointArray, 
-                                        &keyValueIndex[i]);
+                                        &keyValueIndex[i],
+                                        &hostPointA,
+                                        &hostPointB);
 
+        #else
+            distanceCalculationsKernel<<<totalBlocks, BLOCK_SIZE>>>(d_numPoints, d_numSearches, d_addAssign, d_threadOffsets, d_epsilon2, d_dim, &d_numThreadsPerBatch[i], d_numThreadsPerAddress, d_data, d_addIndexes, d_numValidRanges, d_rangeIndexes, d_rangeSizes, d_numPointsInAdd, d_addIndexRange, d_pointArray, &d_keyValueIndex[i], d_pointA, d_pointB);
+
+        #endif
+        
         cudaDeviceSynchronize(); 
 
         // assert(cudaSuccess ==  cudaMemcpy(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long int), cudaMemcpyDeviceToHost));
@@ -228,12 +249,27 @@ void launchKernel(int numLayers, double * data, int dim, unsigned int numPoints,
         
     }
 
+    #if HOST
+    std::vector< std::pair<int,int>> pairs;
+
+    for(int i = 0; i < hostPointA.size();i++){
+        pairs.push_back(std::make_pair(hostPointA[i],hostPointB[i]));
+    }
+
+    std::sort(pairs.begin(), pairs.end(), compPair);
+
+    pairs.erase(std::unique(pairs.begin(), pairs.end()), pairs.end());
+
+    #endif
+
+
+
     unsigned long long totals = 0;
     for(int i = 0; i < numBatches; i++){
         totals += keyValueIndex[i];
     }
 
-    printf("Total results Set Size: %llu\n", totals);
+    printf("Total results Set Size: %llu , unique pairs: %lu\n", totals, pairs.size());
 
     free(numCalcsPerBatch);
     free(numAddPerBatch);
@@ -281,7 +317,7 @@ void distanceCalculationsKernel(unsigned int *numPoints, unsigned int *numSearch
 
 
 
-void distanceCalculationsKernel_CPU(unsigned int totalBlocks, unsigned int *numPoints, unsigned int *numSearches, int * addAssign, int * threadOffsets, double *epsilon2, int *dim, unsigned int *numThreadsPerBatch, unsigned int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long int *keyValueIndex){
+void distanceCalculationsKernel_CPU(unsigned int totalBlocks, unsigned int *numPoints, unsigned int *numSearches, int * addAssign, int * threadOffsets, double *epsilon2, int *dim, unsigned int *numThreadsPerBatch, unsigned int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long int *keyValueIndex, std::vector<int> * hostPointA, std::vector<int> * hostPointB){
 
 
     for(int h = 0; h < BLOCK_SIZE*totalBlocks; h++)
@@ -290,7 +326,7 @@ void distanceCalculationsKernel_CPU(unsigned int totalBlocks, unsigned int *numP
     
         unsigned int tid = h;
 
-        if(tid < *numThreadsPerBatch){
+        if(tid < *numThreadsPerBatch ){
             
             int currentAdd = addAssign[tid]; 
             int threadOffset = threadOffsets[tid];
@@ -309,13 +345,15 @@ void distanceCalculationsKernel_CPU(unsigned int totalBlocks, unsigned int *numP
                     unsigned int p1 = pointArray[pointLocation1];
                     unsigned int p2 = pointArray[pointLocation2];
 
+                    // if(p1 == 0 && p2 == 0) printf("\nSearched point %d\n",p1);
 
                     if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
                         //  store point
                         *keyValueIndex += 1;
+                        
                         // unsigned long long int index = *keyValueIndex;
-                        // point_a[index] = p1; //stores the first point Number
-                        // point_b[index] = p2; // this stores the coresponding point number to form a pair
+                        (*hostPointA).push_back(p1); //stores the first point Number
+                        (*hostPointB).push_back(p2); // this stores the coresponding point number to form a pair
                     }
                 }
             }
