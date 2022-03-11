@@ -17,8 +17,8 @@
 
 #define DATANORM true
 
-const int BLOCK_SIZE = 512; 
-const int KERNEL_BLOCKS = 16;
+const int BLOCK_SIZE = 10; 
+const int KERNEL_BLOCKS = 32;
 const int BRUTE = false;
 const int RANDOM = false;
 const int TEST_RP = 100; 
@@ -34,4 +34,4 @@ const int RPPERLAYER = 10;
 
 const int RAND = false;
 
-const int resultsSize = 100000000; // 400MB
+const int resultsSize = 10000000; // 40MB

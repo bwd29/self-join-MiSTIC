@@ -1,10 +1,10 @@
 #include "include/kernel.cuh"
 
 
-void launchKernel(int numLayers, double * data, int dim, int numPoints, double epsilon, int * addIndexes, int * addIndexRange, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds, int * linearRangeIndexes, unsigned int * linearRangeSizes){
+void launchKernel(int numLayers, double * data, int dim, unsigned int numPoints, double epsilon, int * addIndexes, int * addIndexRange, int * pointArray, int ** rangeIndexes, unsigned int ** rangeSizes, int * numValidRanges, unsigned int * numPointsInAdd, unsigned long long *calcPerAdd, int nonEmptyBins, unsigned long long sumCalcs, unsigned long long sumAdds, int * linearRangeIndexes, unsigned int * linearRangeSizes){
  
     double epsilon2 = epsilon*epsilon;
-    unsigned long long calcsPerThread = 1000; 
+    unsigned long long calcsPerThread = 10000; 
 
     unsigned int numSearches = pow(3,numLayers);
     unsigned int * numThreadsPerAddress = (unsigned int *)malloc(sizeof(unsigned int)*nonEmptyBins);
@@ -17,10 +17,10 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
     for(int i = 0; i < nonEmptyBins; i++){
         numThreadsPerAddress[i] = ceil(calcPerAdd[i]*1.0 / calcsPerThread);
         if(numThreadsPerAddress[i] == 0) printf("\nERROR: Threads per address at %d: %u, cals per add: %llu\n",i, numThreadsPerAddress[i], calcPerAdd[i]);
-        if (sum + calcPerAdd[i] < calcsPerThread*threadsPerBatch){
-            sum += calcPerAdd[i];
+        if (sum + numThreadsPerAddress[i] < threadsPerBatch){
+            sum += numThreadsPerAddress[i];
         }else{
-            sum = calcPerAdd[i];
+            sum = numThreadsPerAddress[i];
             numBatches++;
         }
     }
@@ -34,6 +34,7 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
 
     int currentBatch = 0;
     for(int i = 0; i < nonEmptyBins; i++){
+        if(currentBatch > numBatches) printf("ERROR 3: current batch %d is greater than num batches %d\n", currentBatch, numBatches);
         if(numThreadsPerBatch[currentBatch] == 0 || numThreadsPerBatch[currentBatch] + numThreadsPerAddress[i] < threadsPerBatch){
             numThreadsPerBatch[currentBatch] += numThreadsPerAddress[i];
             numAddPerBatch[currentBatch]++;
@@ -138,9 +139,14 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
 
     printf("numSearches: %d\n", numSearches);
     
+    
+
     int batchFirstAdd = 0;
+
+    // #pragma omp parallel for
     for(int i = 0; i < numBatches; i++){
 
+        
         //compute which thread does wich add
         int * addAssign = (int * )malloc(sizeof(int)*numThreadsPerBatch[i]);
         int * threadOffsets = (int*)malloc(sizeof(int)*numThreadsPerBatch[i]);
@@ -187,14 +193,35 @@ void launchKernel(int numLayers, double * data, int dim, int numPoints, double e
         
         
         //launch distance kernel
-        distanceCalculationsKernel<<<totalBlocks, BLOCK_SIZE>>>(d_numPoints, d_numSearches, d_addAssign, d_threadOffsets, d_epsilon2, d_dim, &d_numThreadsPerBatch[i], d_numThreadsPerAddress, d_data, d_addIndexes, d_numValidRanges, d_rangeIndexes, d_rangeSizes, d_numPointsInAdd, d_addIndexRange, d_pointArray, &d_keyValueIndex[i], d_pointA, d_pointB);
+        // distanceCalculationsKernel<<<totalBlocks, BLOCK_SIZE>>>(d_numPoints, d_numSearches, d_addAssign, d_threadOffsets, d_epsilon2, d_dim, &d_numThreadsPerBatch[i], d_numThreadsPerAddress, d_data, d_addIndexes, d_numValidRanges, d_rangeIndexes, d_rangeSizes, d_numPointsInAdd, d_addIndexRange, d_pointArray, &d_keyValueIndex[i], d_pointA, d_pointB);
+
+        distanceCalculationsKernel_CPU(totalBlocks, 
+                                        &numPoints,
+                                        &numSearches, 
+                                        addAssign, 
+                                        threadOffsets, 
+                                        &epsilon2, 
+                                        &dim, 
+                                        &numThreadsPerBatch[i], 
+                                        numThreadsPerAddress, 
+                                        data, 
+                                        addIndexes, 
+                                        numValidRanges, 
+                                        linearRangeIndexes, 
+                                        linearRangeSizes, 
+                                        numPointsInAdd, 
+                                        addIndexRange, 
+                                        pointArray, 
+                                        &keyValueIndex[i]);
 
         cudaDeviceSynchronize(); 
 
-        assert(cudaSuccess ==  cudaMemcpy(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long int), cudaMemcpyDeviceToHost));
+        // assert(cudaSuccess ==  cudaMemcpy(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long int), cudaMemcpyDeviceToHost));
 
         printf("Results: %llu\n", keyValueIndex[i]);
+        ///////////////////////
         //transfer back reuslts
+        ///////////////////////
 
         free(addAssign);
         free(threadOffsets);
@@ -235,8 +262,8 @@ void distanceCalculationsKernel(unsigned int *numPoints, unsigned int *numSearch
             unsigned int pointLocation2 = rangeIndexes[currentAdd*(*numSearches) + i] + j % rangeSizes[currentAdd*(*numSearches) + i];
 
 
-            if(pointLocation1 > *numPoints) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
-            if(pointLocation2 > *numPoints) printf("ERROR 2: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u %u, j: %llu, rangeVal: %d, size: %u\n", tid, currentAdd, threadOffset, pointLocation1, pointLocation2,j,rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
+            if(pointLocation1 > *numPoints || j / rangeSizes[currentAdd*(*numSearches) + i] > numPointsInAdd[currentAdd]) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
+            if(pointLocation2 > *numPoints || j % rangeSizes[currentAdd*(*numSearches) + i] > rangeSizes[currentAdd*(*numSearches) + i]) printf("ERROR 2: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u %u, j: %llu, rangeVal: %d, size: %u\n", tid, currentAdd, threadOffset, pointLocation1, pointLocation2,j,rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
 
             unsigned int p1 = pointArray[pointLocation1];
             unsigned int p2 = pointArray[pointLocation2];
@@ -252,7 +279,53 @@ void distanceCalculationsKernel(unsigned int *numPoints, unsigned int *numSearch
     }
 }
 
-__device__ //may need to switch to inline
+
+
+void distanceCalculationsKernel_CPU(unsigned int totalBlocks, unsigned int *numPoints, unsigned int *numSearches, int * addAssign, int * threadOffsets, double *epsilon2, int *dim, unsigned int *numThreadsPerBatch, unsigned int * numThreadsPerAddress, double * data, int *addIndexes, int * numValidRanges, int * rangeIndexes, unsigned int * rangeSizes, unsigned int * numPointsInAdd, int * addIndexRange, int * pointArray, unsigned long long int *keyValueIndex){
+
+
+    for(int h = 0; h < BLOCK_SIZE*totalBlocks; h++)
+    {
+
+    
+        unsigned int tid = h;
+
+        if(tid < *numThreadsPerBatch){
+            
+            int currentAdd = addAssign[tid]; 
+            int threadOffset = threadOffsets[tid];
+
+            for(int i = 0; i < numValidRanges[currentAdd]; i++){
+                unsigned long long int numCalcs = rangeSizes[currentAdd*(*numSearches) + i] * numPointsInAdd[currentAdd];
+                for(unsigned long long int j = threadOffset; j < numCalcs; j += numThreadsPerAddress[currentAdd]){
+
+                    unsigned int pointLocation1 = addIndexRange[currentAdd] + j / rangeSizes[currentAdd*(*numSearches) + i];
+                    unsigned int pointLocation2 = rangeIndexes[currentAdd*(*numSearches) + i] + j % rangeSizes[currentAdd*(*numSearches) + i];
+
+
+                    if(pointLocation1 > *numPoints || j / rangeSizes[currentAdd*(*numSearches) + i] > numPointsInAdd[currentAdd]) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
+                    if(pointLocation2 > *numPoints || j % rangeSizes[currentAdd*(*numSearches) + i] > rangeSizes[currentAdd*(*numSearches) + i]) printf("ERROR 2: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u %u, j: %llu, rangeVal: %d, size: %u\n", tid, currentAdd, threadOffset, pointLocation1, pointLocation2,j,rangeIndexes[currentAdd*(*numSearches) + i],rangeSizes[currentAdd*(*numSearches) + i]);
+
+                    unsigned int p1 = pointArray[pointLocation1];
+                    unsigned int p2 = pointArray[pointLocation2];
+
+
+                    if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
+                        //  store point
+                        *keyValueIndex += 1;
+                        // unsigned long long int index = *keyValueIndex;
+                        // point_a[index] = p1; //stores the first point Number
+                        // point_b[index] = p2; // this stores the coresponding point number to form a pair
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+__host__ __device__ //may need to switch to inline
 bool distanceCheck(double epsilon2, int dim, double * data, unsigned int p1, unsigned int p2, unsigned int numPoints){
     double sum = 0;
     for(int i = 0; i < dim; i++){

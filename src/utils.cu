@@ -103,22 +103,22 @@ int brute_force( int num_points, int dim, double epsilon, double *A){
 		for (int j = 0; j < num_points; j++)
 		{
 		double distance = 0;
-		for (int k = 0; k < dim; k++)
-		{
-		if(distance > epsilon*epsilon)
-		{
-		break;
-		} else {
-		double a1 = A[i*dim + k];
-		double a2 = A[j*dim + k];
-		distance += (a1-a2)*(a1-a2);
-		}
-		}
-		if(distance <= epsilon*epsilon){
-			omp_set_lock(&brute);
-			brute_count++;
-			omp_unset_lock(&brute);
-		}
+			for (int k = 0; k < dim; k++)
+			{
+				if(distance > epsilon*epsilon)
+				{
+					break;
+				} else {
+					double a1 = A[i*dim + k];
+					double a2 = A[j*dim + k];
+					distance += (a1-a2)*(a1-a2);
+				}
+				}
+				if(distance <= epsilon*epsilon){
+					omp_set_lock(&brute);
+					brute_count++;
+					omp_unset_lock(&brute);
+				}
 		}
 	}
 	printf("\nBrute force has %d pairs.\n\n\n", brute_count);

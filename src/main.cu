@@ -43,7 +43,7 @@ int main(int argc, char*argv[]){
 	int numPoints = size/sizeof(double)/dim;
 
 	//////////////
-	numPoints = 1000;
+	numPoints = 10000;
 	////////////
 
 	printf("\nNumber points: %d ", numPoints);
