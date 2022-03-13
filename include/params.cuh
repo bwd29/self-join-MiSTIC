@@ -28,9 +28,9 @@ const double SAMPLE_PER = 0.01;
 
 const int MAX_BIN = 100000; 
  
-const int MAXRP = 3;
+const int MAXRP = 1;
 
-const int MINRP = 2;
+const int MINRP = 0;
 
 const int RPPERLAYER = 10;
 
