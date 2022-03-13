@@ -421,105 +421,113 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
 }
 
 __host__ __device__ 
-int depthSearch(int ** tree,
-				unsigned int * binAmounts,
-				int numLayers,
-				int * searchBins){
+int depthSearch(int ** tree, //pointer to the tree built with buildTree()
+				unsigned int * binAmounts, // the number of bins for each reference point, i.e. range/epsilon
+				int numLayers, //the number of layers in the tree
+				int * searchBins){ // the bin number that we are searching for
 	
+	// the offset is used for keeping track of the offset from the begining of each layer to the index
 	int offset = 0;
-	//starting at current layer
+	
+	//go through each layer up to the last to determine if the index is non-empty and if it is then find the offset into the next layer
 	for(int i = 0; i < numLayers-1; i++){
 		
+		//check the current layer at the bin number + offset may or may not need -1 here
 		if (tree[i][offset + searchBins[i]] == 0){
 			return -2;
 		}
 
+		// the next offset will be the previous layer index number * the number of bins for the reference point in the next layer
 		offset = (tree[i][searchBins[i]+offset]-1)*binAmounts[i+1];
 	}
 
-	//for final layer need ranges
+	//the index will be the last layers bin number plus the offset for the last layer -1 because if the previous is the same as cuurernt then empty
 	int index = searchBins[numLayers-1]+offset-1;
 
-	if(tree[numLayers-1][index] < tree[numLayers-1][index+1]){
-
-		// printf("%d :: %d\n", tree[numLayers-1][index],tree[numLayers-1][index+1] );
-
+	//if last layer has poionts then return the index value
+	if(tree[numLayers-1][index-1] < tree[numLayers-1][index]){
 		return index;
-
 	}else{
-		// printf("%d :: %d\n", tree[numLayers-1][index],tree[numLayers-1][index+1] );
 		return -1;
 	}
 
 }
 
 __host__ __device__
-void treeTraversal(int * tempAdd,
-				   int ** tree,
-				   unsigned int * binSizes,
-				   unsigned int * binAmounts,
-				   int * binNumbers,
-				   int numLayers,
-				   unsigned long long * numCalcs,
-				   int * numberRanges,
-				   int ** rangeIndexes,
-				   unsigned int ** rangeSizes,
-				   unsigned int * numPointsInAdd,
-				   unsigned int numSearches){
+void treeTraversal(int * tempAdd, //twmp array for the address being searched
+				   int ** tree, // the pointer to the tree
+				   unsigned int * binSizes, // the width of the tree for each layer mesuared in number of bins
+				   unsigned int * binAmounts, // the number of bins for each reference point
+				   int * binNumbers, // the bin number for the home address
+				   int numLayers, // the number of reference points/layers in the tree
+				   unsigned long long * numCalcs, // the place to retrun the number of calcs that will be needed
+				   int * numberRanges, // the return location for the number of adjacent non-empty indexes
+				   int ** rangeIndexes, // the array of non-empty adjacent index locations
+				   unsigned int ** rangeSizes, // the number of points in each of the adjacent non-empty indexes
+				   unsigned int * numPointsInAdd, //the number of points in the home address/iondex
+				   unsigned int numSearches){ //the number of searches that are being perfomred for each addresss
 
+	//keep track of the number of calcs that will be needed
     unsigned long long localNumCalcs = 0;
+
+	// keep track of the number of non-empty adjacent indexes
     int localNumRanges = 0;
+
+	//keep track of the locations of adjacent indexes that are not empty
 	int * localRangeIndexes = (int*)malloc(sizeof(int)*numSearches);
+
+	// the number of points in the adjacent non-empty indexes
 	unsigned int * localRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*numSearches);
+
 	//permute through bin variations (3^r) and run depth searches
 	for(int i = 0; i < numSearches; i++){
-		// printf("modded: ");
+		
+		//modify temp add for the search based on our itteration i
 		for(int j = 0; j < numLayers; j++){
 			tempAdd[j] = binNumbers[j] + (i / (int)pow(3, j) % 3)-1;
-			// printf("%d:%d, ", tempAdd[j], binNumbers[j]);
 		}
-		// printf("\n");
-
 		
+		//perform the search and get the index location of the return 
 
 		int index = depthSearch(tree, binAmounts, numLayers, tempAdd);
+
+		//check if the index location was non empty
 		if(index >= 0){
+			//store the non empty index location
 			localRangeIndexes[localNumRanges] = index;
-			unsigned int size = tree[numLayers-1][index+1] - tree[numLayers-1][index];
-			// printf("size: %u\n", size);
+
+			//calcualte the size of the index, i.e. the number of points in the index
+			unsigned int size = tree[numLayers-1][index+1] - tree[numLayers-1][index]; //may need to +- to index here!!!!!!!!!!!!!!!
+
+			//store that in the sizes array
 			localRangeSizes[localNumRanges] = size;
+
+			// keep running total of the sizes for getting the number of calculations latter
 			localNumCalcs += size;
+
+			//keep track of the number of non-empty adjacent indexes
 			localNumRanges++;
 		}
 
-		// if(i == numSearches /2){ //the zero case
-		// 	numHomePoints = tree[numLayers-1][localRangeIndexes[localNumRanges-1]+1] - tree[numLayers-1][localRangeIndexes[localNumRanges-1]];
-		// }
 
 	}
 
+	// get the index of the home address
 	int homeIndex = depthSearch(tree, binAmounts, numLayers, binNumbers);
-	unsigned int numHomePoints = tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex];
-	if(homeIndex < 0 || numHomePoints == 0) {
-		printf("id: %d, binNumbers: ", homeIndex);
-		for(int i = 0; i < numLayers; i++){
-			printf("%d, ", binNumbers[i]);
-		}
-		printf("\n");
-	}
 
-	//get number of calcs / load in array values
-	// for(int i = 0; i < localNumRanges; i++){
-	// 	unsigned int size = tree[numLayers-1][localRangeIndexes[i]+1] - tree[numLayers-1][localRangeIndexes[i]];
-	// 	localRangeSizes[i] = size;
-	// 	localNumCalcs += size;
-	// }
+	// find the number of points in the home address
+	unsigned int numHomePoints = tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex]; //may need to +- one to index here !!!!!!!!!
 
+	if(numHomePoints == 0)printf("ERROR: no points found in address at index: %d\n", homeIndex);
+	// use the running total of points in adjacent addresses and multiply it by the number of points in the home address for number of total calcs
+	*numCalcs = localNumCalcs*numHomePoints;
+
+	// return the arrays with pointer magic
 	*rangeIndexes = localRangeIndexes;
 	*rangeSizes = localRangeSizes;
 
 	*numberRanges = localNumRanges;
-	*numCalcs = localNumCalcs*numHomePoints;
+
 	*numPointsInAdd = numHomePoints;
 
 

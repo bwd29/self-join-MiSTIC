@@ -19,12 +19,14 @@
 #define DATANORM true
 #define HOST true
 
-const int BLOCK_SIZE = 10; 
+const int BLOCK_SIZE = 1024; 
 const int KERNEL_BLOCKS = 32;
 const int BRUTE = false;
 const int RANDOM = false;
 const int TEST_RP = 100; 
 const double SAMPLE_PER = 0.01;
+
+const int CALCS_PER_THREAD = 10000;
 
 const int MAX_BIN = 100000; 
  
