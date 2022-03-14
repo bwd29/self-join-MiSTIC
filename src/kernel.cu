@@ -466,21 +466,33 @@ void distanceCalculationsKernel_CPU(unsigned int totalBlocks,
 
         if(tid < *numThreadsPerBatch ){
             
-
+            //the current index/address that we are searching for
             int currentAdd = addAssign[tid]; 
+
+            //the offset of the thread based on the address we are currently in
             int threadOffset = threadOffsets[tid];
+
+            // the strating location for this index into the linear arrays
             int startingRangeID = linearRangeID[currentAdd];
         
+            //go through each adjacent index and calcualte
             for(int i = 0; i < numValidRanges[currentAdd]; i++){
+
+                //the number of calcs for this address is the nuymber of points in it * number of points in current address
                 unsigned long long int numCalcs = rangeSizes[startingRangeID + i] * numPointsInAdd[currentAdd];
+
+                //each thread starts at its offset then increments by the number of threads for the address untill past the numebr of calcs
                 for(unsigned long long int j = threadOffset; j < numCalcs; j += numThreadsPerAddress[currentAdd]){
         
+                    // the first point will be from the home address
+                    // the starting point from addIndexRange plus the floor of the itteration over the number of points in the adjacent address
+                    // once all of the threads have made the calcs for a point they all move to the next point in the home address
                     unsigned int pointLocation1 = addIndexRange[currentAdd] + j / rangeSizes[startingRangeID + i];
                     unsigned int pointLocation2 = rangeIndexes[startingRangeID + i] + j % rangeSizes[startingRangeID+ i];
         
         
-                    if(pointLocation1 > *numPoints || j / rangeSizes[startingRangeID + i] > numPointsInAdd[currentAdd]) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[startingRangeID + i],rangeSizes[startingRangeID + i]);
-                    if(pointLocation2 > *numPoints || j % rangeSizes[startingRangeID + i] > rangeSizes[startingRangeID + i]) printf("ERROR 2: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u %u, j: %llu, rangeVal: %d, size: %u\n", tid, currentAdd, threadOffset, pointLocation1, pointLocation2,j,rangeIndexes[startingRangeID + i],rangeSizes[startingRangeID + i]);
+                    if(pointLocation1 > *numPoints || j / rangeSizes[startingRangeID + i] > numPointsInAdd[currentAdd]) printf("ERROR 1: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u,%u, j: %llu, addVal: %d, size:%u, rangeIndexVal: %d, size:%u, j:%llu\n", tid, currentAdd, threadOffset, pointLocation1,pointLocation2,j,addIndexRange[currentAdd],numPointsInAdd[currentAdd],rangeIndexes[startingRangeID + i],rangeSizes[startingRangeID + i],j);
+                    if(pointLocation2 > *numPoints || j % rangeSizes[startingRangeID + i] > rangeSizes[startingRangeID + i]) printf("ERROR 2: tid: %d, CurrentAdd: %d, Offset: %d, Point Locations: %u %u, j: %llu, rangeVal: %d, size: %u, j: %llu\n", tid, currentAdd, threadOffset, pointLocation1, pointLocation2,j,rangeIndexes[startingRangeID + i],rangeSizes[startingRangeID + i],j);
         
                     unsigned int p1 = pointArray[pointLocation1];
                     unsigned int p2 = pointArray[pointLocation2];

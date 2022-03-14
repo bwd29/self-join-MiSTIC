@@ -213,8 +213,8 @@ int buildTree(int *** rbins,
 
 				int runningTotal = 0;
 				for(int i = 0; i < binCounts[currentLayer]; i++){
-					runningTotal += layerBins[minSumIdx][i];
 					bins[currentLayer][i] = runningTotal;
+					runningTotal += layerBins[minSumIdx][i];
 					
 				}
 				// printf("Made it here!\n"); 
@@ -312,7 +312,7 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
 				   int numLayers, // the number of layer the tree has
 				   unsigned int * binSizes,	// the number of bins for each layer, or rather the width of the tree in bins for that layer
 				   unsigned int * binAmounts, // the number of bins for each reference point, ranhge/epsilon
-				   int ** addIndexes, // where generateRanges will return the non-empty iindex locations in the tree's final layer
+				   int ** addIndexes, // where generateRanges will return the non-empty index locations in the tree's final layer
 				   int *** rangeIndexes, // the index locations that are adjacent to each non-empty index
 				   unsigned int *** rangeSizes, // the number of points in adjacent non-empty indexes for each non-empty index
 				   int ** numValidRanges, // the numnber of adjacent non-empty indexes for each non-empty index
@@ -326,7 +326,7 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
     int nonEmptyBins = 0;
 
 	// counting the number of non empty bins and keeping track of the indexes of those nonempty bins
-    for(int i = 0; i < binSizes[numLayers-1]-1; i++){ //binsizes -1 because the last bin should always be 0 and dont want to look over the edge
+    for(int i = 0; i < binSizes[numLayers-1]-1; i++){ 
         
 		// if the tree value on the last layer is less than the next then it has points in it
 		if(tree[numLayers-1][i] < tree[numLayers-1][i+1]){
@@ -371,7 +371,7 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
 	#pragma omp parallel for
     for(int i = 0; i < nonEmptyBins; i++){
 
-		// thje bin numbers of the current nonempty bin is found from the first point in that bin
+		// the bin numbers of the current nonempty bin is found from the first point in that bin
 		int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ] ];
 
 		// this will record the number of calculations that need to be made by this index/address
@@ -442,10 +442,10 @@ int depthSearch(int ** tree, //pointer to the tree built with buildTree()
 	}
 
 	//the index will be the last layers bin number plus the offset for the last layer -1 because if the previous is the same as cuurernt then empty
-	int index = searchBins[numLayers-1]+offset-1;
+	int index = searchBins[numLayers-1]+offset;
 
 	//if last layer has poionts then return the index value
-	if(tree[numLayers-1][index-1] < tree[numLayers-1][index]){
+	if(tree[numLayers-1][index] < tree[numLayers-1][index+1]){
 		return index;
 	}else{
 		return -1;
