@@ -45,7 +45,7 @@ int main(int argc, char*argv[]){
 
 	// can set a subset of the data for easier debugging
 	//////////////
-	numPoints = 10000;
+	// numPoints = 10000;
 	////////////
 
 	printf("\nNumber points: %d ", numPoints);
@@ -76,8 +76,6 @@ int main(int argc, char*argv[]){
             dimOrderedData[i*dim + j] = A[i*dim + dimensionOrder[j]];
         }
     }
-
-
 
 	// allocate and set an array to keep the order of the points
 	// this allows us to refer to the row of the intial data when returning pairs
@@ -137,6 +135,9 @@ int main(int argc, char*argv[]){
 			#endif
 		}
 	}
+
+
+
 
 
 	// checking that the last bin size is not negative or zero and that the tree has every data point in it
