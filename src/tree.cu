@@ -17,9 +17,6 @@ int buildTree(int *** rbins, //this will be where the tree itself is returned
 	//an array to hold the bins of the tree that will be passed back to the calling function in rbins
 	int ** bins = (int **)malloc(sizeof(int*)*maxRP);
 
-	//an array to hold the number of bins per layer of the tree
-	int * binCounts = (int*)malloc(sizeof(int)*maxRP);
-
 	//an array to keep track of the number of non-empty bins in each layer
 	int * binNonEmpty = (int*)malloc(sizeof(int)*maxRP);
 
@@ -47,48 +44,74 @@ int buildTree(int *** rbins, //this will be where the tree itself is returned
 	// keeping track of which layer of the tree is being built
 	int currentLayer = 0;
 
+	// cinstruct the layers in this loop, terminates when we reach the max layer count or when loss function calls for return
 	while(check && currentLayer < maxRP){
-		// printf("\nCurrent layer: %d\n",currentLayer);
 		
+		// initial sumsqrs for layer is 0
 		sumSqrsLayers[currentLayer] = 0;
 
+		// set the temp sum sqrs for possible reference points to 0
 		for(int i = 0; i < numRPperLayer; i++){
 			sumSqrsTemp[i] = 0;
 		}
 
-		if(RAND) srand(omp_get_wtime());
+		// if we want full random, then set seed based on time
+		if(RAND){
+			srand(omp_get_wtime());
+		} 
+
+		// make the array of reference points
 		double * RPArray = createRPArray(data, numRPperLayer, dim, numPoints);
-		// double * RPArray = (double *)malloc(sizeof(double)*dim*numRPperLayer); 
-
-		// for(int i = 0; i < numRPperLayer*dim; i++){
-		// 	RPArray[i] = (double)rand()/(double)RAND_MAX;
-		// }
 		
+		// this is the distance matrix for the points to the reference points in RPArray
 		double * distMat = (double * )malloc(sizeof(double)*numPoints*numRPperLayer);
+
+		// a 2d array that keeps track of the bins for the current layer for each possible reference point
 		int ** layerBins = (int**)malloc(sizeof(int*)*numRPperLayer);
+
+		// an array for the number of bins in the current layer of the tree
 		int * layerBinCount = (int*)malloc(sizeof(int)*numRPperLayer);
+
+		// the number of non empty bins in the current layer of the tree
 		int * layerBinNonEmpty = (int*)malloc(numRPperLayer*sizeof(int));
+
+		// the offset of each point into the current layer
 		int ** layerBinOffsets = (int**)malloc(sizeof(int*)*numRPperLayer);
-		int * layerNumBins = (int*)malloc(sizeof(int)*numRPperLayer);
-		int * skipBins = (int*)malloc(sizeof(int)*numRPperLayer);
 
-
+		// allocateing the 2d array structure for layer bin offsets
 		for(int i = 0; i < numRPperLayer; i ++){
 			layerBinOffsets[i] = (int*)malloc(sizeof(int)*numPoints);
 		}
 
+		// the nuber of bins from the reference point to points
+		int * layerNumBins = (int*)malloc(sizeof(int)*numRPperLayer);
+
+		//the number of bins to skip form the start of the reference point
+		int * skipBins = (int*)malloc(sizeof(int)*numRPperLayer);
+
 		// printf("refChecking: \n");
+
+		// entering into a loop to create a bunch of different possible layers for the current layer. then the best one is chosen
 		#pragma omp parallel for
 		for(int i = 0; i < numRPperLayer; i++){
+
+			//set the current number of non empty bins to 0
 			layerBinNonEmpty[i] = 0;
 
-			double maxDistance = 0; 
-			double minDistance = euclideanDistance(&data[0*dim], dim , &RPArray[i*dim]);
+			//fill out the distance matrix
+			double maxDistance = 0;  // for saving the max distance and used for determining layer size
+			double minDistance = euclideanDistance(&data[0*dim], dim , &RPArray[i*dim]); // the min distance starts as just a point
+
+			// going through each point to build the distance matrix
 			for(int j = 0; j < numPoints; j++){
 				distMat[i*numPoints + j] = euclideanDistance(&data[j*dim], dim , &RPArray[i*dim]);
+
+				// checking fot the max distance
 				if(distMat[i*numPoints + j] > maxDistance){
 					maxDistance = distMat[i*numPoints + j];
 				}
+
+				//checkign for the min distance
 				if(distMat[i*numPoints + j] < minDistance){
 					minDistance = distMat[i*numPoints + j];
 				}
@@ -97,145 +120,165 @@ int buildTree(int *** rbins, //this will be where the tree itself is returned
 
 
 			// printf("Max dist = %f, ",maxDistance);
-			skipBins[i] = floor(minDistance/epsilon) - 2;
-			layerNumBins[i] = ceil(maxDistance / epsilon) + 2 - skipBins[i];
+
+			// a modifier for padding the bin sizes
+			int modifier = 0;
+
+			//the number of bins to skip from the beigning to save on space
+			skipBins[i] = floor(minDistance/epsilon) - 1 ;
+
+			//the number of bins for a given reference point, i.e. the farthest bin number minus the closest bin number
+			layerNumBins[i] = ceil(maxDistance / epsilon) + modifier - skipBins[i];
 			// layerNumBins[i] = ceil(maxDistance / epsilon) + 1;
-			if(currentLayer == 0){
+
+			//if the current layer is the first layer, then the number of total bins for that layer will be just the number of bins for the reference point
+			if(currentLayer == 0){ 
 				layerBinCount[i] = layerNumBins[i];
 			} else {
+				// the number of bins in the layer is the number of bins for a reference point times the number of non empty bins in the previous layer
 				layerBinCount[i] = binNonEmpty[currentLayer - 1] * layerNumBins[i];
-				// printf("nonEmpties prev = %d, max bins = %d, layerBinCount = %d\n", binNonEmpty[currentLayer-1],layerNumBins[i], layerBinCount[i]);
-
 			}
 			
-
+			// now that we know the size of the layer we can allocate the array to hold the bin values
 			layerBins[i] = (int*)malloc(layerBinCount[i] * sizeof(int));
+
+			// the bin values will all start at 0
 			for(int j = 0; j < layerBinCount[i]; j++){
 				layerBins[i][j] = 0;
 			}
 
+			// the first layer is unique because there are no offsets from the previous layer
 			if(currentLayer == 0){
+				// itterate through each point in the data set to assign point to bins
 				for(int j = 0; j < numPoints; j++){
+					// the bin number will be the the floor of this distance from the point to the reference point - the numebr of bins we skipped on the start
 					int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
-					// int binNumber = floor(distMat[i*numPoints + j] / epsilon);
+
+					// if the bin is empty, then increase the non empty bin count by 1
 					if(layerBins[i][binNumber] == 0){
 						layerBinNonEmpty[i]++;
 					}
+
+					//increment the value of the bin to count the number of points in that bin
 					layerBins[i][binNumber]++; 
+
+					// the offset from the first layer will be the bin number
 					layerBinOffsets[i][j] = binNumber; 
 				}
 			} else {
+				// assign every point to a bin for layers past the first one
 				for(int j = 0; j < numPoints; j++){
-					int part1 = pointBinOffsets[currentLayer-1][j];
-					int part2 = bins[ currentLayer - 1 ][part1] - 1;
-					int part3 = layerNumBins[i];//binNonEmpty[currentLayer-1];
-					// int offset = (bins[ currentLayer - 1 ][ pointBinOffsets[currentLayer-1][j] ] - 1)*binNonEmpty[currentLayer-1];
-					int offset = part2*part3;
+
+					// the offset will be the bin number of the previous layer, which will be the number of non empty bins before it, times the number of bins for the reference point in the current layer
+					int offset = (bins[currentLayer -1][pointBinOffsets[currentLayer-1][j]]-1)*layerNumBins[i];
+
+					// the bin number will be the the floor of this distance from the point to the reference point - the numebr of bins we skipped on the start
 					int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
-					// int binNumber = floor(distMat[i*numPoints + j] / epsilon);
 
 					// if(offset+binNumber > layerBinCount[i] && checkers == true) {
 					// 	checkers = false;
 					// 	printf("offset+binNumber is the problem with offset = %d, binnumber = %d, and layerbincount = %d, pointBinOff = %d, bins = %d\n", offset,binNumber,layerBinCount[i], part1, part2);
 					// }
-
+					
+					// if the bin was empty, then increment the number of non empty bins
 					if(layerBins[i][offset+binNumber] == 0){
 						layerBinNonEmpty[i]++;
 					}
+
+					// increment the value of the bin to count the number of points in that bin
 					layerBins[i][offset+binNumber]++;
 
+					// the offset for the point will be the previous offset + the bin number
 					layerBinOffsets[i][j] = offset + binNumber;
 
 				}
 
 			}
 
-			// printf("Non Empties = %d", layerBinNonEmpty[i]);
-
+			// calculate the sum of squares based on the number of points in each bin. 
+			// the lower the sum of squares, the more even the distribution of points
 			for(int j = 0; j < layerBinCount[i]; j++){
 				sumSqrsTemp[i] += layerBins[i][j] * layerBins[i][j];
 			}
-			// printf(", %d\n ",i);
 
 		}
 
-		
-		// printf("\n");
- 
 		//pick the one with lowest sum sqrs? sure why not
-		int minSumIdx = 0;
+		int minSumIdx = 0; // this will be the reference point form all of the possible one that will be used for final layer construction
 		for(int i = 1; i < numRPperLayer; i++){
 			if(sumSqrsTemp[minSumIdx] > sumSqrsTemp[i] ){
 				minSumIdx = i; 
 			}
 		}
 
-		// printf("Found Layer min at %d\n", minSumIdx);
-
+		// assign the sum sqrs for the layer as the one chosen
 		sumSqrsLayers[currentLayer] = sumSqrsTemp[minSumIdx];
 
+		// copy over the bin offsets based on the reference point that was chosen
 		for(int i = 0; i < numPoints; i++){
 			pointBinOffsets[currentLayer][i] = layerBinOffsets[minSumIdx][i];
 		}
 		
-		int part4 = layerBinCount[minSumIdx];
-		bins[currentLayer] = (int*)malloc(part4*sizeof(int));
+		// the size of the bins will be the size of the layer form the chosen one
+		bins[currentLayer] = (int*)malloc(layerBinCount[minSumIdx]*sizeof(int));
+		
+		// tmnpcount will keep track of the number of previous non empty bins
 		int tmpCount = 0;
-		// printf("\n");
+
+		//go through each bin inn the layer
 		for(int i = 0; i < layerBinCount[minSumIdx]; i++){
+
+			//if the bin is not empty then increment our counter and assign that value to the bin
 			if(layerBins[minSumIdx][i] != 0){
 				tmpCount++;
 				bins[currentLayer][i] = tmpCount;
+
+			// if the bin is empty, then  leave the value as zero
 			} else {
 				bins[currentLayer][i] = 0;
-			}
-
-			// printf("%d, ", bins[currentLayer][i]);
- 
+			} 
 		} 
-		// printf("\n");
 
+		// the bin counts will be the number of bins in that layer
+		binSizes[currentLayer] = layerBinCount[minSumIdx];
 
-
-		// printf("tmpCount: %d, non Empty: %d\n", tmpCount, layerBinNonEmpty[minSumIdx] );
-
-		// printf("fff: %d\n", layerBinCount[minSumIdx]);
-		binCounts[currentLayer] = layerBinCount[minSumIdx];
-		if(currentLayer != 0){
-			binSizes[currentLayer] = layerNumBins[minSumIdx]*binNonEmpty[currentLayer-1];
-		} else {
-			binSizes[currentLayer] = layerNumBins[minSumIdx];
-		}
-		
-		// printf("layer %d bincount: %d\n", currentLayer, binCounts[currentLayer]);
-
+		// copy over the number of non empty bins for the layer
 		binNonEmpty[currentLayer] = layerBinNonEmpty[minSumIdx];
+
+		// copy the number of bins for the reference point
 		binAmounts[currentLayer] = layerNumBins[minSumIdx];
 
+		// assign the point bin numbers and save them
 		for(int i = 0; i < numPoints; i++){
 			pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon)-skipBins[minSumIdx];
-			// pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon);
 		}
 
-		// printf("Finishing up layer\n");
+		// check if the current layer is at least the min number of layers for the tree
 		if(currentLayer >= MINRP){
+			// check if the sum of sqrs is still decreasing by adding layers or if we are at the max number of layers
 			if(sumSqrsLayers[currentLayer-1]/sumSqrsLayers[currentLayer] < LAYER_DIFF || currentLayer == maxRP - 1){
-				// printf("Found final layer!\n");
+				
+				//set check to false to exit the while loop
 				check = false;
 
+				// keep track of the running total of points in bins
 				int runningTotal = 0;
-				for(int i = 0; i < binCounts[currentLayer]; i++){
+
+				// go through each bin of the final layer
+				for(int i = 0; i < binSizes[currentLayer]; i++){
+					// the final layer of the tree will have the running total of points in the bins as values
 					bins[currentLayer][i] = runningTotal;
+					// update the running total number of points
 					runningTotal += layerBins[minSumIdx][i];
 					
 				}
-				// printf("Made it here!\n"); 
 			}
-			
 		} 
 
+		//move on to the next layer
 		currentLayer++;
 
+		//free all the memory used for construction of this layer
 		free(distMat);
 		for(int i = 0; i < numRPperLayer; i++){
 			free(layerBins[i]);
@@ -250,67 +293,72 @@ int buildTree(int *** rbins, //this will be where the tree itself is returned
 		free(RPArray);
 	}
 
+	// the number of layers/ reference points is the current layer
 	int numRP = currentLayer;
-	// selectedRP = &numRP;
+
 	printf("Selected %d reference points\n", numRP);
 
     // sort the point arrays from bottom to top using a stable sort
+	
+	// use a thrust vector that will keep track of the point numbers
 	thrust::host_vector<int*> pointVector(numPoints);
-	for(int i = 0; i < numPoints; i++)
-	{
+
+	//go through each point an load the point bin numbers
+	for(int i = 0; i < numPoints; i++){
+		// the point vector will contain the point number i.e. the row of the point in the original data, and then each bin of the point
 		pointVector[i] = (int*)malloc(sizeof(int)*(numRP+1));
+
+		//copy over the bin numbers
 		for(int j = 0; j < numRP; j++){
 			pointVector[i][j+1] = pointBinNumbers[i][j];
 		}
 	}
 
-	for( unsigned long long i = 0; i < numPoints; i++){
+	// assign the point numbers which start as sequential
+	for( int i = 0; i < numPoints; i++){
 		pointVector[i][0] = pointArray[i];
 	}
 
-	// thrust::device_vector<int*> d_pointVector(pointVector);
-	double startSortTime = omp_get_wtime();
-
+	// go through each layer of the tree backwards to sort the points
     for(int i = numRP-1; i >= 0; i--){
 
+		// array to keep track of the bin values that are being used for this sort at the layer i
 		int * oneBin = (int*)malloc(sizeof(int)*numPoints);
-		// thrust::host_vector<int> oneBin(numPoints);
 
-		// #pragma omp parallel for
+		// copy over the bin numebrs for sorting
+		#pragma omp parallel for
 		for(int j = 0; j < numPoints; j++ ){
 			oneBin[j] = pointVector[j][i+1];
 		}
 
-		// thrust::device_vector<int> d_oneBin(oneBin);
-
+		// run the stabel sort with the bin numbers at i as the key
 		thrust::stable_sort_by_key(thrust::omp::par, oneBin, oneBin+numPoints, pointVector.begin());
-		// thrust::stable_sort_by_key(thrust::device, oneBin.begin(), oneBin.end(), pointVector.begin());
 
 		free(oneBin);
 	}
 
-	double endSortTime = omp_get_wtime();
-
-	// printf("\nTree sorting time: %f\n", endSortTime-startSortTime);
-
+	// copy over results after sorting
 	#pragma omp parallel for
 	for(int i = 0; i < numPoints; i++){
+		// point array will have all of the point numbers is order
 		pointArray[i] = pointVector[i][0];
 		for(int j = 0; j < numRP; j++){
+			// the point bin numbers will have all of the bin numbers
 			pointBinNumbers[i][j] = pointVector[i][j+1];
 		}
 		free(pointVector[i]);
 	}
 
+	// free data used only in tree cointsruction
 	for(int i = 0; i < maxRP; i++){
 		free(pointBinOffsets[i]);
 	}
 	free(pointBinOffsets);
-	free(binCounts);
 	free(binNonEmpty);
 	free(sumSqrsLayers);
 	free(sumSqrsTemp);
 
+	// return the tree
 	*rbins = bins;
 	*rpointBinNumbers = pointBinNumbers;
 

@@ -30,9 +30,9 @@ const int CALCS_PER_THREAD = 100000;
 
 const int MAX_BIN = 1000000; 
  
-const int MAXRP = 6;
+const int MAXRP = 3;
 
-const int MINRP = 5;
+const int MINRP = 2;
 
 const double LAYER_DIFF = 1.0;
 
