@@ -122,10 +122,10 @@ int buildTree(int *** rbins, //this will be where the tree itself is returned
 			// printf("Max dist = %f, ",maxDistance);
 
 			// a modifier for padding the bin sizes
-			int modifier = 0;
+			int modifier = 2;
 
 			//the number of bins to skip from the beigning to save on space
-			skipBins[i] = floor(minDistance/epsilon) - 1 ;
+			skipBins[i] = floor(minDistance/epsilon) - 2 ;
 
 			//the number of bins for a given reference point, i.e. the farthest bin number minus the closest bin number
 			layerNumBins[i] = ceil(maxDistance / epsilon) + modifier - skipBins[i];
@@ -424,15 +424,21 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
 	// free the overallocated array now that we have the data stored in tempAddIndexes
     free(tempIndexes);
 
-	// the number of searches that are needed for a full search is the number of referecnes point cubed. This is always true.
+	// the number of searches that are needed for a full search is the number of referecnes point cubed. This is always true, mostly.
 	const unsigned int numSearches = pow(3,numLayers);
 
-	//go through each non empty bin and do all the needed searching and generate the arrasy that are needed for the calculations kernels
+	
+	//array to hold the point bin numbers
+	int ** binNumbers = (int**)malloc(sizeof(int*)*nonEmptyBins);
 	#pragma omp parallel for
-    for(int i = 0; i < nonEmptyBins; i++){
+	for(int i = 0; i < nonEmptyBins; i++){
+		binNumbers[i] = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ]];
+	}
+	
 
-		// the bin numbers of the current nonempty bin is found from the first point in that bin
-		int * binNumbers = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ] ];
+	//go through each non empty bin and do all the needed searching and generate the arrays that are needed for the calculations kernels
+	// #pragma omp parallel for
+    for(int i = 0; i < nonEmptyBins; i++){
 
 		// this will record the number of calculations that need to be made by this index/address
 		unsigned long long numCalcs;
@@ -446,11 +452,30 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
 		// the number of points in this non empty index
 		unsigned int localNumPointsInAdd;
 
+		#if BINARYSEARCH
+
+		//set up array to binary search on
+		binarySearch( i, // the bin to search in bin numebrs
+					 tempAdd, //temporary address for searching
+					 binNumbers, //array of bin numbrs 
+					 nonEmptyBins, //size of binNumebrs
+					 numLayers, //number of reference points
+					 tree, //the tree structure
+					 binAmounts, // the range of bins from a reference points, i.e. range / epsilon
+					 tempAddIndexes, // location of nonempty bin in tree
+					 &numCalcs, // for keeping track of the number of distance calculations to be performed
+					 &numRanges, // the number of adjacent non-empty addresses/indexes
+					 &localRangeIndexes[i], // this addresses/index's array to keep track of adjacent indexes
+					 &localRangeSizes[i], // the number of points in the indexes in localRangeIndexes
+					 &localNumPointsInAdd, // the number of points in this nonempty address
+					 numSearches); // the number of searches that need to be performed, 3^r
+
+		#else
 		treeTraversal(tempAdd, // array of int for temp storage for searching
 					  tree, // pointer to the tree made with buildTree()
 					  binSizes, // the widths of each layer of the tree measured in bins
 					  binAmounts, // the range of bins from a reference points, i.e. range / epsilon
-					  binNumbers, // the address/bin numbers of the current index/address
+					  binNumbers[i], // the address/bin numbers of the current index/address
 					  numLayers, // the number of reference points or layers in the tree, same thing
 					  &numCalcs, // for keeping track of the number of distance calculations to be performed
 					  &numRanges, // the number of adjacent non-empty addresses/indexes
@@ -459,6 +484,8 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
 					  &localNumPointsInAdd, // the number of points in this nonempty address
 					  numSearches); // the number of searches that need to be performed, 3^r
 
+		#endif
+
 		// storing variables into arrays that coorespond to the non-empty indexes/addresses
 		tempCalcPerAdd[i] = numCalcs;
 		tempNumValidRanges[i] = numRanges;
@@ -466,6 +493,7 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
 
 
     }
+	// std::cerr << "Finished search" << std::endl;
 
 	// assiging pointers for accsess outside of this functions scope
 	*addIndexes = tempAddIndexes;
@@ -480,7 +508,7 @@ int generateRanges(int ** tree, //points to the tree constructed with buildTree(
 
 }
 
-__host__ __device__ 
+// __host__ __device__ 
 int depthSearch(int ** tree, //pointer to the tree built with buildTree()
 				unsigned int * binAmounts, // the number of bins for each reference point, i.e. range/epsilon
 				int numLayers, //the number of layers in the tree
@@ -513,7 +541,7 @@ int depthSearch(int ** tree, //pointer to the tree built with buildTree()
 
 }
 
-__host__ __device__
+// __host__ __device__
 void treeTraversal(int * tempAdd, //twmp array for the address being searched
 				   int ** tree, // the pointer to the tree
 				   unsigned int * binSizes, // the width of the tree for each layer mesuared in number of bins
@@ -572,6 +600,7 @@ void treeTraversal(int * tempAdd, //twmp array for the address being searched
 
 	// get the index of the home address
 	int homeIndex = depthSearch(tree, binAmounts, numLayers, binNumbers);
+	// std::cerr << "index: "<< homeIndex << " above: "<<tree[numLayers-1][homeIndex+1]<<" below: "<< tree[numLayers-1][homeIndex] << " difference: "<<tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex] << std::endl;
 
 	// find the number of points in the home address
 	unsigned long long numHomePoints = tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex]; //may need to +- one to index here !!!!!!!!!
@@ -588,5 +617,129 @@ void treeTraversal(int * tempAdd, //twmp array for the address being searched
 
 	*numPointsInAdd = numHomePoints;
 
+
+}
+
+// __host__ __device__
+inline int compareBins(int * bin1, int * bin2, int binSize){
+	for(int i = 0; i < binSize; i++){
+		if(bin1[i] < bin2[i]){
+			return -1;
+		}
+		if(bin1[i] > bin2[i]){
+			return 1;
+		}
+	}
+	return 0;
+}
+// __host__ __device__
+int bSearch(int * tempAdd, //address to search for
+			int ** binNumbers, //array of addresses
+			int nonEmptyBins, //number of bins
+			int numLayers) //numebr of layers or size of addresses
+			{
+
+	// initial conditions of the search
+	int left = 0;
+	int right = nonEmptyBins-1;
+	
+	
+	//while loop for halving search each itterations
+	while(left <= right){
+		//calculate the middle
+		int mid = (left + right)/2;
+		// -1 for smaller, 1 for larger, 0 for equal
+		int loc = compareBins( binNumbers[mid], tempAdd, numLayers);
+		//if we found the index
+		if( loc == 0){
+			return mid;
+		//if the index was smaller
+		}else if (loc == -1){
+			left = mid + 1;
+		//if the index was larger
+		} else {
+			right = mid - 1;
+		}
+	}
+
+	return -1;
+
+}
+
+// __host__ __device__
+void binarySearch(	int searchIndex, // the bin to search in bin numebrs
+				 	int  * tempAdd, //temporary address for searching
+				  	int ** binNumbers, //array of bin numbrs 
+					int nonEmptyBins, //size of binNumebrs
+					int numLayers, //number of reference points
+					int ** tree, //the tree structure
+					unsigned int * binAmounts, // the range of bins from a reference points, i.e. range / epsilon
+					int * addIndexs, //location of nonempty bins in the tree
+					unsigned long long * numCalcs, // the place to retrun the number of calcs that will be needed
+					int * numberRanges, // the return location for the number of adjacent non-empty indexes
+					int ** rangeIndexes, // the array of non-empty adjacent index locations
+					unsigned int ** rangeSizes, // the number of points in each of the adjacent non-empty indexes
+					unsigned int * numPointsInAdd, //the number of points in the home address/iondex
+					unsigned int numSearches){ //the number of searches that are being perfomred for each addresss
+
+	
+	//keep track of the number of calcs that will be needed
+    unsigned long long localNumCalcs = 0;
+
+	// keep track of the number of non-empty adjacent indexes
+    unsigned int localNumRanges = 0;
+
+	//keep track of the locations of adjacent indexes that are not empty
+	int * localRangeIndexes = (int*)malloc(sizeof(int)*numSearches);
+
+	// the number of points in the adjacent non-empty indexes
+	unsigned int * localRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*numSearches);
+
+	//permute through bin variations (3^r) and run depth searches
+	for(unsigned int i = 0; i < numSearches; i++){
+		
+		//modify temp add for the search based on our itteration i
+		for(unsigned int j = 0; j < numLayers; j++){
+			tempAdd[j] = binNumbers[searchIndex][j] + (i / (int)pow(3, j) % 3)-1;
+		}
+		//perform the search and get the index location of the return 
+		int index = addIndexs[bSearch(tempAdd, binNumbers, nonEmptyBins, numLayers)];
+
+		//check if the index location was non empty
+		if(index >= 0){
+			//store the non empty index location
+			localRangeIndexes[localNumRanges] = index;
+
+			//calcualte the size of the index, i.e. the number of points in the index
+			unsigned long long size = tree[numLayers-1][index+1] - tree[numLayers-1][index]; //may need to +- to index here!!!!!!!!!!!!!!!
+
+			//store that in the sizes array
+			localRangeSizes[localNumRanges] = size;
+
+			// keep running total of the sizes for getting the number of calculations latter
+			localNumCalcs += size;
+
+			//keep track of the number of non-empty adjacent indexes
+			localNumRanges++;
+		}
+	}
+
+	// get the index of the home address
+	int homeIndex = addIndexs[bSearch(binNumbers[searchIndex], binNumbers, nonEmptyBins, numLayers)];
+	// std::cerr << "index: "<< homeIndex << " above: "<<tree[numLayers-1][homeIndex+1]<<" below: "<< tree[numLayers-1][homeIndex] << " difference: "<<tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex] << std::endl;
+	// find the number of points in the home address
+	unsigned long long numHomePoints = tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex]; //may need to +- one to index here !!!!!!!!!
+
+	if(numHomePoints == 0)printf("ERROR: no points found in address at index: %d\n", homeIndex);
+	// use the running total of points in adjacent addresses and multiply it by the number of points in the home address for number of total calcs
+	*numCalcs = localNumCalcs*numHomePoints;
+
+	// return the arrays with pointer magic
+	*rangeIndexes = localRangeIndexes;
+	*rangeSizes = localRangeSizes;
+
+	*numberRanges = localNumRanges;
+
+	*numPointsInAdd = numHomePoints;
 
 }

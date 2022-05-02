@@ -18,6 +18,7 @@
 
 #define DATANORM true
 #define HOST false
+#define BINARYSEARCH false
 
 const int BLOCK_SIZE = 1024; 
 const int KERNEL_BLOCKS = 1024;
