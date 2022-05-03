@@ -123,7 +123,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 			unsigned int modifier = 2;
 
 			//the number of bins to skip from the beigning to save on space
-			skipBins[i] = floor(minDistance/epsilon) - 2 ;
+			skipBins[i] = floor(minDistance/epsilon) - modifier ;
 
 			//the number of bins for a given reference point, i.e. the farthest bin number minus the closest bin number
 			layerNumBins[i] = ceil(maxDistance / epsilon) + modifier - skipBins[i];
@@ -318,7 +318,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	}
 
 	// go through each layer of the tree backwards to sort the points
-    for(unsigned int i = numRP-1; i >= 0; i--){
+    for(unsigned int i = 0; i < numRP; i++){
 
 		// array to keep track of the bin values that are being used for this sort at the layer i
 		unsigned int * oneBin = (unsigned int*)malloc(sizeof(unsigned int)*numPoints);
@@ -326,7 +326,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		// copy over the bin numebrs for sorting
 		#pragma omp parallel for
 		for(unsigned int j = 0; j < numPoints; j++ ){
-			oneBin[j] = pointVector[j][i+1];
+			oneBin[j] = pointVector[j][numRP-i];
 		}
 
 		// run the stabel sort with the bin numbers at i as the key
@@ -430,9 +430,11 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 	unsigned int ** binNumbers = (unsigned int**)malloc(sizeof(unsigned int*)*nonEmptyBins);
 	#pragma omp parallel for
 	for(unsigned int i = 0; i < nonEmptyBins; i++){
-		binNumbers[i] = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ]];
+		binNumbers[i] = (unsigned int*)malloc(sizeof(unsigned int)*numLayers);
+		for(unsigned int j = 0; j < numLayers; j++){
+			binNumbers[i][j] = pointBinNumbers[ tree[ numLayers-1 ][ tempAddIndexes[i] ]][j];
+		}
 	}
-	
 
 	//go through each non empty bin and do all the needed searching and generate the arrays that are needed for the calculations kernels
 	// #pragma omp parallel for
@@ -638,14 +640,14 @@ int bSearch(unsigned int * tempAdd, //address to search for
 			{
 
 	// initial conditions of the search
-	unsigned int left = 0;
-	unsigned int right = nonEmptyBins-1;
+	int left = 0;
+	int right = nonEmptyBins-1;
 	
 	
 	//while loop for halving search each itterations
 	while(left <= right){
 		//calculate the middle
-		unsigned int mid = (left + right)/2;
+		int mid = (left + right)/2;
 		// -1 for smaller, 1 for larger, 0 for equal
 		int loc = compareBins( binNumbers[mid], tempAdd, numLayers);
 		//if we found the index

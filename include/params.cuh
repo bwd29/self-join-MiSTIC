@@ -17,8 +17,8 @@
 #include <vector>
 
 #define DATANORM true
-#define HOST true
-#define BINARYSEARCH true
+#define HOST false
+#define BINARYSEARCH false
 
 const unsigned int BLOCK_SIZE = 1024; 
 const unsigned int KERNEL_BLOCKS = 1024;
