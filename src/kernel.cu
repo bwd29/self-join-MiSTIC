@@ -1,7 +1,7 @@
 #include "include/kernel.cuh"
 
 //comparator function for sorting pairs and is used when checking results for duplicates
-bool compPair(const std::pair<int, int> &x, const std::pair<int, int> &y){
+bool compPair(const std::pair<unsigned int, unsigned int> &x, const std::pair<unsigned int, unsigned int> &y){
     if(x.first < y.first){
         return true;
     }
@@ -15,24 +15,24 @@ bool compPair(const std::pair<int, int> &x, const std::pair<int, int> &y){
 }
 
 //function to launch kcuda kernels and distance calculation kernels
-void launchKernel(int numLayers,// the number of layers in the tree
+void launchKernel(unsigned int numLayers,// the number of layers in the tree
                   double * data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
-                  int dim,//the dimensionality of the data
+                  unsigned int dim,//the dimensionality of the data
                   unsigned int numPoints,//the number of points in the dataset
                   double epsilon,//the distance threshold being searched
-                  int * addIndexes,//the non-empty index locations in the last layer of the tree
-                  int * addIndexRange,// the value of the non empty index locations  in the last layer of the tree, so the starting point number
-                  int * pointArray,// the array of point numbers ordered to match the sequence in the last array of the tree and the data
-                  int ** rangeIndexes,// the non-empty adjacent indexes for each non-empty index 
+                  unsigned int * addIndexes,//the non-empty index locations in the last layer of the tree
+                  unsigned int * addIndexRange,// the value of the non empty index locations  in the last layer of the tree, so the starting point number
+                  unsigned int * pointArray,// the array of point numbers ordered to match the sequence in the last array of the tree and the data
+                  unsigned int ** rangeIndexes,// the non-empty adjacent indexes for each non-empty index 
                   unsigned int ** rangeSizes, // the size of the non-empty adjacent indexes for each non-empty index
-                  int * numValidRanges,// the number of adjacent non-empty indexes for each non-empty index
+                  unsigned int * numValidRanges,// the number of adjacent non-empty indexes for each non-empty index
                   unsigned int * numPointsInAdd,// the number of points in each non-empty index
                   unsigned long long *calcPerAdd,// the number of calculations needed for each non-mepty index
-                  int nonEmptyBins,//the number of nonempty indexes
+                  unsigned int nonEmptyBins,//the number of nonempty indexes
                   unsigned long long sumCalcs,// the total number of calculations that will need to be made
                   unsigned long long sumAdds,//the total number of addresses that will be compared to by other addresses for distance calcs
-                  int * linearRangeID,// an array for keeping trackj of starting points in the linear arrays
-                  int * linearRangeIndexes,// a linear version of rangeIndexes
+                  unsigned int * linearRangeID,// an array for keeping trackj of starting points in the linear arrays
+                  unsigned int * linearRangeIndexes,// a linear version of rangeIndexes
                   unsigned int * linearRangeSizes){ // a linear version of rangeSizes
 
 
@@ -46,7 +46,7 @@ void launchKernel(int numLayers,// the number of layers in the tree
     unsigned long long * numThreadsPerAddress = (unsigned long long *)malloc(sizeof(unsigned long long )*nonEmptyBins);
 
     //keeping track of the number of batches that will be needed
-    int numBatches = 0;
+    unsigned int numBatches = 0;
 
     // the number of threads that will be avaliable for each kernel invocation
     unsigned long long threadsPerBatch = KERNEL_BLOCKS * BLOCK_SIZE;
@@ -55,7 +55,7 @@ void launchKernel(int numLayers,// the number of layers in the tree
     unsigned long long sum = 0;
 
     //itterating through the non-empty bins to generate batch parameters
-    for(int i = 0; i < nonEmptyBins; i++){
+    for(unsigned int i = 0; i < nonEmptyBins; i++){
 
         // the number of threads for the address is the ceiling of the number of calcs for that address over calcs per thread
         numThreadsPerAddress[i] = ceil(calcPerAdd[i]*1.0 / calcsPerThread);
@@ -91,10 +91,10 @@ void launchKernel(int numLayers,// the number of layers in the tree
     unsigned long long * numThreadsPerBatch = (unsigned long long*)calloc(numBatches,sizeof(unsigned long long));
 
     // setting starting batch for loop
-    int currentBatch = 0;
+    unsigned int currentBatch = 0;
 
     // go through each non-empty index
-    for(int i = 0; i < nonEmptyBins; i++){
+    for(unsigned int i = 0; i < nonEmptyBins; i++){
 
         //error check
         if(currentBatch > numBatches) printf("ERROR 3: current batch %d is greater than num batches %d\n", currentBatch, numBatches);
@@ -117,21 +117,21 @@ void launchKernel(int numLayers,// the number of layers in the tree
 
  
     // array to track which thread is assigned to witch address
-    int ** addAssign = (int**)malloc(sizeof(int*)*numBatches);
+    unsigned int ** addAssign = (unsigned int**)malloc(sizeof(unsigned int*)*numBatches);
 
     //the offset of the thread for calculations inside an address
-    int ** threadOffsets = (int**)malloc(sizeof(int*)*numBatches);
+    unsigned int ** threadOffsets = (unsigned int**)malloc(sizeof(unsigned int*)*numBatches);
 
     for(int i = 0; i < numBatches; i++){
         // array to track which thread is assigned to witch address
-        addAssign[i] = (int * )malloc(sizeof(int)*numThreadsPerBatch[i]);
+        addAssign[i] = (unsigned int * )malloc(sizeof(unsigned int)*numThreadsPerBatch[i]);
 
         //the offset of the thread for calculations inside an address
-        threadOffsets[i] = (int*)malloc(sizeof(int)*numThreadsPerBatch[i]);
+        threadOffsets[i] = (unsigned int*)malloc(sizeof(unsigned int)*numThreadsPerBatch[i]);
     }
 
     //setting the intital batch starting address
-    int batchFirstAdd = 0;
+    unsigned int batchFirstAdd = 0;
 
     //keep track of the total numebr of threads
     unsigned long long totalThreads = 0;
@@ -140,12 +140,12 @@ void launchKernel(int numLayers,// the number of layers in the tree
     unsigned int * batchThreadOffset = (unsigned int *)malloc(sizeof(unsigned int)*numBatches);
 
     // calculating the thread assignements
-    for(int i = 0; i < numBatches; i++){
+    for(unsigned int i = 0; i < numBatches; i++){
 
         unsigned int threadCount = 0;
 
         //compute which thread does wich add
-        for(int j = 0; j < numAddPerBatch[i]; j++){
+        for(unsigned int j = 0; j < numAddPerBatch[i]; j++){
 
             //basic error check
             if(numThreadsPerAddress[batchFirstAdd + j] == 0) {
@@ -153,7 +153,7 @@ void launchKernel(int numLayers,// the number of layers in the tree
             }
 
             //for each address in the batch, assigne threads to it
-            for(int k = 0; k < numThreadsPerAddress[batchFirstAdd + j]; k++){
+            for(unsigned int k = 0; k < numThreadsPerAddress[batchFirstAdd + j]; k++){
 
                 //assign the thread to the current address
                 addAssign[i][threadCount] = j + batchFirstAdd;
@@ -192,25 +192,25 @@ void launchKernel(int numLayers,// the number of layers in the tree
     assert(cudaSuccess ==  cudaMemcpy(d_numThreadsPerAddress, numThreadsPerAddress, sizeof(unsigned long long )*nonEmptyBins, cudaMemcpyHostToDevice));
 
     // the device array to keep the values of the non-empty indexes in the final layer of the tree
-    int * d_addIndexes;
-    assert(cudaSuccess == cudaMalloc((void**)&d_addIndexes, sizeof(int)*nonEmptyBins));
-    assert(cudaSuccess ==  cudaMemcpy(d_addIndexes, addIndexes, sizeof(int)*nonEmptyBins, cudaMemcpyHostToDevice));
+    unsigned int * d_addIndexes;
+    assert(cudaSuccess == cudaMalloc((void**)&d_addIndexes, sizeof(unsigned int)*nonEmptyBins));
+    assert(cudaSuccess ==  cudaMemcpy(d_addIndexes, addIndexes, sizeof(unsigned int)*nonEmptyBins, cudaMemcpyHostToDevice));
 
     //the number of adjacent non-empty indexes for each non-empty index
-    int * d_numValidRanges;
-    assert(cudaSuccess == cudaMalloc((void**)&d_numValidRanges, sizeof(int)*nonEmptyBins));
-    assert(cudaSuccess ==  cudaMemcpy(d_numValidRanges, numValidRanges, sizeof(int)*nonEmptyBins, cudaMemcpyHostToDevice));
+    unsigned int * d_numValidRanges;
+    assert(cudaSuccess == cudaMalloc((void**)&d_numValidRanges, sizeof(unsigned int)*nonEmptyBins));
+    assert(cudaSuccess ==  cudaMemcpy(d_numValidRanges, numValidRanges, sizeof(unsigned int)*nonEmptyBins, cudaMemcpyHostToDevice));
 
     // copy over the linear rangeIDs for keeping track of loactions in the linear arrays
-    int * d_linearRangeID;
-    assert(cudaSuccess == cudaMalloc((void**)&d_linearRangeID, sizeof(int)*nonEmptyBins));
-    assert(cudaSuccess ==  cudaMemcpy(d_linearRangeID, linearRangeID, sizeof(int)*nonEmptyBins, cudaMemcpyHostToDevice));
+    unsigned int * d_linearRangeID;
+    assert(cudaSuccess == cudaMalloc((void**)&d_linearRangeID, sizeof(unsigned int)*nonEmptyBins));
+    assert(cudaSuccess ==  cudaMemcpy(d_linearRangeID, linearRangeID, sizeof(unsigned int)*nonEmptyBins, cudaMemcpyHostToDevice));
 
 
     //copy over the linear range indexes wich kkeps track of the locations of adjacent non-empty indexes for each non-empty index
-    int * d_rangeIndexes; //double check this for errors
-    assert(cudaSuccess == cudaMalloc((void**)&d_rangeIndexes, sizeof(int)*sumAdds));
-    assert(cudaSuccess ==  cudaMemcpy(d_rangeIndexes, linearRangeIndexes, sizeof(int)*sumAdds, cudaMemcpyHostToDevice));
+    unsigned int * d_rangeIndexes; //double check this for errors
+    assert(cudaSuccess == cudaMalloc((void**)&d_rangeIndexes, sizeof(unsigned int)*sumAdds));
+    assert(cudaSuccess ==  cudaMemcpy(d_rangeIndexes, linearRangeIndexes, sizeof(unsigned int)*sumAdds, cudaMemcpyHostToDevice));
 
     // copy over the size of the ranges in each adjacent non-empty index for each non-empty index
     unsigned int * d_rangeSizes;
@@ -223,14 +223,14 @@ void launchKernel(int numLayers,// the number of layers in the tree
     assert(cudaSuccess ==  cudaMemcpy(d_numPointsInAdd, numPointsInAdd, sizeof(unsigned int)*nonEmptyBins, cudaMemcpyHostToDevice));
 
     //copy over the array that tracks the values of the non-empty indexes in the last layer of the tree
-    int * d_addIndexRange;
-    assert(cudaSuccess == cudaMalloc((void**)&d_addIndexRange, sizeof(int)*nonEmptyBins));
-    assert(cudaSuccess ==  cudaMemcpy(d_addIndexRange, addIndexRange, sizeof(int)*nonEmptyBins, cudaMemcpyHostToDevice));
+    unsigned int * d_addIndexRange;
+    assert(cudaSuccess == cudaMalloc((void**)&d_addIndexRange, sizeof(unsigned int)*nonEmptyBins));
+    assert(cudaSuccess ==  cudaMemcpy(d_addIndexRange, addIndexRange, sizeof(unsigned int)*nonEmptyBins, cudaMemcpyHostToDevice));
 
     // copy over the ordered point array that corresponds with the point numbers and the dataset
-    int * d_pointArray;
-    assert(cudaSuccess == cudaMalloc((void**)&d_pointArray, sizeof(int)*numPoints));
-    assert(cudaSuccess ==  cudaMemcpy(d_pointArray, pointArray, sizeof(int)*numPoints, cudaMemcpyHostToDevice));
+    unsigned int * d_pointArray;
+    assert(cudaSuccess == cudaMalloc((void**)&d_pointArray, sizeof(unsigned int)*numPoints));
+    assert(cudaSuccess ==  cudaMemcpy(d_pointArray, pointArray, sizeof(unsigned int)*numPoints, cudaMemcpyHostToDevice));
 
     // keep track of the number of pairs found in each batch
     unsigned long long * keyValueIndex;
@@ -259,9 +259,9 @@ void launchKernel(int numLayers,// the number of layers in the tree
     assert(cudaSuccess ==  cudaMemcpy(d_epsilon2, &epsilon2, sizeof(double), cudaMemcpyHostToDevice));
 
     // copying over the dimensionality of the data
-    int *d_dim;
-    assert(cudaSuccess == cudaMalloc((void**)&d_dim, sizeof(int)));
-    assert(cudaSuccess ==  cudaMemcpy(d_dim, &dim, sizeof(int), cudaMemcpyHostToDevice));
+    unsigned int *d_dim;
+    assert(cudaSuccess == cudaMalloc((void**)&d_dim, sizeof(unsigned int)));
+    assert(cudaSuccess ==  cudaMemcpy(d_dim, &dim, sizeof(unsigned int), cudaMemcpyHostToDevice));
 
     // copy over the number of threads for each batch
     unsigned long long * d_numThreadsPerBatch;
@@ -282,24 +282,24 @@ void launchKernel(int numLayers,// the number of layers in the tree
     // copy over the thread assignments for the current batch
     unsigned int * d_addAssign;
     assert(cudaSuccess == cudaMalloc((void**)&d_addAssign, sizeof(unsigned int)*totalThreads));
-    for(int i = 0; i < numBatches; i++){
+    for(unsigned int i = 0; i < numBatches; i++){
         assert(cudaSuccess ==  cudaMemcpy(&d_addAssign[batchThreadOffset[i]], addAssign[i], sizeof(unsigned int)*numThreadsPerBatch[i], cudaMemcpyHostToDevice));
     }
 
     // copy over the offsets for each thread in the batch
     unsigned int * d_threadOffsets;
     assert(cudaSuccess == cudaMalloc((void**)&d_threadOffsets, sizeof(unsigned int)*totalThreads));
-    for(int i = 0; i < numBatches; i++){
+    for(unsigned int i = 0; i < numBatches; i++){
         assert(cudaSuccess ==  cudaMemcpy(&d_threadOffsets[batchThreadOffset[i]], threadOffsets[i], sizeof(unsigned int)*numThreadsPerBatch[i], cudaMemcpyHostToDevice));
     }
 
     
     // vectors for trackking results in the CPU version of the Kernel
-    std::vector<int> hostPointA;
-    std::vector<int> hostPointB;
+    std::vector<unsigned int> hostPointA;
+    std::vector<unsigned int> hostPointB;
 
     // #pragma omp parallel for
-    for(int i = 0; i < numBatches; i++){
+    for(unsigned int i = 0; i < numBatches; i++){
 
         unsigned int totalBlocks = ceil(numThreadsPerBatch[i]*1.0 / BLOCK_SIZE);
 
@@ -366,9 +366,9 @@ void launchKernel(int numLayers,// the number of layers in the tree
     }
 
     #if HOST
-    std::vector< std::pair<int,int>> pairs;
+    std::vector< std::pair<unsigned int,unsigned int>> pairs;
 
-    for(int i = 0; i < hostPointA.size();i++){
+    for(unsigned int i = 0; i < hostPointA.size();i++){
         pairs.push_back(std::make_pair(hostPointA[i],hostPointB[i]));
     }
 
@@ -401,19 +401,19 @@ void launchKernel(int numLayers,// the number of layers in the tree
 
 __global__ 
 void distanceCalculationsKernel(unsigned int *numPoints,
-                                int * linearRangeID,
+                                unsigned int * linearRangeID,
                                 unsigned int * addAssign,
                                 unsigned int * threadOffsets,
                                 double *epsilon2,
-                                int *dim,
+                                unsigned int *dim,
                                 unsigned long long  *numThreadsPerBatch,
                                 unsigned long long  * numThreadsPerAddress,
                                 double * data, 
-                                int * numValidRanges,
-                                int * rangeIndexes,
+                                unsigned int * numValidRanges,
+                                unsigned int * rangeIndexes,
                                 unsigned int * rangeSizes,
                                 unsigned int * numPointsInAdd,
-                                int * addIndexRange,
+                                unsigned int * addIndexRange,
                                 unsigned long long  *keyValueIndex,
                                 unsigned int * point_a,
                                 unsigned int * point_b){
@@ -449,27 +449,27 @@ void distanceCalculationsKernel(unsigned int *numPoints,
 
 void distanceCalculationsKernel_CPU(unsigned int totalBlocks,
                                     unsigned int *numPoints,
-                                    int * linearRangeID,
+                                    unsigned int * linearRangeID,
                                     unsigned int * addAssign,
                                     unsigned int * threadOffsets,
                                     double *epsilon2,
-                                    int *dim,
+                                    unsigned int *dim,
                                     unsigned long long  *numThreadsPerBatch,
                                     unsigned long long  * numThreadsPerAddress,
                                     double * data,
-                                    int *addIndexes,
-                                    int * numValidRanges,
-                                    int * rangeIndexes,
+                                    unsigned int *addIndexes,
+                                    unsigned int * numValidRanges,
+                                    unsigned int * rangeIndexes,
                                     unsigned int * rangeSizes,
                                     unsigned int * numPointsInAdd,
-                                    int * addIndexRange,
-                                    int * pointArray,
+                                    unsigned int * addIndexRange,
+                                    unsigned int * pointArray,
                                     unsigned long long  *keyValueIndex,
-                                    std::vector<int> * hostPointA,
-                                    std::vector<int> * hostPointB){
+                                    std::vector<unsigned int> * hostPointA,
+                                    std::vector<unsigned int> * hostPointB){
 
 
-    for(int h = 0; h < BLOCK_SIZE*totalBlocks; h++)
+    for(unsigned int h = 0; h < BLOCK_SIZE*totalBlocks; h++)
     {
 
         unsigned int tid = h;
@@ -477,16 +477,16 @@ void distanceCalculationsKernel_CPU(unsigned int totalBlocks,
         if(tid < *numThreadsPerBatch ){
             
             //the current index/address that we are searching for
-            int currentAdd = addAssign[tid]; 
+            unsigned int currentAdd = addAssign[tid]; 
 
             //the offset of the thread based on the address we are currently in
-            int threadOffset = threadOffsets[tid];
+            unsigned int threadOffset = threadOffsets[tid];
 
             // the strating location for this index into the linear arrays
-            int startingRangeID = linearRangeID[currentAdd];
+            unsigned int startingRangeID = linearRangeID[currentAdd];
         
             //go through each adjacent index and calcualte
-            for(int i = 0; i < numValidRanges[currentAdd]; i++){
+            for(unsigned int i = 0; i < numValidRanges[currentAdd]; i++){
 
                 //the number of calcs for this address is the nuymber of points in it * number of points in current address
                 unsigned long long int numCalcs = rangeSizes[startingRangeID + i] * numPointsInAdd[currentAdd];
@@ -517,9 +517,9 @@ void distanceCalculationsKernel_CPU(unsigned int totalBlocks,
 
 
 __host__ __device__ //may need to switch to inline (i did)
-inline bool distanceCheck(double epsilon2, int dim, double * data, unsigned int p1, unsigned int p2, unsigned int numPoints){
+inline bool distanceCheck(double epsilon2, unsigned int dim, double * data, unsigned int p1, unsigned int p2, unsigned int numPoints){
     double sum = 0;
-    for(int i = 0; i < dim; i++){
+    for(unsigned int i = 0; i < dim; i++){
         #if DATANORM
         sum += pow(data[i*numPoints + p1] - data[i*numPoints + p2], 2);
         #else

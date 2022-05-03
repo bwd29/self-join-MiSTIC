@@ -14,15 +14,15 @@
 #include "include/params.cuh"
 
 struct result{
-    int pid;
-    int numNeighbors;
-    int *neighbors;
+    unsigned int pid;
+    unsigned int numNeighbors;
+    unsigned int *neighbors;
 };
 
-double euclideanDistance(double * dataPoint, int dim, double * RP);
+double euclideanDistance(double * dataPoint, unsigned int dim, double * RP);
 
-double * createRPArray(double * data, int numRP, int dim, unsigned long long numPoints);
+double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsigned long long numPoints);
 
-int * stddev( double * A, int dim, int num_points);
-int brute_force( int num_points, int dim, double epsilon, double *A);
+unsigned int * stddev( double * A, unsigned int dim, unsigned int num_points);
+unsigned int brute_force( unsigned int num_points, unsigned int dim, double epsilon, double *A);
 

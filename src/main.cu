@@ -19,8 +19,8 @@ int main(int argc, char*argv[]){
 
     //reading in command line arguments
 	char *filename = argv[1]; // first argument is the file with the dataset as a .bin
-	int dim = atoi(argv[2]); // second argument is the dimensionality of the data, i.e. number of columns
-	int concurent_streams = 2; // number of cuda streams, should only ever need to be 2 but can be set to a parameter
+	unsigned int dim = atoi(argv[2]); // second argument is the dimensionality of the data, i.e. number of columns
+	unsigned int concurent_streams = 2; // number of cuda streams, should only ever need to be 2 but can be set to a parameter
 	double epsilon;
 	sscanf(argv[3], "%lf", &epsilon); // third argumernt is the distance threshold being searched
 
@@ -41,7 +41,7 @@ int main(int argc, char*argv[]){
 
 	double* A = (double*)read_buffer;//reinterpret as doubles
 
-	int numPoints = size/sizeof(double)/dim; // calculate number of points based on the siez of the input
+	unsigned int numPoints = size/sizeof(double)/dim; // calculate number of points based on the siez of the input
 
 	// can set a subset of the data for easier debugging
 	//////////////
@@ -59,7 +59,7 @@ int main(int argc, char*argv[]){
 	double time1 = omp_get_wtime();
 
 	//dimensionOrder holds the order of dimensions sorted by thier varience
-	int *dimensionOrder = (int*)malloc(sizeof(int)*dim);
+	unsigned int *dimensionOrder = (unsigned int*)malloc(sizeof(unsigned int)*dim);
 
 	//dimOrderedData holds the dataset after it has been reordered based on dimensional varience
 	double * dimOrderedData = (double*)malloc(sizeof(double)*numPoints*dim);
@@ -71,22 +71,22 @@ int main(int argc, char*argv[]){
 	// the points maintain thier order relative to other points
 	// this can increase short circuiting because higher variences are calculated earlier
     #pragma omp parallel for
-    for(int i = 0; i < numPoints; i++){
-        for(int j = 0; j < dim; j++){
+    for(unsigned int i = 0; i < numPoints; i++){
+        for(unsigned int j = 0; j < dim; j++){
             dimOrderedData[i*dim + j] = A[i*dim + dimensionOrder[j]];
         }
     }
 
 	// allocate and set an array to keep the order of the points
 	// this allows us to refer to the row of the intial data when returning pairs
-	int * pointArray = (int*)malloc(sizeof(int)*numPoints);
-	for (int i = 0; i < numPoints; i++){
+	unsigned int * pointArray = (unsigned int*)malloc(sizeof(unsigned int)*numPoints);
+	for (unsigned int i = 0; i < numPoints; i++){
 		pointArray[i] = i;
 	}
 
 
 	// poinmt bin numbers holds the bins relative to reference points that each point is in
-	int ** pointBinNumbers;
+	unsigned int ** pointBinNumbers;
 
 	// binSizes is the number of bins for each layer of the tree , which includes the spread from the previous layer
 	unsigned int * binSizes = (unsigned int*)malloc(sizeof(unsigned int)*MAXRP);
@@ -95,13 +95,13 @@ int main(int argc, char*argv[]){
 	unsigned int * binAmounts = (unsigned int*)malloc(sizeof(unsigned int)*MAXRP);
 
 	//maxBinAmount limits the number of bins that can be in a layer to reduce space complexity, not usually an issue
-	int maxBinAmount = MAX_BIN;
+	unsigned int maxBinAmount = MAX_BIN;
 
 	//this will be the tree structure of pointers to layers
-	int ** tree;
+	unsigned int ** tree;
 
 	//build the tree into tree and returns the number of layers that was selected for the tree
-	int numLayers = buildTree(
+	unsigned int numLayers = buildTree(
 					&tree, // outputs into this pointer
 					dimOrderedData, //uses the data after ordered for dimensions
 					dim, // the dimensionality of the data
@@ -126,8 +126,8 @@ int main(int argc, char*argv[]){
 	//	  this is the standard stride that was used after dimensional ordering
     double * data = (double *)malloc(sizeof(double)*numPoints*dim);
     #pragma omp parallel for
-	for(int i = 0; i < numPoints; i++){
-		for(int j = 0; j < dim; j++){
+	for(unsigned int i = 0; i < numPoints; i++){
+		for(unsigned int j = 0; j < dim; j++){
 			#if DATANORM
 			data[i+numPoints*j] = dimOrderedData[pointArray[i]*dim+j];
 			#else
@@ -149,17 +149,17 @@ int main(int argc, char*argv[]){
 
 
 	// addIndexes holds the return from generating ranges which contains the non-empty index locations in the last layer of tree
-    int * addIndexes;
+    unsigned int * addIndexes;
 
 	// rangeIndexes holds the return from generating ranges that correspond to the non-empty indexes 
 	// and has the adjacent non-empty index locations
-    int ** rangeIndexes;
+    unsigned int ** rangeIndexes;
 
 	// range sizes has the number of points in the adjacent ranges in rangeIndexes
     unsigned int ** rangeSizes;
 
 	// the number of adjacent indexes for each noin-empty index
-    int * numValidRanges;
+    unsigned int * numValidRanges;
 
 	//the number of distance calculations that will be needed for each non-empty index
     unsigned long long * calcPerAdd;
@@ -168,7 +168,7 @@ int main(int argc, char*argv[]){
 	unsigned int *numPointsInAdd;
 
 	//generate the ranges and perform the searches
-    int nonEmptyBins = generateRanges(tree, //the tree arrays pointer
+    unsigned int nonEmptyBins = generateRanges(tree, //the tree arrays pointer
 									  numPoints, //the number of points in the dataset
 									  pointBinNumbers, // the bin numbers for each point
 									  numLayers, // the number of layers of the tree
@@ -188,37 +188,37 @@ int main(int argc, char*argv[]){
     unsigned long long sumAdds = 0;
 
 	//itterating through just to find sum values
-    for(int i = 0; i < nonEmptyBins; i++){
+    for(unsigned int i = 0; i < nonEmptyBins; i++){
         sumCalcs += calcPerAdd[i];
         sumAdds += numValidRanges[i];
     }
 
 	// add index range has the values at each nonempty index of the last layer of the tree
-	int * addIndexRange = (int*)malloc(sizeof(int)*nonEmptyBins);
-	for(int i = 0; i < nonEmptyBins; i++){
+	unsigned int * addIndexRange = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins);
+	for(unsigned int i = 0; i < nonEmptyBins; i++){
 		addIndexRange[i] = tree[numLayers-1][addIndexes[i]];
 	}
 
 	// an array for keeping track of where the linear indexs start for each elemetn in the 2d one
-	int * linearRangeID = (int*)malloc(sizeof(int) * nonEmptyBins);
+	unsigned int * linearRangeID = (unsigned int*)malloc(sizeof(unsigned int) * nonEmptyBins);
 
 	// a linear range index made from the 2d range index array to keep track of adjacent non-empty indexes for each non-empty index
-	int * linearRangeIndexes = (int*)malloc(sizeof(int)*sumAdds);
+	unsigned int * linearRangeIndexes = (unsigned int*)malloc(sizeof(unsigned int)*sumAdds);
 
 	//a linear range sizes made from the range siezes array to keep track of the number of points in adjacent indexes
 	unsigned int * linearRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*sumAdds);
 
 	//running total for keeping track of starts for each index in the linear arrays
-	int runningTotal = 0;
+	unsigned int runningTotal = 0;
 	//linearizeing 2d arrays to 1d arrays for GPU work
-	for(int i = 0; i < nonEmptyBins; i++){
+	for(unsigned int i = 0; i < nonEmptyBins; i++){
 
 		//keeping track of start locations in the linear arrays
 		linearRangeID[i] = runningTotal;
 		
 
 		//populating the linear arrays from the 2d ones
-		for(int j = 0; j < numValidRanges[i]; j++){
+		for(unsigned int j = 0; j < numValidRanges[i]; j++){
 			linearRangeIndexes[runningTotal + j] = tree[numLayers-1][rangeIndexes[i][j]];
 			linearRangeSizes[runningTotal + j] = rangeSizes[i][j];
 		}
@@ -274,15 +274,15 @@ int main(int argc, char*argv[]){
 // just freeing memory here
 //////////////////////////////////////////////////////////////////////
 
-	for(int i = 0; i < nonEmptyBins; i++){
+	for(unsigned int i = 0; i < nonEmptyBins; i++){
 		free(rangeIndexes[i]);
 		free(rangeSizes[i]);
 	}
-	for(int i = 0; i < numLayers; i++){
+	for(unsigned int i = 0; i < numLayers; i++){
 		free(tree[i]);
 	}
 	free(tree);
-	for(int i = 0; i < numPoints; i++){
+	for(unsigned int i = 0; i < numPoints; i++){
 		free(pointBinNumbers[i]);
 	}
 

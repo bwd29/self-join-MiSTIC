@@ -17,28 +17,28 @@
 #include <vector>
 
 #define DATANORM true
-#define HOST false
-#define BINARYSEARCH false
+#define HOST true
+#define BINARYSEARCH true
 
-const int BLOCK_SIZE = 1024; 
-const int KERNEL_BLOCKS = 1024;
+const unsigned int BLOCK_SIZE = 1024; 
+const unsigned int KERNEL_BLOCKS = 1024;
 const int BRUTE = false;
 const int RANDOM = false;
-const int TEST_RP = 100; 
+const unsigned int TEST_RP = 100; 
 const double SAMPLE_PER = 0.02;
 
-const int CALCS_PER_THREAD = 100000;
+const unsigned int CALCS_PER_THREAD = 100000;
 
-const int MAX_BIN = 1000000; 
+const unsigned int MAX_BIN = 1000000; 
  
-const int MAXRP = 3;
+const unsigned int MAXRP = 3;
 
-const int MINRP = 2;
+const unsigned int MINRP = 2;
 
 const double LAYER_DIFF = 1.0;
 
-const int RPPERLAYER = 10;
+const unsigned int RPPERLAYER = 10;
 
 const int RAND = false;
 
-const int resultsSize = 1000000000; // 400MB
+const unsigned int resultsSize = 1000000000; // 400MB
