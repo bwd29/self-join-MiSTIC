@@ -1,0 +1,33 @@
+rm -f build/main build/*.o
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/kernel.o build/tree.o build/utils.o 
+not unicomp, 256x1024 launches, 100 x 0.02 sampling, 32 per layer, variable rps 5 to 6, non-rand rp, not sorted by varience
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+
+Time to read in file: 0.240396
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.007000 
+*********************************
+
+Selected 7 reference points
+Last Layer Bin Count: 132975
+Tree Check: 515345
+Time to build tree: 1.647357
+Number non-empty bins: 8174
+Number of calcs: 139223393753
+Number Address for calcs: 2246786
+Tree TRAVERSAL search time: 3.809254
+BatchNumber: 1/2, Calcs: 88524458163, Adds: 8077, threads: 891888, blocks:871 Results: 373198
+BatchNumber: 2/2, Calcs: 50698935590, Adds: 97, threads: 507039, blocks:496 Results: 64840871
+Total results Set Size: 65214069 
+Kernel time: 3.810871
+Total Time: 9.267483
+Completed!

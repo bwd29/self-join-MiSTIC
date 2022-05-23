@@ -2,7 +2,7 @@
 #SBATCH --job-name=treeMSD 
 #SBATCH --output=/home/bwd29/self-join/results/resultsMSD3.out
 #SBATCH --error=/home/bwd29/self-join/results/errorMSD3.err
-#SBATCH --time=3000:00
+#SBATCH --time=30:00
 #SBATCH --mem=0
 #SBATCH -c 64
 #SBATCH -G 3
@@ -18,14 +18,14 @@ make
 
 echo "not unicomp, 256x1024 launches, 100 x 0.02 sampling, 32 per layer, variable rps 5 to 6, non-rand rp, not sorted by varience"
 
-# echo "MSD ________________________________________________________________"
-# echo "MSD ________________________________________________________________"
-# echo "MSD ________________________________________________________________"
+echo "MSD ________________________________________________________________"
+echo "MSD ________________________________________________________________"
+echo "MSD ________________________________________________________________"
 
-# for j in 0.007  0.007525 0.00805 0.008575 0.0091  
-# do
-#      ./build/main /scratch/bwd29/data/MSD.bin 90 $j
-# done
+for j in 0.007  #0.007525 0.00805 0.008575 0.0091  
+do
+     ./build/main /scratch/bwd29/data/MSD.bin 90 $j
+done
 
 
 
@@ -46,14 +46,14 @@ echo "not unicomp, 256x1024 launches, 100 x 0.02 sampling, 32 per layer, variabl
 #         ./build/main /scratch/bwd29/data/WAVE_Normalized.bin 49 $j
 # done
 
-echo "BIGCROSS____________________________________________________________"
-echo "BIGCROSS____________________________________________________________"
-echo "BIGCROSS____________________________________________________________"
-# for j in 0.001 0.00575 0.0105 0.01525 
-for j in 0.02
-do
-        ./build/main /scratch/bwd29/data/BIGCROSS_Normalized.bin 57 $j
-done
+# echo "BIGCROSS____________________________________________________________"
+# echo "BIGCROSS____________________________________________________________"
+# echo "BIGCROSS____________________________________________________________"
+# # for j in 0.001 0.00575 0.0105 0.01525 
+# for j in 0.02
+# do
+#         ./build/main /scratch/bwd29/data/BIGCROSS_Normalized.bin 57 $j
+# done
 
 # echo "SUSY ________________________________________________________________"
 # echo "SUSY ________________________________________________________________"

@@ -469,6 +469,7 @@ void distanceCalculationsKernel_CPU(unsigned int totalBlocks,
                                     std::vector<unsigned int> * hostPointB){
 
 
+    #pragma omp parallel for
     for(unsigned int h = 0; h < BLOCK_SIZE*totalBlocks; h++)
     {
 
@@ -502,11 +503,15 @@ void distanceCalculationsKernel_CPU(unsigned int totalBlocks,
 
                     if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
                         //  store point
-                        *keyValueIndex += 1;
-                        
-                        // unsigned long long int index = *keyValueIndex;
-                        (*hostPointA).push_back(p1); //stores the first point Number
-                        (*hostPointB).push_back(p2); // this stores the coresponding point number to form a pair
+
+                        #pragma omp critical
+                        {
+                            *keyValueIndex += 1;
+                            
+                            // unsigned long long int index = *keyValueIndex;
+                            (*hostPointA).push_back(p1); //stores the first point Number
+                            (*hostPointB).push_back(p2); // this stores the coresponding point number to form a pair
+                        }
                     }
                 }
             }

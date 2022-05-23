@@ -45,7 +45,7 @@ int main(int argc, char*argv[]){
 
 	// can set a subset of the data for easier debugging
 	//////////////
-	// numPoints = 10000;
+	// numPoints = 100000;
 	////////////
 
 	printf("\nNumber points: %d ", numPoints);
@@ -54,7 +54,7 @@ int main(int argc, char*argv[]){
 	printf("\nDistance Threshold: %f \n*********************************\n\n", epsilon);
 
 	//if using a small datset for debugging, also run brute force so we can double check results
-	if(numPoints <= 10000) 	brute_force( numPoints, dim, epsilon, A);
+	if(numPoints <= 100000) 	brute_force( numPoints, dim, epsilon, A);
 
 	double time1 = omp_get_wtime();
 
@@ -232,8 +232,11 @@ int main(int argc, char*argv[]){
 
 	double time3 = omp_get_wtime();
 
-	printf("Tree search time: %f\n", time3-time2);
-
+	#if BINARYSEARCH
+	printf("Tree BINARY search time: %f\n", time3-time2);
+	#else
+	printf("Tree TRAVERSAL search time: %f\n", time3-time2);
+	#endif
 
 	launchKernel(numLayers, // the number of layers in the tree
 				data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess

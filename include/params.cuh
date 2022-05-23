@@ -16,7 +16,7 @@
 #include <algorithm>  
 #include <vector>
 
-#define DATANORM true
+#define DATANORM false
 #define HOST false
 #define BINARYSEARCH false
 
@@ -31,9 +31,9 @@ const unsigned int CALCS_PER_THREAD = 100000;
 
 const unsigned int MAX_BIN = 1000000; 
  
-const unsigned int MAXRP = 3;
+const unsigned int MAXRP = 7;
 
-const unsigned int MINRP = 2;
+const unsigned int MINRP = 6;
 
 const double LAYER_DIFF = 1.0;
 
@@ -41,4 +41,4 @@ const unsigned int RPPERLAYER = 10;
 
 const int RAND = false;
 
-const unsigned int resultsSize = 1000000000; // 400MB
+const unsigned long long int resultsSize = 1000000000; // 400MB
