@@ -509,7 +509,7 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 }
 
 // __host__ __device__ 
-int depthSearch(unsigned int ** tree, //pointer to the tree built with buildTree()
+long int depthSearch(unsigned int ** tree, //pointer to the tree built with buildTree()
 				unsigned int * binAmounts, // the number of bins for each reference point, i.e. range/epsilon
 				unsigned int numLayers, //the number of layers in the tree
 				unsigned int * searchBins){ // the bin number that we are searching for
@@ -530,7 +530,7 @@ int depthSearch(unsigned int ** tree, //pointer to the tree built with buildTree
 	}
 
 	//the index will be the last layers bin number plus the offset for the last layer
-	int index = searchBins[numLayers-1]+offset;
+	long int index = searchBins[numLayers-1]+offset;
 
 	//if last layer has poionts then return the index value
 	if(tree[numLayers-1][index] < tree[numLayers-1][index+1]){
@@ -621,8 +621,8 @@ void treeTraversal(unsigned int * tempAdd, //twmp array for the address being se
 }
 
 // __host__ __device__
-inline int compareBins(unsigned int * bin1, unsigned int * bin2, unsigned int binSize){
-	for(int i = 0; i < binSize; i++){
+inline long int compareBins(unsigned int * bin1, unsigned int * bin2, unsigned int binSize){
+	for(long int i = 0; i < binSize; i++){
 		if(bin1[i] < bin2[i]){
 			return -1;
 		}
@@ -633,23 +633,23 @@ inline int compareBins(unsigned int * bin1, unsigned int * bin2, unsigned int bi
 	return 0;
 }
 // __host__ __device__
-int bSearch(unsigned int * tempAdd, //address to search for
+long int bSearch(unsigned int * tempAdd, //address to search for
 			unsigned int ** binNumbers, //array of addresses
 			unsigned int nonEmptyBins, //number of bins
 			unsigned int numLayers) //numebr of layers or size of addresses
 			{
 
 	// initial conditions of the search
-	int left = 0;
-	int right = nonEmptyBins-1;
+	long int left = 0;
+	long int right = nonEmptyBins-1;
 	
 	
 	//while loop for halving search each itterations
 	while(left <= right){
 		//calculate the middle
-		int mid = (left + right)/2;
+		long int mid = (left + right)/2;
 		// -1 for smaller, 1 for larger, 0 for equal
-		int loc = compareBins( binNumbers[mid], tempAdd, numLayers);
+		long int loc = compareBins( binNumbers[mid], tempAdd, numLayers);
 		//if we found the index
 		if( loc == 0){
 			return mid;
@@ -703,7 +703,7 @@ void binarySearch(	unsigned int searchIndex, // the bin to search in bin numebrs
 			tempAdd[j] = binNumbers[searchIndex][j] + (i / (int)pow(3, j) % 3)-1;
 		}
 		//perform the search and get the index location of the return 
-		int index = bSearch(tempAdd, binNumbers, nonEmptyBins, numLayers);
+		long int index = bSearch(tempAdd, binNumbers, nonEmptyBins, numLayers);
 
 		//check if the index location was non empty
 		if(index >= 0){
@@ -726,7 +726,7 @@ void binarySearch(	unsigned int searchIndex, // the bin to search in bin numebrs
 	}
 
 	// get the index of the home address
-	int homeIndex = addIndexs[bSearch(binNumbers[searchIndex], binNumbers, nonEmptyBins, numLayers)];
+	long int homeIndex = addIndexs[bSearch(binNumbers[searchIndex], binNumbers, nonEmptyBins, numLayers)];
 	// std::cerr << "index: "<< homeIndex << " above: "<<tree[numLayers-1][homeIndex+1]<<" below: "<< tree[numLayers-1][homeIndex] << " difference: "<<tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex] << std::endl;
 	// find the number of points in the home address
 	unsigned long long numHomePoints = tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex]; //may need to +- one to index here !!!!!!!!!

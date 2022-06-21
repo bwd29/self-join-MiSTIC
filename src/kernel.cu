@@ -49,7 +49,7 @@ void launchKernel(unsigned int numLayers,// the number of layers in the tree
     unsigned int numBatches = 0;
 
     // the number of threads that will be avaliable for each kernel invocation
-    unsigned long long threadsPerBatch = KERNEL_BLOCKS * BLOCK_SIZE;
+    unsigned long long threadsPerBatch = (unsigned long long)KERNEL_BLOCKS * BLOCK_SIZE;
 
     // keeping track of the number of threads in a kernel invocation
     unsigned long long sum = 0;
@@ -58,7 +58,8 @@ void launchKernel(unsigned int numLayers,// the number of layers in the tree
     for(unsigned int i = 0; i < nonEmptyBins; i++){
 
         // the number of threads for the address is the ceiling of the number of calcs for that address over calcs per thread
-        numThreadsPerAddress[i] = ceil(calcPerAdd[i]*1.0 / calcsPerThread);
+        numThreadsPerAddress[i] = calcPerAdd[i] / calcsPerThread;
+        if(calcPerAdd[i] % calcsPerThread != 0) numThreadsPerAddress[i]++;
 
         if(calcPerAdd[i] == 0) printf("ERROR: add %d has 0 calcs\n", i);
 
@@ -429,7 +430,7 @@ void distanceCalculationsKernel(unsigned int *numPoints,
     unsigned int startingRangeID = linearRangeID[currentAdd];
 
     for(unsigned int i = 0; i < numValidRanges[currentAdd]; i++){
-        unsigned long long int numCalcs = rangeSizes[startingRangeID + i] * numPointsInAdd[currentAdd];
+        unsigned long long int numCalcs = (unsigned long long int)rangeSizes[startingRangeID + i] * numPointsInAdd[currentAdd];
         for(unsigned long long int j = threadOffset; j < numCalcs; j += numThreadsPerAddress[currentAdd]){
 
             unsigned int p1 = addIndexRange[currentAdd] + j / rangeSizes[startingRangeID + i];

@@ -29,7 +29,7 @@ void treeTraversal(unsigned int * tempAdd,
 				   unsigned int numSearches);
 
 // __host__ __device__
-int depthSearch(unsigned int ** tree, 
+long int depthSearch(unsigned int ** tree, 
 				unsigned int * binAmounts, 
 				unsigned int numLayers, 
 				unsigned int * searchBins);
@@ -49,13 +49,13 @@ unsigned int generateRanges(unsigned int ** tree,
 							unsigned int ** numPointsInAdd );
 
 // __host__ __device__
-int bSearch(unsigned int * tempAdd, //address to search for
+long int bSearch(unsigned int * tempAdd, //address to search for
 			unsigned int ** binNumbers, //array of addresses
 			unsigned int nonEmptyBins, //number of bins
 			unsigned int numLayers); //numebr of layers or size of addresses
 
 // __host__ __device__
-inline int compareBins(unsigned int * bin1,
+inline long int compareBins(unsigned int * bin1,
 					   unsigned int * bin2, 
 					   unsigned int binSize);
 
