@@ -3,11 +3,14 @@ CUDAFLAGS = -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3
 LIBDIRS = -I.
 
 
-build/main: build/main.o build/kernel.o build/tree.o build/utils.o 
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -o build/main build/main.o build/kernel.o build/tree.o build/utils.o 
+build/main: build/main.o build/launcher.o build/kernel.o build/tree.o build/utils.o 
+	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -o build/main build/main.o build/launcher.o build/kernel.o build/tree.o build/utils.o
 
 build/main.o: src/main.cu
 	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/main.o src/main.cu -lm
+
+build/launcher.o: src/launcher.cu
+	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/launcher.o src/launcher.cu -lm
 
 build/kernel.o: src/kernel.cu
 	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu -lm

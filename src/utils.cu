@@ -1,6 +1,11 @@
 #include "include/utils.cuh"
 
 
+void GPU_SortbyKey( cudaStream_t stream, unsigned int * A, unsigned int size, unsigned int * B){
+	thrust::sort_by_key(thrust::cuda::par.on(stream), A, A+size, B);
+}
+
+
 unsigned int * stddev( double * A, unsigned int dim, unsigned int num_points) {
 	double mean, devmean;
 	double *deviation = (double*)malloc(sizeof(double) * dim);

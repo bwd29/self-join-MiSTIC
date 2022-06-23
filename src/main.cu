@@ -10,13 +10,11 @@
 
 #include "include/tree.cuh"
 #include "include/utils.cuh"
-#include "include/kernel.cuh"
+#include "include/launcher.cuh"
 
 
 int main(int argc, char*argv[]){
     
-
-
     //reading in command line arguments
 	char *filename = argv[1]; // first argument is the file with the dataset as a .bin
 	unsigned int dim = atoi(argv[2]); // second argument is the dimensionality of the data, i.e. number of columns
@@ -238,7 +236,7 @@ int main(int argc, char*argv[]){
 	printf("Tree TRAVERSAL search time: %f\n", time3-time2);
 	#endif
 
-	launchKernel(numLayers, // the number of layers in the tree
+	struct neighborTable * table =  launchKernel(numLayers, // the number of layers in the tree
 				data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
 				dim, //the dimensionality of the data
 				numPoints, //the number of points in the dataset

@@ -19,6 +19,19 @@ struct result{
     unsigned int *neighbors;
 };
 
+
+typedef struct neighborTable
+{
+	unsigned int cntNDataArrays;
+	std::vector<unsigned int>vectindexmin;
+	std::vector<unsigned int>vectindexmax;
+	std::vector<unsigned int *>vectdataPtr;
+	omp_lock_t pointLock; //one lock per point
+
+}neighborTable;
+
+void GPU_SortbyKey( cudaStream_t stream, unsigned int * A, unsigned size, unsigned int * B);
+
 double euclideanDistance(double * dataPoint, unsigned int dim, double * RP);
 
 double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsigned long long numPoints);

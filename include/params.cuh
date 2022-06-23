@@ -20,6 +20,7 @@
 #define HOST false
 #define BINARYSEARCH false
 
+const unsigned int NUMSTREAMS = 2;
 const unsigned int BLOCK_SIZE = 1024; 
 const unsigned int KERNEL_BLOCKS = 1024;
 const int BRUTE = false;
@@ -40,5 +41,5 @@ const double LAYER_DIFF = 1.0;
 const unsigned int RPPERLAYER = 10;
 
 const int RAND = false;
-
+const unsigned long long initalPinnedResultsSize = 10000;
 const unsigned long long int resultsSize = 1000000000; // 400MB
