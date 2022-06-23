@@ -1,23 +1,30 @@
 #!/bin/bash
-#SBATCH --job-name=tree    
-#SBATCH --output=/home/bwd29/TREE/results/newres.out
-#SBATCH --error=/home/bwd29/TREE/results/newerro.err
-#SBATCH --time=15:00				# 2 min
-#SBATCH --mem=0 
-#SBATCH --nodes=1
-#SBATCH --exclusive
+#SBATCH --job-name=treeMSD 
+#SBATCH --output=/home/bwd29/self-join/results/resultsMSD3.out
+#SBATCH --error=/home/bwd29/self-join/results/errorMSD3.err
+#SBATCH --time=30:00
+#SBATCH --mem=0
+#SBATCH -c 64
+#SBATCH -G 3
+#SBATCH --partition=gowanlock
+#SBATCH --account=gowanlock_condo
+#SBATCH -w cn2
+
 
 module load cuda
 
-echo "not unicomp, 32x1024 launches, 100 x 0.02 sampling, 32 per layer, variable rps 5 to 6, non-rand rp, not sorted by varience"
+make clean
+make
+
+echo "not unicomp, 256x1024 launches, 100 x 0.02 sampling, 32 per layer, variable rps 5 to 6, non-rand rp, not sorted by varience"
 
 echo "MSD ________________________________________________________________"
 echo "MSD ________________________________________________________________"
 echo "MSD ________________________________________________________________"
 
-for j in 0.007 0.007525 0.00805 0.008575 0.0091  
+for j in 0.007  #0.007525 0.00805 0.008575 0.0091  
 do
-    ./build/main /scratch/bwd29/data/MSD.bin 90 $j
+     ./build/main /scratch/bwd29/data/MSD.bin 90 $j
 done
 
 
@@ -42,7 +49,8 @@ done
 # echo "BIGCROSS____________________________________________________________"
 # echo "BIGCROSS____________________________________________________________"
 # echo "BIGCROSS____________________________________________________________"
-# for j in 0.001 0.00575 0.0105 0.01525 0.02
+# # for j in 0.001 0.00575 0.0105 0.01525 
+# for j in 0.02
 # do
 #         ./build/main /scratch/bwd29/data/BIGCROSS_Normalized.bin 57 $j
 # done
@@ -51,6 +59,7 @@ done
 # echo "SUSY ________________________________________________________________"
 # echo "SUSY ________________________________________________________________"
 
+# # for j in 0.01825 
 # for j in 0.01 0.01275 0.0155 0.01825 0.021  
 # do
 #     ./build/main /scratch/bwd29/data/SUSY_Normalized.bin 18 $j
@@ -71,3 +80,5 @@ done
 # do
 #         ./build/main /scratch/bwd29/data/TINY_Normalized.bin 384 $j
 # done
+
+echo "Completed!"

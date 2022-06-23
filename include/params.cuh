@@ -1,16 +1,45 @@
 #pragma once
+#include "include/params.cuh"
+#include <stdio.h>
+#include <cuda_runtime.h>
+#include <assert.h>
+#include <time.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include "omp.h"
+#include <unistd.h>
+#include <math.h>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <algorithm>  
+#include <vector>
 
-const int BLOCK_SIZE = 1024; 
-const int KERNEL_BLOCKS = 32;
+#define DATANORM false
+#define HOST false
+#define BINARYSEARCH false
+
+const unsigned int NUMSTREAMS = 2;
+const unsigned int BLOCK_SIZE = 1024; 
+const unsigned int KERNEL_BLOCKS = 1024;
 const int BRUTE = false;
 const int RANDOM = false;
-const int TEST_RP = 10; 
-const double SAMPLE_PER = 0.1;
+const unsigned int TEST_RP = 100; 
+const double SAMPLE_PER = 0.02;
 
-const int MAX_BIN = 100000; 
+const unsigned int CALCS_PER_THREAD = 100000;
+
+const unsigned int MAX_BIN = 1000000; 
  
-const int MAXRP = 3;
+const unsigned int MAXRP = 7;
 
-const int MINRP = 2;
+const unsigned int MINRP = 6;
 
-const int RPPERLAYER = 10;
+const double LAYER_DIFF = 1.0;
+
+const unsigned int RPPERLAYER = 10;
+
+const int RAND = false;
+const unsigned long long initalPinnedResultsSize = 10000;
+const unsigned long long int resultsSize = 1000000000; // 400MB

@@ -1,15 +1,5 @@
 #pragma once
-#include "include/params.cuh"
-#include <stdio.h>
-#include <cuda_runtime.h>
-#include <assert.h>
-#include <time.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include "omp.h"
-#include <unistd.h>
-#include <math.h>
+
 #include <thrust/host_vector.h>
 #include <thrust/sort.h>
 #include <thrust/device_vector.h> 
@@ -20,19 +10,32 @@
 #include <thrust/system/omp/execution_policy.h>
 #include <thrust/execution_policy.h>
 #include <thrust/system/cuda/execution_policy.h>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <algorithm>   
+ 
+#include "include/params.cuh"
 
 struct result{
-    int pid;
-    int numNeighbors;
-    int *neighbors;
+    unsigned int pid;
+    unsigned int numNeighbors;
+    unsigned int *neighbors;
 };
 
-double euclideanDistance(double * dataPoint, int dim, double * RP);
 
-double * createRPArray(double * data, int numRP, int dim, unsigned long long numPoints);
+typedef struct neighborTable
+{
+	unsigned int cntNDataArrays;
+	std::vector<unsigned int>vectindexmin;
+	std::vector<unsigned int>vectindexmax;
+	std::vector<unsigned int *>vectdataPtr;
+	omp_lock_t pointLock; //one lock per point
 
-int * stddev( double * A, int dim, int num_points);
+}neighborTable;
+
+void GPU_SortbyKey( cudaStream_t stream, unsigned int * A, unsigned size, unsigned int * B);
+
+double euclideanDistance(double * dataPoint, unsigned int dim, double * RP);
+
+double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsigned long long numPoints);
+
+unsigned int * stddev( double * A, unsigned int dim, unsigned int num_points);
+unsigned int brute_force( unsigned int num_points, unsigned int dim, double epsilon, double *A);
+
