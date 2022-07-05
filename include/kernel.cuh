@@ -1,6 +1,68 @@
 #pragma once
 
 #include "include/params.cuh"
+__global__
+void GPUGenerateRanges(unsigned int ** tree, //points to the tree constructed with buildTree()
+                        unsigned int * numPoints, // the number of points in the dataset
+                        unsigned int ** pointBinNumbers, // the bin numbers of the points relative to the reference points
+                        unsigned int numLayers, // the number of layer the tree has
+                        unsigned int * binSizes,	// the number of bins for each layer, or rather the width of the tree in bins for that layer
+                        unsigned int * binAmounts, // the number of bins for each reference point, ranhge/epsilon
+                        unsigned int * addIndexes, // where generateRanges will return the non-empty index locations in the tree's final layer
+                        unsigned int ** rangeIndexes, // the index locations that are adjacent to each non-empty index
+                        unsigned int ** rangeSizes, // the number of points in adjacent non-empty indexes for each non-empty index
+                        unsigned int * numValidRanges, // the numnber of adjacent non-empty indexes for each non-empty index
+                        unsigned long long * calcPerAdd, // the number of calculations that will be needed for each non-empty index
+                        unsigned int * numPointsInAdd, // the number of points in each non-empty index
+                        unsigned int * nonEmptyBins,
+                        unsigned int ** binNumbers,
+                        unsigned int ** tempAdd,
+                        unsigned int * numSearches);
+
+__device__
+void GPUBinarySearch(	unsigned int searchIndex, // the bin to search in bin numbers
+                    unsigned int  * tempAdd, //temporary address for searching
+                    unsigned int ** binNumbers, //array of bin numbrs 
+                    unsigned int nonEmptyBins, //size of binNumebrs
+                    unsigned int numLayers, //number of reference points
+                    unsigned int ** tree, //the tree structure
+                    unsigned int * binAmounts, // the range of bins from a reference points, i.e. range / epsilon
+                    unsigned int * addIndexs, //location of nonempty bins in the tree
+                    unsigned long long * numCalcs, // the place to retrun the number of calcs that will be needed
+                    unsigned int * numberRanges, // the return location for the number of adjacent non-empty indexes
+                    unsigned int * rangeIndexes, // the array of non-empty adjacent index locations
+                    unsigned int * rangeSizes, // the number of points in each of the adjacent non-empty indexes
+                    unsigned int  numPointsInAdd, //the number of points in the home address/iondex
+                    unsigned int numSearches);
+
+
+__device__
+void GPUTreeTraversal(unsigned int * tempAdd, //twmp array for the address being searched
+                    unsigned int ** tree, // the pointer to the tree
+                    unsigned int * binSizes, // the width of the tree for each layer mesuared in number of bins
+                    unsigned int * binAmounts, // the number of bins for each reference point
+                    unsigned int * binNumbers, // the bin number for the home address
+                    unsigned int numLayers, // the number of reference points/layers in the tree
+                    unsigned long long * numCalcs, // the place to retrun the number of calcs that will be needed
+                    unsigned int * numberRanges, // the return location for the number of adjacent non-empty indexes
+                    unsigned int * rangeIndexes, // the array of non-empty adjacent index locations
+                    unsigned int * rangeSizes, // the number of points in each of the adjacent non-empty indexes
+                    unsigned int  numPointsInAdd, //the number of points in the home address/iondex
+                    unsigned int numSearches);
+
+
+
+__device__
+int GPUDepthSearch(unsigned int ** tree, //pointer to the tree built with buildTree()
+                    unsigned int * binAmounts, // the number of bins for each reference point, i.e. range/epsilon
+                    unsigned int numLayers, //the number of layers in the tree
+                    unsigned int * searchBins);
+
+__device__
+int GPUBSearch(unsigned int * tempAdd, //address to search for
+            unsigned int ** binNumbers, //array of addresses
+            unsigned int nonEmptyBins, //number of bins
+            unsigned int numLayers);
 
 __global__ 
 void kernelUniqueKeys(unsigned int * pointIDKey,
