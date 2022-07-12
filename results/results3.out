@@ -1,0 +1,467 @@
+rm -f build/main build/*.o
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/tree.o build/utils.o
+1024x1024 launches, 100 x 0.01 sampling, 32 per layer, 6 rps, non-rand rp, 10,000 calcs per thread
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+
+Time to read in file: 0.406316
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.007000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 76752
+Tree Check: 515345
+Time to build tree: 1.802828
+Number non-empty bins: 5382
+Number of calcs: 148381418725
+Number Address for calcs: 854358
+Tree BINARY search time: 0.029948
+Total results Set Size: 65915313 
+Kernel time: 4.820821
+Total Time: 6.653601
+
+Time to read in file: 0.085898
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.007525 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 61614
+Tree Check: 515345
+Time to build tree: 1.656397
+Number non-empty bins: 4867
+Number of calcs: 175951354655
+Number Address for calcs: 797255
+Tree BINARY search time: 0.021928
+Total results Set Size: 121384099 
+Kernel time: 6.878386
+Total Time: 8.556719
+
+Time to read in file: 0.163097
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.008050 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 59940
+Tree Check: 515345
+Time to build tree: 1.980606
+Number non-empty bins: 4034
+Number of calcs: 171959041759
+Number Address for calcs: 592884
+Tree BINARY search time: 0.020440
+Total results Set Size: 207932133 
+Kernel time: 7.445152
+Total Time: 9.446199
+
+Time to read in file: 0.073248
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.008575 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 67828
+Tree Check: 515345
+Time to build tree: 1.953390
+Number non-empty bins: 4122
+Number of calcs: 177552628289
+Number Address for calcs: 612804
+Tree BINARY search time: 0.044614
+Total results Set Size: 335507787 
+Kernel time: 8.153720
+Total Time: 10.151745
+
+Time to read in file: 0.072419
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.009100 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 28710
+Tree Check: 515345
+Time to build tree: 1.895902
+Number non-empty bins: 2819
+Number of calcs: 192364128357
+Number Address for calcs: 378731
+Tree BINARY search time: 0.012233
+Total results Set Size: 514928275 
+Kernel time: 9.833940
+Total Time: 11.742080
+Census____________________________________________________________
+Census____________________________________________________________
+Census____________________________________________________________
+
+Time to read in file: 1.045316
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Concurent Streams: 2
+Distance Threshold: 0.001000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 184673412
+Tree Check: 2458285
+Time to build tree: 9.813698
+Number non-empty bins: 1492253
+Number of calcs: 3099632743
+Number Address for calcs: 177693399
+Tree BINARY search time: 13.476419
+Total results Set Size: 55650567 
+Kernel time: 1.340999
+Total Time: 24.631123
+
+Time to read in file: 0.855440
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Concurent Streams: 2
+Distance Threshold: 0.003250 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 3904158
+Tree Check: 2458285
+Time to build tree: 7.008814
+Number non-empty bins: 157284
+Number of calcs: 99517626129
+Number Address for calcs: 38787880
+Tree BINARY search time: 1.054071
+Total results Set Size: 55650567 
+Kernel time: 3.713672
+Total Time: 11.776563
+
+Time to read in file: 0.857131
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Concurent Streams: 2
+Distance Threshold: 0.005500 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 430502
+Tree Check: 2458285
+Time to build tree: 6.608904
+Number non-empty bins: 27837
+Number of calcs: 536202601989
+Number Address for calcs: 5717763
+Tree BINARY search time: 0.175986
+Total results Set Size: 311087687 
+Kernel time: 18.596696
+Total Time: 25.381592
+
+Time to read in file: 0.863474
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Concurent Streams: 2
+Distance Threshold: 0.007750 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 96309
+Tree Check: 2458285
+Time to build tree: 6.545903
+Number non-empty bins: 8106
+Number of calcs: 1331746513071
+Number Address for calcs: 1330570
+Tree BINARY search time: 0.029349
+Total results Set Size: 897710957 
+Kernel time: 56.242893
+Total Time: 62.818151
+Wave __________________________________________________
+Wave __________________________________________________
+Wave __________________________________________________
+
+Time to read in file: 0.103490
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.002000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 1052376
+Tree Check: 287999
+Time to build tree: 0.632000
+Number non-empty bins: 28158
+Number of calcs: 10501432791
+Number Address for calcs: 6661170
+Tree BINARY search time: 0.175309
+Total results Set Size: 11651957 
+Kernel time: 0.409280
+Total Time: 1.216595
+
+Time to read in file: 0.030570
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.003250 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 185328
+Tree Check: 287999
+Time to build tree: 0.769540
+Number non-empty bins: 8017
+Number of calcs: 20096585581
+Number Address for calcs: 1858143
+Tree BINARY search time: 0.037311
+Total results Set Size: 27340089 
+Kernel time: 0.585591
+Total Time: 1.392447
+
+Time to read in file: 0.027208
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.004500 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 46576
+Tree Check: 287999
+Time to build tree: 0.894432
+Number non-empty bins: 2422
+Number of calcs: 27835386607
+Number Address for calcs: 417664
+Tree BINARY search time: 0.011756
+Total results Set Size: 47254879 
+Kernel time: 0.781831
+Total Time: 1.688025
+
+Time to read in file: 0.028374
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.005750 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 12725
+Tree Check: 287999
+Time to build tree: 0.926042
+Number non-empty bins: 973
+Number of calcs: 38971093875
+Number Address for calcs: 128777
+Tree BINARY search time: 0.029382
+Total results Set Size: 93070851 
+Kernel time: 1.196456
+Total Time: 2.151885
+
+Time to read in file: 0.026852
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.007000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 5940
+Tree Check: 287999
+Time to build tree: 0.723066
+Number non-empty bins: 489
+Number of calcs: 44380467507
+Number Address for calcs: 51141
+Tree BINARY search time: 0.001908
+Total results Set Size: 290127035 
+Kernel time: 2.074918
+Total Time: 2.799900
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+
+Time to read in file: 0.624847
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.010000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 5821589
+Tree Check: 5000000
+Time to build tree: 6.341902
+Number non-empty bins: 328064
+Number of calcs: 333719497200
+Number Address for calcs: 109203690
+Tree BINARY search time: 2.462895
+Total results Set Size: 30844186 
+Kernel time: 12.423362
+Total Time: 21.228167
+
+Time to read in file: 0.514742
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.012750 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 1674641
+Tree Check: 5000000
+Time to build tree: 5.626678
+Number non-empty bins: 96826
+Number of calcs: 1429328041938
+Number Address for calcs: 28397628
+Tree BINARY search time: 0.610145
+Total results Set Size: 162647128 
+Kernel time: 43.651805
+Total Time: 49.888636
+
+Time to read in file: 0.516411
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.015500 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 602010
+Tree Check: 5000000
+Time to build tree: 5.595291
+Number non-empty bins: 41773
+Number of calcs: 3351372342840
+Number Address for calcs: 11132695
+Tree BINARY search time: 0.245279
+Total results Set Size: 655680946 
+Kernel time: 123.852259
+Total Time: 129.692834
+
+Time to read in file: 0.496712
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.018250 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 501267
+Tree Check: 5000000
+Time to build tree: 5.773736
+Number non-empty bins: 34009
+Number of calcs: 7514313337886
+Number Address for calcs: 8240999
+Tree BINARY search time: 0.233551
+Total results Set Size: 2072898048 
+Kernel time: 335.493218
+Total Time: 341.500511
+
+Time to read in file: 0.489825
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.021000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 118854
+Tree Check: 5000000
+Time to build tree: 6.096042
+Number non-empty bins: 15476
+Number of calcs: 8370761559324
+Number Address for calcs: 3841412
+Tree BINARY search time: 0.129707
+Total results Set Size: 5457260816 
+Kernel time: 397.502308
+Total Time: 403.728064
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+
+Time to read in file: 1.851985
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Concurent Streams: 2
+Distance Threshold: 0.010000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 2969753
+Tree Check: 11000000
+Time to build tree: 16.191539
+Number non-empty bins: 244931
+Number of calcs: 2768512779600
+Number Address for calcs: 89224687
+Tree BINARY search time: 2.187151
+Total results Set Size: 11566498 
+Kernel time: 105.625376
+Total Time: 124.004071
+Tiny____________________________________________________
+Tiny____________________________________________________
+Tiny____________________________________________________
+
+Time to read in file: 11.709210
+
+Number points: 5000000 
+Number Dimensions: 384 
+Number Concurent Streams: 2
+Distance Threshold: 0.200000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 10760
+Tree Check: 5000000
+Time to build tree: 70.215454
+Number non-empty bins: 959
+Number of calcs: 7648832381140
+Number Address for calcs: 82733
+Tree BINARY search time: 0.028957
+Total results Set Size: 53619112 
+Kernel time: 674.862091
+Total Time: 745.106510
+
+Time to read in file: 11.938493
+
+Number points: 5000000 
+Number Dimensions: 384 
+Number Concurent Streams: 2
+Distance Threshold: 0.260000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 4928
+Tree Check: 5000000
+Time to build tree: 73.036363
+Number non-empty bins: 541
+Number of calcs: 9195192734842
+Number Address for calcs: 39629
+Tree BINARY search time: 0.026721
+Total results Set Size: 181164422 
+Kernel time: 1093.326751
+Total Time: 1166.389843
+Completed!

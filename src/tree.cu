@@ -92,7 +92,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		// printf("refChecking: \n");
 
 		// entering into a loop to create a bunch of different possible layers for the current layer. then the best one is chosen
-		#pragma omp parallel for
+		#pragma omp parallel for num_threads(numRPperLayer)
 		for(unsigned int i = 0; i < numRPperLayer; i++){
 
 			//set the current number of non empty bins to 0
@@ -437,7 +437,7 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 	}
 
 	//go through each non empty bin and do all the needed searching and generate the arrays that are needed for the calculations kernels
-	// #pragma omp parallel for
+	#pragma omp parallel for
     for(unsigned int i = 0; i < nonEmptyBins; i++){
 
 		// this will record the number of calculations that need to be made by this index/address

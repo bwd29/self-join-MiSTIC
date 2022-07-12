@@ -32,3 +32,14 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
     unsigned int * linearRangeID,// an array for keeping trackj of starting points in the linear arrays
     unsigned int * linearRangeIndexes,// a linear version of rangeIndexes
     unsigned int * linearRangeSizes); // a linear version of rangeSizes
+
+    struct neighborTable * launchGPUSearchKernel(unsigned int ** tree, // a pointer to the tree
+        unsigned int numPoints, //the number of points in the data
+        unsigned int ** pointBinNumbers,  //the bin numbers ofr each point to each reference point
+        unsigned int numLayers, //the number of reference points
+        unsigned int * binSizes, // the number of bins in each layer
+        unsigned int * binAmounts, //the number of bins for each reference point
+        double * data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
+        unsigned int dim,//the dimensionality of the data
+        double epsilon,//the distance threshold being searched
+        unsigned int * pointArray);// the array of point numbers ordered to match the sequence in the last array of the tree and the data

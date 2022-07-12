@@ -1,21 +1,22 @@
 #include "include/kernel.cuh"
 
 __global__
-void GPUGenerateRanges(unsigned int ** tree, //points to the tree constructed with buildTree()
+void GPUGenerateRanges(unsigned int * tree, //points to the tree constructed with buildTree()
+                        unsigned int * lastTreeLayer,
                         unsigned int * numPoints, // the number of points in the dataset
-                        unsigned int ** pointBinNumbers, // the bin numbers of the points relative to the reference points
-                        unsigned int numLayers, // the number of layer the tree has
+                        unsigned int * pointBinNumbers, // the bin numbers of the points relative to the reference points
+                        unsigned int * numLayers, // the number of layer the tree has
                         unsigned int * binSizes,	// the number of bins for each layer, or rather the width of the tree in bins for that layer
                         unsigned int * binAmounts, // the number of bins for each reference point, ranhge/epsilon
                         unsigned int * addIndexes, // where generateRanges will return the non-empty index locations in the tree's final layer
-                        unsigned int ** rangeIndexes, // the index locations that are adjacent to each non-empty index
-                        unsigned int ** rangeSizes, // the number of points in adjacent non-empty indexes for each non-empty index
+                        unsigned int * rangeIndexes, // the index locations that are adjacent to each non-empty index
+                        unsigned int * rangeSizes, // the number of points in adjacent non-empty indexes for each non-empty index
                         unsigned int * numValidRanges, // the numnber of adjacent non-empty indexes for each non-empty index
                         unsigned long long * calcPerAdd, // the number of calculations that will be needed for each non-empty index
                         unsigned int * numPointsInAdd, // the number of points in each non-empty index
                         unsigned int * nonEmptyBins,
-                        unsigned int ** binNumbers,
-                        unsigned int ** tempAdd,
+                        unsigned int * binNumbers,
+                        unsigned int * tempAdd,
                         unsigned int * numSearches){ 
     
     // guiding function for dynamic programing of either the binary searches or tree traversals
@@ -24,7 +25,7 @@ void GPUGenerateRanges(unsigned int ** tree, //points to the tree constructed wi
     unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
 
     // if the tid is greawter than the number of non empty bins then return
-    if(tid > *nonEmptyBins){
+    if(tid >= *nonEmptyBins){
         return;
     }
 
@@ -35,18 +36,18 @@ void GPUGenerateRanges(unsigned int ** tree, //points to the tree constructed wi
 
         //call the GPU binary search for a single thread
         GPUBinarySearch( tid, // the bin to search in bin numebrs
-                        tempAdd[tid], //temporary address for searching
+                        tempAdd, //temporary address for searching
                         binNumbers, //array of bin numbrs 
                         *nonEmptyBins, //size of binNumebrs
-                        numLayers, //number of reference points
-                        tree, //the tree structure
+                        *numLayers, //number of reference points
+                        lastTreeLayer,
                         binAmounts, // the range of bins from a reference points, i.e. range / epsilon
                         addIndexes, // location of nonempty bin in tree
-                        &calcPerAdd[tid], // for keeping track of the number of distance calculations to be performed
-                        &numValidRanges[tid], // the number of adjacent non-empty addresses/indexes
-                        rangeIndexes[tid], // this addresses/index's array to keep track of adjacent indexes
-                        rangeSizes[tid], // the number of points in the indexes in localRangeIndexes
-                        numPointsInAdd[tid], // the number of points in this nonempty address
+                        calcPerAdd, // for keeping track of the number of distance calculations to be performed
+                        numValidRanges, // the number of adjacent non-empty addresses/indexes
+                        rangeIndexes, // this addresses/index's array to keep track of adjacent indexes
+                        rangeSizes, // the number of points in the indexes in localRangeIndexes
+                        numPointsInAdd, // the number of points in this nonempty address
                         *numSearches); // the number of searches that need to be performed, 3^r
 
     #else // do a tree traversal
@@ -54,17 +55,19 @@ void GPUGenerateRanges(unsigned int ** tree, //points to the tree constructed wi
         // call the GPU tree traversal with dynamic programing
 
         //call the GPU tree traversal with a single thread
-        GPUTreeTraversal(tempAdd[tid], // array of int for temp storage for searching
+        GPUTreeTraversal(tid,
+                        tempAdd, // array of int for temp storage for searching
                         tree, // pointer to the tree made with buildTree()
+                        lastTreeLayer,
                         binSizes, // the widths of each layer of the tree measured in bins
                         binAmounts, // the range of bins from a reference points, i.e. range / epsilon
-                        binNumbers[tid], // the address/bin numbers of the current index/address
-                        numLayers, // the number of reference points or layers in the tree, same thing
-                        &calcPerAdd[tid], // for keeping track of the number of distance calculations to be performed
-                        &numValidRanges[tid], // the number of adjacent non-empty addresses/indexes
-                        rangeIndexes[tid], // this addresses/index's array to keep track of adjacent indexes
-                        rangeSizes[tid], // the number of points in the indexes in localRangeIndexes
-                        numPointsInAdd[tid], // the number of points in this nonempty address
+                        binNumbers, // the address/bin numbers of the current index/address
+                        *numLayers, // the number of reference points or layers in the tree, same thing
+                        calcPerAdd, // for keeping track of the number of distance calculations to be performed
+                        numValidRanges, // the number of adjacent non-empty addresses/indexes
+                        rangeIndexes, // this addresses/index's array to keep track of adjacent indexes
+                        rangeSizes, // the number of points in the indexes in localRangeIndexes
+                        numPointsInAdd, // the number of points in this nonempty address
                         *numSearches); // the number of searches that need to be performed, 3^r
 
     #endif
@@ -85,17 +88,17 @@ void GPUGenerateRanges(unsigned int ** tree, //points to the tree constructed wi
 __device__
 void GPUBinarySearch(	unsigned int searchIndex, // the bin to search in bin numbers
                     unsigned int  * tempAdd, //temporary address for searching
-                    unsigned int ** binNumbers, //array of bin numbrs 
+                    unsigned int * binNumbers, //array of bin numbrs 
                     unsigned int nonEmptyBins, //size of binNumebrs
                     unsigned int numLayers, //number of reference points
-                    unsigned int ** tree, //the tree structure
+                    unsigned int * lastTreeLayer, //the last layer of the tree structure
                     unsigned int * binAmounts, // the range of bins from a reference points, i.e. range / epsilon
                     unsigned int * addIndexs, //location of nonempty bins in the tree
                     unsigned long long * numCalcs, // the place to retrun the number of calcs that will be needed
                     unsigned int * numberRanges, // the return location for the number of adjacent non-empty indexes
                     unsigned int * rangeIndexes, // the array of non-empty adjacent index locations
                     unsigned int * rangeSizes, // the number of points in each of the adjacent non-empty indexes
-                    unsigned int numPointsInAdd, //the number of points in the home address/iondex
+                    unsigned int * numPointsInAdd, //the number of points in the home address/iondex
                     unsigned int numSearches){ //the number of searches that are being perfomred for each addresss
 
 
@@ -110,22 +113,22 @@ void GPUBinarySearch(	unsigned int searchIndex, // the bin to search in bin numb
 
         //modify temp add for the search based on our itteration i
         for(unsigned int j = 0; j < numLayers; j++){
-            tempAdd[j] = binNumbers[searchIndex][j] + (i / (int)pow((double)3, (double)j) % 3)-1;
+            tempAdd[searchIndex*numLayers + j] = binNumbers[searchIndex*numLayers + j] + (i / (int)pow((double)3, (double)j) % 3)-1;
         }
         //perform the search and get the index location of the return 
-        long int index = GPUBSearch(tempAdd, binNumbers, nonEmptyBins, numLayers);
+        long int index = GPUBSearch(searchIndex, &tempAdd[searchIndex*numLayers], binNumbers, nonEmptyBins, numLayers);
 
         //check if the index location was non empty
         if(index >= 0){
             unsigned int newIndex = addIndexs[index];
             //store the non empty index location
-            rangeIndexes[localNumRanges] = newIndex;
+            rangeIndexes[searchIndex*numSearches + localNumRanges] = newIndex;
 
             //calcualte the size of the index, i.e. the number of points in the index
-            unsigned long long size = tree[numLayers-1][newIndex+1] - tree[numLayers-1][newIndex]; //may need to +- to index here!!!!!!!!!!!!!!!
+            unsigned long long size = lastTreeLayer[newIndex+1] - lastTreeLayer[newIndex]; //may need to +- to index here!!!!!!!!!!!!!!!
 
             //store that in the sizes array
-            rangeSizes[localNumRanges] = size;
+            rangeSizes[searchIndex*numSearches + localNumRanges] = size;
 
             // keep running total of the sizes for getting the number of calculations latter
             localNumCalcs += size;
@@ -136,19 +139,21 @@ void GPUBinarySearch(	unsigned int searchIndex, // the bin to search in bin numb
     }
 
     // get the index of the home address
-    long int homeIndex = addIndexs[GPUBSearch(binNumbers[searchIndex], binNumbers, nonEmptyBins, numLayers)];
+    long int homeIndex = addIndexs[GPUBSearch(searchIndex, &binNumbers[searchIndex*numLayers], binNumbers, nonEmptyBins, numLayers)];
     // find the number of points in the home address
-    numPointsInAdd = tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex]; //may need to +- one to index here !!!!!!!!!
+    *numPointsInAdd = lastTreeLayer[homeIndex+1] - lastTreeLayer[homeIndex]; //may need to +- one to index here !!!!!!!!!
     // use the running total of points in adjacent addresses and multiply it by the number of points in the home address for number of total calcs
-    *numCalcs = localNumCalcs*numPointsInAdd;
+    *numCalcs = localNumCalcs*(*numPointsInAdd);
     
     *numberRanges = localNumRanges;
 }
 
 
 __device__
-void GPUTreeTraversal(unsigned int * tempAdd, //twmp array for the address being searched
-                    unsigned int ** tree, // the pointer to the tree
+void GPUTreeTraversal(unsigned int tid,
+                    unsigned int * tempAdd, //twmp array for the address being searched
+                    unsigned int * tree, // the pointer to the tree
+                    unsigned int * lastTreeLayer, // pointer to the last layer of the tree
                     unsigned int * binSizes, // the width of the tree for each layer mesuared in number of bins
                     unsigned int * binAmounts, // the number of bins for each reference point
                     unsigned int * binNumbers, // the bin number for the home address
@@ -157,7 +162,7 @@ void GPUTreeTraversal(unsigned int * tempAdd, //twmp array for the address being
                     unsigned int * numberRanges, // the return location for the number of adjacent non-empty indexes
                     unsigned int * rangeIndexes, // the array of non-empty adjacent index locations
                     unsigned int * rangeSizes, // the number of points in each of the adjacent non-empty indexes
-                    unsigned int  numPointsInAdd, //the number of points in the home address/iondex
+                    unsigned int  * numPointsInAdd, //the number of points in the home address/iondex
                     unsigned int numSearches){ //the number of searches that are being perfomred for each addresss
 
     //keep track of the number of calcs that will be needed
@@ -171,24 +176,24 @@ void GPUTreeTraversal(unsigned int * tempAdd, //twmp array for the address being
 
         //modify temp add for the search based on our itteration i
         for(unsigned int j = 0; j < numLayers; j++){
-            tempAdd[j] = binNumbers[j] + (i / (int)pow((double)3, (double)j) % 3)-1;
+            tempAdd[tid*numLayers+j] = binNumbers[tid*numLayers+j] + (i / (int)pow((double)3, (double)j) % 3)-1;
         }
 
         //perform the search and get the index location of the return 
 
-        int index = GPUDepthSearch(tree, binAmounts, numLayers, tempAdd);
+        int index = GPUDepthSearch(tid, tree, binSizes, binAmounts, numLayers, &tempAdd[tid*numLayers]);
 
         //check if the index location was non empty
         if(index >= 0){
             unsigned int newIndex = index;
             //store the non empty index location
-            rangeIndexes[localNumRanges] = newIndex;
+            rangeIndexes[tid*numSearches + localNumRanges] = newIndex;
 
             //calcualte the size of the index, i.e. the number of points in the index
-            unsigned long long size = tree[numLayers-1][newIndex+1] - tree[numLayers-1][newIndex]; //may need to +- to index here!!!!!!!!!!!!!!!
+            unsigned long long size = lastTreeLayer[newIndex+1] - lastTreeLayer[newIndex]; //may need to +- to index here!!!!!!!!!!!!!!!
 
             //store that in the sizes array
-            rangeSizes[localNumRanges] = size;
+            rangeSizes[tid*numSearches+localNumRanges] = size;
 
             // keep running total of the sizes for getting the number of calculations latter
             localNumCalcs += size;
@@ -199,13 +204,13 @@ void GPUTreeTraversal(unsigned int * tempAdd, //twmp array for the address being
     }
 
     // get the index of the home address
-    int homeIndex = GPUDepthSearch(tree, binAmounts, numLayers, binNumbers);
+    int homeIndex = GPUDepthSearch(tid, tree, binSizes, binAmounts, numLayers, &binNumbers[tid*numLayers]);
 
     // find the number of points in the home address
-    numPointsInAdd = tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex]; //may need to +- one to index here !!!!!!!!!
+    *numPointsInAdd = lastTreeLayer[homeIndex+1] - lastTreeLayer[homeIndex]; //may need to +- one to index here !!!!!!!!!
 
     // use the running total of points in adjacent addresses and multiply it by the number of points in the home address for number of total calcs
-    *numCalcs = localNumCalcs*numPointsInAdd;
+    *numCalcs = localNumCalcs*(*numPointsInAdd);
 
     *numberRanges = localNumRanges;
 
@@ -216,37 +221,36 @@ void GPUTreeTraversal(unsigned int * tempAdd, //twmp array for the address being
 
 
 
-
-
-
-
-
 __device__
-int GPUDepthSearch(unsigned int ** tree, //pointer to the tree built with buildTree()
+int GPUDepthSearch(unsigned int tid,
+                    unsigned int * tree, //pointer to the tree built with buildTree()
+                    unsigned int * binSizes,
                     unsigned int * binAmounts, // the number of bins for each reference point, i.e. range/epsilon
                     unsigned int numLayers, //the number of layers in the tree
                     unsigned int * searchBins){ // the bin number that we are searching for
 
     // the offset is used for keeping track of the offset from the begining of each layer to the index
     unsigned int offset = 0;
-
+    unsigned int layerOffset = 0;
     //go through each layer up to the last to determine if the index is non-empty and if it is then find the offset into the next layer
     for(unsigned int i = 0; i < numLayers-1; i++){
 
         //check the current layer at the bin number + offset may or may not need -1 here
-        if (tree[i][offset + searchBins[i]] == 0){
+        if (tree[layerOffset +offset + searchBins[i]] == 0){
             return -2;
         }
 
         // the next offset will be the previous layer index number * the number of bins for the reference point in the next layer
-        offset = (tree[i][searchBins[i]+offset]-1)*binAmounts[i+1];
+        offset = (tree[layerOffset + searchBins[i]+offset]-1)*binAmounts[i+1];
+
+        layerOffset += binSizes[i];
     }
 
     //the index will be the last layers bin number plus the offset for the last layer
-    long int index = searchBins[numLayers-1]+offset;
+    long int index = searchBins[ numLayers-1]+offset;
 
     //if last layer has poionts then return the index value
-    if(tree[numLayers-1][index] < tree[numLayers-1][index+1]){
+    if(tree[layerOffset + index] < tree[layerOffset+index+1]){
         return index;
     }else{
         return -1;
@@ -256,8 +260,9 @@ int GPUDepthSearch(unsigned int ** tree, //pointer to the tree built with buildT
 
 
 __device__
-int GPUBSearch(unsigned int * tempAdd, //address to search for
-            unsigned int ** binNumbers, //array of addresses
+int GPUBSearch(unsigned int tid,
+            unsigned int * tempAdd, //address to search for
+            unsigned int * binNumbers, //array of addresses
             unsigned int nonEmptyBins, //number of bins
             unsigned int numLayers) //number of layers or size of addresses
             {
@@ -274,11 +279,11 @@ int GPUBSearch(unsigned int * tempAdd, //address to search for
         int loc = 0; //compareBins( binNumbers[mid], tempAdd, numLayers);
 
         for(unsigned int i = 0; i < numLayers; i++){
-            if(binNumbers[mid][i] < tempAdd[i]){
+            if(binNumbers[mid*numLayers + i] < tempAdd[ i]){
                 left = mid + 1;
                 break;
             }
-            if(binNumbers[mid][i] > tempAdd[i]){
+            if(binNumbers[mid*numLayers+i] > tempAdd[ i]){
                 right = mid - 1;
                 break;
             }

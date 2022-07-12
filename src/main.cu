@@ -145,7 +145,19 @@ int main(int argc, char*argv[]){
 
     printf("Time to build tree: %f\n", time2-time1);
 
-
+	#if GPUSEARCH
+	struct neighborTable * table = launchGPUSearchKernel(tree,
+														numPoints,
+														pointBinNumbers,
+														numLayers,
+														binSizes,
+														binAmounts,
+														data,
+														dim,
+														epsilon,
+														pointArray);
+	
+	#else
 	// addIndexes holds the return from generating ranges which contains the non-empty index locations in the last layer of tree
     unsigned int * addIndexes;
 
@@ -164,6 +176,7 @@ int main(int argc, char*argv[]){
 
 	// the number of points in each non-empty index
 	unsigned int *numPointsInAdd;
+
 
 	//generate the ranges and perform the searches
     unsigned int nonEmptyBins = generateRanges(tree, //the tree arrays pointer
@@ -254,15 +267,14 @@ int main(int argc, char*argv[]){
 				sumAdds, //the total number of addresses that will be compared to by other addresses for distance calcs
 				linearRangeID, // an array for keeping trackj of starting points in the linear arrays
 				linearRangeIndexes, // a linear version of rangeIndexes
-				linearRangeSizes); // a linear version of rangeSizes
-
-
-
+				linearRangeSizes); // a linear version of 
+				
 	double time4 = omp_get_wtime();
+    printf("Kernel time: %f\n", time4-time3);
 
-	printf("Kernel time: %f\n", time4-time3);
+	#endif
 
-	printf("Total Time: %f\n",time4-time1); //note that this does not include time to read in the data from disk to main memory
+	printf("Total Time: %f\n",omp_get_wtime()-time1); //note that this does not include time to read in the data from disk to main memory
 
 
 
@@ -275,32 +287,32 @@ int main(int argc, char*argv[]){
 // just freeing memory here
 //////////////////////////////////////////////////////////////////////
 
-	for(unsigned int i = 0; i < nonEmptyBins; i++){
-		free(rangeIndexes[i]);
-		free(rangeSizes[i]);
-	}
-	for(unsigned int i = 0; i < numLayers; i++){
-		free(tree[i]);
-	}
-	free(tree);
-	for(unsigned int i = 0; i < numPoints; i++){
-		free(pointBinNumbers[i]);
-	}
+	// for(unsigned int i = 0; i < nonEmptyBins; i++){
+	// 	free(rangeIndexes[i]);
+	// 	free(rangeSizes[i]);
+	// }
+	// for(unsigned int i = 0; i < numLayers; i++){
+	// 	free(tree[i]);
+	// }
+	// free(tree);
+	// for(unsigned int i = 0; i < numPoints; i++){
+	// 	free(pointBinNumbers[i]);
+	// }
 
-	free(pointBinNumbers);
-	free(numValidRanges);
-	free(calcPerAdd);
-	free(addIndexes);
-	free(rangeIndexes);
-	free(rangeSizes);
-	free(A);
-	free(binSizes);
-	free(binAmounts);
-	free(pointArray);
-	free(data);
-	free(dimensionOrder);
-	free(dimOrderedData);
-	free(addIndexRange);
+	// free(pointBinNumbers);
+	// free(numValidRanges);
+	// free(calcPerAdd);
+	// free(addIndexes);
+	// free(rangeIndexes);
+	// free(rangeSizes);
+	// free(A);
+	// free(binSizes);
+	// free(binAmounts);
+	// free(pointArray);
+	// free(data);
+	// free(dimensionOrder);
+	// free(dimOrderedData);
+	// free(addIndexRange);
 
     return 1;
 

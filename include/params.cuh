@@ -18,11 +18,12 @@
 
 #define DATANORM false
 #define HOST false
-#define BINARYSEARCH false
+#define BINARYSEARCH true
+#define GPUSEARCH false
 
-const unsigned int MAXRP = 7;
+const unsigned int MAXRP = 6;
 
-const unsigned int MINRP = 6;
+const unsigned int MINRP = 5;
 
 
 const unsigned int NUMSTREAMS = 2;
@@ -33,14 +34,14 @@ const int RANDOM = false;
 const unsigned int TEST_RP = 100; 
 const double SAMPLE_PER = 0.01;
 
-const unsigned int CALCS_PER_THREAD = 100000;
+const unsigned int CALCS_PER_THREAD = 200000;
 
 const unsigned int MAX_BIN = 1000000; 
  
 
 const double LAYER_DIFF = 1.0;
 
-const unsigned int RPPERLAYER = 10;
+const unsigned int RPPERLAYER = 32;
 
 const int RAND = false;
 const unsigned long long initalPinnedResultsSize = 10000;
