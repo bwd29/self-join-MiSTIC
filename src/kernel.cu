@@ -363,18 +363,29 @@ void distanceCalculationsKernel(unsigned int *numPoints,
         return;
     }
 
-    unsigned int currentAdd = addAssign[tid]; 
-    unsigned int threadOffset = threadOffsets[tid];
-    unsigned int startingRangeID = linearRangeID[currentAdd];
+    // unsigned int currentAdd = addAssign[tid]; 
+    // unsigned int threadOffset = threadOffsets[tid];
+    // unsigned int startingRangeID = linearRangeID[currentAdd];
 
-    for(unsigned int i = 0; i < numValidRanges[currentAdd]; i++){
-        unsigned long long int numCalcs = (unsigned long long int)rangeSizes[startingRangeID + i] * numPointsInAdd[currentAdd];
-        for(unsigned long long int j = threadOffset; j < numCalcs; j += numThreadsPerAddress[currentAdd]){
+    for(unsigned int i = 0; i < numValidRanges[addAssign[tid]]; i++){
+        // unsigned long long int numCalcs = (unsigned long long int)rangeSizes[startingRangeID + i] * numPointsInAdd[currentAdd];
+        for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)rangeSizes[linearRangeID[addAssign[tid]] + i] * numPointsInAdd[addAssign[tid]]; j += numThreadsPerAddress[addAssign[tid]]){
 
-            unsigned int p1 = addIndexRange[currentAdd] + j / rangeSizes[startingRangeID + i];
-            unsigned int p2 = rangeIndexes[startingRangeID + i] + j % rangeSizes[startingRangeID+ i];
+            unsigned int p1 = addIndexRange[addAssign[tid]] + j / rangeSizes[linearRangeID[addAssign[tid]] + i];
+            unsigned int p2 = rangeIndexes[linearRangeID[addAssign[tid]] + i] + j % rangeSizes[linearRangeID[addAssign[tid]]+ i];
+
+            // double sum = 0;
+            // for(unsigned int i = 0; i < *dim; i++){
+            //     #if DATANORM
+            //     sum += pow(data[i*(*numPoints) + p1] - data[i*(*numPoints) + p2], 2);
+            //     #else
+            //     sum += pow(data[p1*(*dim)+i]-data[p2*(*dim)+i],2);
+            //     #endif
+            //     if(sum > *epsilon2) break;
+            // }
 
             if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
+            // if (sum <= *epsilon2){
                 //  store point
                 unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
                 point_a[index] = p1; //stores the first point Number
@@ -471,6 +482,7 @@ inline bool distanceCheck(double epsilon2, unsigned int dim, double * data, unsi
         #endif
         if(sum > epsilon2) return false;
     }
+
 
     return true;
 }

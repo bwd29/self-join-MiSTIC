@@ -12,8 +12,9 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 						unsigned int * binAmounts){ // the range / epsilon for that rp of that layer of the tree
 
 	unsigned int maxRP = MAXRP; // setting the max number of reference points
-	unsigned int numRPperLayer = RPPERLAYER; // setting how many reference points are checked for each layer
+	unsigned int numRPperLayer = RPPERLAYER; //could use log2(numPoints) // setting how many reference points are checked for each layer
 
+	printf("Selecting %d Rp from a pool of %d\n", numRPperLayer, (int)sqrt(numPoints));
 	//an array to hold the bins of the tree that will be passed back to the calling function in rbins
 	unsigned int ** bins = (unsigned int **)malloc(sizeof(unsigned int*)*maxRP);
 
@@ -436,6 +437,13 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 		}
 	}
 
+
+
+	bool binSearch = false;
+	if(log2(nonEmptyBins) < numLayers){
+		binSearch = true;
+	}
+
 	//go through each non empty bin and do all the needed searching and generate the arrays that are needed for the calculations kernels
 	#pragma omp parallel for
     for(unsigned int i = 0; i < nonEmptyBins; i++){
@@ -452,39 +460,39 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 		// the number of points in this non empty index
 		unsigned int localNumPointsInAdd;
 
-		#if BINARYSEARCH
+		
+		if(binSearch){
+			//set up array to binary search on
+			binarySearch( i, // the bin to search in bin numebrs
+				tempAdd, //temporary address for searching
+				binNumbers, //array of bin numbrs 
+				nonEmptyBins, //size of binNumebrs
+				numLayers, //number of reference points
+				tree, //the tree structure
+				binAmounts, // the range of bins from a reference points, i.e. range / epsilon
+				tempAddIndexes, // location of nonempty bin in tree
+				&numCalcs, // for keeping track of the number of distance calculations to be performed
+				&numRanges, // the number of adjacent non-empty addresses/indexes
+				&localRangeIndexes[i], // this addresses/index's array to keep track of adjacent indexes
+				&localRangeSizes[i], // the number of points in the indexes in localRangeIndexes
+				&localNumPointsInAdd, // the number of points in this nonempty address
+				numSearches); // the number of searches that need to be performed, 3^r
 
-		//set up array to binary search on
-		binarySearch( i, // the bin to search in bin numebrs
-					 tempAdd, //temporary address for searching
-					 binNumbers, //array of bin numbrs 
-					 nonEmptyBins, //size of binNumebrs
-					 numLayers, //number of reference points
-					 tree, //the tree structure
-					 binAmounts, // the range of bins from a reference points, i.e. range / epsilon
-					 tempAddIndexes, // location of nonempty bin in tree
-					 &numCalcs, // for keeping track of the number of distance calculations to be performed
-					 &numRanges, // the number of adjacent non-empty addresses/indexes
-					 &localRangeIndexes[i], // this addresses/index's array to keep track of adjacent indexes
-					 &localRangeSizes[i], // the number of points in the indexes in localRangeIndexes
-					 &localNumPointsInAdd, // the number of points in this nonempty address
-					 numSearches); // the number of searches that need to be performed, 3^r
+		} else {
+			treeTraversal(tempAdd, // array of int for temp storage for searching
+				tree, // pointer to the tree made with buildTree()
+				binSizes, // the widths of each layer of the tree measured in bins
+				binAmounts, // the range of bins from a reference points, i.e. range / epsilon
+				binNumbers[i], // the address/bin numbers of the current index/address
+				numLayers, // the number of reference points or layers in the tree, same thing
+				&numCalcs, // for keeping track of the number of distance calculations to be performed
+				&numRanges, // the number of adjacent non-empty addresses/indexes
+				&localRangeIndexes[i], // this addresses/index's array to keep track of adjacent indexes
+				&localRangeSizes[i], // the number of points in the indexes in localRangeIndexes
+				&localNumPointsInAdd, // the number of points in this nonempty address
+				numSearches); // the number of searches that need to be performed, 3^r
 
-		#else
-		treeTraversal(tempAdd, // array of int for temp storage for searching
-					  tree, // pointer to the tree made with buildTree()
-					  binSizes, // the widths of each layer of the tree measured in bins
-					  binAmounts, // the range of bins from a reference points, i.e. range / epsilon
-					  binNumbers[i], // the address/bin numbers of the current index/address
-					  numLayers, // the number of reference points or layers in the tree, same thing
-					  &numCalcs, // for keeping track of the number of distance calculations to be performed
-					  &numRanges, // the number of adjacent non-empty addresses/indexes
-					  &localRangeIndexes[i], // this addresses/index's array to keep track of adjacent indexes
-					  &localRangeSizes[i], // the number of points in the indexes in localRangeIndexes
-					  &localNumPointsInAdd, // the number of points in this nonempty address
-					  numSearches); // the number of searches that need to be performed, 3^r
-
-		#endif
+		}
 
 		// storing variables into arrays that coorespond to the non-empty indexes/addresses
 		tempCalcPerAdd[i] = numCalcs;

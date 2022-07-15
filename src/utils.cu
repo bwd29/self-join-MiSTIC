@@ -54,28 +54,69 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 
 	unsigned int sample_size = numPoints*SAMPLE_PER;
 
-	// double * testRPArray = new double[TEST_RP*dim];
-	double * testRPArray = (double*)malloc(sizeof(double)*TEST_RP*dim);
+	unsigned int test_rp = sqrt(numPoints);
 
-	//randomly place the rps
-	// #pragma omp parallel for
-	for(unsigned int i = 0; i < TEST_RP*dim; i++){
-		testRPArray[i] = (double)rand()/(double)RAND_MAX;
+
+	// double * testRPArray = new double[TEST_RP*dim];
+	double * testRPArray = (double*)malloc(sizeof(double)*test_rp*dim);
+
+	if(BOXED_RP){
+
+		//first rp is the max corner
+		for(unsigned int i = 0; i < dim; i++)
+		{
+			testRPArray[i] = 0;
+		}
+		for(int i = 0; i < numPoints; i++)
+		{
+			for(int j = 0; j < dim; j++)
+			{
+				if(testRPArray[j] < data[i*dim+j])
+				{
+					testRPArray[j] = data[i*dim+j];
+				}
+			}
+		}
+
+		for(int i = 1; i < test_rp; i++) // the first rp is set
+		{
+			
+			unsigned int step = pow(2,dim) / test_rp;
+			for(int j = 0; j < dim; j++)
+			{
+				testRPArray[i*dim + j] = (i*step / (int)pow(2, j) % 2)*testRPArray[j];
+					// RP[i*dim+i*step + j] = RP[j+i*step];
+			}
+
+		}
+
+
+
+		
+	}else{
+		//randomly place the rps
+		// #pragma omp parallel for
+		for(unsigned int i = 0; i < test_rp*dim; i++){
+			testRPArray[i] = (double)rand()/(double)RAND_MAX;
+		}
 	}
+
+
+
 
 	//get the distances
 	// double *distmat = new double[TEST_RP*sample_size];
-	double* distmat = (double*)malloc(sizeof(double)*TEST_RP*sample_size);
+	double* distmat = (double*)malloc(sizeof(double)*test_rp*sample_size);
 
-	// #pragma omp parallel for
+	#pragma omp parallel for
 	for(unsigned int i = 0; i < sample_size; i++){
-		for(unsigned int j = 0; j < TEST_RP; j++){
-			distmat[i*TEST_RP+j] = euclideanDistance(&data[i*dim], dim, &testRPArray[j*dim]);
+		for(unsigned int j = 0; j < test_rp; j++){
+			distmat[i*test_rp+j] = euclideanDistance(&data[i*dim], dim, &testRPArray[j*dim]);
 		}
 	}
 
 	//get std dev of dist mat
-	unsigned int * order = stddev(distmat, TEST_RP, sample_size);
+	unsigned int * order = stddev(distmat, test_rp, sample_size);
 
 	//get first numRP rps
 	double * RPArray = (double *)malloc(sizeof(double)*numRP*dim);

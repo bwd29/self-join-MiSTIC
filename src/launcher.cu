@@ -838,12 +838,22 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
     unsigned int * linearRangeSizes){ // a linear version of rangeSizes
 
 
-
+    // double launchstart = omp_get_wtime();
     // store the squared value of epsilon because thats all that is needed for distance calcs
     double epsilon2 = epsilon*epsilon;
 
+    unsigned long long threadsPerKernel = BLOCK_SIZE*KERNEL_BLOCKS;
+    unsigned long long desiredNumBatches = 10;
     //set a value for the number of calculations made by each thread per kernel invocation
-    unsigned long long calcsPerThread = CALCS_PER_THREAD; 
+    unsigned long long calcsPerThread = sumCalcs/(desiredNumBatches*threadsPerKernel); 
+
+    if (calcsPerThread > MAX_CALCS_PER_THREAD){
+        calcsPerThread = MAX_CALCS_PER_THREAD;
+    }
+
+    if(calcsPerThread < MIN_CALCS_PER_THREAD){
+        calcsPerThread = MIN_CALCS_PER_THREAD;
+    }
 
     //the number of thrreads assigned to each non-empty address
     unsigned long long * numThreadsPerAddress = (unsigned long long *)malloc(sizeof(unsigned long long )*nonEmptyBins);
@@ -884,6 +894,8 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
 
     //always need at least one batch
     numBatches++;
+
+    printf("Total Number of Batches: %d , with calcs per threads: %llu\n", numBatches, calcsPerThread);
 
     //keeping track of the number of calculations for each batch
     unsigned long long * numCalcsPerBatch = (unsigned long long*)calloc(numBatches,sizeof(unsigned long long));
@@ -981,6 +993,9 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
         batchFirstAdd += numAddPerBatch[i];
     }
 
+    // double launchend = omp_get_wtime();
+
+    // printf("Launch setup time: %f\n", launchend - launchstart);
     ////////////////////////////////////////////////
     //     Perfoming Data Transfers to Device     //
     ////////////////////////////////////////////////
@@ -1160,9 +1175,13 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
     }
 
     unsigned long long bufferSizes[NUMSTREAMS];
+    // double totalKernelTime[NUMSTREAMS];
     for(unsigned int i = 0; i < NUMSTREAMS; i++){
         bufferSizes[i] = initalPinnedResultsSize;
+        // totalKernelTime[NUMSTREAMS] = 0;
     }
+
+    // printf("Time to transfer: %f\n", omp_get_wtime()-launchend);
 
     #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic)
     for(unsigned int i = 0; i < numBatches; i++){
@@ -1171,6 +1190,8 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
         unsigned int totalBlocks = ceil(numThreadsPerBatch[i]*1.0 / BLOCK_SIZE);
 
         // printf("BatchNumber: %d/%d, Calcs: %llu, addresses: %d, threads: %u, blocks:%d \n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i], totalBlocks);
+
+        // double kernelStartTime = omp_get_wtime();
 
         //launch distance kernel
         #if HOST
@@ -1215,6 +1236,8 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
                                                                                 d_pointB[tid]);
 
             cudaStreamSynchronize(stream[tid]);
+
+            // totalKernelTime[tid] += omp_get_wtime() - kernelStartTime;
 
             assert(cudaSuccess ==  cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid]));
             cudaStreamSynchronize(stream[tid]);
@@ -1301,6 +1324,11 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
     #else
         printf("Total results Set Size: %llu \n", totals);
     #endif
+
+    // for(unsigned int i = 0; i < NUMSTREAMS; i++){
+    //     printf("Total time in kernel or stream %d: %f\n", i, totalKernelTime[i]);
+    // }
+    
 
 
     free(numCalcsPerBatch);

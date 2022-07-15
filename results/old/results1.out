@@ -1,0 +1,2373 @@
+rm -f build/main build/*.o
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/tree.o build/utils.o
+256x1024 launches, 100 x 0.01 sampling, 32 per layer, 6 rps, non-rand rp, 100,000 calcs per thread
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+
+Time to read in file: 0.303253
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.007000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 76752
+Tree Check: 515345
+Time to build tree: 2.077367
+Number non-empty bins: 5382
+Number of calcs: 148381418725
+Number Address for calcs: 854358
+Tree BINARY search time: 0.028611
+BatchNumber: 1/2, Calcs: 100762924415, addresses: 5285, threads: 1011998, blocks:989 
+BatchNumber: 2/2, Calcs: 47618494310, addresses: 97, threads: 476232, blocks:466 
+Batch 0 Results: 400169
+Batch 1 Results: 65515144
+Total results Set Size: 65915313 
+Kernel time: 5.319935
+Total Time: 7.425919
+
+Time to read in file: 0.096420
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.007525 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 61614
+Tree Check: 515345
+Time to build tree: 1.824579
+Number non-empty bins: 4867
+Number of calcs: 175951354655
+Number Address for calcs: 797255
+Tree BINARY search time: 0.036120
+BatchNumber: 1/3, Calcs: 65484970227, addresses: 4320, threads: 658483, blocks:644 
+BatchNumber: 2/3, Calcs: 100115096686, addresses: 354, threads: 1001396, blocks:978 
+Batch 0 Results: 244833
+Batch 1 Results: 15976575
+BatchNumber: 3/3, Calcs: 10351287742, addresses: 193, threads: 103675, blocks:102 
+Batch 2 Results: 105162691
+Total results Set Size: 121384099 
+Kernel time: 7.133210
+Total Time: 8.993913
+
+Time to read in file: 0.086399
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.008050 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 59940
+Tree Check: 515345
+Time to build tree: 2.212608
+Number non-empty bins: 4034
+Number of calcs: 171959041759
+Number Address for calcs: 592884
+Tree BINARY search time: 0.020336
+BatchNumber: 1/2, Calcs: 99251130202, addresses: 3737, threads: 995641, blocks:973 
+BatchNumber: 2/2, Calcs: 72707911557, addresses: 297, threads: 727290, blocks:711 
+Batch 1 Results: 207503129
+Batch 0 Results: 429004
+Total results Set Size: 207932133 
+Kernel time: 7.390531
+Total Time: 9.623482
+
+Time to read in file: 0.086664
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.008575 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 67828
+Tree Check: 515345
+Time to build tree: 2.237012
+Number non-empty bins: 4122
+Number of calcs: 177552628289
+Number Address for calcs: 612804
+Tree BINARY search time: 0.020370
+BatchNumber: 1/2, Calcs: 100570274767, addresses: 3948, threads: 1008965, blocks:986 
+BatchNumber: 2/2, Calcs: 76982353522, addresses: 174, threads: 769955, blocks:752 
+Batch 1 Results: 335028962
+Batch 0 Results: 478825
+Total results Set Size: 335507787 
+Kernel time: 8.013102
+Total Time: 10.270493
+
+Time to read in file: 0.175516
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Distance Threshold: 0.009100 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 28710
+Tree Check: 515345
+Time to build tree: 2.151524
+Number non-empty bins: 2819
+Number of calcs: 192364128357
+Number Address for calcs: 378731
+Tree BINARY search time: 0.011884
+BatchNumber: 1/3, Calcs: 84302258017, addresses: 2498, threads: 845042, blocks:826 
+BatchNumber: 2/3, Calcs: 83943290135, addresses: 203, threads: 839570, blocks:820 
+Batch 1 Results: 50764182
+Batch 0 Results: 1487244
+BatchNumber: 3/3, Calcs: 24118580205, addresses: 118, threads: 241292, blocks:236 
+Batch 2 Results: 462676849
+Total results Set Size: 514928275 
+Kernel time: 9.432223
+Total Time: 11.595638
+Census____________________________________________________________
+Census____________________________________________________________
+Census____________________________________________________________
+
+Time to read in file: 1.118949
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Concurent Streams: 2
+Distance Threshold: 0.001000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 184673412
+Tree Check: 2458285
+Time to build tree: 10.371441
+Number non-empty bins: 1492253
+Number of calcs: 3099632743
+Number Address for calcs: 177693399
+Tree BINARY search time: 14.655513
+BatchNumber: 1/2, Calcs: 528389617, addresses: 1048445, threads: 1048575, blocks:1024 
+BatchNumber: 2/2, Calcs: 2571243126, addresses: 443808, threads: 460944, blocks:451 
+Batch 0 Results: 1470643
+Batch 1 Results: 54179924
+Total results Set Size: 55650567 
+Kernel time: 2.214453
+Total Time: 27.241414
+
+Time to read in file: 0.980709
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Concurent Streams: 2
+Distance Threshold: 0.003250 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 3904158
+Tree Check: 2458285
+Time to build tree: 7.369565
+Number non-empty bins: 157284
+Number of calcs: 99517626129
+Number Address for calcs: 38787880
+Tree BINARY search time: 0.687976
+BatchNumber: 1/2, Calcs: 92537715673, addresses: 146885, threads: 1048502, blocks:1024 
+BatchNumber: 2/2, Calcs: 6979910456, addresses: 10399, threads: 78437, blocks:77 
+Batch 1 Results: 695876
+Batch 0 Results: 54954691
+Total results Set Size: 55650567 
+Kernel time: 5.393792
+Total Time: 13.451339
+
+Time to read in file: 0.300651
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Concurent Streams: 2
+Distance Threshold: 0.005500 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 430502
+Tree Check: 2458285
+Time to build tree: 7.548858
+Number non-empty bins: 27837
+Number of calcs: 536202601989
+Number Address for calcs: 5717763
+Tree BINARY search time: 0.171819
+BatchNumber: 1/6, Calcs: 102842034788, addresses: 13310, threads: 1037412, blocks:1014 
+BatchNumber: 2/6, Calcs: 104797270311, addresses: 319, threads: 1048159, blocks:1024 
+Batch 0 Results: 835543
+Batch 1 Results: 396451
+BatchNumber: 3/6, Calcs: 104715951178, addresses: 2255, threads: 1048553, blocks:1024 
+BatchNumber: 4/6, Calcs: 104785828440, addresses: 397, threads: 1048111, blocks:1024 
+Batch 2 Results: 1288722
+Batch 3 Results: 1034251
+BatchNumber: 5/6, Calcs: 103521028718, addresses: 7575, threads: 1040725, blocks:1017 
+BatchNumber: 6/6, Calcs: 15540488554, addresses: 3981, threads: 158683, blocks:155 
+Batch 4 Results: 186351560
+Batch 5 Results: 121181160
+Total results Set Size: 311087687 
+Kernel time: 21.225177
+Total Time: 28.945861
+
+Time to read in file: 0.933641
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Concurent Streams: 2
+Distance Threshold: 0.007750 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 96309
+Tree Check: 2458285
+Time to build tree: 7.502333
+Number non-empty bins: 8106
+Number of calcs: 1331746513071
+Number Address for calcs: 1330570
+Tree BINARY search time: 0.030114
+BatchNumber: 1/15, Calcs: 104405000029, addresses: 3589, threads: 1046624, blocks:1023 
+BatchNumber: 2/15, Calcs: 104484917802, addresses: 1579, threads: 1045815, blocks:1022 
+Batch 0 Results: 707520221
+Batch 1 Results: 167620196
+BatchNumber: 3/15, Calcs: 99923919979, addresses: 709, threads: 999599, blocks:977 
+BatchNumber: 4/15, Calcs: 96018581049, addresses: 77, threads: 960226, blocks:938 
+Batch 2 Results: 233384
+Batch 3 Results: 164272
+BatchNumber: 5/15, Calcs: 76094559646, addresses: 6, threads: 760949, blocks:744 
+BatchNumber: 6/15, Calcs: 98275955415, addresses: 151, threads: 982833, blocks:960 
+Batch 4 Results: 126320
+Batch 5 Results: 190997
+BatchNumber: 7/15, Calcs: 74771607634, addresses: 65, threads: 747750, blocks:731 
+BatchNumber: 8/15, Calcs: 57211377472, addresses: 16, threads: 572123, blocks:559 
+Batch 6 Results: 123329
+Batch 7 Results: 116082
+BatchNumber: 9/15, Calcs: 103230734881, addresses: 475, threads: 1032555, blocks:1009 
+BatchNumber: 10/15, Calcs: 78448421532, addresses: 211, threads: 784591, blocks:767 
+Batch 8 Results: 303145
+Batch 9 Results: 379946
+BatchNumber: 11/15, Calcs: 96300008919, addresses: 17, threads: 963008, blocks:941 
+BatchNumber: 12/15, Calcs: 101578374619, addresses: 49, threads: 1015811, blocks:993 
+Batch 10 Results: 456733
+Batch 11 Results: 860399
+BatchNumber: 13/15, Calcs: 77929405263, addresses: 22, threads: 779304, blocks:762 
+BatchNumber: 14/15, Calcs: 89929548206, addresses: 432, threads: 899521, blocks:879 
+Batch 12 Results: 602569
+Batch 13 Results: 4049922
+BatchNumber: 15/15, Calcs: 73144100625, addresses: 708, threads: 731860, blocks:715 
+Batch 14 Results: 14963442
+Total results Set Size: 897710957 
+Kernel time: 55.144000
+Total Time: 62.676457
+Wave __________________________________________________
+Wave __________________________________________________
+Wave __________________________________________________
+
+Time to read in file: 0.098894
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.002000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 1052376
+Tree Check: 287999
+Time to build tree: 0.786806
+Number non-empty bins: 28158
+Number of calcs: 10501432791
+Number Address for calcs: 6661170
+Tree BINARY search time: 0.185195
+BatchNumber: 1/1, Calcs: 10501432791, addresses: 28158, threads: 131068, blocks:128 
+Batch 0 Results: 11651957
+Total results Set Size: 11651957 
+Kernel time: 0.657575
+Total Time: 1.629581
+
+Time to read in file: 0.032360
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.003250 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 185328
+Tree Check: 287999
+Time to build tree: 0.949447
+Number non-empty bins: 8017
+Number of calcs: 20096585581
+Number Address for calcs: 1858143
+Tree BINARY search time: 0.039052
+BatchNumber: 1/1, Calcs: 20096585581, addresses: 8017, threads: 207432, blocks:203 
+Batch 0 Results: 27340089
+Total results Set Size: 27340089 
+Kernel time: 0.733348
+Total Time: 1.721852
+
+Time to read in file: 0.028458
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.004500 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 46576
+Tree Check: 287999
+Time to build tree: 0.854406
+Number non-empty bins: 2422
+Number of calcs: 27835386607
+Number Address for calcs: 417664
+Tree BINARY search time: 0.010879
+BatchNumber: 1/1, Calcs: 27835386607, addresses: 2422, threads: 280063, blocks:274 
+Batch 0 Results: 47254879
+Total results Set Size: 47254879 
+Kernel time: 0.930610
+Total Time: 1.795902
+
+Time to read in file: 0.028154
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.005750 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 12725
+Tree Check: 287999
+Time to build tree: 0.946864
+Number non-empty bins: 973
+Number of calcs: 38971093875
+Number Address for calcs: 128777
+Tree BINARY search time: 0.003335
+BatchNumber: 1/1, Calcs: 38971093875, addresses: 973, threads: 390315, blocks:382 
+Batch 0 Results: 93070851
+Total results Set Size: 93070851 
+Kernel time: 1.379552
+Total Time: 2.329756
+
+Time to read in file: 0.028442
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Distance Threshold: 0.007000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 5940
+Tree Check: 287999
+Time to build tree: 0.857499
+Number non-empty bins: 489
+Number of calcs: 44380467507
+Number Address for calcs: 51141
+Tree BINARY search time: 0.002251
+BatchNumber: 1/1, Calcs: 44380467507, addresses: 489, threads: 444083, blocks:434 
+Batch 0 Results: 290127035
+Total results Set Size: 290127035 
+Kernel time: 2.293843
+Total Time: 3.153600
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+
+Time to read in file: 0.606773
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.010000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 5821589
+Tree Check: 5000000
+Time to build tree: 6.575889
+Number non-empty bins: 328064
+Number of calcs: 333719497200
+Number Address for calcs: 109203690
+Tree BINARY search time: 2.672485
+BatchNumber: 1/4, Calcs: 91367795344, addresses: 157951, threads: 1048177, blocks:1024 
+BatchNumber: 2/4, Calcs: 101265772438, addresses: 46194, threads: 1048363, blocks:1024 
+Batch 0 Results: 10259346
+Batch 1 Results: 8947359
+BatchNumber: 3/4, Calcs: 99749461163, addresses: 62794, threads: 1048574, blocks:1024 
+BatchNumber: 4/4, Calcs: 41336468255, addresses: 61125, threads: 465875, blocks:455 
+Batch 2 Results: 8098551
+Batch 3 Results: 3538930
+Total results Set Size: 30844186 
+Kernel time: 15.513949
+Total Time: 24.762330
+
+Time to read in file: 0.505712
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.012750 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 1674641
+Tree Check: 5000000
+Time to build tree: 6.206528
+Number non-empty bins: 96826
+Number of calcs: 1429328041938
+Number Address for calcs: 28397628
+Tree BINARY search time: 0.905936
+BatchNumber: 1/14, Calcs: 102438205840, addresses: 28928, threads: 1048280, blocks:1024 
+BatchNumber: 2/14, Calcs: 102852432764, addresses: 6761, threads: 1033622, blocks:1010 
+Batch 1 Results: 12312391
+Batch 0 Results: 17183718
+BatchNumber: 3/14, Calcs: 102657027941, addresses: 3683, threads: 1029373, blocks:1006 
+BatchNumber: 4/14, Calcs: 103593260016, addresses: 12250, threads: 1045690, blocks:1022 
+Batch 2 Results: 10803578
+Batch 3 Results: 11103130
+BatchNumber: 5/14, Calcs: 104777275842, addresses: 1163, threads: 1048555, blocks:1024 
+BatchNumber: 6/14, Calcs: 104111412932, addresses: 2992, threads: 1043397, blocks:1019 
+Batch 4 Results: 10647021
+Batch 5 Results: 8790692
+BatchNumber: 7/14, Calcs: 104581578904, addresses: 3404, threads: 1048368, blocks:1024 
+BatchNumber: 8/14, Calcs: 103884482120, addresses: 10564, threads: 1047179, blocks:1023 
+Batch 6 Results: 10103597
+Batch 7 Results: 9967540
+BatchNumber: 9/14, Calcs: 104334467307, addresses: 654, threads: 1043766, blocks:1020 
+BatchNumber: 10/14, Calcs: 104593392162, addresses: 2941, threads: 1048147, blocks:1024 
+Batch 8 Results: 9749355
+Batch 9 Results: 9421099
+BatchNumber: 11/14, Calcs: 104435443497, addresses: 3104, threads: 1046633, blocks:1023 
+BatchNumber: 12/14, Calcs: 103092690156, addresses: 7679, threads: 1036931, blocks:1013 
+Batch 10 Results: 11559191
+Batch 11 Results: 10966492
+BatchNumber: 13/14, Calcs: 104041118945, addresses: 2600, threads: 1042270, blocks:1018 
+BatchNumber: 14/14, Calcs: 79935253512, addresses: 10103, threads: 807042, blocks:789 
+Batch 12 Results: 13391319
+Batch 13 Results: 16648005
+Total results Set Size: 162647128 
+Kernel time: 47.435613
+Total Time: 54.548083
+
+Time to read in file: 0.490415
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.015500 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 602010
+Tree Check: 5000000
+Time to build tree: 6.035380
+Number non-empty bins: 41773
+Number of calcs: 3351372342840
+Number Address for calcs: 11132695
+Tree BINARY search time: 0.216444
+BatchNumber: 1/33, Calcs: 102346298474, addresses: 28232, threads: 1046871, blocks:1023 
+BatchNumber: 2/33, Calcs: 104475597531, addresses: 3722, threads: 1047260, blocks:1023 
+Batch 1 Results: 18560535
+Batch 0 Results: 14711733
+BatchNumber: 3/33, Calcs: 104339570830, addresses: 1101, threads: 1044077, blocks:1020 
+BatchNumber: 4/33, Calcs: 101254910545, addresses: 90, threads: 1012601, blocks:989 
+Batch 2 Results: 18271998
+Batch 3 Results: 17392950
+BatchNumber: 5/33, Calcs: 103388305122, addresses: 298, threads: 1034056, blocks:1010 
+BatchNumber: 6/33, Calcs: 103443039342, addresses: 71, threads: 1034469, blocks:1011 
+Batch 4 Results: 16909323
+Batch 5 Results: 13211556
+BatchNumber: 7/33, Calcs: 104203713266, addresses: 891, threads: 1042585, blocks:1019 
+BatchNumber: 8/33, Calcs: 102190762562, addresses: 2193, threads: 1023253, blocks:1000 
+Batch 6 Results: 15219693
+Batch 7 Results: 13235388
+BatchNumber: 9/33, Calcs: 104637358687, addresses: 75, threads: 1046415, blocks:1022 
+BatchNumber: 10/33, Calcs: 101655525964, addresses: 236, threads: 1016689, blocks:993 
+Batch 8 Results: 20197827
+Batch 9 Results: 17834413
+BatchNumber: 11/33, Calcs: 102391940321, addresses: 42, threads: 1023943, blocks:1000 
+BatchNumber: 12/33, Calcs: 102341424629, addresses: 46, threads: 1023435, blocks:1000 
+Batch 10 Results: 15083275
+Batch 11 Results: 18616226
+BatchNumber: 13/33, Calcs: 104711973994, addresses: 449, threads: 1047384, blocks:1023 
+BatchNumber: 14/33, Calcs: 99117808573, addresses: 324, threads: 991362, blocks:969 
+Batch 12 Results: 15302777
+Batch 13 Results: 27070376
+BatchNumber: 15/33, Calcs: 81464031470, addresses: 9, threads: 814646, blocks:796 
+BatchNumber: 16/33, Calcs: 103617370795, addresses: 25, threads: 1036189, blocks:1012 
+Batch 14 Results: 14306633
+Batch 15 Results: 19984299
+BatchNumber: 17/33, Calcs: 89652909010, addresses: 34, threads: 896544, blocks:876 
+BatchNumber: 18/33, Calcs: 104711700853, addresses: 167, threads: 1047212, blocks:1023 
+Batch 16 Results: 17291247
+Batch 17 Results: 14678156
+BatchNumber: 19/33, Calcs: 101310041865, addresses: 39, threads: 1013121, blocks:990 
+BatchNumber: 20/33, Calcs: 103621817655, addresses: 19, threads: 1036229, blocks:1012 
+Batch 18 Results: 16113470
+Batch 19 Results: 14770673
+BatchNumber: 21/33, Calcs: 94431974882, addresses: 38, threads: 944343, blocks:923 
+BatchNumber: 22/33, Calcs: 103291801323, addresses: 461, threads: 1033173, blocks:1009 
+Batch 20 Results: 18807599
+Batch 21 Results: 17724099
+BatchNumber: 23/33, Calcs: 104820811917, addresses: 613, threads: 1048561, blocks:1024 
+BatchNumber: 24/33, Calcs: 95683924938, addresses: 504, threads: 957127, blocks:935 
+Batch 22 Results: 20146028
+Batch 23 Results: 22002352
+BatchNumber: 25/33, Calcs: 103580883811, addresses: 54, threads: 1035839, blocks:1012 
+BatchNumber: 26/33, Calcs: 103403585832, addresses: 183, threads: 1034136, blocks:1010 
+Batch 24 Results: 22652744
+Batch 25 Results: 22242148
+BatchNumber: 27/33, Calcs: 100077873887, addresses: 15, threads: 1000785, blocks:978 
+BatchNumber: 28/33, Calcs: 104236558978, addresses: 26, threads: 1042378, blocks:1018 
+Batch 26 Results: 17729134
+Batch 27 Results: 20102619
+BatchNumber: 29/33, Calcs: 103644078884, addresses: 273, threads: 1036594, blocks:1013 
+BatchNumber: 30/33, Calcs: 101830143422, addresses: 204, threads: 1018411, blocks:995 
+Batch 28 Results: 20918550
+Batch 29 Results: 32845379
+BatchNumber: 31/33, Calcs: 104330186511, addresses: 107, threads: 1043357, blocks:1019 
+BatchNumber: 32/33, Calcs: 104783316129, addresses: 212, threads: 1047942, blocks:1024 
+Batch 30 Results: 28206670
+Batch 31 Results: 35528608
+BatchNumber: 33/33, Calcs: 102381100838, addresses: 1020, threads: 1024367, blocks:1001 
+Batch 32 Results: 38012468
+Total results Set Size: 655680946 
+Kernel time: 119.050454
+Total Time: 125.302287
+
+Time to read in file: 0.505787
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.018250 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 501267
+Tree Check: 5000000
+Time to build tree: 6.043705
+Number non-empty bins: 34009
+Number of calcs: 7514313337886
+Number Address for calcs: 8240999
+Tree BINARY search time: 0.210713
+BatchNumber: 1/77, Calcs: 102707547537, addresses: 24563, threads: 1047892, blocks:1024 
+BatchNumber: 2/77, Calcs: 103779518990, addresses: 132, threads: 1037863, blocks:1014 
+Batch 1 Results: 8271792
+Batch 0 Results: 7613086
+BatchNumber: 3/77, Calcs: 98971633626, addresses: 972, threads: 990387, blocks:968 
+BatchNumber: 4/77, Calcs: 101251133932, addresses: 134, threads: 1012580, blocks:989 
+Batch 2 Results: 11892921
+Batch 3 Results: 11062425
+BatchNumber: 5/77, Calcs: 104486631743, addresses: 1160, threads: 1045681, blocks:1022 
+BatchNumber: 6/77, Calcs: 97162477393, addresses: 1611, threads: 972783, blocks:950 
+Batch 4 Results: 13089483
+Batch 5 Results: 8497216
+BatchNumber: 7/77, Calcs: 104797171475, addresses: 103, threads: 1048028, blocks:1024 
+BatchNumber: 8/77, Calcs: 104686242220, addresses: 616, threads: 1047249, blocks:1023 
+Batch 6 Results: 12926732
+Batch 7 Results: 21469242
+BatchNumber: 9/77, Calcs: 63834739022, addresses: 8, threads: 638351, blocks:624 
+BatchNumber: 10/77, Calcs: 65095185372, addresses: 1, threads: 650952, blocks:636 
+Batch 8 Results: 7243920
+Batch 9 Results: 9552851
+BatchNumber: 11/77, Calcs: 101414504345, addresses: 21, threads: 1014154, blocks:991 
+BatchNumber: 12/77, Calcs: 33173650822, addresses: 1, threads: 331737, blocks:324 
+Batch 10 Results: 18265014
+Batch 11 Results: 3901727
+BatchNumber: 13/77, Calcs: 189257740308, addresses: 1, threads: 1892578, blocks:1849 
+BatchNumber: 14/77, Calcs: 204153885573, addresses: 1, threads: 2041539, blocks:1994 
+Batch 12 Results: 31371846
+Batch 13 Results: 43788586
+BatchNumber: 15/77, Calcs: 86497013815, addresses: 14, threads: 864976, blocks:845 
+BatchNumber: 16/77, Calcs: 38113292052, addresses: 1, threads: 381133, blocks:373 
+Batch 14 Results: 27503122
+Batch 15 Results: 7148280
+BatchNumber: 17/77, Calcs: 87058831330, addresses: 4, threads: 870590, blocks:851 
+BatchNumber: 18/77, Calcs: 91545965008, addresses: 59, threads: 915492, blocks:895 
+Batch 16 Results: 24097151
+Batch 17 Results: 20892730
+BatchNumber: 19/77, Calcs: 78136257860, addresses: 18, threads: 781371, blocks:764 
+BatchNumber: 20/77, Calcs: 54793535370, addresses: 1, threads: 547936, blocks:536 
+Batch 18 Results: 8707111
+Batch 19 Results: 7958468
+BatchNumber: 21/77, Calcs: 147758063259, addresses: 1, threads: 1477581, blocks:1443 
+BatchNumber: 22/77, Calcs: 97826791503, addresses: 4, threads: 978270, blocks:956 
+Batch 20 Results: 18491414
+Batch 21 Results: 17710844
+BatchNumber: 23/77, Calcs: 69655399499, addresses: 11, threads: 696559, blocks:681 
+BatchNumber: 24/77, Calcs: 73407426768, addresses: 1, threads: 734075, blocks:717 
+Batch 22 Results: 13946380
+Batch 23 Results: 13779899
+BatchNumber: 25/77, Calcs: 86426202430, addresses: 5, threads: 864265, blocks:845 
+BatchNumber: 26/77, Calcs: 102830403852, addresses: 56, threads: 1028333, blocks:1005 
+Batch 24 Results: 24176634
+Batch 25 Results: 25597793
+BatchNumber: 27/77, Calcs: 102503602763, addresses: 818, threads: 1025597, blocks:1002 
+BatchNumber: 28/77, Calcs: 72284645700, addresses: 1, threads: 722847, blocks:706 
+Batch 26 Results: 18089208
+Batch 27 Results: 14615349
+BatchNumber: 29/77, Calcs: 120541781765, addresses: 1, threads: 1205418, blocks:1178 
+BatchNumber: 30/77, Calcs: 94240881507, addresses: 22, threads: 942418, blocks:921 
+Batch 28 Results: 34947429
+Batch 29 Results: 31415620
+BatchNumber: 31/77, Calcs: 99747903949, addresses: 6, threads: 997483, blocks:975 
+BatchNumber: 32/77, Calcs: 95782229290, addresses: 73, threads: 957856, blocks:936 
+Batch 30 Results: 32340006
+Batch 31 Results: 32338921
+BatchNumber: 33/77, Calcs: 60294117771, addresses: 1, threads: 602942, blocks:589 
+BatchNumber: 34/77, Calcs: 99842200876, addresses: 7, threads: 998424, blocks:976 
+Batch 32 Results: 11872538
+Batch 33 Results: 28887449
+BatchNumber: 35/77, Calcs: 89667703060, addresses: 15, threads: 896683, blocks:876 
+BatchNumber: 36/77, Calcs: 93082146206, addresses: 5, threads: 930824, blocks:910 
+Batch 34 Results: 19599918
+Batch 35 Results: 26550025
+BatchNumber: 37/77, Calcs: 96857970816, addresses: 1, threads: 968580, blocks:946 
+BatchNumber: 38/77, Calcs: 96132051586, addresses: 15, threads: 961328, blocks:939 
+Batch 36 Results: 25455567
+Batch 37 Results: 28605376
+BatchNumber: 39/77, Calcs: 96740310441, addresses: 874, threads: 968029, blocks:946 
+BatchNumber: 40/77, Calcs: 95079871395, addresses: 626, threads: 951251, blocks:929 
+Batch 38 Results: 31125134
+Batch 39 Results: 24625733
+BatchNumber: 41/77, Calcs: 88689097168, addresses: 62, threads: 886921, blocks:867 
+BatchNumber: 42/77, Calcs: 86558761644, addresses: 2, threads: 865589, blocks:846 
+Batch 40 Results: 27509338
+Batch 41 Results: 15935005
+BatchNumber: 43/77, Calcs: 63235315815, addresses: 4, threads: 632355, blocks:618 
+BatchNumber: 44/77, Calcs: 89565012905, addresses: 8, threads: 895654, blocks:875 
+Batch 42 Results: 16380269
+Batch 43 Results: 21414585
+BatchNumber: 45/77, Calcs: 48416897155, addresses: 1, threads: 484169, blocks:473 
+BatchNumber: 46/77, Calcs: 86615305585, addresses: 4, threads: 866155, blocks:846 
+Batch 44 Results: 9831707
+Batch 45 Results: 31177274
+BatchNumber: 47/77, Calcs: 113989679920, addresses: 1, threads: 1139897, blocks:1114 
+BatchNumber: 48/77, Calcs: 118043791641, addresses: 1, threads: 1180438, blocks:1153 
+Batch 46 Results: 34338112
+Batch 47 Results: 34511255
+BatchNumber: 49/77, Calcs: 103085860507, addresses: 65, threads: 1030894, blocks:1007 
+BatchNumber: 50/77, Calcs: 96197540243, addresses: 385, threads: 962202, blocks:940 
+Batch 48 Results: 39145623
+Batch 49 Results: 23277754
+BatchNumber: 51/77, Calcs: 104738245265, addresses: 24, threads: 1047394, blocks:1023 
+BatchNumber: 52/77, Calcs: 104829496614, addresses: 46, threads: 1048318, blocks:1024 
+Batch 50 Results: 31830586
+Batch 51 Results: 28512030
+BatchNumber: 53/77, Calcs: 73470647252, addresses: 2, threads: 734707, blocks:718 
+BatchNumber: 54/77, Calcs: 71414918122, addresses: 12, threads: 714153, blocks:698 
+Batch 52 Results: 25551516
+Batch 53 Results: 26663312
+BatchNumber: 55/77, Calcs: 72266288958, addresses: 1, threads: 722663, blocks:706 
+BatchNumber: 56/77, Calcs: 94419526391, addresses: 5, threads: 944198, blocks:923 
+Batch 54 Results: 13675005
+Batch 55 Results: 31273368
+BatchNumber: 57/77, Calcs: 43654113408, addresses: 1, threads: 436542, blocks:427 
+BatchNumber: 58/77, Calcs: 319943843598, addresses: 1, threads: 3199439, blocks:3125 
+Batch 56 Results: 13991184
+Batch 57 Results: 85494761
+BatchNumber: 59/77, Calcs: 323409455446, addresses: 1, threads: 3234095, blocks:3159 
+Batch 58 Results: 95964577
+BatchNumber: 60/77, Calcs: 87327801867, addresses: 13, threads: 873284, blocks:853 
+BatchNumber: 61/77, Calcs: 99790964340, addresses: 1, threads: 997910, blocks:975 
+Batch 59 Results: 42220284
+Batch 60 Results: 34114931
+BatchNumber: 62/77, Calcs: 171002922027, addresses: 1, threads: 1710030, blocks:1670 
+BatchNumber: 63/77, Calcs: 93728012730, addresses: 41, threads: 937303, blocks:916 
+Batch 61 Results: 59867152
+Batch 62 Results: 52357468
+BatchNumber: 64/77, Calcs: 71925580852, addresses: 18, threads: 719265, blocks:703 
+BatchNumber: 65/77, Calcs: 51482548764, addresses: 1, threads: 514826, blocks:503 
+Batch 63 Results: 20939503
+Batch 64 Results: 22196248
+BatchNumber: 66/77, Calcs: 147626528890, addresses: 1, threads: 1476266, blocks:1442 
+BatchNumber: 67/77, Calcs: 96426677329, addresses: 3, threads: 964268, blocks:942 
+Batch 65 Results: 46428032
+Batch 66 Results: 38778918
+BatchNumber: 68/77, Calcs: 48337257251, addresses: 10, threads: 483377, blocks:473 
+BatchNumber: 69/77, Calcs: 61330144741, addresses: 1, threads: 613302, blocks:599 
+Batch 67 Results: 24128514
+Batch 68 Results: 21708596
+BatchNumber: 70/77, Calcs: 101851304092, addresses: 3, threads: 1018514, blocks:995 
+BatchNumber: 71/77, Calcs: 81813570102, addresses: 508, threads: 818472, blocks:800 
+Batch 69 Results: 50345472
+Batch 70 Results: 41581148
+BatchNumber: 72/77, Calcs: 97106728163, addresses: 58, threads: 971096, blocks:949 
+BatchNumber: 73/77, Calcs: 99095879480, addresses: 20, threads: 990968, blocks:968 
+Batch 71 Results: 46107604
+Batch 72 Results: 51903766
+BatchNumber: 74/77, Calcs: 100163805308, addresses: 384, threads: 1001912, blocks:979 
+BatchNumber: 75/77, Calcs: 93178867156, addresses: 16, threads: 931797, blocks:910 
+Batch 73 Results: 51502035
+Batch 74 Results: 31400872
+BatchNumber: 76/77, Calcs: 104629157205, addresses: 243, threads: 1046439, blocks:1022 
+BatchNumber: 77/77, Calcs: 3333127723, addresses: 97, threads: 33408, blocks:33 
+Batch 75 Results: 48831479
+Batch 76 Results: 2583825
+Total results Set Size: 2072898048 
+Kernel time: 306.954086
+Total Time: 313.208512
+
+Time to read in file: 0.509214
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Distance Threshold: 0.021000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 118854
+Tree Check: 5000000
+Time to build tree: 5.852766
+Number non-empty bins: 15476
+Number of calcs: 8370761559324
+Number Address for calcs: 3841412
+Tree BINARY search time: 0.103401
+BatchNumber: 1/89, Calcs: 104015075865, addresses: 4519, threads: 1043678, blocks:1020 
+BatchNumber: 2/89, Calcs: 99402078122, addresses: 29, threads: 994034, blocks:971 
+Batch 1 Results: 87324079
+Batch 0 Results: 71328070
+BatchNumber: 3/89, Calcs: 99904133588, addresses: 646, threads: 999521, blocks:977 
+BatchNumber: 4/89, Calcs: 85502704059, addresses: 166, threads: 855134, blocks:836 
+Batch 2 Results: 122875145
+Batch 3 Results: 25843692
+BatchNumber: 5/89, Calcs: 95426367803, addresses: 24, threads: 954273, blocks:932 
+BatchNumber: 6/89, Calcs: 99129955092, addresses: 103, threads: 991370, blocks:969 
+Batch 4 Results: 46933744
+Batch 5 Results: 58201068
+BatchNumber: 7/89, Calcs: 104369858271, addresses: 2008, threads: 1045187, blocks:1021 
+BatchNumber: 8/89, Calcs: 104426577403, addresses: 119, threads: 1044341, blocks:1020 
+Batch 6 Results: 57634510
+Batch 7 Results: 106299600
+BatchNumber: 9/89, Calcs: 99770448634, addresses: 32, threads: 997723, blocks:975 
+BatchNumber: 10/89, Calcs: 92259251662, addresses: 652, threads: 923045, blocks:902 
+Batch 8 Results: 99229225
+Batch 9 Results: 35868583
+BatchNumber: 11/89, Calcs: 104654256822, addresses: 8, threads: 1046546, blocks:1023 
+BatchNumber: 12/89, Calcs: 89416112993, addresses: 28, threads: 894176, blocks:874 
+Batch 10 Results: 32876464
+Batch 11 Results: 31606267
+BatchNumber: 13/89, Calcs: 164861387028, addresses: 1, threads: 1648614, blocks:1610 
+BatchNumber: 14/89, Calcs: 76225874128, addresses: 6, threads: 762262, blocks:745 
+Batch 12 Results: 98203744
+Batch 13 Results: 74120023
+BatchNumber: 15/89, Calcs: 91383898032, addresses: 1, threads: 913839, blocks:893 
+BatchNumber: 16/89, Calcs: 82165058397, addresses: 117, threads: 821726, blocks:803 
+Batch 14 Results: 85918105
+Batch 15 Results: 42488416
+BatchNumber: 17/89, Calcs: 29799077224, addresses: 1, threads: 297991, blocks:292 
+BatchNumber: 18/89, Calcs: 140616280416, addresses: 1, threads: 1406163, blocks:1374 
+Batch 16 Results: 9169754
+Batch 17 Results: 59824090
+BatchNumber: 19/89, Calcs: 58636511071, addresses: 5, threads: 586368, blocks:573 
+BatchNumber: 20/89, Calcs: 104301568698, addresses: 24, threads: 1043027, blocks:1019 
+Batch 18 Results: 29461844
+Batch 19 Results: 66609817
+BatchNumber: 21/89, Calcs: 102199918828, addresses: 1, threads: 1022000, blocks:999 
+BatchNumber: 22/89, Calcs: 167823353576, addresses: 1, threads: 1678234, blocks:1639 
+Batch 20 Results: 53087554
+Batch 21 Results: 100360358
+BatchNumber: 23/89, Calcs: 36391372363, addresses: 4, threads: 363916, blocks:356 
+BatchNumber: 24/89, Calcs: 81998492400, addresses: 1, threads: 819985, blocks:801 
+Batch 22 Results: 23925725
+Batch 23 Results: 65448953
+BatchNumber: 25/89, Calcs: 144809345904, addresses: 1, threads: 1448094, blocks:1415 
+BatchNumber: 26/89, Calcs: 104467543855, addresses: 103, threads: 1044736, blocks:1021 
+Batch 24 Results: 112442307
+Batch 25 Results: 85579045
+BatchNumber: 27/89, Calcs: 82572058269, addresses: 7, threads: 825724, blocks:807 
+BatchNumber: 28/89, Calcs: 99208857505, addresses: 641, threads: 992566, blocks:970 
+Batch 26 Results: 74275852
+Batch 27 Results: 38299641
+BatchNumber: 29/89, Calcs: 104195655687, addresses: 9, threads: 1041960, blocks:1018 
+BatchNumber: 30/89, Calcs: 100847046572, addresses: 153, threads: 1008566, blocks:985 
+Batch 28 Results: 57778977
+Batch 29 Results: 27931479
+BatchNumber: 31/89, Calcs: 118554396708, addresses: 1, threads: 1185544, blocks:1158 
+BatchNumber: 32/89, Calcs: 135921657908, addresses: 1, threads: 1359217, blocks:1328 
+Batch 30 Results: 40234056
+Batch 31 Results: 66290113
+BatchNumber: 33/89, Calcs: 25164864567, addresses: 4, threads: 251652, blocks:246 
+BatchNumber: 34/89, Calcs: 97800212378, addresses: 1, threads: 978003, blocks:956 
+Batch 32 Results: 11259031
+Batch 33 Results: 57587569
+BatchNumber: 35/89, Calcs: 119291839416, addresses: 1, threads: 1192919, blocks:1165 
+BatchNumber: 36/89, Calcs: 79578171107, addresses: 21, threads: 795793, blocks:778 
+Batch 34 Results: 60269599
+Batch 35 Results: 60290339
+BatchNumber: 37/89, Calcs: 104258927741, addresses: 78, threads: 1042641, blocks:1019 
+BatchNumber: 38/89, Calcs: 96883685722, addresses: 32, threads: 968851, blocks:947 
+Batch 36 Results: 95281021
+Batch 37 Results: 30447233
+BatchNumber: 39/89, Calcs: 57372940170, addresses: 1, threads: 573730, blocks:561 
+BatchNumber: 40/89, Calcs: 104724382275, addresses: 632, threads: 1047693, blocks:1024 
+Batch 38 Results: 39814499
+Batch 39 Results: 57303626
+BatchNumber: 41/89, Calcs: 93647034928, addresses: 1268, threads: 937448, blocks:916 
+BatchNumber: 42/89, Calcs: 87516787056, addresses: 120, threads: 875244, blocks:855 
+Batch 40 Results: 29582114
+Batch 41 Results: 49841107
+BatchNumber: 43/89, Calcs: 67129808844, addresses: 1, threads: 671299, blocks:656 
+BatchNumber: 44/89, Calcs: 97499388082, addresses: 5, threads: 974997, blocks:953 
+Batch 42 Results: 18140984
+Batch 43 Results: 37844847
+BatchNumber: 45/89, Calcs: 41573412327, addresses: 1, threads: 415735, blocks:406 
+BatchNumber: 46/89, Calcs: 94807851645, addresses: 1, threads: 948079, blocks:926 
+Batch 44 Results: 21330262
+Batch 45 Results: 54448951
+BatchNumber: 47/89, Calcs: 104213476015, addresses: 84, threads: 1042186, blocks:1018 
+BatchNumber: 48/89, Calcs: 103927539571, addresses: 22, threads: 1039288, blocks:1015 
+Batch 46 Results: 104583571
+Batch 47 Results: 56381594
+BatchNumber: 49/89, Calcs: 70365732950, addresses: 4, threads: 703659, blocks:688 
+BatchNumber: 50/89, Calcs: 103134294633, addresses: 5, threads: 1031344, blocks:1008 
+Batch 48 Results: 53949806
+Batch 49 Results: 89155592
+BatchNumber: 51/89, Calcs: 104739526898, addresses: 611, threads: 1047830, blocks:1024 
+BatchNumber: 52/89, Calcs: 39881532207, addresses: 40, threads: 398839, blocks:390 
+Batch 50 Results: 32913660
+Batch 51 Results: 2182128
+BatchNumber: 53/89, Calcs: 81614710755, addresses: 1, threads: 816148, blocks:798 
+BatchNumber: 54/89, Calcs: 77232101066, addresses: 5, threads: 772324, blocks:755 
+Batch 52 Results: 13710617
+Batch 53 Results: 21969913
+BatchNumber: 55/89, Calcs: 63737406122, addresses: 1, threads: 637375, blocks:623 
+BatchNumber: 56/89, Calcs: 115654914529, addresses: 1, threads: 1156550, blocks:1130 
+Batch 54 Results: 19404785
+Batch 55 Results: 42761907
+BatchNumber: 57/89, Calcs: 79331838055, addresses: 25, threads: 793331, blocks:775 
+BatchNumber: 58/89, Calcs: 63722529234, addresses: 1, threads: 637226, blocks:623 
+Batch 56 Results: 55079038
+Batch 57 Results: 22342088
+BatchNumber: 59/89, Calcs: 86908775961, addresses: 6, threads: 869091, blocks:849 
+BatchNumber: 60/89, Calcs: 211785817236, addresses: 1, threads: 2117859, blocks:2069 
+Batch 58 Results: 45309227
+Batch 59 Results: 108839656
+BatchNumber: 61/89, Calcs: 167423619434, addresses: 1, threads: 1674237, blocks:1635 
+BatchNumber: 62/89, Calcs: 13142663285, addresses: 5, threads: 131428, blocks:129 
+Batch 60 Results: 160289031
+Batch 61 Results: 21066353
+BatchNumber: 63/89, Calcs: 93284815288, addresses: 1, threads: 932849, blocks:911 
+BatchNumber: 64/89, Calcs: 44086905655, addresses: 90, threads: 440924, blocks:431 
+Batch 62 Results: 106036032
+Batch 63 Results: 48598767
+BatchNumber: 65/89, Calcs: 71044802400, addresses: 1, threads: 710449, blocks:694 
+BatchNumber: 66/89, Calcs: 122543898960, addresses: 1, threads: 1225439, blocks:1197 
+Batch 64 Results: 14822930
+Batch 65 Results: 40384282
+BatchNumber: 67/89, Calcs: 28341122512, addresses: 4, threads: 283414, blocks:277 
+BatchNumber: 68/89, Calcs: 210264827250, addresses: 1, threads: 2102649, blocks:2054 
+Batch 66 Results: 16937159
+Batch 67 Results: 121109775
+BatchNumber: 69/89, Calcs: 208604773893, addresses: 1, threads: 2086048, blocks:2038 
+BatchNumber: 70/89, Calcs: 80638710766, addresses: 19, threads: 806395, blocks:788 
+Batch 68 Results: 127814320
+Batch 69 Results: 67366020
+BatchNumber: 71/89, Calcs: 75793625025, addresses: 5, threads: 757940, blocks:741 
+BatchNumber: 72/89, Calcs: 42071527120, addresses: 1, threads: 420716, blocks:411 
+Batch 70 Results: 39318922
+Batch 71 Results: 28314259
+BatchNumber: 73/89, Calcs: 187758026534, addresses: 1, threads: 1877581, blocks:1834 
+BatchNumber: 74/89, Calcs: 89493318322, addresses: 6, threads: 894936, blocks:874 
+Batch 72 Results: 147873261
+Batch 73 Results: 85700600
+BatchNumber: 75/89, Calcs: 101436672188, addresses: 92, threads: 1014421, blocks:991 
+BatchNumber: 76/89, Calcs: 84350783558, addresses: 465, threads: 843850, blocks:825 
+Batch 74 Results: 104656436
+Batch 75 Results: 71439329
+BatchNumber: 77/89, Calcs: 86772235266, addresses: 5, threads: 867725, blocks:848 
+BatchNumber: 78/89, Calcs: 85494095777, addresses: 130, threads: 855020, blocks:835 
+Batch 76 Results: 54083414
+Batch 77 Results: 48789815
+BatchNumber: 79/89, Calcs: 40941421939, addresses: 1, threads: 409415, blocks:400 
+BatchNumber: 80/89, Calcs: 86836997489, addresses: 1, threads: 868370, blocks:849 
+Batch 78 Results: 26062648
+Batch 79 Results: 59002930
+BatchNumber: 81/89, Calcs: 98747359623, addresses: 5, threads: 987477, blocks:965 
+BatchNumber: 82/89, Calcs: 90822110398, addresses: 111, threads: 908285, blocks:887 
+Batch 80 Results: 92656322
+Batch 81 Results: 111644506
+BatchNumber: 83/89, Calcs: 91308659499, addresses: 1157, threads: 913985, blocks:893 
+BatchNumber: 84/89, Calcs: 59349720869, addresses: 22, threads: 593508, blocks:580 
+Batch 82 Results: 73907334
+Batch 83 Results: 26300243
+BatchNumber: 85/89, Calcs: 102523363781, addresses: 60, threads: 1025268, blocks:1002 
+BatchNumber: 86/89, Calcs: 81558586921, addresses: 329, threads: 815830, blocks:797 
+Batch 84 Results: 88640715
+Batch 85 Results: 65972430
+BatchNumber: 87/89, Calcs: 99284374893, addresses: 25, threads: 992857, blocks:970 
+BatchNumber: 88/89, Calcs: 79128407811, addresses: 49, threads: 791317, blocks:773 
+Batch 86 Results: 84209213
+Batch 87 Results: 107535824
+BatchNumber: 89/89, Calcs: 68958456495, addresses: 501, threads: 689955, blocks:674 
+Batch 88 Results: 137232882
+Total results Set Size: 5457260816 
+Kernel time: 365.511655
+Total Time: 371.467825
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+
+Time to read in file: 1.746678
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Concurent Streams: 2
+Distance Threshold: 0.010000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 2969753
+Tree Check: 11000000
+Time to build tree: 16.020995
+Number non-empty bins: 244931
+Number of calcs: 2768512779600
+Number Address for calcs: 89224687
+Tree BINARY search time: 2.727713
+BatchNumber: 1/27, Calcs: 97054053635, addresses: 91682, threads: 1048210, blocks:1024 
+BatchNumber: 2/27, Calcs: 103276747153, addresses: 20856, threads: 1048479, blocks:1024 
+Batch 1 Results: 679760
+Batch 0 Results: 1234584
+BatchNumber: 3/27, Calcs: 104197234263, addresses: 3739, threads: 1044415, blocks:1020 
+BatchNumber: 4/27, Calcs: 104495663777, addresses: 3095, threads: 1046882, blocks:1023 
+Batch 2 Results: 421261
+Batch 3 Results: 387329
+BatchNumber: 5/27, Calcs: 104588894455, addresses: 3056, threads: 1047708, blocks:1024 
+BatchNumber: 6/27, Calcs: 102985731317, addresses: 19205, threads: 1044070, blocks:1020 
+Batch 4 Results: 383167
+Batch 5 Results: 600227
+BatchNumber: 7/27, Calcs: 104439304258, addresses: 912, threads: 1044933, blocks:1021 
+BatchNumber: 8/27, Calcs: 104697959981, addresses: 1130, threads: 1047628, blocks:1024 
+Batch 6 Results: 273866
+Batch 7 Results: 297937
+BatchNumber: 9/27, Calcs: 104635147638, addresses: 2059, threads: 1047611, blocks:1024 
+BatchNumber: 10/27, Calcs: 104704297767, addresses: 959, threads: 1047598, blocks:1024 
+Batch 8 Results: 294067
+Batch 9 Results: 271194
+BatchNumber: 11/27, Calcs: 103841135890, addresses: 14041, threads: 1048526, blocks:1024 
+BatchNumber: 12/27, Calcs: 104469386314, addresses: 5117, threads: 1047964, blocks:1024 
+Batch 10 Results: 490652
+Batch 11 Results: 408221
+BatchNumber: 13/27, Calcs: 104426866419, addresses: 1297, threads: 1045026, blocks:1021 
+BatchNumber: 14/27, Calcs: 104742418473, addresses: 305, threads: 1047591, blocks:1024 
+Batch 12 Results: 286354
+Batch 13 Results: 204399
+BatchNumber: 15/27, Calcs: 104646062598, addresses: 2469, threads: 1047915, blocks:1024 
+BatchNumber: 16/27, Calcs: 104293446274, addresses: 756, threads: 1043364, blocks:1019 
+Batch 14 Results: 345109
+Batch 15 Results: 249162
+BatchNumber: 17/27, Calcs: 104713459975, addresses: 2358, threads: 1048506, blocks:1024 
+BatchNumber: 18/27, Calcs: 103782433714, addresses: 12459, threads: 1046563, blocks:1023 
+Batch 16 Results: 332371
+Batch 17 Results: 469029
+BatchNumber: 19/27, Calcs: 103845903209, addresses: 2818, threads: 1040136, blocks:1016 
+BatchNumber: 20/27, Calcs: 104434305743, addresses: 707, threads: 1044749, blocks:1021 
+Batch 18 Results: 352967
+Batch 19 Results: 247763
+BatchNumber: 21/27, Calcs: 104719615388, addresses: 2062, threads: 1048405, blocks:1024 
+BatchNumber: 22/27, Calcs: 104415139124, addresses: 1195, threads: 1044831, blocks:1021 
+Batch 20 Results: 335574
+Batch 21 Results: 309473
+BatchNumber: 23/27, Calcs: 104057787265, addresses: 11562, threads: 1048274, blocks:1024 
+BatchNumber: 24/27, Calcs: 104592234156, addresses: 2892, threads: 1047637, blocks:1024 
+Batch 22 Results: 521738
+Batch 23 Results: 388276
+BatchNumber: 25/27, Calcs: 104671809678, addresses: 2839, threads: 1048371, blocks:1024 
+BatchNumber: 26/27, Calcs: 103743140379, addresses: 11253, threads: 1044713, blocks:1021 
+Batch 24 Results: 429611
+Batch 25 Results: 622051
+BatchNumber: 27/27, Calcs: 64042600757, addresses: 24108, threads: 657263, blocks:642 
+Batch 26 Results: 730356
+Total results Set Size: 11566498 
+Kernel time: 111.552222
+Total Time: 130.300938
+
+Time to read in file: 1.664038
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Concurent Streams: 2
+Distance Threshold: 0.021375 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 71589
+Tree Check: 11000000
+Time to build tree: 15.871592
+Number non-empty bins: 8676
+Number of calcs: 45944079460656
+Number Address for calcs: 1972806
+Tree BINARY search time: 0.064874
+BatchNumber: 1/234, Calcs: 101374266334, addresses: 3144, threads: 1016148, blocks:993 
+BatchNumber: 2/234, Calcs: 104484739450, addresses: 740, threads: 1045280, blocks:1021 
+Batch 0 Results: 213465
+Batch 1 Results: 124596
+BatchNumber: 3/234, Calcs: 90047183753, addresses: 235, threads: 900597, blocks:880 
+BatchNumber: 4/234, Calcs: 101408705746, addresses: 29, threads: 1014103, blocks:991 
+Batch 2 Results: 101464
+Batch 3 Results: 71358
+BatchNumber: 5/234, Calcs: 59294255844, addresses: 55, threads: 592969, blocks:580 
+BatchNumber: 6/234, Calcs: 95772912037, addresses: 5, threads: 957731, blocks:936 
+Batch 4 Results: 46321
+Batch 5 Results: 56088
+BatchNumber: 7/234, Calcs: 83795296953, addresses: 20, threads: 837964, blocks:819 
+BatchNumber: 8/234, Calcs: 37680676762, addresses: 1, threads: 376807, blocks:368 
+Batch 6 Results: 42977
+Batch 7 Results: 22711
+BatchNumber: 9/234, Calcs: 256522695264, addresses: 1, threads: 2565227, blocks:2506 
+BatchNumber: 10/234, Calcs: 62495780977, addresses: 3, threads: 624959, blocks:611 
+Batch 8 Results: 96556
+Batch 9 Results: 25890
+BatchNumber: 11/234, Calcs: 58165071529, addresses: 1, threads: 581651, blocks:569 
+BatchNumber: 12/234, Calcs: 429961287208, addresses: 1, threads: 4299613, blocks:4199 
+Batch 10 Results: 29644
+Batch 11 Results: 125073
+BatchNumber: 13/234, Calcs: 125420825000, addresses: 1, threads: 1254209, blocks:1225 
+BatchNumber: 14/234, Calcs: 84690190309, addresses: 18, threads: 846911, blocks:828 
+Batch 12 Results: 38017
+Batch 13 Results: 37199
+BatchNumber: 15/234, Calcs: 99066874483, addresses: 54, threads: 990700, blocks:968 
+BatchNumber: 16/234, Calcs: 104206005484, addresses: 78, threads: 1042102, blocks:1018 
+Batch 14 Results: 38494
+Batch 15 Results: 40833
+BatchNumber: 17/234, Calcs: 84526246047, addresses: 67, threads: 845296, blocks:826 
+BatchNumber: 18/234, Calcs: 93163010304, addresses: 1, threads: 931631, blocks:910 
+Batch 16 Results: 55146
+Batch 17 Results: 38833
+BatchNumber: 19/234, Calcs: 50318136390, addresses: 21, threads: 503193, blocks:492 
+BatchNumber: 20/234, Calcs: 67804326912, addresses: 1, threads: 678044, blocks:663 
+Batch 18 Results: 27058
+Batch 19 Results: 25414
+BatchNumber: 21/234, Calcs: 75540723673, addresses: 4, threads: 755409, blocks:738 
+BatchNumber: 22/234, Calcs: 678280276116, addresses: 1, threads: 6782803, blocks:6624 
+Batch 20 Results: 33688
+Batch 21 Results: 169157
+BatchNumber: 23/234, Calcs: 414321230304, addresses: 1, threads: 4143213, blocks:4047 
+BatchNumber: 24/234, Calcs: 14409104341, addresses: 3, threads: 144093, blocks:141 
+Batch 22 Results: 101073
+Batch 23 Results: 7568
+BatchNumber: 25/234, Calcs: 166564632208, addresses: 1, threads: 1665647, blocks:1627 
+BatchNumber: 26/234, Calcs: 112148085250, addresses: 1, threads: 1121481, blocks:1096 
+Batch 24 Results: 47445
+Batch 25 Results: 30184
+BatchNumber: 27/234, Calcs: 72563341086, addresses: 15, threads: 725642, blocks:709 
+BatchNumber: 28/234, Calcs: 128270022699, addresses: 1, threads: 1282701, blocks:1253 
+Batch 26 Results: 23404
+Batch 27 Results: 32914
+BatchNumber: 29/234, Calcs: 58885685706, addresses: 48, threads: 588879, blocks:576 
+BatchNumber: 30/234, Calcs: 108031553418, addresses: 1, threads: 1080316, blocks:1055 
+Batch 28 Results: 22470
+Batch 29 Results: 27194
+BatchNumber: 31/234, Calcs: 49998144084, addresses: 4, threads: 499983, blocks:489 
+BatchNumber: 32/234, Calcs: 98632102072, addresses: 1, threads: 986322, blocks:964 
+Batch 30 Results: 14020
+Batch 31 Results: 26946
+BatchNumber: 33/234, Calcs: 85800441042, addresses: 15, threads: 858013, blocks:838 
+BatchNumber: 34/234, Calcs: 104830617066, addresses: 14, threads: 1048313, blocks:1024 
+Batch 32 Results: 23082
+Batch 33 Results: 26955
+BatchNumber: 35/234, Calcs: 92224462789, addresses: 80, threads: 922280, blocks:901 
+BatchNumber: 36/234, Calcs: 98267681051, addresses: 14, threads: 982685, blocks:960 
+Batch 34 Results: 36777
+Batch 35 Results: 33105
+BatchNumber: 37/234, Calcs: 72802719781, addresses: 36, threads: 728048, blocks:711 
+BatchNumber: 38/234, Calcs: 104292871013, addresses: 307, threads: 1043097, blocks:1019 
+Batch 36 Results: 24743
+Batch 37 Results: 47324
+BatchNumber: 39/234, Calcs: 51230103935, addresses: 201, threads: 512402, blocks:501 
+BatchNumber: 40/234, Calcs: 75419472744, addresses: 1, threads: 754195, blocks:737 
+Batch 38 Results: 37633
+Batch 39 Results: 28546
+BatchNumber: 41/234, Calcs: 50962893261, addresses: 4, threads: 509631, blocks:498 
+BatchNumber: 42/234, Calcs: 162364788681, addresses: 1, threads: 1623648, blocks:1586 
+Batch 40 Results: 22190
+Batch 41 Results: 45650
+BatchNumber: 43/234, Calcs: 104282752834, addresses: 6, threads: 1042830, blocks:1019 
+BatchNumber: 44/234, Calcs: 65406729925, addresses: 17, threads: 654077, blocks:639 
+Batch 42 Results: 30642
+Batch 43 Results: 27725
+BatchNumber: 45/234, Calcs: 39854234036, addresses: 1, threads: 398543, blocks:390 
+BatchNumber: 46/234, Calcs: 95439572812, addresses: 56, threads: 954419, blocks:933 
+Batch 44 Results: 12059
+Batch 45 Results: 35344
+BatchNumber: 47/234, Calcs: 66941066797, addresses: 5, threads: 669413, blocks:654 
+BatchNumber: 48/234, Calcs: 263700665604, addresses: 1, threads: 2637007, blocks:2576 
+Batch 46 Results: 29755
+Batch 47 Results: 70644
+BatchNumber: 49/234, Calcs: 92744935340, addresses: 4, threads: 927452, blocks:906 
+BatchNumber: 50/234, Calcs: 76002432583, addresses: 11, threads: 760031, blocks:743 
+Batch 48 Results: 25357
+Batch 49 Results: 23511
+BatchNumber: 51/234, Calcs: 73948421361, addresses: 5, threads: 739487, blocks:723 
+BatchNumber: 52/234, Calcs: 211350513780, addresses: 1, threads: 2113506, blocks:2064 
+Batch 50 Results: 31600
+Batch 51 Results: 57467
+BatchNumber: 53/234, Calcs: 313173755829, addresses: 1, threads: 3131738, blocks:3059 
+BatchNumber: 54/234, Calcs: 97357976373, addresses: 18, threads: 973590, blocks:951 
+Batch 52 Results: 78534
+Batch 53 Results: 30778
+BatchNumber: 55/234, Calcs: 79982434164, addresses: 129, threads: 799889, blocks:782 
+BatchNumber: 56/234, Calcs: 43006025861, addresses: 5, threads: 430062, blocks:420 
+Batch 54 Results: 35414
+Batch 55 Results: 17146
+BatchNumber: 57/234, Calcs: 249287652470, addresses: 1, threads: 2492877, blocks:2435 
+BatchNumber: 58/234, Calcs: 339103931600, addresses: 1, threads: 3391040, blocks:3312 
+Batch 56 Results: 58293
+Batch 57 Results: 73893
+BatchNumber: 59/234, Calcs: 85992331162, addresses: 4, threads: 859925, blocks:840 
+BatchNumber: 60/234, Calcs: 100210117260, addresses: 1, threads: 1002102, blocks:979 
+Batch 58 Results: 24678
+Batch 59 Results: 23485
+BatchNumber: 61/234, Calcs: 95958315128, addresses: 17, threads: 959593, blocks:938 
+BatchNumber: 62/234, Calcs: 216446999436, addresses: 1, threads: 2164470, blocks:2114 
+Batch 60 Results: 30466
+Batch 61 Results: 47422
+BatchNumber: 63/234, Calcs: 100342007129, addresses: 37, threads: 1003442, blocks:980 
+BatchNumber: 64/234, Calcs: 57247179605, addresses: 22, threads: 572482, blocks:560 
+Batch 62 Results: 28664
+Batch 63 Results: 25566
+BatchNumber: 65/234, Calcs: 592259562062, addresses: 1, threads: 5922596, blocks:5784 
+BatchNumber: 66/234, Calcs: 535780443184, addresses: 1, threads: 5357805, blocks:5233 
+Batch 64 Results: 124984
+Batch 65 Results: 100751
+BatchNumber: 67/234, Calcs: 30991854408, addresses: 4, threads: 309922, blocks:303 
+BatchNumber: 68/234, Calcs: 618992458369, addresses: 1, threads: 6189925, blocks:6045 
+Batch 66 Results: 11891
+Batch 67 Results: 134890
+BatchNumber: 69/234, Calcs: 664995447369, addresses: 1, threads: 6649955, blocks:6495 
+BatchNumber: 70/234, Calcs: 80839427620, addresses: 12, threads: 808400, blocks:790 
+Batch 68 Results: 122460
+Batch 69 Results: 25844
+BatchNumber: 71/234, Calcs: 42058171238, addresses: 4, threads: 420583, blocks:411 
+BatchNumber: 72/234, Calcs: 660546172377, addresses: 1, threads: 6605462, blocks:6451 
+Batch 70 Results: 17284
+Batch 71 Results: 134529
+BatchNumber: 73/234, Calcs: 1918638155972, addresses: 1, threads: 19186382, blocks:18737 
+BatchNumber: 74/234, Calcs: 230435527954, addresses: 1, threads: 2304356, blocks:2251 
+Batch 72 Results: 318599
+Batch 73 Results: 51729
+BatchNumber: 75/234, Calcs: 3492684500, addresses: 2, threads: 34928, blocks:35 
+BatchNumber: 76/234, Calcs: 538631772944, addresses: 1, threads: 5386318, blocks:5261 
+Batch 74 Results: 2331
+Batch 75 Results: 109037
+BatchNumber: 77/234, Calcs: 1917177596412, addresses: 1, threads: 19171776, blocks:18723 
+BatchNumber: 78/234, Calcs: 338934358321, addresses: 1, threads: 3389344, blocks:3310 
+Batch 76 Results: 296431
+Batch 77 Results: 66155
+BatchNumber: 79/234, Calcs: 75090012123, addresses: 17, threads: 750911, blocks:734 
+BatchNumber: 80/234, Calcs: 99764163594, addresses: 1, threads: 997642, blocks:975 
+Batch 78 Results: 21525
+Batch 79 Results: 24252
+BatchNumber: 81/234, Calcs: 41999405868, addresses: 4, threads: 419996, blocks:411 
+BatchNumber: 82/234, Calcs: 102264333569, addresses: 23, threads: 1022654, blocks:999 
+Batch 80 Results: 11972
+Batch 81 Results: 22729
+BatchNumber: 83/234, Calcs: 66425799801, addresses: 17, threads: 664267, blocks:649 
+BatchNumber: 84/234, Calcs: 54663071630, addresses: 3, threads: 546633, blocks:534 
+Batch 82 Results: 18658
+Batch 83 Results: 11836
+BatchNumber: 85/234, Calcs: 87257934720, addresses: 1, threads: 872580, blocks:853 
+BatchNumber: 86/234, Calcs: 268896097790, addresses: 1, threads: 2688961, blocks:2626 
+Batch 84 Results: 21936
+Batch 85 Results: 48357
+BatchNumber: 87/234, Calcs: 93288651511, addresses: 19, threads: 932896, blocks:912 
+BatchNumber: 88/234, Calcs: 74370317179, addresses: 60, threads: 743733, blocks:727 
+Batch 86 Results: 23700
+Batch 87 Results: 19179
+BatchNumber: 89/234, Calcs: 79584463846, addresses: 5, threads: 795848, blocks:778 
+BatchNumber: 90/234, Calcs: 101291094846, addresses: 16, threads: 1012921, blocks:990 
+Batch 88 Results: 23573
+Batch 89 Results: 29094
+BatchNumber: 91/234, Calcs: 63281039165, addresses: 41, threads: 632833, blocks:619 
+BatchNumber: 92/234, Calcs: 94719884952, addresses: 1, threads: 947199, blocks:925 
+Batch 90 Results: 19757
+Batch 91 Results: 21010
+BatchNumber: 93/234, Calcs: 16005510805, addresses: 3, threads: 160057, blocks:157 
+BatchNumber: 94/234, Calcs: 129232031565, addresses: 1, threads: 1292321, blocks:1263 
+Batch 92 Results: 4962
+Batch 93 Results: 32679
+BatchNumber: 95/234, Calcs: 504904509603, addresses: 1, threads: 5049046, blocks:4931 
+BatchNumber: 96/234, Calcs: 86422104307, addresses: 4, threads: 864223, blocks:844 
+Batch 94 Results: 101029
+Batch 95 Results: 24522
+BatchNumber: 97/234, Calcs: 83889014837, addresses: 12, threads: 838896, blocks:820 
+BatchNumber: 98/234, Calcs: 38329364364, addresses: 1, threads: 383294, blocks:375 
+Batch 96 Results: 26575
+Batch 97 Results: 9440
+BatchNumber: 99/234, Calcs: 359592563881, addresses: 1, threads: 3595926, blocks:3512 
+BatchNumber: 100/234, Calcs: 105660078096, addresses: 1, threads: 1056601, blocks:1032 
+Batch 98 Results: 67200
+Batch 99 Results: 24599
+BatchNumber: 101/234, Calcs: 798107361, addresses: 2, threads: 7982, blocks:8 
+BatchNumber: 102/234, Calcs: 228672861102, addresses: 1, threads: 2286729, blocks:2234 
+Batch 100 Results: 605
+Batch 101 Results: 52071
+BatchNumber: 103/234, Calcs: 2037173726496, addresses: 1, threads: 20371738, blocks:19895 
+BatchNumber: 104/234, Calcs: 658522855060, addresses: 1, threads: 6585229, blocks:6431 
+Batch 102 Results: 321935
+Batch 103 Results: 121139
+BatchNumber: 105/234, Calcs: 25466481718, addresses: 4, threads: 254666, blocks:249 
+BatchNumber: 106/234, Calcs: 244426417910, addresses: 1, threads: 2444265, blocks:2387 
+Batch 104 Results: 9470
+Batch 105 Results: 53637
+BatchNumber: 107/234, Calcs: 107572104000, addresses: 1, threads: 1075722, blocks:1051 
+BatchNumber: 108/234, Calcs: 39231698876, addresses: 13, threads: 392322, blocks:384 
+Batch 106 Results: 25573
+Batch 107 Results: 11120
+BatchNumber: 109/234, Calcs: 88427178334, addresses: 1, threads: 884272, blocks:864 
+BatchNumber: 110/234, Calcs: 104456361321, addresses: 21, threads: 1044574, blocks:1021 
+Batch 108 Results: 17863
+Batch 109 Results: 23824
+BatchNumber: 111/234, Calcs: 93702830164, addresses: 21, threads: 937039, blocks:916 
+BatchNumber: 112/234, Calcs: 366119167144, addresses: 1, threads: 3661192, blocks:3576 
+Batch 110 Results: 25319
+Batch 111 Results: 63928
+BatchNumber: 113/234, Calcs: 100547457697, addresses: 3, threads: 1005476, blocks:982 
+BatchNumber: 114/234, Calcs: 20409885090, addresses: 1, threads: 204099, blocks:200 
+Batch 112 Results: 19602
+Batch 113 Results: 7498
+BatchNumber: 115/234, Calcs: 203799878220, addresses: 1, threads: 2037999, blocks:1991 
+BatchNumber: 116/234, Calcs: 94220834194, addresses: 13, threads: 942214, blocks:921 
+Batch 114 Results: 44977
+Batch 115 Results: 23213
+BatchNumber: 117/234, Calcs: 74229134000, addresses: 1, threads: 742292, blocks:725 
+BatchNumber: 118/234, Calcs: 84878644364, addresses: 4, threads: 848789, blocks:829 
+Batch 116 Results: 14970
+Batch 117 Results: 18981
+BatchNumber: 119/234, Calcs: 81944085154, addresses: 81, threads: 819479, blocks:801 
+BatchNumber: 120/234, Calcs: 80549169117, addresses: 4, threads: 805493, blocks:787 
+Batch 118 Results: 28743
+Batch 119 Results: 25744
+BatchNumber: 121/234, Calcs: 101044839384, addresses: 37, threads: 1010471, blocks:987 
+BatchNumber: 122/234, Calcs: 98947593791, addresses: 251, threads: 989609, blocks:967 
+Batch 120 Results: 33374
+Batch 121 Results: 38009
+BatchNumber: 123/234, Calcs: 102293141777, addresses: 56, threads: 1022955, blocks:999 
+BatchNumber: 124/234, Calcs: 68491714653, addresses: 121, threads: 684979, blocks:669 
+Batch 122 Results: 37276
+Batch 123 Results: 27223
+BatchNumber: 125/234, Calcs: 64065282045, addresses: 5, threads: 640656, blocks:626 
+BatchNumber: 126/234, Calcs: 81899179387, addresses: 15, threads: 818999, blocks:800 
+Batch 124 Results: 15954
+Batch 125 Results: 21103
+BatchNumber: 127/234, Calcs: 54146620466, addresses: 1, threads: 541467, blocks:529 
+BatchNumber: 128/234, Calcs: 413205301380, addresses: 1, threads: 4132054, blocks:4036 
+Batch 126 Results: 13699
+Batch 127 Results: 78596
+BatchNumber: 129/234, Calcs: 129612678075, addresses: 1, threads: 1296127, blocks:1266 
+BatchNumber: 130/234, Calcs: 56294184980, addresses: 3, threads: 562944, blocks:550 
+Batch 128 Results: 30194
+Batch 129 Results: 13872
+BatchNumber: 131/234, Calcs: 484820347439, addresses: 1, threads: 4848204, blocks:4735 
+BatchNumber: 132/234, Calcs: 198513145393, addresses: 1, threads: 1985132, blocks:1939 
+Batch 130 Results: 81572
+Batch 131 Results: 39044
+BatchNumber: 133/234, Calcs: 95621499697, addresses: 13, threads: 956222, blocks:934 
+BatchNumber: 134/234, Calcs: 55310607377, addresses: 4, threads: 553108, blocks:541 
+Batch 132 Results: 25318
+Batch 133 Results: 15602
+BatchNumber: 135/234, Calcs: 54519710607, addresses: 1, threads: 545198, blocks:533 
+BatchNumber: 136/234, Calcs: 104773319247, addresses: 37, threads: 1047753, blocks:1024 
+Batch 134 Results: 11291
+Batch 135 Results: 25743
+BatchNumber: 137/234, Calcs: 37876445448, addresses: 12, threads: 378769, blocks:370 
+BatchNumber: 138/234, Calcs: 178012405012, addresses: 1, threads: 1780125, blocks:1739 
+Batch 136 Results: 11554
+Batch 137 Results: 36950
+BatchNumber: 139/234, Calcs: 34543946765, addresses: 3, threads: 345442, blocks:338 
+BatchNumber: 140/234, Calcs: 119634561300, addresses: 1, threads: 1196346, blocks:1169 
+Batch 138 Results: 8625
+Batch 139 Results: 30845
+BatchNumber: 141/234, Calcs: 918927233261, addresses: 1, threads: 9189273, blocks:8974 
+BatchNumber: 142/234, Calcs: 257640356350, addresses: 1, threads: 2576404, blocks:2517 
+Batch 140 Results: 158471
+Batch 141 Results: 50041
+BatchNumber: 143/234, Calcs: 8295480955, addresses: 3, threads: 82957, blocks:82 
+BatchNumber: 144/234, Calcs: 103413263030, addresses: 1, threads: 1034133, blocks:1010 
+Batch 142 Results: 3240
+Batch 143 Results: 23796
+BatchNumber: 145/234, Calcs: 56260403534, addresses: 12, threads: 562610, blocks:550 
+BatchNumber: 146/234, Calcs: 123798848169, addresses: 1, threads: 1237989, blocks:1209 
+Batch 144 Results: 14819
+Batch 145 Results: 30660
+BatchNumber: 147/234, Calcs: 98788117850, addresses: 4, threads: 987884, blocks:965 
+BatchNumber: 148/234, Calcs: 447490708317, addresses: 1, threads: 4474908, blocks:4371 
+Batch 146 Results: 28048
+Batch 147 Results: 88741
+BatchNumber: 149/234, Calcs: 455244876684, addresses: 1, threads: 4552449, blocks:4446 
+BatchNumber: 150/234, Calcs: 104029852490, addresses: 28, threads: 1040312, blocks:1016 
+Batch 148 Results: 95087
+Batch 149 Results: 31459
+BatchNumber: 151/234, Calcs: 103093399724, addresses: 98, threads: 1030983, blocks:1007 
+BatchNumber: 152/234, Calcs: 3067265701, addresses: 1, threads: 30673, blocks:30 
+Batch 150 Results: 31813
+Batch 151 Results: 876
+BatchNumber: 153/234, Calcs: 103443586382, addresses: 1, threads: 1034436, blocks:1011 
+BatchNumber: 154/234, Calcs: 100814027152, addresses: 4, threads: 1008142, blocks:985 
+Batch 152 Results: 21117
+Batch 153 Results: 24762
+BatchNumber: 155/234, Calcs: 13630898710, addresses: 1, threads: 136309, blocks:134 
+BatchNumber: 156/234, Calcs: 490132198584, addresses: 1, threads: 4901322, blocks:4787 
+Batch 154 Results: 3471
+Batch 155 Results: 80444
+BatchNumber: 157/234, Calcs: 504037210063, addresses: 1, threads: 5040373, blocks:4923 
+BatchNumber: 158/234, Calcs: 75251551424, addresses: 4, threads: 752517, blocks:735 
+Batch 156 Results: 90590
+Batch 157 Results: 19717
+BatchNumber: 159/234, Calcs: 100944579736, addresses: 12, threads: 1009452, blocks:986 
+BatchNumber: 160/234, Calcs: 93046777124, addresses: 5, threads: 930470, blocks:909 
+Batch 158 Results: 24090
+Batch 159 Results: 21286
+BatchNumber: 161/234, Calcs: 126591772550, addresses: 1, threads: 1265918, blocks:1237 
+BatchNumber: 162/234, Calcs: 60037614103, addresses: 45, threads: 600401, blocks:587 
+Batch 160 Results: 25311
+Batch 161 Results: 17974
+BatchNumber: 163/234, Calcs: 76254883121, addresses: 4, threads: 762550, blocks:745 
+BatchNumber: 164/234, Calcs: 50844617894, addresses: 1, threads: 508447, blocks:497 
+Batch 162 Results: 17480
+Batch 163 Results: 13665
+BatchNumber: 165/234, Calcs: 1277689932763, addresses: 1, threads: 12776900, blocks:12478 
+BatchNumber: 166/234, Calcs: 907451673126, addresses: 1, threads: 9074517, blocks:8862 
+Batch 164 Results: 206825
+Batch 165 Results: 153455
+BatchNumber: 167/234, Calcs: 40777606693, addresses: 4, threads: 407779, blocks:399 
+BatchNumber: 168/234, Calcs: 758939486256, addresses: 1, threads: 7589395, blocks:7412 
+Batch 166 Results: 14432
+Batch 167 Results: 150024
+BatchNumber: 169/234, Calcs: 734398141698, addresses: 1, threads: 7343982, blocks:7172 
+BatchNumber: 170/234, Calcs: 83404746096, addresses: 12, threads: 834055, blocks:815 
+Batch 168 Results: 143185
+Batch 169 Results: 27315
+BatchNumber: 171/234, Calcs: 79548572703, addresses: 5, threads: 795488, blocks:777 
+BatchNumber: 172/234, Calcs: 1002943055469, addresses: 1, threads: 10029431, blocks:9795 
+Batch 170 Results: 22859
+Batch 171 Results: 178384
+BatchNumber: 173/234, Calcs: 1661253188140, addresses: 1, threads: 16612532, blocks:16224 
+BatchNumber: 174/234, Calcs: 100775604167, addresses: 3, threads: 1007757, blocks:985 
+Batch 172 Results: 287974
+Batch 173 Results: 32280
+BatchNumber: 175/234, Calcs: 428127640472, addresses: 1, threads: 4281277, blocks:4181 
+BatchNumber: 176/234, Calcs: 985969173350, addresses: 1, threads: 9859692, blocks:9629 
+Batch 174 Results: 89218
+Batch 175 Results: 190976
+BatchNumber: 177/234, Calcs: 104660666726, addresses: 4, threads: 1046609, blocks:1023 
+BatchNumber: 178/234, Calcs: 99720143978, addresses: 36, threads: 997219, blocks:974 
+Batch 176 Results: 33393
+Batch 177 Results: 38423
+BatchNumber: 179/234, Calcs: 104016412769, addresses: 12, threads: 1040170, blocks:1016 
+BatchNumber: 180/234, Calcs: 77286842145, addresses: 4, threads: 772871, blocks:755 
+Batch 178 Results: 29710
+Batch 179 Results: 23355
+BatchNumber: 181/234, Calcs: 173720739192, addresses: 1, threads: 1737208, blocks:1697 
+BatchNumber: 182/234, Calcs: 74546775322, addresses: 61, threads: 745498, blocks:729 
+Batch 180 Results: 44505
+Batch 181 Results: 30133
+BatchNumber: 183/234, Calcs: 98191752180, addresses: 17, threads: 981926, blocks:959 
+BatchNumber: 184/234, Calcs: 44383404221, addresses: 29, threads: 443849, blocks:434 
+Batch 182 Results: 31441
+Batch 183 Results: 13778
+BatchNumber: 185/234, Calcs: 91794003514, addresses: 4, threads: 917943, blocks:897 
+BatchNumber: 186/234, Calcs: 91974609830, addresses: 1, threads: 919747, blocks:899 
+Batch 184 Results: 24166
+Batch 185 Results: 25124
+BatchNumber: 187/234, Calcs: 297456596154, addresses: 1, threads: 2974566, blocks:2905 
+BatchNumber: 188/234, Calcs: 104632387134, addresses: 13, threads: 1046331, blocks:1022 
+Batch 186 Results: 73873
+Batch 187 Results: 39663
+BatchNumber: 189/234, Calcs: 227949425500, addresses: 1, threads: 2279495, blocks:2227 
+BatchNumber: 190/234, Calcs: 33760020515, addresses: 3, threads: 337602, blocks:330 
+Batch 188 Results: 54117
+Batch 189 Results: 12305
+BatchNumber: 191/234, Calcs: 129794179186, addresses: 1, threads: 1297942, blocks:1268 
+BatchNumber: 192/234, Calcs: 740838995207, addresses: 1, threads: 7408390, blocks:7235 
+Batch 190 Results: 35483
+Batch 191 Results: 173560
+BatchNumber: 193/234, Calcs: 131116660896, addresses: 1, threads: 1311167, blocks:1281 
+BatchNumber: 194/234, Calcs: 101615082776, addresses: 45, threads: 1016174, blocks:993 
+Batch 192 Results: 44141
+Batch 193 Results: 44764
+BatchNumber: 195/234, Calcs: 33236965455, addresses: 1, threads: 332370, blocks:325 
+BatchNumber: 196/234, Calcs: 163631092086, addresses: 1, threads: 1636311, blocks:1598 
+Batch 194 Results: 11793
+Batch 195 Results: 46983
+BatchNumber: 197/234, Calcs: 97892246550, addresses: 14, threads: 978930, blocks:956 
+BatchNumber: 198/234, Calcs: 103862548518, addresses: 279, threads: 1038774, blocks:1015 
+Batch 196 Results: 44588
+Batch 197 Results: 57403
+BatchNumber: 199/234, Calcs: 104052486423, addresses: 53, threads: 1040550, blocks:1017 
+BatchNumber: 200/234, Calcs: 102871854330, addresses: 89, threads: 1028763, blocks:1005 
+Batch 198 Results: 38325
+Batch 199 Results: 34724
+BatchNumber: 201/234, Calcs: 73995893999, addresses: 18, threads: 739968, blocks:723 
+BatchNumber: 202/234, Calcs: 51791445489, addresses: 1, threads: 517915, blocks:506 
+Batch 200 Results: 23984
+Batch 201 Results: 13902
+BatchNumber: 203/234, Calcs: 294792015224, addresses: 1, threads: 2947921, blocks:2879 
+BatchNumber: 204/234, Calcs: 88011410071, addresses: 4, threads: 880117, blocks:860 
+Batch 202 Results: 69867
+Batch 203 Results: 29591
+BatchNumber: 205/234, Calcs: 185903878208, addresses: 1, threads: 1859039, blocks:1816 
+BatchNumber: 206/234, Calcs: 104610204520, addresses: 35, threads: 1046120, blocks:1022 
+Batch 204 Results: 45084
+Batch 205 Results: 40162
+BatchNumber: 207/234, Calcs: 59402163673, addresses: 15, threads: 594028, blocks:581 
+BatchNumber: 208/234, Calcs: 141605668704, addresses: 1, threads: 1416057, blocks:1383 
+Batch 206 Results: 19525
+Batch 207 Results: 38866
+BatchNumber: 209/234, Calcs: 84296040023, addresses: 4, threads: 842962, blocks:824 
+BatchNumber: 210/234, Calcs: 424260910219, addresses: 1, threads: 4242610, blocks:4144 
+Batch 208 Results: 28562
+Batch 209 Results: 112611
+BatchNumber: 211/234, Calcs: 99198504832, addresses: 3, threads: 991987, blocks:969 
+BatchNumber: 212/234, Calcs: 87576103933, addresses: 11, threads: 875765, blocks:856 
+Batch 210 Results: 36028
+Batch 211 Results: 37712
+BatchNumber: 213/234, Calcs: 25821439844, addresses: 3, threads: 258216, blocks:253 
+BatchNumber: 214/234, Calcs: 108698950464, addresses: 1, threads: 1086990, blocks:1062 
+Batch 212 Results: 12673
+Batch 213 Results: 40016
+BatchNumber: 215/234, Calcs: 104585301855, addresses: 82, threads: 1045893, blocks:1022 
+BatchNumber: 216/234, Calcs: 100321626987, addresses: 15, threads: 1003225, blocks:980 
+Batch 214 Results: 49668
+Batch 215 Results: 35325
+BatchNumber: 217/234, Calcs: 5591632158, addresses: 1, threads: 55917, blocks:55 
+BatchNumber: 218/234, Calcs: 132270207360, addresses: 1, threads: 1322703, blocks:1292 
+Batch 216 Results: 1925
+Batch 217 Results: 36360
+BatchNumber: 219/234, Calcs: 103400359722, addresses: 1, threads: 1034004, blocks:1010 
+BatchNumber: 220/234, Calcs: 89833301674, addresses: 50, threads: 898355, blocks:878 
+Batch 218 Results: 36417
+Batch 219 Results: 38963
+BatchNumber: 221/234, Calcs: 19865906655, addresses: 1, threads: 198660, blocks:195 
+BatchNumber: 222/234, Calcs: 386324372148, addresses: 1, threads: 3863244, blocks:3773 
+Batch 220 Results: 7513
+Batch 221 Results: 112337
+BatchNumber: 223/234, Calcs: 217063480946, addresses: 1, threads: 2170635, blocks:2120 
+BatchNumber: 224/234, Calcs: 5639994119, addresses: 3, threads: 56401, blocks:56 
+Batch 222 Results: 78112
+Batch 223 Results: 4886
+BatchNumber: 225/234, Calcs: 106064777104, addresses: 1, threads: 1060648, blocks:1036 
+BatchNumber: 226/234, Calcs: 96784815309, addresses: 9, threads: 967852, blocks:946 
+Batch 224 Results: 47226
+Batch 225 Results: 51207
+BatchNumber: 227/234, Calcs: 35293433951, addresses: 4, threads: 352936, blocks:345 
+BatchNumber: 228/234, Calcs: 189411966953, addresses: 1, threads: 1894120, blocks:1850 
+Batch 226 Results: 16878
+Batch 227 Results: 71941
+BatchNumber: 229/234, Calcs: 185841015535, addresses: 1, threads: 1858411, blocks:1815 
+BatchNumber: 230/234, Calcs: 103257259834, addresses: 29, threads: 1032587, blocks:1009 
+Batch 228 Results: 79770
+Batch 229 Results: 65768
+BatchNumber: 231/234, Calcs: 95850448835, addresses: 96, threads: 958553, blocks:937 
+BatchNumber: 232/234, Calcs: 100972762495, addresses: 266, threads: 1009853, blocks:987 
+Batch 230 Results: 83079
+Batch 231 Results: 99349
+BatchNumber: 233/234, Calcs: 90488352012, addresses: 62, threads: 904915, blocks:884 
+BatchNumber: 234/234, Calcs: 72589608831, addresses: 436, threads: 726148, blocks:710 
+Batch 232 Results: 80516
+Batch 233 Results: 125969
+Total results Set Size: 11660630 
+Kernel time: 2192.108508
+Total Time: 2208.044982
+
+Time to read in file: 1.701603
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Concurent Streams: 2
+Distance Threshold: 0.032750 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 20235
+Tree Check: 11000000
+Time to build tree: 15.391607
+Number non-empty bins: 2753
+Number of calcs: 77800609544432
+Number Address for calcs: 501973
+Tree BINARY search time: 0.041907
+BatchNumber: 1/170, Calcs: 99020251011, addresses: 1021, threads: 990950, blocks:968 
+BatchNumber: 2/170, Calcs: 94053138898, addresses: 159, threads: 940626, blocks:919 
+Batch 1 Results: 84853
+Batch 0 Results: 116472
+BatchNumber: 3/170, Calcs: 102247716579, addresses: 5, threads: 1022480, blocks:999 
+BatchNumber: 4/170, Calcs: 63172867701, addresses: 42, threads: 631753, blocks:617 
+Batch 2 Results: 70652
+Batch 3 Results: 49604
+BatchNumber: 5/170, Calcs: 213532394877, addresses: 1, threads: 2135324, blocks:2086 
+BatchNumber: 6/170, Calcs: 611981339050, addresses: 1, threads: 6119814, blocks:5977 
+Batch 4 Results: 90761
+Batch 5 Results: 274124
+BatchNumber: 7/170, Calcs: 887163655, addresses: 2, threads: 8873, blocks:9 
+BatchNumber: 8/170, Calcs: 173817333072, addresses: 1, threads: 1738174, blocks:1698 
+Batch 6 Results: 278
+Batch 7 Results: 95515
+BatchNumber: 9/170, Calcs: 1022888527280, addresses: 1, threads: 10228886, blocks:9990 
+Batch 8 Results: 492690
+BatchNumber: 10/170, Calcs: 40681983290, addresses: 9, threads: 406825, blocks:398 
+BatchNumber: 11/170, Calcs: 120840206207, addresses: 1, threads: 1208403, blocks:1181 
+Batch 9 Results: 15545
+Batch 10 Results: 62041
+BatchNumber: 12/170, Calcs: 55550780825, addresses: 2, threads: 555509, blocks:543 
+BatchNumber: 13/170, Calcs: 827279911277, addresses: 1, threads: 8272800, blocks:8079 
+Batch 11 Results: 42834
+Batch 12 Results: 560528
+BatchNumber: 14/170, Calcs: 99048492329, addresses: 24, threads: 990496, blocks:968 
+BatchNumber: 15/170, Calcs: 361735894976, addresses: 1, threads: 3617359, blocks:3533 
+Batch 13 Results: 52067
+Batch 14 Results: 209284
+BatchNumber: 16/170, Calcs: 65569004461, addresses: 10, threads: 655696, blocks:641 
+BatchNumber: 17/170, Calcs: 633799267536, addresses: 1, threads: 6337993, blocks:6190 
+Batch 15 Results: 30032
+Batch 16 Results: 449682
+BatchNumber: 18/170, Calcs: 61593415351, addresses: 2, threads: 615935, blocks:602 
+BatchNumber: 19/170, Calcs: 104779211727, addresses: 4, threads: 1047794, blocks:1024 
+Batch 17 Results: 51410
+Batch 18 Results: 63094
+BatchNumber: 20/170, Calcs: 18544885012, addresses: 93, threads: 185502, blocks:182 
+BatchNumber: 21/170, Calcs: 100767743804, addresses: 3, threads: 1007679, blocks:985 
+Batch 19 Results: 13153
+Batch 20 Results: 41500
+BatchNumber: 22/170, Calcs: 132883958592, addresses: 1, threads: 1328840, blocks:1298 
+BatchNumber: 23/170, Calcs: 48457219874, addresses: 8, threads: 484576, blocks:474 
+Batch 21 Results: 54095
+Batch 22 Results: 27182
+BatchNumber: 24/170, Calcs: 149987985472, addresses: 1, threads: 1499880, blocks:1465 
+BatchNumber: 25/170, Calcs: 51565110502, addresses: 14, threads: 515658, blocks:504 
+Batch 23 Results: 77561
+Batch 24 Results: 27086
+BatchNumber: 26/170, Calcs: 102198593125, addresses: 8, threads: 1021990, blocks:999 
+BatchNumber: 27/170, Calcs: 105146241126, addresses: 1, threads: 1051463, blocks:1027 
+Batch 25 Results: 58672
+Batch 26 Results: 59651
+BatchNumber: 28/170, Calcs: 154586348727, addresses: 1, threads: 1545864, blocks:1510 
+BatchNumber: 29/170, Calcs: 101618920132, addresses: 213, threads: 1016303, blocks:993 
+Batch 27 Results: 116182
+Batch 28 Results: 67013
+BatchNumber: 30/170, Calcs: 28307992197, addresses: 40, threads: 283100, blocks:277 
+BatchNumber: 31/170, Calcs: 133717430270, addresses: 1, threads: 1337175, blocks:1306 
+Batch 29 Results: 23439
+Batch 30 Results: 47228
+BatchNumber: 32/170, Calcs: 338797021455, addresses: 1, threads: 3387971, blocks:3309 
+BatchNumber: 33/170, Calcs: 1873187000, addresses: 1, threads: 18732, blocks:19 
+Batch 31 Results: 91349
+Batch 32 Results: 443
+BatchNumber: 34/170, Calcs: 150329731968, addresses: 1, threads: 1503298, blocks:1469 
+BatchNumber: 35/170, Calcs: 1003436703802, addresses: 1, threads: 10034368, blocks:9800 
+Batch 33 Results: 64875
+Batch 34 Results: 291153
+BatchNumber: 36/170, Calcs: 69947428782, addresses: 9, threads: 699478, blocks:684 
+BatchNumber: 37/170, Calcs: 133923602175, addresses: 1, threads: 1339237, blocks:1308 
+Batch 35 Results: 19808
+Batch 36 Results: 47389
+BatchNumber: 38/170, Calcs: 424706832, addresses: 1, threads: 4248, blocks:5 
+BatchNumber: 39/170, Calcs: 114026095392, addresses: 1, threads: 1140261, blocks:1114 
+Batch 37 Results: 121
+Batch 38 Results: 70313
+BatchNumber: 40/170, Calcs: 1811214421905, addresses: 1, threads: 18112145, blocks:17688 
+Batch 39 Results: 856447
+BatchNumber: 41/170, Calcs: 19837447460, addresses: 2, threads: 198375, blocks:194 
+BatchNumber: 42/170, Calcs: 103384186927, addresses: 5, threads: 1033845, blocks:1010 
+Batch 40 Results: 7388
+Batch 41 Results: 50142
+BatchNumber: 43/170, Calcs: 73680351260, addresses: 24, threads: 736817, blocks:720 
+BatchNumber: 44/170, Calcs: 697453447438, addresses: 1, threads: 6974535, blocks:6812 
+Batch 42 Results: 21136
+Batch 43 Results: 202725
+BatchNumber: 45/170, Calcs: 48229990490, addresses: 2, threads: 482301, blocks:471 
+BatchNumber: 46/170, Calcs: 103052126829, addresses: 8, threads: 1030525, blocks:1007 
+Batch 44 Results: 11459
+Batch 45 Results: 24237
+BatchNumber: 47/170, Calcs: 83779515822, addresses: 3, threads: 837796, blocks:819 
+BatchNumber: 48/170, Calcs: 3013250682183, addresses: 1, threads: 30132507, blocks:29427 
+Batch 46 Results: 23802
+Batch 47 Results: 1355218
+BatchNumber: 49/170, Calcs: 257928732610, addresses: 1, threads: 2579288, blocks:2519 
+BatchNumber: 50/170, Calcs: 492862173, addresses: 1, threads: 4929, blocks:5 
+Batch 48 Results: 102858
+Batch 49 Results: 199
+BatchNumber: 51/170, Calcs: 1293339096630, addresses: 1, threads: 12933391, blocks:12631 
+BatchNumber: 52/170, Calcs: 219115776768, addresses: 1, threads: 2191158, blocks:2140 
+Batch 50 Results: 718615
+Batch 51 Results: 101728
+BatchNumber: 53/170, Calcs: 71930536990, addresses: 9, threads: 719310, blocks:703 
+BatchNumber: 54/170, Calcs: 102825713900, addresses: 1, threads: 1028258, blocks:1005 
+Batch 52 Results: 36396
+Batch 53 Results: 70836
+BatchNumber: 55/170, Calcs: 66455101136, addresses: 13, threads: 664557, blocks:649 
+BatchNumber: 56/170, Calcs: 64524627746, addresses: 1, threads: 645247, blocks:631 
+Batch 54 Results: 44589
+Batch 55 Results: 55836
+BatchNumber: 57/170, Calcs: 99546221883, addresses: 76, threads: 995500, blocks:973 
+BatchNumber: 58/170, Calcs: 23408972596, addresses: 1, threads: 234090, blocks:229 
+Batch 56 Results: 74245
+Batch 57 Results: 7819
+BatchNumber: 59/170, Calcs: 360882380152, addresses: 1, threads: 3608824, blocks:3525 
+BatchNumber: 60/170, Calcs: 37349735080, addresses: 2, threads: 373498, blocks:365 
+Batch 58 Results: 100745
+Batch 59 Results: 10487
+BatchNumber: 61/170, Calcs: 982321400632, addresses: 1, threads: 9823215, blocks:9593 
+BatchNumber: 62/170, Calcs: 150358591687, addresses: 1, threads: 1503586, blocks:1469 
+Batch 60 Results: 238621
+Batch 61 Results: 31070
+BatchNumber: 63/170, Calcs: 25502972248, addresses: 7, threads: 255034, blocks:250 
+BatchNumber: 64/170, Calcs: 204976071027, addresses: 1, threads: 2049761, blocks:2002 
+Batch 62 Results: 5779
+Batch 63 Results: 80799
+BatchNumber: 65/170, Calcs: 33220298232, addresses: 2, threads: 332204, blocks:325 
+BatchNumber: 66/170, Calcs: 3021119265888, addresses: 1, threads: 30211193, blocks:29504 
+Batch 64 Results: 13072
+Batch 65 Results: 1250479
+BatchNumber: 67/170, Calcs: 926974679477, addresses: 1, threads: 9269747, blocks:9053 
+BatchNumber: 68/170, Calcs: 11334315, addresses: 1, threads: 114, blocks:1 
+Batch 67 Results: 4
+Batch 66 Results: 385398
+BatchNumber: 69/170, Calcs: 132371377200, addresses: 1, threads: 1323714, blocks:1293 
+Batch 68 Results: 55862
+BatchNumber: 70/170, Calcs: 100522497219, addresses: 16, threads: 1005231, blocks:982 
+BatchNumber: 71/170, Calcs: 58619036536, addresses: 3, threads: 586191, blocks:573 
+Batch 69 Results: 40726
+Batch 70 Results: 15621
+BatchNumber: 72/170, Calcs: 669768233808, addresses: 1, threads: 6697683, blocks:6541 
+BatchNumber: 73/170, Calcs: 487079745005, addresses: 1, threads: 4870798, blocks:4757 
+Batch 71 Results: 174057
+Batch 72 Results: 130183
+BatchNumber: 74/170, Calcs: 81338338509, addresses: 2, threads: 813384, blocks:795 
+BatchNumber: 75/170, Calcs: 88194654376, addresses: 7, threads: 881950, blocks:862 
+Batch 73 Results: 19277
+Batch 74 Results: 19202
+BatchNumber: 76/170, Calcs: 90981985534, addresses: 3, threads: 909822, blocks:889 
+BatchNumber: 77/170, Calcs: 4691246272678, addresses: 1, threads: 46912463, blocks:45813 
+Batch 75 Results: 24924
+Batch 76 Results: 1648200
+BatchNumber: 78/170, Calcs: 6588827076014, addresses: 1, threads: 65888271, blocks:64345 
+BatchNumber: 79/170, Calcs: 961441846, addresses: 2, threads: 9615, blocks:10 
+Batch 77 Results: 2419174
+Batch 78 Results: 283
+BatchNumber: 80/170, Calcs: 1801040580400, addresses: 1, threads: 18010406, blocks:17589 
+BatchNumber: 81/170, Calcs: 4967325492021, addresses: 1, threads: 49673255, blocks:48510 
+Batch 79 Results: 799378
+Batch 80 Results: 2095373
+BatchNumber: 82/170, Calcs: 14760138902, addresses: 7, threads: 147603, blocks:145 
+BatchNumber: 83/170, Calcs: 149038230557, addresses: 1, threads: 1490383, blocks:1456 
+Batch 81 Results: 7079
+Batch 82 Results: 64818
+BatchNumber: 84/170, Calcs: 415547434434, addresses: 1, threads: 4155475, blocks:4059 
+BatchNumber: 85/170, Calcs: 170033721, addresses: 1, threads: 1701, blocks:2 
+Batch 83 Results: 185223
+Batch 84 Results: 53
+BatchNumber: 86/170, Calcs: 236166081072, addresses: 1, threads: 2361661, blocks:2307 
+BatchNumber: 87/170, Calcs: 1245457978537, addresses: 1, threads: 12454580, blocks:12163 
+Batch 85 Results: 129535
+Batch 86 Results: 653134
+BatchNumber: 88/170, Calcs: 45359112946, addresses: 16, threads: 453599, blocks:443 
+BatchNumber: 89/170, Calcs: 195838977040, addresses: 1, threads: 1958390, blocks:1913 
+Batch 87 Results: 23700
+Batch 88 Results: 86351
+BatchNumber: 90/170, Calcs: 85083646368, addresses: 2, threads: 850837, blocks:831 
+BatchNumber: 91/170, Calcs: 1244624857200, addresses: 1, threads: 12446249, blocks:12155 
+Batch 89 Results: 46200
+Batch 90 Results: 766826
+BatchNumber: 92/170, Calcs: 92410838794, addresses: 9, threads: 924112, blocks:903 
+BatchNumber: 93/170, Calcs: 554737355000, addresses: 1, threads: 5547374, blocks:5418 
+Batch 91 Results: 50721
+Batch 92 Results: 297993
+BatchNumber: 94/170, Calcs: 103315123340, addresses: 53, threads: 1033178, blocks:1009 
+BatchNumber: 95/170, Calcs: 330416044623, addresses: 1, threads: 3304161, blocks:3227 
+Batch 93 Results: 56675
+Batch 94 Results: 112346
+BatchNumber: 96/170, Calcs: 3389041391, addresses: 2, threads: 33891, blocks:34 
+BatchNumber: 97/170, Calcs: 171491607803, addresses: 1, threads: 1714917, blocks:1675 
+Batch 95 Results: 910
+Batch 96 Results: 51727
+BatchNumber: 98/170, Calcs: 54335309628, addresses: 7, threads: 543355, blocks:531 
+BatchNumber: 99/170, Calcs: 104338080941, addresses: 12, threads: 1043386, blocks:1019 
+Batch 97 Results: 21777
+Batch 98 Results: 37848
+BatchNumber: 100/170, Calcs: 88669246837, addresses: 8, threads: 886698, blocks:866 
+BatchNumber: 101/170, Calcs: 99822285048, addresses: 72, threads: 998261, blocks:975 
+Batch 99 Results: 37860
+Batch 100 Results: 36385
+BatchNumber: 102/170, Calcs: 97576421328, addresses: 12, threads: 975770, blocks:953 
+BatchNumber: 103/170, Calcs: 104550514966, addresses: 25, threads: 1045515, blocks:1022 
+Batch 101 Results: 22878
+Batch 102 Results: 37417
+BatchNumber: 104/170, Calcs: 103911166178, addresses: 41, threads: 1039133, blocks:1015 
+BatchNumber: 105/170, Calcs: 29417152339, addresses: 11, threads: 294176, blocks:288 
+Batch 103 Results: 27975
+Batch 104 Results: 6444
+BatchNumber: 106/170, Calcs: 398999023134, addresses: 1, threads: 3989991, blocks:3897 
+BatchNumber: 107/170, Calcs: 152490671751, addresses: 1, threads: 1524907, blocks:1490 
+Batch 105 Results: 150203
+Batch 106 Results: 63517
+BatchNumber: 108/170, Calcs: 93586793962, addresses: 21, threads: 935878, blocks:914 
+BatchNumber: 109/170, Calcs: 89369227116, addresses: 1, threads: 893693, blocks:873 
+Batch 107 Results: 48809
+Batch 108 Results: 18122
+BatchNumber: 110/170, Calcs: 103399052341, addresses: 10, threads: 1033996, blocks:1010 
+BatchNumber: 111/170, Calcs: 5031059414, addresses: 2, threads: 50312, blocks:50 
+Batch 109 Results: 19242
+Batch 110 Results: 1323
+BatchNumber: 112/170, Calcs: 1581534726068, addresses: 1, threads: 15815348, blocks:15445 
+BatchNumber: 113/170, Calcs: 2282617334145, addresses: 1, threads: 22826174, blocks:22292 
+Batch 111 Results: 479949
+Batch 112 Results: 663387
+BatchNumber: 114/170, Calcs: 1626420603, addresses: 2, threads: 16265, blocks:16 
+BatchNumber: 115/170, Calcs: 1139217398152, addresses: 1, threads: 11392174, blocks:11126 
+Batch 113 Results: 330
+Batch 114 Results: 460716
+BatchNumber: 116/170, Calcs: 3560786758800, addresses: 1, threads: 35607868, blocks:34774 
+Batch 115 Results: 1158353
+BatchNumber: 117/170, Calcs: 33964456946, addresses: 7, threads: 339648, blocks:332 
+BatchNumber: 118/170, Calcs: 137555330474, addresses: 1, threads: 1375554, blocks:1344 
+Batch 116 Results: 13761
+Batch 117 Results: 59478
+BatchNumber: 119/170, Calcs: 437499130376, addresses: 1, threads: 4374992, blocks:4273 
+BatchNumber: 120/170, Calcs: 215524960, addresses: 1, threads: 2156, blocks:3 
+Batch 118 Results: 211259
+Batch 119 Results: 59
+BatchNumber: 121/170, Calcs: 386260510074, addresses: 1, threads: 3862606, blocks:3773 
+BatchNumber: 122/170, Calcs: 2475821769576, addresses: 1, threads: 24758218, blocks:24178 
+Batch 120 Results: 234428
+Batch 121 Results: 1269500
+BatchNumber: 123/170, Calcs: 64303773645, addresses: 16, threads: 643047, blocks:628 
+BatchNumber: 124/170, Calcs: 141735153300, addresses: 1, threads: 1417352, blocks:1385 
+Batch 122 Results: 37810
+Batch 123 Results: 37779
+BatchNumber: 125/170, Calcs: 75156146068, addresses: 2, threads: 751563, blocks:734 
+BatchNumber: 126/170, Calcs: 1659228138744, addresses: 1, threads: 16592282, blocks:16204 
+Batch 124 Results: 29284
+Batch 125 Results: 688924
+BatchNumber: 127/170, Calcs: 46198592762, addresses: 2, threads: 461987, blocks:452 
+BatchNumber: 128/170, Calcs: 102560354053, addresses: 4, threads: 1025605, blocks:1002 
+Batch 126 Results: 22705
+Batch 127 Results: 64733
+BatchNumber: 129/170, Calcs: 88587008492, addresses: 3, threads: 885872, blocks:866 
+BatchNumber: 130/170, Calcs: 29273621608, addresses: 1, threads: 292737, blocks:286 
+Batch 128 Results: 35597
+Batch 129 Results: 12695
+BatchNumber: 131/170, Calcs: 2428602547435, addresses: 1, threads: 24286026, blocks:23717 
+BatchNumber: 132/170, Calcs: 83710425195, addresses: 2, threads: 837105, blocks:818 
+Batch 130 Results: 1263433
+Batch 131 Results: 52112
+BatchNumber: 133/170, Calcs: 471076847415, addresses: 1, threads: 4710769, blocks:4601 
+BatchNumber: 134/170, Calcs: 89082832416, addresses: 41, threads: 890846, blocks:870 
+Batch 132 Results: 377244
+Batch 133 Results: 88385
+BatchNumber: 135/170, Calcs: 57189619798, addresses: 19, threads: 571908, blocks:559 
+BatchNumber: 136/170, Calcs: 64813923460, addresses: 1, threads: 648140, blocks:633 
+Batch 134 Results: 19693
+Batch 135 Results: 15123
+BatchNumber: 137/170, Calcs: 1148317255612, addresses: 1, threads: 11483173, blocks:11215 
+BatchNumber: 138/170, Calcs: 55094763310, addresses: 2, threads: 550948, blocks:539 
+Batch 136 Results: 364851
+Batch 137 Results: 16161
+BatchNumber: 139/170, Calcs: 1469909904736, addresses: 1, threads: 14699100, blocks:14355 
+BatchNumber: 140/170, Calcs: 127053026744, addresses: 1, threads: 1270531, blocks:1241 
+Batch 138 Results: 438388
+Batch 139 Results: 37609
+BatchNumber: 141/170, Calcs: 10410619418, addresses: 5, threads: 104109, blocks:102 
+Batch 140 Results: 3140
+BatchNumber: 142/170, Calcs: 331715898295, addresses: 1, threads: 3317159, blocks:3240 
+BatchNumber: 143/170, Calcs: 28664032168, addresses: 2, threads: 286641, blocks:280 
+Batch 141 Results: 156973
+Batch 142 Results: 14525
+BatchNumber: 144/170, Calcs: 1782144429614, addresses: 1, threads: 17821445, blocks:17404 
+BatchNumber: 145/170, Calcs: 264062643200, addresses: 1, threads: 2640627, blocks:2579 
+Batch 143 Results: 904300
+Batch 144 Results: 144627
+BatchNumber: 146/170, Calcs: 97419896356, addresses: 16, threads: 974205, blocks:952 
+BatchNumber: 147/170, Calcs: 13493079362, addresses: 2, threads: 134932, blocks:132 
+Batch 145 Results: 36330
+Batch 146 Results: 4249
+BatchNumber: 148/170, Calcs: 692624002378, addresses: 1, threads: 6926241, blocks:6764 
+BatchNumber: 149/170, Calcs: 321276264932, addresses: 1, threads: 3212763, blocks:3138 
+Batch 147 Results: 220513
+Batch 148 Results: 129076
+BatchNumber: 150/170, Calcs: 55758171863, addresses: 3, threads: 557584, blocks:545 
+BatchNumber: 151/170, Calcs: 81669447984, addresses: 3, threads: 816696, blocks:798 
+Batch 149 Results: 25172
+Batch 150 Results: 35203
+BatchNumber: 152/170, Calcs: 1983754672815, addresses: 1, threads: 19837547, blocks:19373 
+BatchNumber: 153/170, Calcs: 1354522707559, addresses: 1, threads: 13545228, blocks:13228 
+Batch 151 Results: 955991
+Batch 152 Results: 698022
+BatchNumber: 154/170, Calcs: 10443023, addresses: 2, threads: 106, blocks:1 
+BatchNumber: 155/170, Calcs: 264960608736, addresses: 1, threads: 2649607, blocks:2588 
+Batch 153 Results: 8
+Batch 154 Results: 156958
+BatchNumber: 156/170, Calcs: 416144289744, addresses: 1, threads: 4161443, blocks:4064 
+Batch 155 Results: 242621
+BatchNumber: 157/170, Calcs: 99916477799, addresses: 50, threads: 999193, blocks:976 
+BatchNumber: 158/170, Calcs: 104669440235, addresses: 68, threads: 1046734, blocks:1023 
+Batch 156 Results: 95555
+Batch 157 Results: 69786
+BatchNumber: 159/170, Calcs: 73913920599, addresses: 39, threads: 739159, blocks:722 
+BatchNumber: 160/170, Calcs: 144687589947, addresses: 1, threads: 1446876, blocks:1413 
+Batch 158 Results: 26726
+Batch 159 Results: 109345
+BatchNumber: 161/170, Calcs: 102296894158, addresses: 22, threads: 1022981, blocks:1000 
+BatchNumber: 162/170, Calcs: 457521778824, addresses: 1, threads: 4575218, blocks:4468 
+Batch 160 Results: 50290
+Batch 161 Results: 318388
+BatchNumber: 163/170, Calcs: 377392709520, addresses: 1, threads: 3773928, blocks:3686 
+BatchNumber: 164/170, Calcs: 12727803, addresses: 2, threads: 128, blocks:1 
+Batch 163 Results: 16
+Batch 162 Results: 269438
+BatchNumber: 165/170, Calcs: 154090462164, addresses: 1, threads: 1540905, blocks:1505 
+Batch 164 Results: 123378
+BatchNumber: 166/170, Calcs: 251495291576, addresses: 1, threads: 2514953, blocks:2457 
+BatchNumber: 167/170, Calcs: 85423722270, addresses: 21, threads: 854249, blocks:835 
+Batch 165 Results: 162751
+Batch 166 Results: 102564
+BatchNumber: 168/170, Calcs: 87540390410, addresses: 45, threads: 875425, blocks:855 
+BatchNumber: 169/170, Calcs: 72007636259, addresses: 3, threads: 720078, blocks:704 
+Batch 167 Results: 91665
+Batch 168 Results: 67903
+BatchNumber: 170/170, Calcs: 91250414772, addresses: 117, threads: 912566, blocks:892 
+Batch 169 Results: 117010
+Total results Set Size: 33883428 
+Kernel time: 4158.078239
+Total Time: 4173.511759
+
+Time to read in file: 1.664868
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Concurent Streams: 2
+Distance Threshold: 0.044125 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 5388
+Tree Check: 11000000
+Time to build tree: 15.161545
+Number non-empty bins: 915
+Number of calcs: 102700348890812
+Number Address for calcs: 121529
+Tree BINARY search time: 0.027375
+BatchNumber: 1/93, Calcs: 88028137236, addresses: 409, threads: 880561, blocks:860 
+BatchNumber: 2/93, Calcs: 70450393065, addresses: 1, threads: 704504, blocks:688 
+Batch 0 Results: 156248
+Batch 1 Results: 128984
+BatchNumber: 3/93, Calcs: 138088205240, addresses: 1, threads: 1380883, blocks:1349 
+BatchNumber: 4/93, Calcs: 96848910412, addresses: 30, threads: 968503, blocks:946 
+Batch 2 Results: 305365
+Batch 3 Results: 136628
+BatchNumber: 5/93, Calcs: 82321939780, addresses: 31, threads: 823235, blocks:804 
+BatchNumber: 6/93, Calcs: 106206015050, addresses: 1, threads: 1062061, blocks:1038 
+Batch 4 Results: 241345
+Batch 5 Results: 498745
+BatchNumber: 7/93, Calcs: 1307022252360, addresses: 1, threads: 13070223, blocks:12764 
+BatchNumber: 8/93, Calcs: 37544176591, addresses: 8, threads: 375446, blocks:367 
+Batch 6 Results: 9462376
+Batch 7 Results: 75942
+BatchNumber: 9/93, Calcs: 87077589564, addresses: 1, threads: 870776, blocks:851 
+BatchNumber: 10/93, Calcs: 2632599828608, addresses: 1, threads: 26325999, blocks:25709 
+Batch 8 Results: 246599
+Batch 9 Results: 16552555
+BatchNumber: 11/93, Calcs: 69508676616, addresses: 2, threads: 695088, blocks:679 
+BatchNumber: 12/93, Calcs: 103345817850, addresses: 11, threads: 1033464, blocks:1010 
+Batch 10 Results: 282371
+Batch 11 Results: 611238
+BatchNumber: 13/93, Calcs: 84878889551, addresses: 9, threads: 848794, blocks:829 
+BatchNumber: 14/93, Calcs: 454396886970, addresses: 1, threads: 4543969, blocks:4438 
+Batch 12 Results: 100271
+Batch 13 Results: 1445926
+BatchNumber: 15/93, Calcs: 101488446568, addresses: 2, threads: 1014885, blocks:992 
+BatchNumber: 16/93, Calcs: 69894079744, addresses: 1, threads: 698941, blocks:683 
+Batch 14 Results: 384816
+Batch 15 Results: 260277
+BatchNumber: 17/93, Calcs: 103900181030, addresses: 52, threads: 1039029, blocks:1015 
+BatchNumber: 18/93, Calcs: 59843871401, addresses: 46, threads: 598462, blocks:585 
+Batch 16 Results: 379279
+Batch 17 Results: 260398
+BatchNumber: 19/93, Calcs: 850765761702, addresses: 1, threads: 8507658, blocks:8309 
+BatchNumber: 20/93, Calcs: 28290557809, addresses: 6, threads: 282907, blocks:277 
+Batch 18 Results: 9357402
+Batch 19 Results: 225277
+BatchNumber: 21/93, Calcs: 107610038848, addresses: 1, threads: 1076101, blocks:1051 
+BatchNumber: 22/93, Calcs: 8662626198742, addresses: 1, threads: 86626262, blocks:84596 
+Batch 20 Results: 444702
+Batch 21 Results: 68864308
+BatchNumber: 23/93, Calcs: 212621303808, addresses: 1, threads: 2126214, blocks:2077 
+BatchNumber: 24/93, Calcs: 566063520, addresses: 1, threads: 5661, blocks:6 
+Batch 23 Results: 140
+Batch 22 Results: 1500222
+BatchNumber: 25/93, Calcs: 1468620884379, addresses: 1, threads: 14686209, blocks:14343 
+Batch 24 Results: 13963153
+BatchNumber: 26/93, Calcs: 172116239814, addresses: 1, threads: 1721163, blocks:1681 
+BatchNumber: 27/93, Calcs: 63954140285, addresses: 9, threads: 639545, blocks:625 
+Batch 25 Results: 1243794
+Batch 26 Results: 123057
+BatchNumber: 28/93, Calcs: 163740595173, addresses: 1, threads: 1637406, blocks:1600 
+BatchNumber: 29/93, Calcs: 61583636146, addresses: 7, threads: 615838, blocks:602 
+Batch 27 Results: 503647
+Batch 28 Results: 197132
+BatchNumber: 30/93, Calcs: 7095360983721, addresses: 1, threads: 70953610, blocks:69291 
+BatchNumber: 31/93, Calcs: 1720133296412, addresses: 1, threads: 17201333, blocks:16799 
+Batch 29 Results: 39439018
+Batch 30 Results: 8996874
+BatchNumber: 32/93, Calcs: 532305032, addresses: 1, threads: 5324, blocks:6 
+BatchNumber: 33/93, Calcs: 5133322551873, addresses: 1, threads: 51333226, blocks:50131 
+Batch 31 Results: 138
+Batch 32 Results: 44992363
+BatchNumber: 34/93, Calcs: 5253444125561, addresses: 1, threads: 52534442, blocks:51304 
+Batch 33 Results: 42887309
+BatchNumber: 35/93, Calcs: 399312642, addresses: 3, threads: 3995, blocks:4 
+Batch 34 Results: 217
+BatchNumber: 36/93, Calcs: 142764944294, addresses: 1, threads: 1427650, blocks:1395 
+BatchNumber: 37/93, Calcs: 22151444822, addresses: 2, threads: 221515, blocks:217 
+Batch 35 Results: 623636
+Batch 36 Results: 37847
+BatchNumber: 38/93, Calcs: 699167455850, addresses: 1, threads: 6991675, blocks:6828 
+BatchNumber: 39/93, Calcs: 745356218242, addresses: 1, threads: 7453563, blocks:7279 
+Batch 37 Results: 3270604
+Batch 38 Results: 3515799
+BatchNumber: 40/93, Calcs: 65043980481, addresses: 32, threads: 650454, blocks:636 
+BatchNumber: 41/93, Calcs: 1430373949020, addresses: 1, threads: 14303740, blocks:13969 
+Batch 39 Results: 283002
+Batch 40 Results: 11083109
+BatchNumber: 42/93, Calcs: 136755791590, addresses: 1, threads: 1367558, blocks:1336 
+BatchNumber: 43/93, Calcs: 1330880482400, addresses: 1, threads: 13308805, blocks:12997 
+Batch 41 Results: 959909
+Batch 42 Results: 12494590
+BatchNumber: 44/93, Calcs: 446144561199, addresses: 1, threads: 4461446, blocks:4357 
+BatchNumber: 45/93, Calcs: 14024355699, addresses: 3, threads: 140246, blocks:137 
+Batch 43 Results: 3502114
+Batch 44 Results: 25501
+BatchNumber: 46/93, Calcs: 96632601088, addresses: 1, threads: 966327, blocks:944 
+BatchNumber: 47/93, Calcs: 42556114282, addresses: 8, threads: 425565, blocks:416 
+Batch 45 Results: 278324
+Batch 46 Results: 147035
+BatchNumber: 48/93, Calcs: 2073310216568, addresses: 1, threads: 20733103, blocks:20248 
+BatchNumber: 49/93, Calcs: 1023943254620, addresses: 1, threads: 10239433, blocks:10000 
+Batch 47 Results: 13469816
+Batch 48 Results: 5236483
+BatchNumber: 50/93, Calcs: 5212344913479, addresses: 1, threads: 52123450, blocks:50902 
+BatchNumber: 51/93, Calcs: 14353075847126, addresses: 1, threads: 143530759, blocks:140167 
+Batch 49 Results: 53136738
+Batch 50 Results: 142109830
+BatchNumber: 52/93, Calcs: 21729982800, addresses: 4, threads: 217302, blocks:213 
+Batch 51 Results: 241335
+BatchNumber: 53/93, Calcs: 119744184720, addresses: 1, threads: 1197442, blocks:1170 
+BatchNumber: 54/93, Calcs: 43803662084, addresses: 1, threads: 438037, blocks:428 
+Batch 52 Results: 468280
+Batch 53 Results: 97579
+BatchNumber: 55/93, Calcs: 1978585562952, addresses: 1, threads: 19785856, blocks:19323 
+BatchNumber: 56/93, Calcs: 10256978683248, addresses: 1, threads: 102569787, blocks:100166 
+Batch 54 Results: 12995300
+Batch 55 Results: 83130736
+BatchNumber: 57/93, Calcs: 17257382718, addresses: 2, threads: 172575, blocks:169 
+BatchNumber: 58/93, Calcs: 290319396966, addresses: 1, threads: 2903194, blocks:2836 
+Batch 56 Results: 139184
+Batch 57 Results: 4047248
+BatchNumber: 59/93, Calcs: 13278017081, addresses: 7, threads: 132784, blocks:130 
+BatchNumber: 60/93, Calcs: 104066095674, addresses: 2, threads: 1040662, blocks:1017 
+Batch 58 Results: 203701
+Batch 59 Results: 191382
+BatchNumber: 61/93, Calcs: 3153566076, addresses: 5, threads: 31538, blocks:31 
+BatchNumber: 62/93, Calcs: 453008346350, addresses: 1, threads: 4530084, blocks:4424 
+Batch 60 Results: 3403
+BatchNumber: 63/93, Calcs: 104792764992, addresses: 22, threads: 1047938, blocks:1024 
+Batch 61 Results: 1735495
+Batch 62 Results: 758416
+BatchNumber: 64/93, Calcs: 59005879743, addresses: 9, threads: 590064, blocks:577 
+BatchNumber: 65/93, Calcs: 95702320823, addresses: 5, threads: 957026, blocks:935 
+Batch 63 Results: 290154
+Batch 64 Results: 466137
+BatchNumber: 66/93, Calcs: 88505185017, addresses: 18, threads: 885062, blocks:865 
+BatchNumber: 67/93, Calcs: 81022073251, addresses: 2, threads: 810222, blocks:792 
+Batch 65 Results: 309580
+Batch 66 Results: 135984
+BatchNumber: 68/93, Calcs: 657502698584, addresses: 1, threads: 6575027, blocks:6421 
+BatchNumber: 69/93, Calcs: 3093182654862, addresses: 1, threads: 30931827, blocks:30207 
+Batch 67 Results: 4749773
+Batch 68 Results: 25164931
+BatchNumber: 70/93, Calcs: 42825271751, addresses: 6, threads: 428255, blocks:419 
+BatchNumber: 71/93, Calcs: 986641776260, addresses: 1, threads: 9866418, blocks:9636 
+Batch 69 Results: 482454
+Batch 70 Results: 5253694
+BatchNumber: 72/93, Calcs: 10526696350092, addresses: 1, threads: 105266964, blocks:102800 
+BatchNumber: 73/93, Calcs: 28127738694, addresses: 2, threads: 281278, blocks:275 
+Batch 71 Results: 82290860
+Batch 72 Results: 189745
+BatchNumber: 74/93, Calcs: 1762655325830, addresses: 1, threads: 17626554, blocks:17214 
+BatchNumber: 75/93, Calcs: 81091114353, addresses: 9, threads: 810916, blocks:792 
+Batch 73 Results: 21908240
+Batch 74 Results: 1198600
+BatchNumber: 76/93, Calcs: 146058810540, addresses: 1, threads: 1460589, blocks:1427 
+BatchNumber: 77/93, Calcs: 21119542555, addresses: 6, threads: 211198, blocks:207 
+Batch 75 Results: 311536
+Batch 76 Results: 45431
+BatchNumber: 78/93, Calcs: 2733034265316, addresses: 1, threads: 27330343, blocks:26690 
+BatchNumber: 79/93, Calcs: 156386620953, addresses: 1, threads: 1563867, blocks:1528 
+Batch 77 Results: 13087816
+Batch 78 Results: 718253
+BatchNumber: 80/93, Calcs: 48094011, addresses: 1, threads: 481, blocks:1 
+BatchNumber: 81/93, Calcs: 1709364235072, addresses: 1, threads: 17093643, blocks:16694 
+Batch 79 Results: 8
+Batch 80 Results: 12994030
+BatchNumber: 82/93, Calcs: 675708678324, addresses: 1, threads: 6757087, blocks:6599 
+Batch 81 Results: 5957389
+BatchNumber: 83/93, Calcs: 61312356217, addresses: 19, threads: 613133, blocks:599 
+BatchNumber: 84/93, Calcs: 198597609914, addresses: 1, threads: 1985977, blocks:1940 
+Batch 82 Results: 404746
+Batch 83 Results: 1275437
+BatchNumber: 85/93, Calcs: 2563911962, addresses: 2, threads: 25641, blocks:26 
+BatchNumber: 86/93, Calcs: 327382968869, addresses: 1, threads: 3273830, blocks:3198 
+Batch 84 Results: 7823
+Batch 85 Results: 3380689
+BatchNumber: 87/93, Calcs: 52534789112, addresses: 9, threads: 525351, blocks:514 
+BatchNumber: 88/93, Calcs: 92077677390, addresses: 2, threads: 920778, blocks:900 
+Batch 86 Results: 645379
+Batch 87 Results: 514675
+BatchNumber: 89/93, Calcs: 446623219560, addresses: 1, threads: 4466233, blocks:4362 
+BatchNumber: 90/93, Calcs: 442919957067, addresses: 1, threads: 4429200, blocks:4326 
+Batch 88 Results: 3998081
+Batch 89 Results: 3250604
+BatchNumber: 91/93, Calcs: 42107035673, addresses: 6, threads: 421073, blocks:412 
+BatchNumber: 92/93, Calcs: 98641731210, addresses: 31, threads: 986435, blocks:964 
+Batch 90 Results: 295009
+Batch 91 Results: 639304
+BatchNumber: 93/93, Calcs: 60532928283, addresses: 23, threads: 605342, blocks:592 
+Batch 92 Results: 391460
+Total results Set Size: 808812334 
+Kernel time: 5914.013251
+Total Time: 5929.202179
+Tiny____________________________________________________
+Tiny____________________________________________________
+Tiny____________________________________________________
+
+Time to read in file: 12.380078
+
+Number points: 5000000 
+Number Dimensions: 384 
+Number Concurent Streams: 2
+Distance Threshold: 0.200000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 10760
+Tree Check: 5000000
+Time to build tree: 79.204339
+Number non-empty bins: 959
+Number of calcs: 7648832381140
+Number Address for calcs: 82733
+Tree BINARY search time: 0.028873
+BatchNumber: 1/34, Calcs: 104769909349, addresses: 263, threads: 1047858, blocks:1024 
+BatchNumber: 2/34, Calcs: 81048896057, addresses: 57, threads: 810514, blocks:792 
+Batch 1 Results: 141174
+Batch 0 Results: 305501
+BatchNumber: 3/34, Calcs: 439115895304, addresses: 1, threads: 4391159, blocks:4289 
+BatchNumber: 4/34, Calcs: 100878709951, addresses: 46, threads: 1008811, blocks:986 
+Batch 2 Results: 376688
+Batch 3 Results: 91022
+BatchNumber: 5/34, Calcs: 104817702890, addresses: 13, threads: 1048184, blocks:1024 
+BatchNumber: 6/34, Calcs: 104512980253, addresses: 20, threads: 1045139, blocks:1021 
+Batch 4 Results: 90587
+Batch 5 Results: 89487
+BatchNumber: 7/34, Calcs: 75173632826, addresses: 8, threads: 751740, blocks:735 
+BatchNumber: 8/34, Calcs: 1129713039954, addresses: 1, threads: 11297131, blocks:11033 
+Batch 6 Results: 63102
+Batch 7 Results: 644615
+BatchNumber: 9/34, Calcs: 101486234145, addresses: 12, threads: 1014869, blocks:992 
+BatchNumber: 10/34, Calcs: 55550237659, addresses: 29, threads: 555514, blocks:543 
+Batch 8 Results: 72099
+Batch 9 Results: 43452
+BatchNumber: 11/34, Calcs: 86609278498, addresses: 4, threads: 866094, blocks:846 
+BatchNumber: 12/34, Calcs: 98192944357, addresses: 12, threads: 981935, blocks:959 
+Batch 10 Results: 57559
+Batch 11 Results: 75194
+BatchNumber: 13/34, Calcs: 104622185813, addresses: 12, threads: 1046228, blocks:1022 
+BatchNumber: 14/34, Calcs: 67703093676, addresses: 8, threads: 677035, blocks:662 
+Batch 12 Results: 75069
+Batch 13 Results: 46946
+BatchNumber: 15/34, Calcs: 89735025155, addresses: 6, threads: 897353, blocks:877 
+BatchNumber: 16/34, Calcs: 1443001377132, addresses: 1, threads: 14430014, blocks:14092 
+Batch 14 Results: 60133
+Batch 15 Results: 718729
+BatchNumber: 17/34, Calcs: 98487507603, addresses: 20, threads: 984886, blocks:962 
+BatchNumber: 18/34, Calcs: 103142905435, addresses: 23, threads: 1031442, blocks:1008 
+Batch 16 Results: 72194
+Batch 17 Results: 86761
+BatchNumber: 19/34, Calcs: 98822130983, addresses: 13, threads: 988229, blocks:966 
+BatchNumber: 20/34, Calcs: 101717738255, addresses: 14, threads: 1017183, blocks:994 
+Batch 18 Results: 71530
+Batch 19 Results: 77612
+BatchNumber: 21/34, Calcs: 91145717482, addresses: 8, threads: 911461, blocks:891 
+BatchNumber: 22/34, Calcs: 20380829196, addresses: 1, threads: 203809, blocks:200 
+Batch 20 Results: 64637
+Batch 21 Results: 17273
+BatchNumber: 23/34, Calcs: 1142260090725, addresses: 1, threads: 11422601, blocks:11155 
+BatchNumber: 24/34, Calcs: 102449166958, addresses: 37, threads: 1024511, blocks:1001 
+Batch 22 Results: 662004
+Batch 23 Results: 95859
+BatchNumber: 25/34, Calcs: 101775438990, addresses: 21, threads: 1017766, blocks:994 
+BatchNumber: 26/34, Calcs: 91140337527, addresses: 12, threads: 911411, blocks:891 
+Batch 24 Results: 95884
+Batch 25 Results: 86064
+BatchNumber: 27/34, Calcs: 676154180322, addresses: 1, threads: 6761542, blocks:6604 
+BatchNumber: 28/34, Calcs: 104282826390, addresses: 60, threads: 1042860, blocks:1019 
+Batch 26 Results: 531715
+Batch 27 Results: 141579
+BatchNumber: 29/34, Calcs: 30597222752, addresses: 6, threads: 305975, blocks:299 
+BatchNumber: 30/34, Calcs: 352478481600, addresses: 1, threads: 3524785, blocks:3443 
+Batch 28 Results: 48527
+Batch 29 Results: 380877
+BatchNumber: 31/34, Calcs: 57858089399, addresses: 62, threads: 578609, blocks:566 
+BatchNumber: 32/34, Calcs: 175747051450, addresses: 1, threads: 1757471, blocks:1717 
+Batch 30 Results: 113675
+Batch 31 Results: 377606
+BatchNumber: 33/34, Calcs: 97427260304, addresses: 125, threads: 974332, blocks:952 
+BatchNumber: 34/34, Calcs: 16034262750, addresses: 60, threads: 160370, blocks:157 
+Batch 32 Results: 397472
+Batch 33 Results: 47346486
+Total results Set Size: 53619112 
+Kernel time: 664.354824
+Total Time: 743.588046
+
+Time to read in file: 12.608293
+
+Number points: 5000000 
+Number Dimensions: 384 
+Number Concurent Streams: 2
+Distance Threshold: 0.260000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 4928
+Tree Check: 5000000
+Time to build tree: 75.966160
+Number non-empty bins: 541
+Number of calcs: 9195192734842
+Number Address for calcs: 39629
+Tree BINARY search time: 0.026428
+BatchNumber: 1/51, Calcs: 55116981561, addresses: 148, threads: 551248, blocks:539 
+BatchNumber: 2/51, Calcs: 152016551984, addresses: 1, threads: 1520166, blocks:1485 
+Batch 1 Results: 192455
+Batch 0 Results: 190319
+BatchNumber: 3/51, Calcs: 91301307705, addresses: 24, threads: 913025, blocks:892 
+BatchNumber: 4/51, Calcs: 87836600299, addresses: 4, threads: 878369, blocks:858 
+Batch 2 Results: 93179
+Batch 3 Results: 101934
+BatchNumber: 5/51, Calcs: 30047007384, addresses: 2, threads: 300472, blocks:294 
+BatchNumber: 6/51, Calcs: 95354585715, addresses: 8, threads: 953550, blocks:932 
+Batch 4 Results: 28635
+Batch 5 Results: 77077
+BatchNumber: 7/51, Calcs: 41073143685, addresses: 27, threads: 410745, blocks:402 
+BatchNumber: 8/51, Calcs: 227984771160, addresses: 1, threads: 2279848, blocks:2227 
+Batch 6 Results: 39413
+Batch 7 Results: 153131
+BatchNumber: 9/51, Calcs: 2705299663, addresses: 9, threads: 27058, blocks:27 
+BatchNumber: 10/51, Calcs: 852303816288, addresses: 1, threads: 8523039, blocks:8324 
+Batch 8 Results: 2427
+Batch 9 Results: 460632
+BatchNumber: 11/51, Calcs: 29911669241, addresses: 20, threads: 299125, blocks:293 
+Batch 10 Results: 48230
+BatchNumber: 12/51, Calcs: 321591449491, addresses: 1, threads: 3215915, blocks:3141 
+BatchNumber: 13/51, Calcs: 112182273795, addresses: 1, threads: 1121823, blocks:1096 
+Batch 11 Results: 170058
+Batch 12 Results: 60899
+BatchNumber: 14/51, Calcs: 37701644148, addresses: 1, threads: 377017, blocks:369 
+BatchNumber: 15/51, Calcs: 77661235619, addresses: 1, threads: 776613, blocks:759 
+Batch 13 Results: 20358
+Batch 14 Results: 46954
+BatchNumber: 16/51, Calcs: 86188021648, addresses: 2, threads: 861881, blocks:842 
+BatchNumber: 17/51, Calcs: 27235417335, addresses: 1, threads: 272355, blocks:266 
+Batch 15 Results: 46568
+Batch 16 Results: 15533
+BatchNumber: 18/51, Calcs: 223889072740, addresses: 1, threads: 2238891, blocks:2187 
+BatchNumber: 19/51, Calcs: 94743615960, addresses: 32, threads: 947452, blocks:926 
+Batch 17 Results: 116472
+Batch 18 Results: 61027
+BatchNumber: 20/51, Calcs: 583540792560, addresses: 1, threads: 5835408, blocks:5699 
+BatchNumber: 21/51, Calcs: 3661712164, addresses: 11, threads: 36623, blocks:36 
+Batch 19 Results: 280941
+Batch 20 Results: 2196
+BatchNumber: 22/51, Calcs: 1372908566472, addresses: 1, threads: 13729086, blocks:13408 
+BatchNumber: 23/51, Calcs: 25944009589, addresses: 22, threads: 259451, blocks:254 
+Batch 21 Results: 608109
+Batch 22 Results: 14341
+BatchNumber: 24/51, Calcs: 396408452440, addresses: 1, threads: 3964085, blocks:3872 
+BatchNumber: 25/51, Calcs: 117461257784, addresses: 1, threads: 1174613, blocks:1148 
+Batch 23 Results: 198231
+Batch 24 Results: 73533
+BatchNumber: 26/51, Calcs: 35868573414, addresses: 1, threads: 358686, blocks:351 
+BatchNumber: 27/51, Calcs: 102105157885, addresses: 2, threads: 1021052, blocks:998 
+Batch 25 Results: 18606
+Batch 26 Results: 57341
+BatchNumber: 28/51, Calcs: 73496902856, addresses: 2, threads: 734970, blocks:718 
+BatchNumber: 29/51, Calcs: 190207893396, addresses: 1, threads: 1902079, blocks:1858 
+Batch 27 Results: 42017
+Batch 28 Results: 100027
+BatchNumber: 30/51, Calcs: 80697520005, addresses: 29, threads: 806987, blocks:789 
+BatchNumber: 31/51, Calcs: 581348189142, addresses: 1, threads: 5813482, blocks:5678 
+Batch 29 Results: 45712
+Batch 30 Results: 294926
+BatchNumber: 32/51, Calcs: 1793791398, addresses: 10, threads: 17944, blocks:18 
+BatchNumber: 33/51, Calcs: 975476171488, addresses: 1, threads: 9754762, blocks:9527 
+Batch 31 Results: 1243
+Batch 32 Results: 531635
+BatchNumber: 34/51, Calcs: 10623283608, addresses: 16, threads: 106242, blocks:104 
+BatchNumber: 35/51, Calcs: 232740741747, addresses: 1, threads: 2327408, blocks:2273 
+Batch 33 Results: 7597
+Batch 34 Results: 145899
+BatchNumber: 36/51, Calcs: 79556421399, addresses: 2, threads: 795565, blocks:777 
+BatchNumber: 37/51, Calcs: 83832653647, addresses: 4, threads: 838328, blocks:819 
+Batch 35 Results: 55808
+Batch 36 Results: 67624
+BatchNumber: 38/51, Calcs: 104102904010, addresses: 24, threads: 1041039, blocks:1017 
+BatchNumber: 39/51, Calcs: 23305559855, addresses: 4, threads: 233057, blocks:228 
+Batch 37 Results: 78265
+Batch 38 Results: 20062
+BatchNumber: 40/51, Calcs: 323809081925, addresses: 1, threads: 3238091, blocks:3163 
+BatchNumber: 41/51, Calcs: 445365848, addresses: 7, threads: 4457, blocks:5 
+Batch 40 Results: 427
+Batch 39 Results: 248102
+BatchNumber: 42/51, Calcs: 442526720680, addresses: 1, threads: 4425268, blocks:4322 
+BatchNumber: 43/51, Calcs: 97028043830, addresses: 13, threads: 970287, blocks:948 
+Batch 41 Results: 383687
+Batch 42 Results: 96849
+BatchNumber: 44/51, Calcs: 104564909377, addresses: 26, threads: 1045659, blocks:1022 
+BatchNumber: 45/51, Calcs: 2258032410, addresses: 2, threads: 22581, blocks:23 
+Batch 43 Results: 132206
+Batch 44 Results: 2693
+BatchNumber: 46/51, Calcs: 136421044950, addresses: 1, threads: 1364211, blocks:1333 
+BatchNumber: 47/51, Calcs: 68088777, addresses: 3, threads: 683, blocks:1 
+Batch 46 Results: 115
+Batch 45 Results: 167633
+BatchNumber: 48/51, Calcs: 176587077526, addresses: 1, threads: 1765871, blocks:1725 
+Batch 47 Results: 331354
+BatchNumber: 49/51, Calcs: 67273370484, addresses: 29, threads: 672750, blocks:657 
+BatchNumber: 50/51, Calcs: 99267987687, addresses: 7, threads: 992682, blocks:970 
+Batch 48 Results: 164929
+Batch 49 Results: 608941
+BatchNumber: 51/51, Calcs: 23017991068, addresses: 30, threads: 230194, blocks:225 
+Batch 50 Results: 174458072
+Total results Set Size: 181164422 
+Kernel time: 1046.471722
+Total Time: 1122.464314
+
+Time to read in file: 11.987186
+
+Number points: 5000000 
+Number Dimensions: 384 
+Number Concurent Streams: 2
+Distance Threshold: 0.320000 
+*********************************
+
+Selected 6 reference points
+Last Layer Bin Count: 2940
+Tree Check: 5000000
+Time to build tree: 69.005216
+Number non-empty bins: 347
+Number of calcs: 11415744325378
+Number Address for calcs: 20551
+Tree BINARY search time: 0.025681
+BatchNumber: 1/45, Calcs: 27618308515, addresses: 93, threads: 276240, blocks:270 
+BatchNumber: 2/45, Calcs: 96773186234, addresses: 22, threads: 967743, blocks:946 
+Batch 1 Results: 156983
+Batch 0 Results: 99669
+BatchNumber: 3/45, Calcs: 329673540497, addresses: 1, threads: 3296736, blocks:3220 
+BatchNumber: 4/45, Calcs: 86689495943, addresses: 5, threads: 866897, blocks:847 
+Batch 2 Results: 249636
+Batch 3 Results: 65842
+BatchNumber: 5/45, Calcs: 93773992748, addresses: 6, threads: 937743, blocks:916 
+BatchNumber: 6/45, Calcs: 66568512824, addresses: 3, threads: 665687, blocks:651 
+Batch 4 Results: 69031
+Batch 5 Results: 64259
+BatchNumber: 7/45, Calcs: 144428418957, addresses: 1, threads: 1444285, blocks:1411 
+BatchNumber: 8/45, Calcs: 40811447148, addresses: 15, threads: 408121, blocks:399 
+Batch 6 Results: 87645
+Batch 7 Results: 31103
+BatchNumber: 9/45, Calcs: 1006081651792, addresses: 1, threads: 10060817, blocks:9826 
+BatchNumber: 10/45, Calcs: 1204266894, addresses: 24, threads: 12058, blocks:12 
+Batch 9 Results: 768
+Batch 8 Results: 485245
+BatchNumber: 11/45, Calcs: 1640272594675, addresses: 1, threads: 16402726, blocks:16019 
+Batch 10 Results: 688323
+BatchNumber: 12/45, Calcs: 101647690575, addresses: 2, threads: 1016478, blocks:993 
+BatchNumber: 13/45, Calcs: 13910405040, addresses: 1, threads: 139105, blocks:136 
+Batch 11 Results: 53403
+Batch 12 Results: 6197
+BatchNumber: 14/45, Calcs: 105989048052, addresses: 1, threads: 1059891, blocks:1036 
+BatchNumber: 15/45, Calcs: 83467696872, addresses: 2, threads: 834678, blocks:816 
+Batch 13 Results: 47134
+Batch 14 Results: 41314
+BatchNumber: 16/45, Calcs: 42891505152, addresses: 1, threads: 428916, blocks:419 
+BatchNumber: 17/45, Calcs: 82758904048, addresses: 2, threads: 827590, blocks:809 
+Batch 15 Results: 18681
+Batch 16 Results: 38274
+BatchNumber: 18/45, Calcs: 62958857844, addresses: 2, threads: 629590, blocks:615 
+BatchNumber: 19/45, Calcs: 96976923096, addresses: 2, threads: 969770, blocks:948 
+Batch 17 Results: 30050
+Batch 18 Results: 44851
+BatchNumber: 20/45, Calcs: 91859221440, addresses: 1, threads: 918593, blocks:898 
+BatchNumber: 21/45, Calcs: 290652146188, addresses: 1, threads: 2906522, blocks:2839 
+Batch 19 Results: 40578
+Batch 20 Results: 125237
+BatchNumber: 22/45, Calcs: 94825485710, addresses: 15, threads: 948262, blocks:927 
+BatchNumber: 23/45, Calcs: 1748393408680, addresses: 1, threads: 17483935, blocks:17075 
+Batch 21 Results: 41977
+Batch 22 Results: 680446
+BatchNumber: 24/45, Calcs: 689124892, addresses: 21, threads: 6901, blocks:7 
+BatchNumber: 25/45, Calcs: 1681572653866, addresses: 1, threads: 16815727, blocks:16422 
+Batch 23 Results: 359
+Batch 24 Results: 681846
+BatchNumber: 26/45, Calcs: 66280134983, addresses: 3, threads: 662802, blocks:648 
+Batch 25 Results: 43723
+BatchNumber: 27/45, Calcs: 95889689110, addresses: 2, threads: 958898, blocks:937 
+BatchNumber: 28/45, Calcs: 71125630546, addresses: 2, threads: 711257, blocks:695 
+Batch 26 Results: 47136
+Batch 27 Results: 36410
+BatchNumber: 29/45, Calcs: 89768273158, addresses: 4, threads: 897685, blocks:877 
+BatchNumber: 30/45, Calcs: 67523507717, addresses: 2, threads: 675236, blocks:660 
+Batch 28 Results: 51924
+Batch 29 Results: 34443
+BatchNumber: 31/45, Calcs: 64437066130, addresses: 1, threads: 644371, blocks:630 
+BatchNumber: 32/45, Calcs: 174067437940, addresses: 1, threads: 1740675, blocks:1700 
+Batch 30 Results: 39183
+Batch 31 Results: 108236
+BatchNumber: 33/45, Calcs: 48758667160, addresses: 15, threads: 487593, blocks:477 
+BatchNumber: 34/45, Calcs: 1005773295000, addresses: 1, threads: 10057733, blocks:9823 
+Batch 32 Results: 26786
+Batch 33 Results: 551918
+BatchNumber: 35/45, Calcs: 130826670, addresses: 9, threads: 1312, blocks:2 
+BatchNumber: 36/45, Calcs: 717184693736, addresses: 1, threads: 7171847, blocks:7004 
+Batch 34 Results: 105
+Batch 35 Results: 487487
+BatchNumber: 37/45, Calcs: 100491146568, addresses: 11, threads: 1004916, blocks:982 
+Batch 36 Results: 90159
+BatchNumber: 38/45, Calcs: 50615477084, addresses: 3, threads: 506156, blocks:495 
+BatchNumber: 39/45, Calcs: 70794654775, addresses: 15, threads: 707953, blocks:692 
+Batch 37 Results: 47024
+Batch 38 Results: 69766
+BatchNumber: 40/45, Calcs: 347391730738, addresses: 1, threads: 3473918, blocks:3393 
+BatchNumber: 41/45, Calcs: 5596185, addresses: 2, threads: 57, blocks:1 
+Batch 40 Results: 7
+Batch 39 Results: 339613
+BatchNumber: 42/45, Calcs: 218378421840, addresses: 1, threads: 2183785, blocks:2133 
+Batch 41 Results: 451138
+BatchNumber: 43/45, Calcs: 59386449199, addresses: 25, threads: 593876, blocks:580 
+BatchNumber: 44/45, Calcs: 87093012060, addresses: 1, threads: 870931, blocks:851 
+Batch 42 Results: 195467
+Batch 43 Results: 4823270
+BatchNumber: 45/45, Calcs: 48160127097, addresses: 22, threads: 481610, blocks:471 
+Batch 44 Results: 618956570
+Total results Set Size: 630249216 
+Kernel time: 1800.640139
+Total Time: 1869.671044
+Completed!

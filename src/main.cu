@@ -243,11 +243,11 @@ int main(int argc, char*argv[]){
 
 	double time3 = omp_get_wtime();
 
-	#if BINARYSEARCH
-	printf("Tree BINARY search time: %f\n", time3-time2);
-	#else
-	printf("Tree TRAVERSAL search time: %f\n", time3-time2);
-	#endif
+	if(log2(nonEmptyBins) < numLayers){
+		printf("Tree BINARY search time: %f\n", time3-time2);
+	}else{
+		printf("Tree TRAVERSAL search time: %f\n", time3-time2);
+	}
 
 	struct neighborTable * table =  launchKernel(numLayers, // the number of layers in the tree
 				data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
