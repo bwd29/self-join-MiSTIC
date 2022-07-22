@@ -18,8 +18,13 @@
 
 #define DATANORM true
 #define HOST false
-#define BINARYSEARCH true
+#define BINARYSEARCH 1
 #define GPUSEARCH false
+#define TESTING_SEARCH false
+#define MINSQRS true
+#define NODES true
+
+#define CUDA_DEVICE 2
 
 const unsigned int MAXRP = 6;
 
@@ -28,7 +33,7 @@ const unsigned int MINRP = 5;
 
 const unsigned int NUMSTREAMS = 2;
 const unsigned int BLOCK_SIZE = 1024; 
-const unsigned int KERNEL_BLOCKS = 10*1024*1024/BLOCK_SIZE;
+const unsigned int KERNEL_BLOCKS = 2*1024*1024/BLOCK_SIZE;
 const int BRUTE = false;
 const int RANDOM = false;
 const int BOXED_RP = false;

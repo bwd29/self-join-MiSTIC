@@ -9,18 +9,23 @@
 
 
 #include "include/tree.cuh"
+#include "include/nodes.cuh"
 #include "include/utils.cuh"
 #include "include/launcher.cuh"
 
 
 int main(int argc, char*argv[]){
     
+	cudaSetDevice(CUDA_DEVICE); // 0 is bad on the node
+
     //reading in command line arguments
 	char *filename = argv[1]; // first argument is the file with the dataset as a .bin
 	unsigned int dim = atoi(argv[2]); // second argument is the dimensionality of the data, i.e. number of columns
+	unsigned int numRP = atoi(argv[3]);
+
 	unsigned int concurent_streams = 2; // number of cuda streams, should only ever need to be 2 but can be set to a parameter
 	double epsilon;
-	sscanf(argv[3], "%lf", &epsilon); // third argumernt is the distance threshold being searched
+	sscanf(argv[4], "%lf", &epsilon); // third argumernt is the distance threshold being searched
 
 	double time0 = omp_get_wtime(); //start initial timer
 
@@ -46,10 +51,19 @@ int main(int argc, char*argv[]){
 	// numPoints = 100000;
 	////////////
 
+	if(TESTING_SEARCH) fprintf(stderr,"\nRP, %d,", numRP);
+	if(TESTING_SEARCH) fprintf(stderr," E, %f,", epsilon);
+
 	printf("\nNumber points: %d ", numPoints);
 	printf("\nNumber Dimensions: %d ", dim);
+	printf("\nNumber Reference Points: %d ", numRP);
 	printf("\nNumber Concurent Streams: %d", concurent_streams);
+	printf("\nBlock Size: %d, Kernel Blocks: %d",BLOCK_SIZE,KERNEL_BLOCKS);
+	if(BINARYSEARCH == 0) printf("\nUsing tree traversals"); 
+	if(BINARYSEARCH == 1) printf("\nUsing using binary searches");
+	if(BINARYSEARCH == 2) printf("\nUsing dynamic searching");
 	printf("\nDistance Threshold: %f \n*********************************\n\n", epsilon);
+
 
 	//if using a small datset for debugging, also run brute force so we can double check results
 	if(numPoints <= 100000) 	brute_force( numPoints, dim, epsilon, A);
@@ -82,15 +96,30 @@ int main(int argc, char*argv[]){
 		pointArray[i] = i;
 	}
 
+	#if NODES
+
+	double time2 = omp_get_wtime();
+
+	nodeLauncher(dimOrderedData,
+					dim,
+					numPoints,
+					numRP,
+					pointArray,
+					epsilon);
+
+	double time3 = omp_get_wtime();
+	printf("Total time: %f\n", time3 - time2);
+
+	#else
 
 	// poinmt bin numbers holds the bins relative to reference points that each point is in
 	unsigned int ** pointBinNumbers;
 
 	// binSizes is the number of bins for each layer of the tree , which includes the spread from the previous layer
-	unsigned int * binSizes = (unsigned int*)malloc(sizeof(unsigned int)*MAXRP);
+	unsigned int * binSizes = (unsigned int*)malloc(sizeof(unsigned int)*numRP);
 
 	//bin amounts is the number of bins for that reference point, i.e. the range of points / epsilon
-	unsigned int * binAmounts = (unsigned int*)malloc(sizeof(unsigned int)*MAXRP);
+	unsigned int * binAmounts = (unsigned int*)malloc(sizeof(unsigned int)*numRP);
 
 	//maxBinAmount limits the number of bins that can be in a layer to reduce space complexity, not usually an issue
 	unsigned int maxBinAmount = MAX_BIN;
@@ -109,7 +138,8 @@ int main(int argc, char*argv[]){
 					pointArray, // the ordered points, this will be rearanged when building the tree
 					&pointBinNumbers, // this will hold of the bin number for each point relative to each reference point
 					binSizes, // the width for each layer of the tree which is built in the fuinction
-					binAmounts); //the number of bins for each reference point as in the range / epsilon
+					binAmounts,
+					numRP); //the number of bins for each reference point as in the range / epsilon
 
 
 	// allocate a data array for used with distance calcs
@@ -136,12 +166,14 @@ int main(int argc, char*argv[]){
 
 
 
-
+	
 
 	// checking that the last bin size is not negative or zero and that the tree has every data point in it
 	printf("Last Layer Bin Count: %d\nTree Check: %d\n",binSizes[numLayers-1], tree[numLayers-1][binSizes[numLayers-1]-1]);
 
 	double time2 = omp_get_wtime();
+
+	if(TESTING_SEARCH) fprintf(stderr," TT, %f,", time2-time1);
 
     printf("Time to build tree: %f\n", time2-time1);
 
@@ -238,17 +270,24 @@ int main(int argc, char*argv[]){
 		runningTotal += numValidRanges[i];
 	}
 
+	if(TESTING_SEARCH) fprintf(stderr," NB, %d, NC, %llu, NA, %llu", nonEmptyBins, sumCalcs, sumAdds );
+
     printf("Number non-empty bins: %d\nNumber of calcs: %llu\nNumber Address for calcs: %llu\n", nonEmptyBins, sumCalcs, sumAdds);
 
 
 	double time3 = omp_get_wtime();
 
-	if(log2(nonEmptyBins) < numLayers){
+
+	if((log2(nonEmptyBins) < numLayers && BINARYSEARCH == 2) || BINARYSEARCH == true){
 		printf("Tree BINARY search time: %f\n", time3-time2);
+		if(TESTING_SEARCH) fprintf(stderr," B, %f,", time3-time2);
 	}else{
 		printf("Tree TRAVERSAL search time: %f\n", time3-time2);
+		if(TESTING_SEARCH) fprintf(stderr," T, %f,", time3-time2);
 	}
 
+
+	#if !TESTING_SEARCH
 	struct neighborTable * table =  launchKernel(numLayers, // the number of layers in the tree
 				data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
 				dim, //the dimensionality of the data
@@ -271,6 +310,9 @@ int main(int argc, char*argv[]){
 				
 	double time4 = omp_get_wtime();
     printf("Kernel time: %f\n", time4-time3);
+	#endif
+
+	#endif
 
 	#endif
 

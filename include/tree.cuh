@@ -12,7 +12,8 @@ unsigned int buildTree(unsigned int *** rbins,
 					  unsigned int * pointArray, 
 					  unsigned int *** rpointBinNumbers, 
 					  unsigned int * binSizes, 
-					  unsigned int * binAmounts);
+					  unsigned int * binAmounts,
+					  unsigned int numRp);
 
 // __host__ __device__
 void treeTraversal(unsigned int * tempAdd, 

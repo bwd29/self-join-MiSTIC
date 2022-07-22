@@ -3,6 +3,7 @@
 #include "include/params.cuh"
 #include "include/utils.cuh"
 #include "include/kernel.cuh"
+#include "include/nodes.cuh"
 
 void constructNeighborTable(unsigned int * pointInDistValue, 
     unsigned int * pointersToNeighbors, 
@@ -43,3 +44,10 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
         unsigned int dim,//the dimensionality of the data
         double epsilon,//the distance threshold being searched
         unsigned int * pointArray);// the array of point numbers ordered to match the sequence in the last array of the tree and the data
+
+struct neighborTable * nodeLauncher(double * data,
+    unsigned int dim,
+    unsigned int numPoints,
+    unsigned int numRP,
+    unsigned int * pointArray,
+    double epsilon);

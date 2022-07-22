@@ -9,9 +9,10 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 						unsigned int * pointArray, // where the ordered point number will be returned
 						unsigned int *** rpointBinNumbers, // the bin numbers for each point
 						unsigned int * binSizes, // the number bins for that layer of the tree
-						unsigned int * binAmounts){ // the range / epsilon for that rp of that layer of the tree
+						unsigned int * binAmounts,
+						unsigned int numRP){ // the range / epsilon for that rp of that layer of the tree
 
-	unsigned int maxRP = MAXRP; // setting the max number of reference points
+	unsigned int maxRP = numRP; // setting the max number of reference points
 	unsigned int numRPperLayer = RPPERLAYER; //could use log2(numPoints) // setting how many reference points are checked for each layer
 
 	printf("Selecting %d Rp from a pool of %d\n", numRPperLayer, (int)sqrt(numPoints));
@@ -200,14 +201,27 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 				sumSqrsTemp[i] += layerBins[i][j] * layerBins[i][j];
 			}
 
+
+			// //join to the bins
+			// std::vector<std::vector<unsigned int>> bins;
+			// for(unsigned int j = 0; j < ; j++ ){
+				
+			// }
+
 		}
 
-		//pick the one with lowest sum sqrs? sure why not
+		//pick the one with lowest sum sqrs? sure why not //update: this was a bad idea
 		unsigned int minSumIdx = 0; // this will be the reference point form all of the possible one that will be used for final layer construction
 		for(unsigned int i = 1; i < numRPperLayer; i++){
+			#if MINSQRS
 			if(sumSqrsTemp[minSumIdx] > sumSqrsTemp[i] ){
 				minSumIdx = i; 
 			}
+			#else
+			if(sumSqrsTemp[minSumIdx] < sumSqrsTemp[i] ){
+				minSumIdx = i; 
+			}
+			#endif
 		}
 
 		// assign the sum sqrs for the layer as the one chosen
@@ -235,8 +249,8 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 			// if the bin is empty, then  leave the value as zero
 			} else {
 				bins[currentLayer][i] = 0;
-			} 
-		} 
+			}
+		}
 
 		// the bin counts will be the number of bins in that layer
 		binSizes[currentLayer] = layerBinCount[minSumIdx];
@@ -253,7 +267,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		}
 
 		// check if the current layer is at least the min number of layers for the tree
-		if(currentLayer >= MINRP){
+		if(currentLayer == maxRP-1){
 			// check if the sum of sqrs is still decreasing by adding layers or if we are at the max number of layers
 			if(sumSqrsLayers[currentLayer-1]/sumSqrsLayers[currentLayer] < LAYER_DIFF || currentLayer == maxRP - 1){
 				
@@ -293,9 +307,14 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	}
 
 	// the number of layers/ reference points is the current layer
-	unsigned int numRP = currentLayer;
+	unsigned int snumRP = currentLayer;
 
-	printf("Selected %d reference points\n", numRP);
+	printf("Selected %d reference points\n", snumRP);
+
+	for(unsigned int i = 0; i < snumRP; i++){
+		if(TESTING_SEARCH) fprintf(stderr," L%d, %f,", i, sumSqrsLayers[i]);
+		printf("Layer %d sumqrs: %f\n", i, sumSqrsLayers[i]);
+	}
 
     // sort the point arrays from bottom to top using a stable sort
 	
@@ -305,10 +324,10 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	//go through each point an load the point bin numbers
 	for(unsigned int i = 0; i < numPoints; i++){
 		// the point vector will contain the point number i.e. the row of the point in the original data, and then each bin of the point
-		pointVector[i] = (unsigned int*)malloc(sizeof(unsigned int)*(numRP+1));
+		pointVector[i] = (unsigned int*)malloc(sizeof(unsigned int)*(snumRP+1));
 
 		//copy over the bin numbers
-		for(int j = 0; j < numRP; j++){
+		for(int j = 0; j < snumRP; j++){
 			pointVector[i][j+1] = pointBinNumbers[i][j];
 		}
 	}
@@ -319,7 +338,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	}
 
 	// go through each layer of the tree backwards to sort the points
-    for(unsigned int i = 0; i < numRP; i++){
+    for(unsigned int i = 0; i < snumRP; i++){
 
 		// array to keep track of the bin values that are being used for this sort at the layer i
 		unsigned int * oneBin = (unsigned int*)malloc(sizeof(unsigned int)*numPoints);
@@ -327,10 +346,10 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		// copy over the bin numebrs for sorting
 		#pragma omp parallel for
 		for(unsigned int j = 0; j < numPoints; j++ ){
-			oneBin[j] = pointVector[j][numRP-i];
+			oneBin[j] = pointVector[j][snumRP-i];
 		}
 
-		// run the stabel sort with the bin numbers at i as the key
+		// run the stable sort with the bin numbers at i as the key
 		thrust::stable_sort_by_key(thrust::omp::par, oneBin, oneBin+numPoints, pointVector.begin());
 
 		free(oneBin);
@@ -341,7 +360,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	for(unsigned int i = 0; i < numPoints; i++){
 		// point array will have all of the point numbers is order
 		pointArray[i] = pointVector[i][0];
-		for(unsigned int j = 0; j < numRP; j++){
+		for(unsigned int j = 0; j < snumRP; j++){
 			// the point bin numbers will have all of the bin numbers
 			pointBinNumbers[i][j] = pointVector[i][j+1];
 		}
@@ -361,7 +380,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	*rbins = bins;
 	*rpointBinNumbers = pointBinNumbers;
 
-	return(numRP);
+	return(snumRP);
 }
 
 
@@ -439,10 +458,15 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 
 
 
-	bool binSearch = false;
-	if(log2(nonEmptyBins) < numLayers){
+	bool binSearch = BINARYSEARCH;
+	if(log2(nonEmptyBins) < numLayers & BINARYSEARCH == 2){
 		binSearch = true;
 	}
+
+	#if TESTING_SEARCH
+	double binarySearchTimes = 0;
+	double treeSearchTimes = 0;
+	#endif
 
 	//go through each non empty bin and do all the needed searching and generate the arrays that are needed for the calculations kernels
 	#pragma omp parallel for
@@ -461,7 +485,8 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 		unsigned int localNumPointsInAdd;
 
 		
-		if(binSearch){
+		if(binSearch || TESTING_SEARCH){
+
 			//set up array to binary search on
 			binarySearch( i, // the bin to search in bin numebrs
 				tempAdd, //temporary address for searching
@@ -477,8 +502,13 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 				&localRangeSizes[i], // the number of points in the indexes in localRangeIndexes
 				&localNumPointsInAdd, // the number of points in this nonempty address
 				numSearches); // the number of searches that need to be performed, 3^r
+			
 
-		} else {
+
+		}
+		
+		if (!binSearch) {
+
 			treeTraversal(tempAdd, // array of int for temp storage for searching
 				tree, // pointer to the tree made with buildTree()
 				binSizes, // the widths of each layer of the tree measured in bins
@@ -492,6 +522,7 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 				&localNumPointsInAdd, // the number of points in this nonempty address
 				numSearches); // the number of searches that need to be performed, 3^r
 
+
 		}
 
 		// storing variables into arrays that coorespond to the non-empty indexes/addresses
@@ -501,6 +532,8 @@ unsigned int generateRanges(unsigned int ** tree, //points to the tree construct
 
 
     }
+
+
 	// std::cerr << "Finished search" << std::endl;
 
 	// assiging pointers for accsess outside of this functions scope

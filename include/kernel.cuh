@@ -127,3 +127,21 @@ void distanceCalculationsKernel_CPU(unsigned int totalBlocks,
     unsigned long long  *keyValueIndex,
     std::vector<unsigned int> * hostPointA,
     std::vector<unsigned int> * hostPointB);
+
+__global__ 
+void nodeCalculationsKernel(unsigned int *numPoints,
+                                unsigned int * pointOffsets,
+                                unsigned int * nodeAssign,
+                                unsigned int * threadOffsets,
+                                double *epsilon2,
+                                unsigned int *dim,
+                                unsigned long long  *numThreadsPerBatch,
+                                unsigned long long  * numThreadsPerNode,
+                                double * data, 
+                                unsigned int * numNeighbors,
+                                unsigned int * nodePoints,
+                                unsigned int * neighbors,
+                                unsigned int * neighborOffset,
+                                unsigned long long  *keyValueIndex,
+                                unsigned int * point_a,
+                                unsigned int * point_b);

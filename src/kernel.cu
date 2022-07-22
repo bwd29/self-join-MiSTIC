@@ -395,6 +395,47 @@ void distanceCalculationsKernel(unsigned int *numPoints,
     }
 }
 
+__global__ 
+void nodeCalculationsKernel(unsigned int *numPoints,
+                                unsigned int * pointOffsets,
+                                unsigned int * nodeAssign,
+                                unsigned int * threadOffsets,
+                                double *epsilon2,
+                                unsigned int *dim,
+                                unsigned long long  *numThreadsPerBatch,
+                                unsigned long long  * numThreadsPerNode,
+                                double * data, 
+                                unsigned int * numNeighbors,
+                                unsigned int * nodePoints,
+                                unsigned int * neighbors,
+                                unsigned int * neighborOffset,
+                                unsigned long long  *keyValueIndex,
+                                unsigned int * point_a,
+                                unsigned int * point_b){
+
+    unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
+
+    if(tid >= *numThreadsPerBatch){
+        return;
+    }
+
+    for(unsigned int i = 0; i < numNeighbors[nodeAssign[tid]]; i++){
+        for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[nodeAssign[tid]]* nodePoints[neighbors[neighborOffset[nodeAssign[tid]]]]; j += numThreadsPerNode[nodeAssign[tid]]){
+
+            unsigned int p1 = pointOffsets[nodeAssign[tid]] + j / nodePoints[neighbors[neighborOffset[nodeAssign[tid]] + i]];
+            unsigned int p2 = pointOffsets[neighbors[neighborOffset[nodeAssign[tid]] + i]] + j % nodePoints[neighbors[neighborOffset[nodeAssign[tid]] + i]];
+
+            if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
+            // if (sum <= *epsilon2){
+                //  store point
+                unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
+                point_a[index] = p1; //stores the first point Number
+                point_b[index] = p2; // this stores the coresponding point number to form a pair
+            }
+        }
+    }
+}
+
 
 
 void distanceCalculationsKernel_CPU(unsigned int totalBlocks,
