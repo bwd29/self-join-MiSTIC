@@ -15,14 +15,13 @@ unsigned int buildNodeNet(double * data,
                  struct Node ** nodes){
 
     // generate some reference points
-    double * RPArray = createRPArray(data, numRP, dim, numPoints);
     
     struct Node * newNodes;
     unsigned int numNodes;
     
     // need to go through each reference point
     for(unsigned int i = 0; i < numRP; i++){ 
-
+        double * RPArray = createRPArray(data, numRP, dim, numPoints);
         struct Node * layerNodes;
         unsigned long long int lowestDistCalcs = ULLONG_MAX;
         unsigned int bestRP = 0;
@@ -30,9 +29,8 @@ unsigned int buildNodeNet(double * data,
             // need to compare num dist calcs for different potental RP
             struct Node * tempNodes;
             unsigned int tempNumNodes;
-            if(i == 0){tempNumNodes = initNodes(data, dim, numPoints, epsilon, &RPArray[j], pointArray, &tempNodes);}
-            else{tempNumNodes = splitNodes(&RPArray[j], newNodes, numNodes, epsilon, data, dim, numPoints, &tempNodes);}
-
+            if(i == 0){tempNumNodes = initNodes(data, dim, numPoints, epsilon, &RPArray[j*dim], pointArray, &tempNodes);}
+            else{tempNumNodes = splitNodes(&RPArray[j*dim], newNodes, numNodes, epsilon, data, dim, numPoints, &tempNodes);}
             unsigned long long numCalcs = totalNodeCalcs(tempNodes, tempNumNodes);
             unsigned long long sumSqrs = nodeSumSqrs(tempNodes, tempNumNodes);
             printf("Layer %d for RP %d has Nodes: %u with calcs: %llu , and sumSQRs: %llu\n", i, j, tempNumNodes, numCalcs, sumSqrs);
@@ -174,10 +172,13 @@ unsigned int splitNodes(double * RP, //the reference point used for the split
                     struct Node ** newNodes){  // pointer for returning the new nodes
     
 
-
+    printf("Start split node\n");
     //need to keep track of all of the new split nodes
     std::vector<std::vector<struct Node>> tempNewNodes;
     tempNewNodes.resize(numNodes);
+   
+    printf("allocate vector node\n");
+
 
     // go through each node and split
     for(unsigned int i = 0; i < numNodes; i++){

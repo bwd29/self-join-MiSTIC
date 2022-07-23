@@ -1355,7 +1355,7 @@ struct neighborTable * nodeLauncher(double * data,
 
     double time1 = omp_get_wtime();
     struct Node * nodes;
-
+    printf("Starting Node construction\n");
     // build the data structure
     unsigned int numNodes = buildNodeNet(data,
             dim,
