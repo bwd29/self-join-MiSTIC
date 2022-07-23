@@ -772,7 +772,7 @@ void binarySearch(	unsigned int searchIndex, // the bin to search in bin numebrs
 	// find the number of points in the home address
 	unsigned long long numHomePoints = tree[numLayers-1][homeIndex+1] - tree[numLayers-1][homeIndex]; //may need to +- one to index here !!!!!!!!!
 
-	if(numHomePoints == 0)printf("ERROR: no points found in address at index: %d\n", homeIndex);
+	if(numHomePoints == 0)printf("ERROR: no points found in address at index: %lu\n", homeIndex);
 	// use the running total of points in adjacent addresses and multiply it by the number of points in the home address for number of total calcs
 	*numCalcs = localNumCalcs*numHomePoints;
 

@@ -50,7 +50,7 @@ const unsigned int MAX_BIN = 1000000;
 
 const double LAYER_DIFF = 1.0;
 
-const unsigned int RPPERLAYER = 64;
+const unsigned int RPPERLAYER = 16;
 
 const int RAND = false;
 const unsigned long long initalPinnedResultsSize = 10000;

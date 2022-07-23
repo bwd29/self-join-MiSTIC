@@ -666,7 +666,7 @@ struct neighborTable * launchGPUSearchKernel(unsigned int ** tree, // a pointer 
         unsigned int tid = omp_get_thread_num();
         unsigned int totalBlocks = ceil(numThreadsPerBatch[i]*1.0 / BLOCK_SIZE);
 
-        printf("BatchNumber: %d/%d, Calcs: %llu, addresses: %d, threads: %u, blocks:%d \n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i], totalBlocks);
+        printf("BatchNumber: %d/%d, Calcs: %llu, addresses: %d, threads: %llu, blocks:%d \n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i], totalBlocks);
 
         //launch distance kernel
         #if HOST
@@ -1354,8 +1354,8 @@ struct neighborTable * nodeLauncher(double * data,
 
 
     double time1 = omp_get_wtime();
-    struct Node * nodes;
-    printf("Starting Node construction\n");
+    std::vector<struct Node> nodes;
+
     // build the data structure
     unsigned int numNodes = buildNodeNet(data,
             dim,

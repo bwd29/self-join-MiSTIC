@@ -42,17 +42,17 @@ unsigned int buildNodeNet(double * data,
     unsigned int numRP,
     unsigned int * pointArray,
     double epsilon,
-    struct Node ** nodes);
+    std::vector<struct Node> * nodes);
 
 //splits a node based on a reference point and return the number of new nodes
 unsigned int splitNodes(double * RP, //the reference point used for the split
-    struct Node* nodes,// the array of nodes
+    std::vector<struct Node> nodes,// the array of nodes
     unsigned int numNodes,//the number of nodes
     double epsilon, //the distance threshold of the search
     double * data, //the dataset
     unsigned int dim,//the number of dimensions of the data
     unsigned int numPoints,// number of points in the dataset
-    struct Node ** newNodes);
+    std::vector<struct Node> * newNodes);
 
 struct Node newNode(unsigned int numNodePoints, //number of points to go into the node
     unsigned int * nodePoints, // the start of the points that will go into the node
@@ -65,11 +65,11 @@ struct Node newNode(unsigned int numNodePoints, //number of points to go into th
     unsigned int binNumber,//the bin number of the node
     unsigned int nodeNumber);
 
-void updateNodeCalcs(struct Node * nodes,
+void updateNodeCalcs(std::vector<struct Node> * nodes,
     unsigned int numNodes);
 
-unsigned long long totalNodeCalcs(struct Node * nodes, unsigned int numNodes);
-unsigned long long nodeSumSqrs(struct Node * nodes, unsigned int numNodes);
+unsigned long long totalNodeCalcs(std::vector<struct Node> nodes, unsigned int numNodes);
+unsigned long long nodeSumSqrs(std::vector<struct Node> nodes, unsigned int numNodes);
 
 unsigned int initNodes(double * data,
     unsigned int dim,
@@ -77,4 +77,4 @@ unsigned int initNodes(double * data,
     double epsilon,
     double * RP,
     unsigned int * pointArray,
-    struct Node ** nodes);
+    std::vector<struct Node> * nodes);
