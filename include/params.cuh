@@ -24,7 +24,7 @@
 #define MINSQRS true
 #define NODES true
 
-#define CUDA_DEVICE 2
+#define CUDA_DEVICE 0
 
 const unsigned int MAXRP = 6;
 
@@ -32,8 +32,8 @@ const unsigned int MINRP = 5;
 
 
 const unsigned int NUMSTREAMS = 2;
-const unsigned int BLOCK_SIZE = 1024; 
-const unsigned int KERNEL_BLOCKS = 2*1024*1024/BLOCK_SIZE;
+const unsigned int BLOCK_SIZE = 256; 
+const unsigned int KERNEL_BLOCKS = 1024*1024/BLOCK_SIZE;
 const int BRUTE = false;
 const int RANDOM = false;
 const int BOXED_RP = false;
@@ -43,7 +43,7 @@ const double SAMPLE_PER = 0.01;
 
 const unsigned int CALCS_PER_THREAD = 100000;
 const unsigned int MAX_CALCS_PER_THREAD = 250000;
-const unsigned int MIN_CALCS_PER_THREAD = 10000;
+const unsigned int MIN_CALCS_PER_THREAD = 1000;
 
 const unsigned int MAX_BIN = 1000000; 
  
@@ -54,4 +54,4 @@ const unsigned int RPPERLAYER = 16;
 
 const int RAND = false;
 const unsigned long long initalPinnedResultsSize = 10000;
-const unsigned long long int resultsSize = 1000000000; // 400MB
+const unsigned long long int resultsSize = 100000000; // 400MB

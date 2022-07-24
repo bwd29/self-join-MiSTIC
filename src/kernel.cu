@@ -420,10 +420,11 @@ void nodeCalculationsKernel(unsigned int *numPoints,
     }
 
     for(unsigned int i = 0; i < numNeighbors[nodeAssign[tid]]; i++){
-        for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[nodeAssign[tid]]* nodePoints[neighbors[neighborOffset[nodeAssign[tid]]]]; j += numThreadsPerNode[nodeAssign[tid]]){
+        unsigned int neighborIndex = neighbors[neighborOffset[nodeAssign[tid]]+i];
+        for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[nodeAssign[tid]]* nodePoints[neighborIndex]; j += numThreadsPerNode[nodeAssign[tid]]){
 
-            unsigned int p1 = pointOffsets[nodeAssign[tid]] + j / nodePoints[neighbors[neighborOffset[nodeAssign[tid]] + i]];
-            unsigned int p2 = pointOffsets[neighbors[neighborOffset[nodeAssign[tid]] + i]] + j % nodePoints[neighbors[neighborOffset[nodeAssign[tid]] + i]];
+            unsigned int p1 = pointOffsets[nodeAssign[tid]] + j / nodePoints[neighborIndex];
+            unsigned int p2 = pointOffsets[neighbors[neighborOffset[nodeAssign[tid]] + i]] + j % nodePoints[neighborIndex];
 
             if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
             // if (sum <= *epsilon2){
@@ -433,6 +434,51 @@ void nodeCalculationsKernel(unsigned int *numPoints,
                 point_b[index] = p2; // this stores the coresponding point number to form a pair
             }
         }
+    }
+}
+
+void nodeCalculationsKernel_CPU(unsigned int totalBlocks,
+                            unsigned int *numPoints,
+                            unsigned int * pointOffsets,
+                            unsigned int * nodeAssign,
+                            unsigned int * threadOffsets,
+                            double *epsilon2,
+                            unsigned int *dim,
+                            unsigned long long  *numThreadsPerBatch,
+                            unsigned long long  * numThreadsPerNode,
+                            double * data, 
+                            unsigned int * numNeighbors,
+                            unsigned int * nodePoints,
+                            unsigned int * neighbors,
+                            unsigned int * neighborOffset,
+                            unsigned long long  *keyValueIndex){
+
+    #pragma omp parallel for
+    for(unsigned int h = 0; h < BLOCK_SIZE*totalBlocks; h++)
+    {
+        unsigned int tid = h;
+        if(tid < *numThreadsPerBatch){
+            for(unsigned int i = 0; i < numNeighbors[nodeAssign[tid]]; i++){
+                unsigned int neighborIndex = neighbors[neighborOffset[nodeAssign[tid]]+i];
+                for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[nodeAssign[tid]]* nodePoints[neighborIndex]; j += numThreadsPerNode[nodeAssign[tid]]){
+    
+                    unsigned int p1 = pointOffsets[nodeAssign[tid]] + j / nodePoints[neighborIndex];
+                    unsigned int p2 = pointOffsets[neighbors[neighborOffset[nodeAssign[tid]] + i]] + j % nodePoints[neighborIndex];
+    
+                    if(p1 > *numPoints) printf("ERROR1: %u, %u, %u, %u\n", p1, nodeAssign[tid], neighborIndex, pointOffsets[nodeAssign[tid]]);
+                    if(p2 > *numPoints) printf("ERROR2: %u, %u, %u, %u\n", p2, nodeAssign[tid], neighborIndex, pointOffsets[nodeAssign[tid]]);
+    
+                    if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
+    
+                        #pragma omp critical
+                        {
+                            keyValueIndex++;
+                        }
+                    }
+                }
+            }
+        }
+     
     }
 }
 

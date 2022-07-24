@@ -64,7 +64,6 @@ unsigned int buildNodeNet(double * data,
 
     printf("Final graph has %u nodes with: %llu calcs and sumSqrs: %llu\n", numNodes, numCalcs, sumSqrs);
 
-    *nodes = newNodes;
 
     //rearange the pointArray
     unsigned int counter = 0;
@@ -75,6 +74,8 @@ unsigned int buildNodeNet(double * data,
             counter++;
         }
     }
+
+    *nodes = newNodes;
 
 
     return numNodes;
