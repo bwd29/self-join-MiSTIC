@@ -146,7 +146,8 @@ void nodeCalculationsKernel(unsigned int *numPoints,
                                 unsigned int * point_a,
                                 unsigned int * point_b);
 
-void nodeCalculationsKernel_CPU(unsigned int totalBlocks,
+void nodeCalculationsKernel_CPU(unsigned int numNodes,
+                                unsigned int totalBlocks,
                                 unsigned int *numPoints,
                                 unsigned int * pointOffsets,
                                 unsigned int * nodeAssign,

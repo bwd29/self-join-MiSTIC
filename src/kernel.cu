@@ -437,7 +437,8 @@ void nodeCalculationsKernel(unsigned int *numPoints,
     }
 }
 
-void nodeCalculationsKernel_CPU(unsigned int totalBlocks,
+void nodeCalculationsKernel_CPU( unsigned int numNodes,
+                            unsigned int totalBlocks,
                             unsigned int *numPoints,
                             unsigned int * pointOffsets,
                             unsigned int * nodeAssign,
@@ -458,6 +459,7 @@ void nodeCalculationsKernel_CPU(unsigned int totalBlocks,
     {
         unsigned int tid = h;
         if(tid < *numThreadsPerBatch){
+            if(nodeAssign[tid]>numNodes) printf("ERROR0: %u / %u", nodeAssign[tid],numNodes);
             for(unsigned int i = 0; i < numNeighbors[nodeAssign[tid]]; i++){
                 unsigned int neighborIndex = neighbors[neighborOffset[nodeAssign[tid]]+i];
                 for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[nodeAssign[tid]]* nodePoints[neighborIndex]; j += numThreadsPerNode[nodeAssign[tid]]){
@@ -478,7 +480,6 @@ void nodeCalculationsKernel_CPU(unsigned int totalBlocks,
                 }
             }
         }
-     
     }
 }
 

@@ -1430,7 +1430,10 @@ struct neighborTable * nodeLauncher(double * data,
        counter += numNeighbors[i];
     }
 
+    printf("total num neighbors: %u\n", counter);
+
     unsigned long long sumCalcs = totalNodeCalcs(nodes, numNodes);
+    printf("sum calcs: %llu\n", sumCalcs);
 
     // store the squared value of epsilon because thats all that is needed for distance calcs
     double epsilon2 = epsilon*epsilon;
@@ -1737,6 +1740,8 @@ struct neighborTable * nodeLauncher(double * data,
 
     //struct for storing the results
     struct neighborTable * tables = (struct neighborTable*)malloc(sizeof(struct neighborTable)*numPoints);
+    
+    #if !HOST
     for (unsigned int i = 0; i < numPoints; i++){	
         struct neighborTable temp;
         tables[i] = temp;
@@ -1751,6 +1756,7 @@ struct neighborTable * nodeLauncher(double * data,
         tables[i].vectdataPtr[0] = pointArray;
         omp_init_lock(&tables[i].pointLock);
     }
+    #endif
 
     cudaDeviceSynchronize(); 
 
@@ -1769,7 +1775,7 @@ struct neighborTable * nodeLauncher(double * data,
 
     // printf("Time to transfer: %f\n", omp_get_wtime()-launchend);
 
-    #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic)
+    #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic) if(!HOST)
     for(unsigned int i = 0; i < numBatches; i++){
 
         #if HOST
@@ -1777,7 +1783,8 @@ struct neighborTable * nodeLauncher(double * data,
             unsigned int tid = omp_get_thread_num();
             unsigned int totalBlocks = ceil(numThreadsPerBatch[i]*1.0 / BLOCK_SIZE);
 
-            nodeCalculationsKernel_CPU( totalBlocks,
+            nodeCalculationsKernel_CPU( numNodes,
+                                        totalBlocks,
                                         &numPoints,
                                         pointOffsets,
                                         nodeAssign[batchThreadOffset[i]],
@@ -1800,7 +1807,7 @@ struct neighborTable * nodeLauncher(double * data,
             unsigned int totalBlocks = ceil(numThreadsPerBatch[i]*1.0 / BLOCK_SIZE);
 
 
-            // printf("BatchNumber: %d/%d, Calcs: %llu, addresses: %d, threads: %u, blocks:%d \n", i+1, numBatches, numCalcsPerBatch[i], numAddPerBatch[i], numThreadsPerBatch[i], totalBlocks);
+            printf("BatchNumber: %d/%d, Calcs: %llu, addresses: %d, threads: %u, blocks:%d \n", i+1, numBatches, numCalcsPerBatch[i], numNodePerBatch[i], numThreadsPerBatch[i], totalBlocks);
 
             // double kernelStartTime = omp_get_wtime();
 
@@ -1881,7 +1888,7 @@ struct neighborTable * nodeLauncher(double * data,
 
             free(uniqueKeys);
             free(uniqueKeyPosition);
-            
+
         #endif
 
     }
