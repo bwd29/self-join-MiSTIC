@@ -1,19 +1,5 @@
 #include "include/launcher.cuh"
 
-//comparator function for sorting pairs and is used when checking results for duplicates
-bool compPair(const std::pair<unsigned int, unsigned int> &x, const std::pair<unsigned int, unsigned int> &y){
-    if(x.first < y.first){
-        return true;
-    }
-
-    if(x.first == y.first && x.second < y.second){
-        return true;
-    }
-
-    return false;
-
-}
-
 
 void constructNeighborTable(unsigned int * pointInDistValue, 
     unsigned int * pointersToNeighbors, 
@@ -1370,6 +1356,9 @@ struct neighborTable * nodeLauncher(double * data,
     double time2 = omp_get_wtime();
     printf("Node Construct time: %f\n", time2 - time1);
 
+    unsigned long long res = nodeForce(&nodes, epsilon, data, dim, numPoints);
+    // printf("Res: %llu\n", res);
+
     // allocate a data array for used with distance calcs
     // the data is moved around so that point in bin are near eachother in the array
     // the location is based  on the point array that was altered during tree construction
@@ -1430,10 +1419,10 @@ struct neighborTable * nodeLauncher(double * data,
        counter += numNeighbors[i];
     }
 
-    printf("total num neighbors: %u\n", counter);
+    // printf("total num neighbors: %u\n", counter);
 
     unsigned long long sumCalcs = totalNodeCalcs(nodes, numNodes);
-    printf("sum calcs: %llu\n", sumCalcs);
+    // printf("sum calcs: %llu\n", sumCalcs);
 
     // store the squared value of epsilon because thats all that is needed for distance calcs
     double epsilon2 = epsilon*epsilon;
@@ -1807,7 +1796,7 @@ struct neighborTable * nodeLauncher(double * data,
             unsigned int totalBlocks = ceil(numThreadsPerBatch[i]*1.0 / BLOCK_SIZE);
 
 
-            printf("BatchNumber: %d/%d, Calcs: %llu, addresses: %d, threads: %u, blocks:%d \n", i+1, numBatches, numCalcsPerBatch[i], numNodePerBatch[i], numThreadsPerBatch[i], totalBlocks);
+            // printf("BatchNumber: %d/%d, Calcs: %llu, addresses: %d, threads: %u, blocks:%d \n", i+1, numBatches, numCalcsPerBatch[i], numNodePerBatch[i], numThreadsPerBatch[i], totalBlocks);
 
             // double kernelStartTime = omp_get_wtime();
 

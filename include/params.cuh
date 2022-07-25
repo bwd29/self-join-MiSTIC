@@ -31,9 +31,9 @@ const unsigned int MAXRP = 6;
 const unsigned int MINRP = 5;
 
 
-const unsigned int NUMSTREAMS = 2;
+const unsigned int NUMSTREAMS = 1;
 const unsigned int BLOCK_SIZE = 256; 
-const unsigned int KERNEL_BLOCKS = 1024*1024/BLOCK_SIZE;
+const unsigned int KERNEL_BLOCKS = 512;//1024*1024/BLOCK_SIZE;
 const int BRUTE = false;
 const int RANDOM = false;
 const int BOXED_RP = false;
@@ -50,7 +50,7 @@ const unsigned int MAX_BIN = 1000000;
 
 const double LAYER_DIFF = 1.0;
 
-const unsigned int RPPERLAYER = 16;
+const unsigned int RPPERLAYER = 1;
 
 const int RAND = false;
 const unsigned long long initalPinnedResultsSize = 10000;

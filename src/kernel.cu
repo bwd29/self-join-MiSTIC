@@ -566,7 +566,7 @@ inline bool distanceCheck(double epsilon2, unsigned int dim, double * data, unsi
         #if DATANORM
         sum += pow(data[i*numPoints + p1] - data[i*numPoints + p2], 2);
         #else
-        sum += pow(data[p1*dim+i]-data[p2*dim+i],2);
+        sum += pow(data[p1*dim + i] - data[p2*dim + i], 2);
         #endif
         if(sum > epsilon2) return false;
     }

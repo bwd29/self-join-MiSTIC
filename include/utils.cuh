@@ -13,6 +13,9 @@
  
 #include "include/params.cuh"
 
+bool compPair(const std::pair<unsigned int, unsigned int> &x, const std::pair<unsigned int, unsigned int> &y);
+
+
 struct result{
     unsigned int pid;
     unsigned int numNeighbors;

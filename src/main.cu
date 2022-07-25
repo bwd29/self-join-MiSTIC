@@ -48,7 +48,7 @@ int main(int argc, char*argv[]){
 
 	// can set a subset of the data for easier debugging
 	//////////////
-	// numPoints = 100000;
+	numPoints = 100;
 	////////////
 
 	if(TESTING_SEARCH) fprintf(stderr,"\nRP, %d,", numRP);
@@ -66,7 +66,7 @@ int main(int argc, char*argv[]){
 
 
 	//if using a small datset for debugging, also run brute force so we can double check results
-	if(numPoints <= 100000) 	brute_force( numPoints, dim, epsilon, A);
+	// if(numPoints <= 100000) 	brute_force( numPoints, dim, epsilon, A);
 
 	double time1 = omp_get_wtime();
 
@@ -108,7 +108,7 @@ int main(int argc, char*argv[]){
 					epsilon);
 
 	double time3 = omp_get_wtime();
-	printf("Total time: %f\n", time3 - time2);
+	printf("Node Laucnher time: %f\n", time3 - time2);
 
 	#else
 

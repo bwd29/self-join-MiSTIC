@@ -29,6 +29,8 @@ typedef struct Node{
     //start of points in pointArray
     unsigned int pointOffset;
 
+    unsigned long long int numResults;
+
 
 }Node;
 
@@ -78,3 +80,5 @@ unsigned int initNodes(double * data,
     double * RP,
     unsigned int * pointArray,
     std::vector<struct Node> * nodes);
+
+unsigned long long nodeForce(std::vector<struct Node> * nodes, double epsilon, double * data, unsigned int dim, unsigned int numPoints);

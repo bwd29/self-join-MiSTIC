@@ -1,5 +1,18 @@
 #include "include/utils.cuh"
 
+//comparator function for sorting pairs and is used when checking results for duplicates
+bool compPair(const std::pair<unsigned int, unsigned int> &x, const std::pair<unsigned int, unsigned int> &y){
+    if(x.first < y.first){
+        return true;
+    }
+
+    if(x.first == y.first && x.second < y.second){
+        return true;
+    }
+
+    return false;
+
+}
 
 void GPU_SortbyKey( cudaStream_t stream, unsigned int * A, unsigned int size, unsigned int * B){
 	thrust::sort_by_key(thrust::cuda::par.on(stream), A, A+size, B);
