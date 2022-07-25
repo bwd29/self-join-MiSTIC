@@ -48,7 +48,7 @@ int main(int argc, char*argv[]){
 
 	// can set a subset of the data for easier debugging
 	//////////////
-	numPoints = 100;
+	// numPoints = 10000;
 	////////////
 
 	if(TESTING_SEARCH) fprintf(stderr,"\nRP, %d,", numRP);

@@ -20,30 +20,40 @@ unsigned int buildNodeNet(double * data,
         // generate some reference points
         double * RPArray = createRPArray(data, numRP, dim, numPoints);
     
-        std::vector<struct Node> layerNodes;
+        std::vector<std::vector<struct Node>> layerNodes;
+        layerNodes.resize(RPPERLAYER);
         unsigned long long int lowestDistCalcs = ULLONG_MAX;
         unsigned int bestRP = 0;
 
-        // #pragma omp parallel for num_threads(RPPERLAYER)
+        #pragma omp parallel for num_threads(RPPERLAYER)
         for(unsigned int j = 0; j < RPPERLAYER; j++){
             // need to compare num dist calcs for different potental RP
-            std::vector<struct Node> tempNodes;
+            std::vector<struct Node> tempNodes = newNodes;
             unsigned int tempNumNodes = 0;
-            if(i == 0){tempNumNodes = initNodes(data, dim, numPoints, epsilon, &RPArray[j], pointArray, &tempNodes);}
-            else{tempNumNodes = splitNodes(&RPArray[j], newNodes, newNodes.size(), epsilon, data, dim, numPoints, &tempNodes);}
+            
+            if(i == 0){
+                unsigned int * tempPointArray = (unsigned int *)malloc(sizeof(unsigned int)*numPoints);
+                #pragma omp parallel for num_threads(8)
+                for(unsigned int k = 0; k < numPoints; k++){
+                    tempPointArray[k] = pointArray[k];
+                } 
+                tempNumNodes = initNodes(data, dim, numPoints, epsilon, &RPArray[j*dim], tempPointArray, &layerNodes[j]);
+                free(tempPointArray);
+            }
+            else{tempNumNodes = splitNodes(&RPArray[j*dim], tempNodes, tempNodes.size(), epsilon, data, dim, numPoints, &layerNodes[j]);}
             
             // printf("check: %llu\n", tempNodes[0].numCalcs);
             
-            unsigned long long numCalcs = totalNodeCalcs(tempNodes, tempNumNodes);
-            unsigned long long sumSqrs = nodeSumSqrs(tempNodes, tempNumNodes);
+            unsigned long long numCalcs = totalNodeCalcs(layerNodes[j], tempNumNodes);
+            unsigned long long sumSqrs = nodeSumSqrs(layerNodes[j], tempNumNodes);
             // printf("Layer %d for RP %d has Nodes: %u with calcs: %llu , and sumSQRs: %llu\n", i, j, tempNumNodes, numCalcs, sumSqrs);
 
-            // #pragma omp critical
+            #pragma omp critical
             {
                 if(numCalcs < lowestDistCalcs){
                     lowestDistCalcs = numCalcs;
                     bestRP = j;
-                    layerNodes = tempNodes;
+                    // layerNodes = tempNodes;
                     numNodes = tempNumNodes;
                 }
             }
@@ -52,12 +62,12 @@ unsigned int buildNodeNet(double * data,
 
         printf("Layer %d Selecting RP %d with Nodes: %u and calcs: %llu\n", i, bestRP, numNodes, lowestDistCalcs);
 
-        newNodes = layerNodes;
+        newNodes = layerNodes[bestRP];
     }
 
     // printf("check: %llu\n", newNodes[0].numCalcs);
-    unsigned long long numCalcs = totalNodeCalcs(newNodes, numNodes);
-    unsigned long long sumSqrs = nodeSumSqrs(newNodes, numNodes);
+    unsigned long long numCalcs = totalNodeCalcs(newNodes, newNodes.size());
+    unsigned long long sumSqrs = nodeSumSqrs(newNodes, newNodes.size());
 
     printf("Final graph has %u nodes with: %llu calcs and sumSqrs: %llu\n", numNodes, numCalcs, sumSqrs);
 
@@ -76,7 +86,7 @@ unsigned int buildNodeNet(double * data,
     *nodes = newNodes;
 
 
-    return numNodes;
+    return newNodes.size();
 
 }
 
@@ -214,7 +224,7 @@ unsigned int splitNodes(double * RP, //the reference point used for the split
         #pragma omp parallel for
         for(unsigned int j = 0; j < nodes[i].numNodePoints; j++){
             //get distance of each point in the node to the reference point
-            binNumber[j] = floor( euclideanDistance(&data[j*dim],dim,RP) / epsilon);
+            binNumber[j] = floor( euclideanDistance(&data[nodes[i].nodePoints[j]*dim],dim,RP) / epsilon);
         }
 
         // printf("finished binning\n");
@@ -266,11 +276,11 @@ unsigned int splitNodes(double * RP, //the reference point used for the split
                 
                 // printf("making new node, j: %d, numNodePoints: %d, tempBinPointer: %d, numPoints in the new node:%d\n", j,nodes[i].numNodePoints, tempBinPointer, j - tempBinPointer+1 );
                 //push back the new node onto the temporary vector of nodes
-                if(j== nodes[i].numNodePoints - 1) {
-                    printf("BinNumber#%u: %u->%u: p=%u->%u; j: %u\n", numNewNodes, binNumber[j], 0 ,bcounter,j-tempBinPointer+1, j);
-                }else{ 
-                    printf("BinNumber#%u: %u->%u: p=%u->%u; j: %u\n", numNewNodes, binNumber[j], binNumber[j+1], bcounter,j-tempBinPointer+1, j);
-                }
+                // if(j== nodes[i].numNodePoints - 1) {
+                //     printf("BinNumber#%u: %u->%u: p=%u->%u; j: %u\n", numNewNodes, binNumber[j], 0 ,bcounter,j-tempBinPointer+1, j);
+                // }else{ 
+                //     printf("BinNumber#%u: %u->%u: p=%u->%u; j: %u\n", numNewNodes, binNumber[j], binNumber[j+1], bcounter,j-tempBinPointer+1, j);
+                // }
                 tempNodes.push_back( newNode(j-tempBinPointer+1, &(nodes[i].nodePoints[0]) + tempBinPointer, nodes[i], binNumber[j], numNewNodes ) );
                 tempBinPointer = j+1;
                 numNewNodes++;
@@ -418,7 +428,7 @@ struct Node newNode(unsigned int numNodePoints, //number of points to go into th
 void updateNodeCalcs(std::vector<struct Node> * nodes,
                      unsigned int numNodes){
 
-    bool verboseNodeInfo = true;
+    bool verboseNodeInfo = false;
     for(unsigned int i = 0; i < numNodes; i++){
         if(verboseNodeInfo) printf("Node %d has:\n",i);
         unsigned long long int numNeighboringPoints = 0;
