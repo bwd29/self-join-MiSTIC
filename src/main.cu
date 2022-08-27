@@ -21,11 +21,11 @@ int main(int argc, char*argv[]){
     //reading in command line arguments
 	char *filename = argv[1]; // first argument is the file with the dataset as a .bin
 	unsigned int dim = atoi(argv[2]); // second argument is the dimensionality of the data, i.e. number of columns
-	unsigned int numRP = atoi(argv[3]);
+	// unsigned int numRP = atoi(argv[3]);
 
 	unsigned int concurent_streams = 2; // number of cuda streams, should only ever need to be 2 but can be set to a parameter
 	double epsilon;
-	sscanf(argv[4], "%lf", &epsilon); // third argumernt is the distance threshold being searched
+	sscanf(argv[3], "%lf", &epsilon); // third argumernt is the distance threshold being searched
 
 	double time0 = omp_get_wtime(); //start initial timer
 
@@ -50,13 +50,13 @@ int main(int argc, char*argv[]){
 	//////////////
 	// numPoints = 10000;
 	////////////
-
-	if(TESTING_SEARCH) fprintf(stderr,"\nRP, %d,", numRP);
+	if(ERRORPRINT) fprintf(stderr,"\n%f %u ", epsilon, numPoints);
+	// if(TESTING_SEARCH) fprintf(stderr,"\nRP, %d,", numRP);
 	if(TESTING_SEARCH) fprintf(stderr," E, %f,", epsilon);
 
 	printf("\nNumber points: %d ", numPoints);
 	printf("\nNumber Dimensions: %d ", dim);
-	printf("\nNumber Reference Points: %d ", numRP);
+	// printf("\nNumber Reference Points: %d ", numRP);
 	printf("\nNumber Concurent Streams: %d", concurent_streams);
 	printf("\nBlock Size: %d, Kernel Blocks: %d",BLOCK_SIZE,KERNEL_BLOCKS);
 	if(BINARYSEARCH == 0) printf("\nUsing tree traversals"); 
@@ -103,12 +103,13 @@ int main(int argc, char*argv[]){
 	nodeLauncher(dimOrderedData,
 					dim,
 					numPoints,
-					numRP,
+					0, //numRP
 					pointArray,
 					epsilon);
 
 	double time3 = omp_get_wtime();
 	printf("Node Laucnher time: %f\n", time3 - time2);
+	if(ERRORPRINT) fprintf(stderr,"%f ",time3-time2);
 
 	#else
 

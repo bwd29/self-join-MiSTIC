@@ -1338,7 +1338,8 @@ struct neighborTable * nodeLauncher(double * data,
     double epsilon){
 
 
-
+    cudaSetDevice(CUDA_DEVICE);
+    
     double time1 = omp_get_wtime();
     std::vector<struct Node> nodes;
 
@@ -1351,11 +1352,13 @@ struct neighborTable * nodeLauncher(double * data,
             epsilon,
             &nodes);
 
-    cudaSetDevice(CUDA_DEVICE);
+    
 
     double time2 = omp_get_wtime();
     printf("Node Construct time: %f\n", time2 - time1);
+    if(ERRORPRINT) fprintf(stderr,"%f ",time2-time1);
 
+    #if !NODETEST
     // unsigned long long res = nodeForce(&nodes, epsilon, data, dim, numPoints);
     // printf("Res: %llu\n", res);
 
@@ -1764,6 +1767,7 @@ struct neighborTable * nodeLauncher(double * data,
 
     // printf("Time to transfer: %f\n", omp_get_wtime()-launchend);
 
+    double kTime = omp_get_wtime();
     #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic) if(!HOST)
     for(unsigned int i = 0; i < numBatches; i++){
 
@@ -1827,7 +1831,7 @@ struct neighborTable * nodeLauncher(double * data,
             assert(cudaSuccess ==  cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid]));
             cudaStreamSynchronize(stream[tid]);
 
-            printf("Batch %d Results: %llu\n", i,keyValueIndex[i]);
+            // printf("Batch %d Results: %llu\n", i,keyValueIndex[i]);
 
 
             if(keyValueIndex[i] > bufferSizes[tid]){
@@ -1882,6 +1886,8 @@ struct neighborTable * nodeLauncher(double * data,
 
     }
 
+    printf("Kernel Search Time: %f\n", omp_get_wtime()-kTime);
+
     unsigned long long totals = 0;
     for(int i = 0; i < numBatches; i++){
         totals += keyValueIndex[i];
@@ -1894,5 +1900,11 @@ struct neighborTable * nodeLauncher(double * data,
     free(numThreadsPerBatch);
     free(numThreadsPerNode);
 
+
+
     return tables;
+
+    #endif
+
+    return NULL;
 }

@@ -2,6 +2,7 @@
 
 #include "include/utils.cuh"
 #include "include/params.cuh"
+#include "include/kernel.cuh"
 
 
 //struct to contain the node information
@@ -34,7 +35,12 @@ typedef struct Node{
 
 }Node;
 
-
+typedef struct DevicePointers{
+    double * d_epsilon;
+    unsigned int * d_dim;
+    unsigned int * d_numPoints;
+    double * d_data;
+}DevicePointers;
 
 
 
@@ -54,7 +60,9 @@ unsigned int splitNodes(double * RP, //the reference point used for the split
     double * data, //the dataset
     unsigned int dim,//the number of dimensions of the data
     unsigned int numPoints,// number of points in the dataset
-    std::vector<struct Node> * newNodes);
+    std::vector<struct Node> * newNodes,
+    struct DevicePointers devicePointers,
+    double * nodePerSecond);
 
 struct Node newNode(unsigned int numNodePoints, //number of points to go into the node
     unsigned int * nodePoints, // the start of the points that will go into the node
@@ -79,6 +87,10 @@ unsigned int initNodes(double * data,
     double epsilon,
     double * RP,
     unsigned int * pointArray,
-    std::vector<struct Node> * nodes);
+    std::vector<struct Node> * nodes,
+    struct DevicePointers devicePointers,
+    double * calcTime);
 
 unsigned long long nodeForce(std::vector<struct Node> * nodes, double epsilon, double * data, unsigned int dim, unsigned int numPoints);
+
+void updateNeighbors(std::vector<struct Node> nodes, std::vector<std::vector<struct Node>> * newNodes);

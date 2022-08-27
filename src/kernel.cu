@@ -418,13 +418,16 @@ void nodeCalculationsKernel(unsigned int *numPoints,
     if(tid >= *numThreadsPerBatch){
         return;
     }
+    // unsigned int assignedNode = nodeAssign[tid];
 
-    for(unsigned int i = 0; i < numNeighbors[nodeAssign[tid]]; i++){
-        unsigned int neighborIndex = neighbors[neighborOffset[nodeAssign[tid]]+i];
-        for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[nodeAssign[tid]]* nodePoints[neighborIndex]; j += numThreadsPerNode[nodeAssign[tid]]){
+    for(unsigned int i = 0; i < numNeighbors[ nodeAssign[tid]]; i++){
+        unsigned int neighborIndex = neighbors[neighborOffset[nodeAssign[tid]] + i];
+        // unsigned int neighborPoints = nodePoints[neighborIndex];
+        // unsigned long long numCals = (unsigned long long int)nodePoints[ nodeAssign[tid]]* nodePoints[ neighbors[neighborOffset[ nodeAssign[tid]] + i]];
+        for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[ nodeAssign[tid]]* nodePoints[ neighborIndex]; j += numThreadsPerNode[ nodeAssign[tid]]){
 
-            unsigned int p1 = pointOffsets[nodeAssign[tid]] + j / nodePoints[neighborIndex];
-            unsigned int p2 = pointOffsets[neighbors[neighborOffset[nodeAssign[tid]] + i]] + j % nodePoints[neighborIndex];
+            unsigned int p1 = pointOffsets[ nodeAssign[tid]] + j / nodePoints[ neighborIndex];
+            unsigned int p2 = pointOffsets[ neighborIndex] + j % nodePoints[ neighborIndex];
 
             if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
             // if (sum <= *epsilon2){
@@ -467,8 +470,8 @@ void nodeCalculationsKernel_CPU( unsigned int numNodes,
                     unsigned int p1 = pointOffsets[nodeAssign[tid]] + j / nodePoints[neighborIndex];
                     unsigned int p2 = pointOffsets[neighbors[neighborOffset[nodeAssign[tid]] + i]] + j % nodePoints[neighborIndex];
     
-                    if(p1 > *numPoints) printf("ERROR1: %u, %u, %u, %u\n", p1, nodeAssign[tid], neighborIndex, pointOffsets[nodeAssign[tid]]);
-                    if(p2 > *numPoints) printf("ERROR2: %u, %u, %u, %u\n", p2, nodeAssign[tid], neighborIndex, pointOffsets[nodeAssign[tid]]);
+                    // if(p1 > *numPoints) printf("ERROR1: %u, %u, %u, %u\n", p1, nodeAssign[tid], neighborIndex, pointOffsets[nodeAssign[tid]]);
+                    // if(p2 > *numPoints) printf("ERROR2: %u, %u, %u, %u\n", p2, nodeAssign[tid], neighborIndex, pointOffsets[nodeAssign[tid]]);
     
                     if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
     
@@ -573,4 +576,29 @@ inline bool distanceCheck(double epsilon2, unsigned int dim, double * data, unsi
 
 
     return true;
+}
+
+__global__
+void binningKernel(unsigned int * binNumbers, //array numPoints long
+                    unsigned int * numPoints,
+                    unsigned int * dim,
+                    double * data, //all data
+                    double * RP, //single rp
+                    double * epsilon){
+
+    unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
+
+    if(tid >= *numPoints){
+        return;
+    }
+
+    double distance = 0;
+    for(unsigned int j = 0; j < *dim; j++){
+        distance += pow(data[tid*(*dim) + j]-RP[j],2);
+    }
+
+    
+    binNumbers[tid] = floor(sqrt(distance) / (*epsilon));
+
+    return;
 }

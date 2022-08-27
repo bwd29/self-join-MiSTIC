@@ -162,3 +162,11 @@ void nodeCalculationsKernel_CPU(unsigned int numNodes,
                                 unsigned int * neighbors,
                                 unsigned int * neighborOffset,
                                 unsigned long long  *keyValueIndex);
+
+__global__
+void binningKernel(unsigned int * binNumbers, //array numPoints long
+                    unsigned int * numPoints,
+                    unsigned int * dim,
+                    double * data, //all data
+                    double * RP, //single rp
+                    double * epsilon);

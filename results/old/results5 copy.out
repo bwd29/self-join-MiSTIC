@@ -1,0 +1,1334 @@
+rm -f build/main build/*.o
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+device building, 1024x1024*2 launches, sqrt(N) x 0.01 sampling, 32 per layer, k rps, non-rand RP, dynamic calcs per thread max 250000, 30 registers
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+
+Time to read in file: 0.322536
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.007000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 21 and calcs: 170979007977
+Build Time: 0.010500, Calc Time: 3.419580
+Layer 1 Selecting RP 3 with Nodes: 112 and calcs: 149842511851
+Build Time: 0.063436, Calc Time: 2.996850
+Layer 2 Selecting RP 1 with Nodes: 544 and calcs: 138898763933
+Build Time: 0.077226, Calc Time: 2.777975
+Layer 3 Selecting RP 1 with Nodes: 1571 and calcs: 129519852561
+Build Time: 0.035231, Calc Time: 2.590397
+Layer 4 Selecting RP 1 with Nodes: 3017 and calcs: 123714865963
+Build Time: 0.045695, Calc Time: 2.474297
+Layer 5 Selecting RP 1 with Nodes: 5705 and calcs: 118850646695
+Build Time: 0.181597, Calc Time: 2.377013
+Layer 6 Selecting RP 5 with Nodes: 8501 and calcs: 115577176189
+Build Time: 0.406926, Calc Time: 2.311544
+Final graph has 8501 nodes with: 115577176189 calcs and sumSqrs: 6189239843
+Node Construct time: 0.971648
+Total Number of Batches: 7 , with calcs per threads: 10000
+Total results Set Size: 65915313 
+Node Laucnher time: 3.619426
+Total Time: 4.066617
+
+Time to read in file: 0.083079
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.007525 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 20 and calcs: 177585998311
+Build Time: 0.010000, Calc Time: 3.551720
+Layer 1 Selecting RP 5 with Nodes: 168 and calcs: 158764211993
+Build Time: 0.123736, Calc Time: 3.175284
+Layer 2 Selecting RP 3 with Nodes: 549 and calcs: 148432579275
+Build Time: 0.042057, Calc Time: 2.968652
+Layer 3 Selecting RP 1 with Nodes: 1429 and calcs: 137476881917
+Build Time: 0.043087, Calc Time: 2.749538
+Layer 4 Selecting RP 7 with Nodes: 2847 and calcs: 132702466103
+Build Time: 0.030907, Calc Time: 2.654049
+Layer 5 Selecting RP 1 with Nodes: 5528 and calcs: 126676545641
+Build Time: 0.186865, Calc Time: 2.533531
+Layer 6 Selecting RP 1 with Nodes: 8164 and calcs: 124368925275
+Build Time: 0.401966, Calc Time: 2.487379
+Final graph has 8164 nodes with: 124368925275 calcs and sumSqrs: 6897313613
+Node Construct time: 0.938718
+Total Number of Batches: 7 , with calcs per threads: 10000
+Total results Set Size: 121384099 
+Node Laucnher time: 4.176009
+Total Time: 4.624051
+
+Time to read in file: 0.072443
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.008050 
+*********************************
+
+Layer 0 Selecting RP 2 with Nodes: 20 and calcs: 185481056983
+Build Time: 0.010000, Calc Time: 3.709621
+Layer 1 Selecting RP 2 with Nodes: 114 and calcs: 166450847267
+Build Time: 0.068734, Calc Time: 3.329017
+Layer 2 Selecting RP 1 with Nodes: 398 and calcs: 155651370669
+Build Time: 0.043403, Calc Time: 3.113027
+Layer 3 Selecting RP 1 with Nodes: 1127 and calcs: 145060489485
+Build Time: 0.035671, Calc Time: 2.901210
+Layer 4 Selecting RP 7 with Nodes: 2238 and calcs: 140559917873
+Build Time: 0.038271, Calc Time: 2.811198
+Layer 5 Selecting RP 1 with Nodes: 3986 and calcs: 136598586683
+Build Time: 0.189752, Calc Time: 2.731972
+Layer 6 Selecting RP 5 with Nodes: 6163 and calcs: 133526163851
+Build Time: 0.278731, Calc Time: 2.670523
+Final graph has 6163 nodes with: 133526163851 calcs and sumSqrs: 8253079965
+Node Construct time: 0.983051
+Total Number of Batches: 8 , with calcs per threads: 10000
+Total results Set Size: 207932133 
+Node Laucnher time: 4.874248
+Total Time: 5.323456
+
+Time to read in file: 0.073038
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.008575 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 18 and calcs: 191503325863
+Build Time: 0.009000, Calc Time: 3.830067
+Layer 1 Selecting RP 1 with Nodes: 126 and calcs: 171327200763
+Build Time: 0.113804, Calc Time: 3.426544
+Layer 2 Selecting RP 1 with Nodes: 446 and calcs: 162003490543
+Build Time: 0.040195, Calc Time: 3.240070
+Layer 3 Selecting RP 1 with Nodes: 1017 and calcs: 153457264929
+Build Time: 0.025310, Calc Time: 3.069145
+Layer 4 Selecting RP 7 with Nodes: 1967 and calcs: 148718737081
+Build Time: 0.036793, Calc Time: 2.974375
+Layer 5 Selecting RP 1 with Nodes: 3761 and calcs: 143232496441
+Build Time: 0.099530, Calc Time: 2.864650
+Layer 6 Selecting RP 5 with Nodes: 5674 and calcs: 140765845269
+Build Time: 0.236710, Calc Time: 2.815317
+Layer 7 Selecting RP 3 with Nodes: 8931 and calcs: 138434049345
+Build Time: 0.818193, Calc Time: 2.768681
+Final graph has 8931 nodes with: 138434049345 calcs and sumSqrs: 7732070525
+Node Construct time: 1.370537
+Total Number of Batches: 8 , with calcs per threads: 10000
+Total results Set Size: 335507787 
+Node Laucnher time: 6.229909
+Total Time: 6.683023
+
+Time to read in file: 0.071883
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.009100 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 17 and calcs: 197994635393
+Build Time: 0.008500, Calc Time: 3.959893
+Layer 1 Selecting RP 6 with Nodes: 111 and calcs: 181830109603
+Build Time: 0.105004, Calc Time: 3.636602
+Layer 2 Selecting RP 1 with Nodes: 453 and calcs: 171361944249
+Build Time: 0.039432, Calc Time: 3.427239
+Layer 3 Selecting RP 1 with Nodes: 1021 and calcs: 161009605589
+Build Time: 0.051661, Calc Time: 3.220192
+Layer 4 Selecting RP 7 with Nodes: 1912 and calcs: 157690688111
+Build Time: 0.043247, Calc Time: 3.153814
+Layer 5 Selecting RP 1 with Nodes: 3578 and calcs: 151885298721
+Build Time: 0.102337, Calc Time: 3.037706
+Layer 6 Selecting RP 2 with Nodes: 5038 and calcs: 149212360601
+Build Time: 0.210292, Calc Time: 2.984247
+Layer 7 Selecting RP 3 with Nodes: 7809 and calcs: 146963852485
+Build Time: 0.997760, Calc Time: 2.939277
+Final graph has 7809 nodes with: 146963852485 calcs and sumSqrs: 8210240613
+Node Construct time: 1.617067
+Total Number of Batches: 8 , with calcs per threads: 10000
+Total results Set Size: 514928275 
+Node Laucnher time: 7.658814
+Total Time: 8.105399
+UNI ________________________________________________________________
+UNI ________________________________________________________________
+UNI ________________________________________________________________
+
+Time to read in file: 0.140997
+
+Number points: 2000000 
+Number Dimensions: 10 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.250000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 10 and calcs: 2786978203204
+Build Time: 0.005000, Calc Time: 55.739564
+Layer 1 Selecting RP 4 with Nodes: 62 and calcs: 1924986427672
+Build Time: 0.557636, Calc Time: 38.499729
+Layer 2 Selecting RP 4 with Nodes: 326 and calcs: 1358466274950
+Build Time: 0.185830, Calc Time: 27.169325
+Layer 3 Selecting RP 5 with Nodes: 1481 and calcs: 933200718224
+Build Time: 0.341585, Calc Time: 18.664014
+Layer 4 Selecting RP 6 with Nodes: 5536 and calcs: 668019152002
+Build Time: 1.086489, Calc Time: 13.360383
+Layer 5 Selecting RP 2 with Nodes: 18076 and calcs: 473423029174
+Build Time: 2.886033, Calc Time: 9.468461
+Final graph has 18076 nodes with: 473423029174 calcs and sumSqrs: 1625248384
+Node Construct time: 2.734920
+Total Number of Batches: 11 , with calcs per threads: 22574
+Total results Set Size: 7264794 
+Node Laucnher time: 9.678181
+Total Time: 9.844867
+
+Time to read in file: 0.119050
+
+Number points: 2000000 
+Number Dimensions: 10 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.300000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 9 and calcs: 3116988747980
+Build Time: 0.004500, Calc Time: 62.339775
+Layer 1 Selecting RP 4 with Nodes: 48 and calcs: 2413550658212
+Build Time: 0.508584, Calc Time: 48.271013
+Layer 2 Selecting RP 4 with Nodes: 215 and calcs: 1899106281102
+Build Time: 0.300964, Calc Time: 37.982126
+Layer 3 Selecting RP 5 with Nodes: 848 and calcs: 1467238275144
+Build Time: 0.242000, Calc Time: 29.344766
+Layer 4 Selecting RP 6 with Nodes: 2878 and calcs: 1165644291336
+Build Time: 0.311725, Calc Time: 23.312886
+Layer 5 Selecting RP 2 with Nodes: 8601 and calcs: 918411484818
+Build Time: 0.979504, Calc Time: 18.368230
+Layer 6 Selecting RP 5 with Nodes: 23318 and calcs: 724506253250
+Build Time: 6.211526, Calc Time: 14.490125
+Final graph has 23318 nodes with: 724506253250 calcs and sumSqrs: 1461914244
+Node Construct time: 4.696018
+Total Number of Batches: 11 , with calcs per threads: 34547
+Total results Set Size: 30635922 
+Node Laucnher time: 17.314621
+Total Time: 17.487047
+
+Time to read in file: 0.121123
+
+Number points: 2000000 
+Number Dimensions: 10 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.350000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 8 and calcs: 3367464862012
+Build Time: 0.004000, Calc Time: 67.349297
+Layer 1 Selecting RP 4 with Nodes: 37 and calcs: 2823936874458
+Build Time: 0.292364, Calc Time: 56.478737
+Layer 2 Selecting RP 4 with Nodes: 151 and calcs: 2395488597698
+Build Time: 0.182644, Calc Time: 47.909772
+Layer 3 Selecting RP 5 with Nodes: 541 and calcs: 2007800929026
+Build Time: 0.214458, Calc Time: 40.156019
+Layer 4 Selecting RP 6 with Nodes: 1700 and calcs: 1714102715116
+Build Time: 0.274844, Calc Time: 34.282054
+Layer 5 Selecting RP 2 with Nodes: 4687 and calcs: 1454182107388
+Build Time: 0.585248, Calc Time: 29.083642
+Layer 6 Selecting RP 5 with Nodes: 11893 and calcs: 1234666208726
+Build Time: 2.578299, Calc Time: 24.693324
+Final graph has 11893 nodes with: 1234666208726 calcs and sumSqrs: 3726025120
+Node Construct time: 3.003078
+Total Number of Batches: 11 , with calcs per threads: 58873
+Total results Set Size: 119260792 
+Node Laucnher time: 26.209869
+Total Time: 26.378966
+
+Time to read in file: 0.116344
+
+Number points: 2000000 
+Number Dimensions: 10 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.400000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 7 and calcs: 3566525491118
+Build Time: 0.003500, Calc Time: 71.330510
+Layer 1 Selecting RP 4 with Nodes: 30 and calcs: 3171054034732
+Build Time: 0.337721, Calc Time: 63.421081
+Layer 2 Selecting RP 4 with Nodes: 115 and calcs: 2836463065788
+Build Time: 0.258324, Calc Time: 56.729261
+Layer 3 Selecting RP 5 with Nodes: 381 and calcs: 2517905198226
+Build Time: 0.191818, Calc Time: 50.358104
+Layer 4 Selecting RP 6 with Nodes: 1099 and calcs: 2261227183544
+Build Time: 0.226382, Calc Time: 45.224544
+Layer 5 Selecting RP 2 with Nodes: 2909 and calcs: 2022192607288
+Build Time: 0.262717, Calc Time: 40.443852
+Layer 6 Selecting RP 5 with Nodes: 6888 and calcs: 1809131191368
+Build Time: 1.213613, Calc Time: 36.182624
+Layer 7 Selecting RP 7 with Nodes: 15656 and calcs: 1602172346292
+Build Time: 4.712023, Calc Time: 32.043447
+Final graph has 15656 nodes with: 1602172346292 calcs and sumSqrs: 3044349550
+Node Construct time: 4.848893
+Total Number of Batches: 11 , with calcs per threads: 76397
+Total results Set Size: 391579566 
+Node Laucnher time: 39.853808
+Total Time: 40.024997
+
+Time to read in file: 0.132493
+
+Number points: 2000000 
+Number Dimensions: 10 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.450000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 6 and calcs: 3682453656482
+Build Time: 0.003000, Calc Time: 73.649073
+Layer 1 Selecting RP 2 with Nodes: 25 and calcs: 3385866383976
+Build Time: 0.301768, Calc Time: 67.717328
+Layer 2 Selecting RP 2 with Nodes: 88 and calcs: 3122439583672
+Build Time: 0.232085, Calc Time: 62.448792
+Layer 3 Selecting RP 2 with Nodes: 292 and calcs: 2864870752738
+Build Time: 0.161039, Calc Time: 57.297415
+Layer 4 Selecting RP 6 with Nodes: 796 and calcs: 2642455498940
+Build Time: 0.093841, Calc Time: 52.849110
+Layer 5 Selecting RP 7 with Nodes: 2024 and calcs: 2445104824490
+Build Time: 0.185348, Calc Time: 48.902096
+Layer 6 Selecting RP 1 with Nodes: 4662 and calcs: 2250634638664
+Build Time: 0.698206, Calc Time: 45.012693
+Layer 7 Selecting RP 7 with Nodes: 9757 and calcs: 2087066979746
+Build Time: 2.803240, Calc Time: 41.741340
+Layer 8 Selecting RP 6 with Nodes: 18967 and calcs: 1938672330930
+Build Time: 8.452797, Calc Time: 38.773447
+Final graph has 18967 nodes with: 1938672330930 calcs and sumSqrs: 3600803232
+Node Construct time: 8.676123
+Total Number of Batches: 11 , with calcs per threads: 92443
+Total results Set Size: 1104833464 
+Node Laucnher time: 58.528695
+Total Time: 58.699023
+EXPO ________________________________________________________________
+EXPO ________________________________________________________________
+EXPO ________________________________________________________________
+
+Time to read in file: 0.234675
+
+Number points: 2000000 
+Number Dimensions: 16 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.030000 
+*********************************
+
+Layer 0 Selecting RP 0 with Nodes: 10 and calcs: 3204826031224
+Build Time: 0.005000, Calc Time: 64.096521
+Layer 1 Selecting RP 0 with Nodes: 68 and calcs: 2696370253580
+Build Time: 0.612759, Calc Time: 53.927405
+Layer 2 Selecting RP 9 with Nodes: 332 and calcs: 2330555521808
+Build Time: 0.179054, Calc Time: 46.611110
+Layer 3 Selecting RP 9 with Nodes: 1104 and calcs: 2137087400620
+Build Time: 0.102742, Calc Time: 42.741748
+Layer 4 Selecting RP 1 with Nodes: 3314 and calcs: 1977343235660
+Build Time: 0.198959, Calc Time: 39.546865
+Layer 5 Selecting RP 3 with Nodes: 8497 and calcs: 1781010001078
+Build Time: 0.627817, Calc Time: 35.620200
+Layer 6 Selecting RP 0 with Nodes: 17889 and calcs: 1672817363252
+Build Time: 1.152708, Calc Time: 33.456347
+Layer 7 Selecting RP 3 with Nodes: 32609 and calcs: 1596425796588
+Build Time: 9.258379, Calc Time: 31.928516
+Final graph has 32609 nodes with: 1596425796588 calcs and sumSqrs: 13132519018
+Node Construct time: 8.921996
+Total Number of Batches: 11 , with calcs per threads: 76123
+Total results Set Size: 9184214 
+Node Laucnher time: 48.672286
+Total Time: 48.982920
+
+Time to read in file: 0.221337
+
+Number points: 2000000 
+Number Dimensions: 16 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.035000 
+*********************************
+
+Layer 0 Selecting RP 9 with Nodes: 8 and calcs: 3432781767658
+Build Time: 0.004000, Calc Time: 68.655635
+Layer 1 Selecting RP 8 with Nodes: 52 and calcs: 3071411509888
+Build Time: 0.219740, Calc Time: 61.428230
+Layer 2 Selecting RP 6 with Nodes: 229 and calcs: 2790993546140
+Build Time: 0.172420, Calc Time: 55.819871
+Layer 3 Selecting RP 2 with Nodes: 778 and calcs: 2612753079886
+Build Time: 0.148041, Calc Time: 52.255062
+Layer 4 Selecting RP 0 with Nodes: 2026 and calcs: 2459745521756
+Build Time: 0.201717, Calc Time: 49.194910
+Layer 5 Selecting RP 3 with Nodes: 4938 and calcs: 2300113783980
+Build Time: 0.311473, Calc Time: 46.002276
+Layer 6 Selecting RP 1 with Nodes: 9770 and calcs: 2215534274244
+Build Time: 1.046114, Calc Time: 44.310685
+Layer 7 Selecting RP 4 with Nodes: 17562 and calcs: 2131458358606
+Build Time: 2.992045, Calc Time: 42.629167
+Layer 8 Selecting RP 8 with Nodes: 30338 and calcs: 2041349849960
+Build Time: 8.566594, Calc Time: 40.826997
+Final graph has 30338 nodes with: 2041349849960 calcs and sumSqrs: 18448072684
+Node Construct time: 10.260895
+Total Number of Batches: 11 , with calcs per threads: 97339
+Total results Set Size: 48893286 
+Node Laucnher time: 70.340640
+Total Time: 70.652248
+
+Time to read in file: 0.199120
+
+Number points: 2000000 
+Number Dimensions: 16 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.040000 
+*********************************
+
+Layer 0 Selecting RP 8 with Nodes: 8 and calcs: 3596845352306
+Build Time: 0.004000, Calc Time: 71.936907
+Layer 1 Selecting RP 8 with Nodes: 42 and calcs: 3286242903664
+Build Time: 0.185586, Calc Time: 65.724858
+Layer 2 Selecting RP 0 with Nodes: 167 and calcs: 3084885953480
+Build Time: 0.201234, Calc Time: 61.697719
+Layer 3 Selecting RP 5 with Nodes: 549 and calcs: 2937592677274
+Build Time: 0.198326, Calc Time: 58.751854
+Layer 4 Selecting RP 0 with Nodes: 1467 and calcs: 2813160815940
+Build Time: 0.108834, Calc Time: 56.263216
+Layer 5 Selecting RP 3 with Nodes: 3493 and calcs: 2667160486694
+Build Time: 0.198973, Calc Time: 53.343210
+Layer 6 Selecting RP 2 with Nodes: 6807 and calcs: 2581813892150
+Build Time: 0.694504, Calc Time: 51.636278
+Layer 7 Selecting RP 3 with Nodes: 12635 and calcs: 2514773906270
+Build Time: 2.445534, Calc Time: 50.295478
+Layer 8 Selecting RP 8 with Nodes: 21379 and calcs: 2440043704440
+Build Time: 6.329497, Calc Time: 48.800874
+Final graph has 21379 nodes with: 2440043704440 calcs and sumSqrs: 23198483960
+Node Construct time: 8.139576
+Total Number of Batches: 11 , with calcs per threads: 116350
+Total results Set Size: 222848664 
+Node Laucnher time: 91.196786
+Total Time: 91.506759
+
+Time to read in file: 0.205322
+
+Number points: 2000000 
+Number Dimensions: 16 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.045000 
+*********************************
+
+Layer 0 Selecting RP 8 with Nodes: 7 and calcs: 3706139357656
+Build Time: 0.003500, Calc Time: 74.122787
+Layer 1 Selecting RP 8 with Nodes: 35 and calcs: 3511560342164
+Build Time: 0.181422, Calc Time: 70.231207
+Layer 2 Selecting RP 9 with Nodes: 136 and calcs: 3348397911282
+Build Time: 0.125849, Calc Time: 66.967958
+Layer 3 Selecting RP 7 with Nodes: 383 and calcs: 3226319435978
+Build Time: 0.120227, Calc Time: 64.526389
+Layer 4 Selecting RP 0 with Nodes: 1025 and calcs: 3085183450326
+Build Time: 0.139873, Calc Time: 61.703669
+Layer 5 Selecting RP 3 with Nodes: 2262 and calcs: 2989200912062
+Build Time: 0.188490, Calc Time: 59.784018
+Layer 6 Selecting RP 8 with Nodes: 4361 and calcs: 2917063397028
+Build Time: 0.359376, Calc Time: 58.341268
+Layer 7 Selecting RP 1 with Nodes: 7440 and calcs: 2857405195592
+Build Time: 1.312903, Calc Time: 57.148104
+Layer 8 Selecting RP 5 with Nodes: 12115 and calcs: 2794612215414
+Build Time: 2.585712, Calc Time: 55.892244
+Layer 9 Selecting RP 7 with Nodes: 19462 and calcs: 2724761126856
+Build Time: 6.219282, Calc Time: 54.495223
+Final graph has 19462 nodes with: 2724761126856 calcs and sumSqrs: 19787505576
+Node Construct time: 9.850304
+Total Number of Batches: 12 , with calcs per threads: 129926
+Total results Set Size: 813268718 
+Node Laucnher time: 117.246736
+Total Time: 117.555873
+
+Time to read in file: 0.208090
+
+Number points: 2000000 
+Number Dimensions: 16 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.050000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 6 and calcs: 3800614161690
+Build Time: 0.003000, Calc Time: 76.012283
+Layer 1 Selecting RP 0 with Nodes: 30 and calcs: 3620250383232
+Build Time: 0.476982, Calc Time: 72.405008
+Layer 2 Selecting RP 7 with Nodes: 103 and calcs: 3503291998466
+Build Time: 0.183012, Calc Time: 70.065840
+Layer 3 Selecting RP 5 with Nodes: 278 and calcs: 3414678532166
+Build Time: 0.106715, Calc Time: 68.293571
+Layer 4 Selecting RP 1 with Nodes: 627 and calcs: 3342777832218
+Build Time: 0.098179, Calc Time: 66.855557
+Layer 5 Selecting RP 3 with Nodes: 1548 and calcs: 3256279198190
+Build Time: 0.123427, Calc Time: 65.125584
+Layer 6 Selecting RP 1 with Nodes: 2804 and calcs: 3191293033748
+Build Time: 0.192450, Calc Time: 63.825861
+Layer 7 Selecting RP 0 with Nodes: 5192 and calcs: 3138491912422
+Build Time: 0.567968, Calc Time: 62.769838
+Layer 8 Selecting RP 8 with Nodes: 9089 and calcs: 3080136575610
+Build Time: 2.008214, Calc Time: 61.602732
+Layer 9 Selecting RP 7 with Nodes: 14807 and calcs: 3030279251460
+Build Time: 3.901581, Calc Time: 60.605585
+Layer 10 Selecting RP 8 with Nodes: 22049 and calcs: 2977052254072
+Build Time: 7.727723, Calc Time: 59.541045
+Final graph has 22049 nodes with: 2977052254072 calcs and sumSqrs: 20913722494
+Node Construct time: 12.867451
+Total Number of Batches: 11 , with calcs per threads: 141956
+Total results Set Size: 2453705522 
+Node Laucnher time: 148.896971
+Total Time: 149.203044
+Census____________________________________________________________
+Census____________________________________________________________
+Census____________________________________________________________
+
+Time to read in file: 0.942773
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.001000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 226 and calcs: 267839562229
+Build Time: 0.113000, Calc Time: 5.356791
+Layer 1 Selecting RP 8 with Nodes: 10049 and calcs: 48145567515
+Build Time: 6.743782, Calc Time: 0.962911
+Layer 2 Selecting RP 0 with Nodes: 96876 and calcs: 15939380905
+Build Time: 3.533292, Calc Time: 0.318788
+Layer 3 Selecting RP 9 with Nodes: 447094 and calcs: 7637458755
+Build Time: 24.923611, Calc Time: 0.152749
+Final graph has 447094 nodes with: 7637458755 calcs and sumSqrs: 315480695
+Node Construct time: 9.576282
+Total Number of Batches: 1 , with calcs per threads: 10000
+Total results Set Size: 55650567 
+Node Laucnher time: 11.421797
+Total Time: 13.120737
+
+Time to read in file: 0.303422
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.003250 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 71 and calcs: 845568418799
+Build Time: 0.035500, Calc Time: 16.911368
+Layer 1 Selecting RP 8 with Nodes: 1186 and calcs: 366626099449
+Build Time: 1.125107, Calc Time: 7.332522
+Layer 2 Selecting RP 2 with Nodes: 6914 and calcs: 233331386973
+Build Time: 0.434094, Calc Time: 4.666628
+Layer 3 Selecting RP 6 with Nodes: 25516 and calcs: 162380255823
+Build Time: 0.883608, Calc Time: 3.247605
+Final graph has 25516 nodes with: 162380255823 calcs and sumSqrs: 7206063745
+Node Construct time: 2.063992
+Total Number of Batches: 8 , with calcs per threads: 10000
+Total results Set Size: 55650567 
+Node Laucnher time: 6.259860
+Total Time: 7.960238
+
+Time to read in file: 0.268042
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.005500 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 43 and calcs: 1364011199683
+Build Time: 0.021500, Calc Time: 27.280224
+Layer 1 Selecting RP 8 with Nodes: 460 and calcs: 817978001005
+Build Time: 0.503147, Calc Time: 16.359560
+Layer 2 Selecting RP 6 with Nodes: 1955 and calcs: 649233805485
+Build Time: 0.338271, Calc Time: 12.984676
+Layer 3 Selecting RP 9 with Nodes: 6313 and calcs: 524997314141
+Build Time: 0.155322, Calc Time: 10.499946
+Layer 4 Selecting RP 6 with Nodes: 17347 and calcs: 416518780845
+Build Time: 0.656879, Calc Time: 8.330376
+Layer 5 Selecting RP 3 with Nodes: 35509 and calcs: 365190456421
+Build Time: 3.350870, Calc Time: 7.303809
+Final graph has 35509 nodes with: 365190456421 calcs and sumSqrs: 10374848381
+Node Construct time: 4.703561
+Total Number of Batches: 11 , with calcs per threads: 17413
+Total results Set Size: 311087687 
+Node Laucnher time: 16.206866
+Total Time: 17.889475
+
+Time to read in file: 0.921917
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.007750 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 31 and calcs: 1815151802107
+Build Time: 0.015500, Calc Time: 36.303036
+Layer 1 Selecting RP 8 with Nodes: 246 and calcs: 1307631264879
+Build Time: 0.446096, Calc Time: 26.152625
+Layer 2 Selecting RP 6 with Nodes: 884 and calcs: 1135318487347
+Build Time: 0.231457, Calc Time: 22.706370
+Layer 3 Selecting RP 9 with Nodes: 2488 and calcs: 988563699721
+Build Time: 0.155070, Calc Time: 19.771274
+Layer 4 Selecting RP 6 with Nodes: 6334 and calcs: 852564297499
+Build Time: 0.175648, Calc Time: 17.051286
+Layer 5 Selecting RP 3 with Nodes: 12224 and calcs: 787045738107
+Build Time: 0.648231, Calc Time: 15.740915
+Layer 6 Selecting RP 8 with Nodes: 21115 and calcs: 743886499613
+Build Time: 1.705885, Calc Time: 14.877730
+Final graph has 21115 nodes with: 743886499613 calcs and sumSqrs: 16479821587
+Node Construct time: 4.618339
+Total Number of Batches: 11 , with calcs per threads: 35471
+Total results Set Size: 897710957 
+Node Laucnher time: 29.385107
+Total Time: 31.281215
+Wave __________________________________________________
+Wave __________________________________________________
+Wave __________________________________________________
+
+Time to read in file: 0.117639
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.002000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 38 and calcs: 18610355839
+Build Time: 0.019000, Calc Time: 0.372207
+Layer 1 Selecting RP 2 with Nodes: 298 and calcs: 14017701511
+Build Time: 0.064861, Calc Time: 0.280354
+Layer 2 Selecting RP 7 with Nodes: 1357 and calcs: 12453896049
+Build Time: 0.052195, Calc Time: 0.249078
+Layer 3 Selecting RP 1 with Nodes: 5272 and calcs: 10991137713
+Build Time: 0.138600, Calc Time: 0.219823
+Final graph has 5272 nodes with: 10991137713 calcs and sumSqrs: 806849929
+Node Construct time: 0.265954
+Total Number of Batches: 1 , with calcs per threads: 10000
+Total results Set Size: 11651957 
+Node Laucnher time: 0.496715
+Total Time: 0.616553
+
+Time to read in file: 0.028494
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.003250 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 25 and calcs: 27540420945
+Build Time: 0.012500, Calc Time: 0.550808
+Layer 1 Selecting RP 2 with Nodes: 142 and calcs: 23298358509
+Build Time: 0.054619, Calc Time: 0.465967
+Layer 2 Selecting RP 1 with Nodes: 422 and calcs: 21259599885
+Build Time: 0.017521, Calc Time: 0.425192
+Layer 3 Selecting RP 1 with Nodes: 1243 and calcs: 19652431999
+Build Time: 0.033800, Calc Time: 0.393049
+Layer 4 Selecting RP 3 with Nodes: 3225 and calcs: 18757031525
+Build Time: 0.084519, Calc Time: 0.375141
+Final graph has 3225 nodes with: 18757031525 calcs and sumSqrs: 1263805341
+Node Construct time: 0.340295
+Total Number of Batches: 1 , with calcs per threads: 10000
+Total results Set Size: 27340089 
+Node Laucnher time: 0.697079
+Total Time: 0.819196
+
+Time to read in file: 0.024845
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.004500 
+*********************************
+
+Layer 0 Selecting RP 3 with Nodes: 17 and calcs: 34895868125
+Build Time: 0.008500, Calc Time: 0.697917
+Layer 1 Selecting RP 2 with Nodes: 80 and calcs: 30794677135
+Build Time: 0.031581, Calc Time: 0.615894
+Layer 2 Selecting RP 5 with Nodes: 216 and calcs: 28738082953
+Build Time: 0.017359, Calc Time: 0.574762
+Layer 3 Selecting RP 2 with Nodes: 562 and calcs: 27228604409
+Build Time: 0.019492, Calc Time: 0.544572
+Layer 4 Selecting RP 1 with Nodes: 1133 and calcs: 26195047015
+Build Time: 0.028783, Calc Time: 0.523901
+Layer 5 Selecting RP 2 with Nodes: 2460 and calcs: 25493794419
+Build Time: 0.090624, Calc Time: 0.509876
+Final graph has 2460 nodes with: 25493794419 calcs and sumSqrs: 1985287587
+Node Construct time: 0.357525
+Total Number of Batches: 2 , with calcs per threads: 10000
+Total results Set Size: 47254879 
+Node Laucnher time: 0.881860
+Total Time: 1.003881
+
+Time to read in file: 0.025431
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.005750 
+*********************************
+
+Layer 0 Selecting RP 6 with Nodes: 15 and calcs: 40034425453
+Build Time: 0.007500, Calc Time: 0.800689
+Layer 1 Selecting RP 4 with Nodes: 45 and calcs: 36478504153
+Build Time: 0.020065, Calc Time: 0.729570
+Layer 2 Selecting RP 4 with Nodes: 107 and calcs: 35035362385
+Build Time: 0.018383, Calc Time: 0.700707
+Layer 3 Selecting RP 6 with Nodes: 251 and calcs: 33921893511
+Build Time: 0.014686, Calc Time: 0.678438
+Layer 4 Selecting RP 1 with Nodes: 553 and calcs: 32888096443
+Build Time: 0.013245, Calc Time: 0.657762
+Layer 5 Selecting RP 4 with Nodes: 1113 and calcs: 32009998053
+Build Time: 0.029319, Calc Time: 0.640200
+Layer 6 Selecting RP 1 with Nodes: 2035 and calcs: 31353996143
+Build Time: 0.076043, Calc Time: 0.627080
+Final graph has 2035 nodes with: 31353996143 calcs and sumSqrs: 2284115505
+Node Construct time: 0.362330
+Total Number of Batches: 2 , with calcs per threads: 10000
+Total results Set Size: 93070851 
+Node Laucnher time: 1.131658
+Total Time: 1.253668
+
+Time to read in file: 0.024923
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.007000 
+*********************************
+
+Layer 0 Selecting RP 3 with Nodes: 13 and calcs: 43968382041
+Build Time: 0.006500, Calc Time: 0.879368
+Layer 1 Selecting RP 6 with Nodes: 37 and calcs: 41504608459
+Build Time: 0.018907, Calc Time: 0.830092
+Layer 2 Selecting RP 5 with Nodes: 90 and calcs: 39738405373
+Build Time: 0.015167, Calc Time: 0.794768
+Layer 3 Selecting RP 6 with Nodes: 200 and calcs: 38761203449
+Build Time: 0.015798, Calc Time: 0.775224
+Layer 4 Selecting RP 5 with Nodes: 411 and calcs: 37998752709
+Build Time: 0.013268, Calc Time: 0.759975
+Layer 5 Selecting RP 3 with Nodes: 726 and calcs: 37392096681
+Build Time: 0.018263, Calc Time: 0.747842
+Layer 6 Selecting RP 1 with Nodes: 1365 and calcs: 36648343501
+Build Time: 0.037860, Calc Time: 0.732967
+Layer 7 Selecting RP 1 with Nodes: 2207 and calcs: 36166888351
+Build Time: 0.114441, Calc Time: 0.723338
+Final graph has 2207 nodes with: 36166888351 calcs and sumSqrs: 2257659031
+Node Construct time: 0.437124
+Total Number of Batches: 2 , with calcs per threads: 10000
+Total results Set Size: 290127035 
+Node Laucnher time: 1.906139
+Total Time: 2.029419
+BIGCROSS____________________________________________________________
+BIGCROSS____________________________________________________________
+BIGCROSS____________________________________________________________
+
+Time to read in file: 3.978617
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.001000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 284 and calcs: 2218851098970
+Build Time: 0.142000, Calc Time: 44.377022
+Layer 1 Selecting RP 9 with Nodes: 13583 and calcs: 198498455004
+Build Time: 32.202344, Calc Time: 3.969969
+Layer 2 Selecting RP 0 with Nodes: 341481 and calcs: 22180598576
+Build Time: 76.305620, Calc Time: 0.443612
+Layer 3 Selecting RP 2 with Nodes: 1321991 and calcs: 7797315004
+Build Time: 66.187874, Calc Time: 0.155946
+Final graph has 1321991 nodes with: 7797315004 calcs and sumSqrs: 225862494
+Node Construct time: 35.663447
+Total Number of Batches: 1 , with calcs per threads: 10000
+Total results Set Size: 41137474 
+Node Laucnher time: 39.746886
+Total Time: 46.320575
+
+Time to read in file: 3.972347
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.005750 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 50 and calcs: 12707374244866
+Build Time: 0.025000, Calc Time: 254.147485
+Layer 1 Selecting RP 9 with Nodes: 496 and calcs: 5686275380938
+Build Time: 4.470221, Calc Time: 113.725508
+Layer 2 Selecting RP 0 with Nodes: 3665 and calcs: 2812131198518
+Build Time: 4.911783, Calc Time: 56.242624
+Layer 3 Selecting RP 7 with Nodes: 10048 and calcs: 2267909516384
+Build Time: 0.897697, Calc Time: 45.358190
+Layer 4 Selecting RP 0 with Nodes: 26058 and calcs: 1568263988354
+Build Time: 1.920281, Calc Time: 31.365280
+Layer 5 Selecting RP 4 with Nodes: 70419 and calcs: 1045091220992
+Build Time: 6.567807, Calc Time: 20.901824
+Final graph has 70419 nodes with: 1045091220992 calcs and sumSqrs: 10318986054
+Node Construct time: 17.041987
+Total Number of Batches: 11 , with calcs per threads: 49833
+Total results Set Size: 539888914 
+Node Laucnher time: 33.551118
+Total Time: 40.752007
+
+Time to read in file: 4.128467
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.010500 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 28 and calcs: 23026901662088
+Build Time: 0.014000, Calc Time: 460.538033
+Layer 1 Selecting RP 9 with Nodes: 174 and calcs: 15137742722488
+Build Time: 2.089816, Calc Time: 302.754854
+Layer 2 Selecting RP 0 with Nodes: 846 and calcs: 10665285936312
+Build Time: 1.143248, Calc Time: 213.305719
+Layer 3 Selecting RP 7 with Nodes: 1992 and calcs: 9276961463328
+Build Time: 0.515569, Calc Time: 185.539229
+Layer 4 Selecting RP 0 with Nodes: 4745 and calcs: 6938660976076
+Build Time: 0.987550, Calc Time: 138.773220
+Layer 5 Selecting RP 4 with Nodes: 11056 and calcs: 5828699172834
+Build Time: 0.690964, Calc Time: 116.573983
+Layer 6 Selecting RP 1 with Nodes: 21259 and calcs: 4635835220572
+Build Time: 1.604834, Calc Time: 92.716704
+Layer 7 Selecting RP 6 with Nodes: 33039 and calcs: 4354330312544
+Build Time: 3.862289, Calc Time: 87.086606
+Layer 8 Selecting RP 0 with Nodes: 51342 and calcs: 3898710347104
+Build Time: 4.138812, Calc Time: 77.974207
+Layer 9 Selecting RP 0 with Nodes: 74392 and calcs: 3612175664718
+Build Time: 7.621081, Calc Time: 72.243513
+Final graph has 74392 nodes with: 3612175664718 calcs and sumSqrs: 17442013216
+Node Construct time: 41.393077
+Total Number of Batches: 11 , with calcs per threads: 172241
+Total results Set Size: 1686078098 
+Node Laucnher time: 94.698093
+Total Time: 101.710514
+
+Time to read in file: 4.061108
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.015250 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 19 and calcs: 33074580959368
+Build Time: 0.009500, Calc Time: 661.491619
+Layer 1 Selecting RP 9 with Nodes: 95 and calcs: 25399610622444
+Build Time: 1.933050, Calc Time: 507.992212
+Layer 2 Selecting RP 0 with Nodes: 361 and calcs: 20820433737036
+Build Time: 0.859086, Calc Time: 416.408675
+Layer 3 Selecting RP 2 with Nodes: 782 and calcs: 18481342036768
+Build Time: 0.499210, Calc Time: 369.626841
+Layer 4 Selecting RP 0 with Nodes: 1801 and calcs: 14528091530418
+Build Time: 0.730359, Calc Time: 290.561831
+Layer 5 Selecting RP 2 with Nodes: 3390 and calcs: 13337113026894
+Build Time: 0.484501, Calc Time: 266.742261
+Layer 6 Selecting RP 1 with Nodes: 5651 and calcs: 11887502402246
+Build Time: 0.699250, Calc Time: 237.750048
+Layer 7 Selecting RP 6 with Nodes: 9076 and calcs: 11304552072504
+Build Time: 0.654211, Calc Time: 226.091041
+Layer 8 Selecting RP 0 with Nodes: 14637 and calcs: 10495692121776
+Build Time: 1.513643, Calc Time: 209.913842
+Layer 9 Selecting RP 0 with Nodes: 22064 and calcs: 10046083564704
+Build Time: 2.096437, Calc Time: 200.921671
+Layer 10 Selecting RP 1 with Nodes: 31702 and calcs: 9618152113268
+Build Time: 6.086375, Calc Time: 192.363042
+Layer 11 Selecting RP 0 with Nodes: 46218 and calcs: 8942555035514
+Build Time: 8.795028, Calc Time: 178.851101
+Layer 12 Selecting RP 0 with Nodes: 61095 and calcs: 8668218641876
+Build Time: 8.319519, Calc Time: 173.364373
+Layer 13 Selecting RP 8 with Nodes: 75646 and calcs: 8510097047058
+Build Time: 19.453323, Calc Time: 170.201941
+Final graph has 75646 nodes with: 8510097047058 calcs and sumSqrs: 22831369782
+Node Construct time: 73.750678
+Total Number of Batches: 17 , with calcs per threads: 250000
+Total results Set Size: 4751938200 
+Node Laucnher time: 203.057960
+Total Time: 209.876704
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+
+Time to read in file: 0.588756
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.010000 
+*********************************
+
+Layer 0 Selecting RP 5 with Nodes: 33 and calcs: 8418473200814
+Build Time: 0.016500, Calc Time: 168.369464
+Layer 1 Selecting RP 7 with Nodes: 540 and calcs: 3497876253070
+Build Time: 2.855914, Calc Time: 69.957525
+Layer 2 Selecting RP 5 with Nodes: 5375 and calcs: 1939928931986
+Build Time: 1.131091, Calc Time: 38.798579
+Layer 3 Selecting RP 8 with Nodes: 22122 and calcs: 1072134389252
+Build Time: 0.815607, Calc Time: 21.442688
+Layer 4 Selecting RP 3 with Nodes: 79610 and calcs: 713412184518
+Build Time: 9.038150, Calc Time: 14.268244
+Final graph has 79610 nodes with: 713412184518 calcs and sumSqrs: 7019273806
+Node Construct time: 6.285970
+Total Number of Batches: 11 , with calcs per threads: 34018
+Total results Set Size: 30844186 
+Node Laucnher time: 16.745648
+Total Time: 17.625765
+
+Time to read in file: 0.170579
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.012750 
+*********************************
+
+Layer 0 Selecting RP 5 with Nodes: 26 and calcs: 10500822904818
+Build Time: 0.013000, Calc Time: 210.016458
+Layer 1 Selecting RP 7 with Nodes: 363 and calcs: 5350598897736
+Build Time: 1.814744, Calc Time: 107.011978
+Layer 2 Selecting RP 5 with Nodes: 3161 and calcs: 3448380400452
+Build Time: 1.058079, Calc Time: 68.967608
+Layer 3 Selecting RP 8 with Nodes: 11529 and calcs: 2211880626822
+Build Time: 0.518448, Calc Time: 44.237613
+Layer 4 Selecting RP 3 with Nodes: 39136 and calcs: 1619738076384
+Build Time: 2.588264, Calc Time: 32.394762
+Layer 5 Selecting RP 0 with Nodes: 86049 and calcs: 1337262862550
+Build Time: 3.901051, Calc Time: 26.745257
+Final graph has 86049 nodes with: 1337262862550 calcs and sumSqrs: 8329444846
+Node Construct time: 8.711206
+Total Number of Batches: 11 , with calcs per threads: 63765
+Total results Set Size: 162647128 
+Node Laucnher time: 31.682934
+Total Time: 32.525453
+
+Time to read in file: 0.502830
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.015500 
+*********************************
+
+Layer 0 Selecting RP 5 with Nodes: 21 and calcs: 12434365277642
+Build Time: 0.010500, Calc Time: 248.687306
+Layer 1 Selecting RP 7 with Nodes: 261 and calcs: 7362736653304
+Build Time: 2.243614, Calc Time: 147.254733
+Layer 2 Selecting RP 5 with Nodes: 2072 and calcs: 5249684658550
+Build Time: 0.778710, Calc Time: 104.993693
+Layer 3 Selecting RP 8 with Nodes: 6860 and calcs: 3773809129146
+Build Time: 0.388175, Calc Time: 75.476183
+Layer 4 Selecting RP 3 with Nodes: 22183 and calcs: 2951709471578
+Build Time: 1.285265, Calc Time: 59.034189
+Layer 5 Selecting RP 0 with Nodes: 46458 and calcs: 2582250024856
+Build Time: 1.772971, Calc Time: 51.645000
+Layer 6 Selecting RP 0 with Nodes: 99707 and calcs: 2030227983426
+Build Time: 11.612150, Calc Time: 40.604560
+Final graph has 99707 nodes with: 2030227983426 calcs and sumSqrs: 8964124054
+Node Construct time: 16.675472
+Total Number of Batches: 11 , with calcs per threads: 96808
+Total results Set Size: 655680946 
+Node Laucnher time: 59.252525
+Total Time: 60.189010
+
+Time to read in file: 0.500526
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.018250 
+*********************************
+
+Layer 0 Selecting RP 5 with Nodes: 19 and calcs: 14196403216390
+Build Time: 0.009500, Calc Time: 283.928064
+Layer 1 Selecting RP 7 with Nodes: 203 and calcs: 9414165619268
+Build Time: 2.487390, Calc Time: 188.283312
+Layer 2 Selecting RP 5 with Nodes: 1440 and calcs: 7211352256234
+Build Time: 0.755870, Calc Time: 144.227045
+Layer 3 Selecting RP 8 with Nodes: 4477 and calcs: 5618530993648
+Build Time: 0.473734, Calc Time: 112.370620
+Layer 4 Selecting RP 3 with Nodes: 13868 and calcs: 4612954358510
+Build Time: 0.755340, Calc Time: 92.259087
+Layer 5 Selecting RP 7 with Nodes: 28040 and calcs: 4183165931914
+Build Time: 3.351611, Calc Time: 83.663319
+Layer 6 Selecting RP 0 with Nodes: 57539 and calcs: 3503242842116
+Build Time: 4.317003, Calc Time: 70.064857
+Layer 7 Selecting RP 6 with Nodes: 91427 and calcs: 3080365641214
+Build Time: 17.933087, Calc Time: 61.607313
+Final graph has 91427 nodes with: 3080365641214 calcs and sumSqrs: 13275804178
+Node Construct time: 26.268616
+Total Number of Batches: 11 , with calcs per threads: 146883
+Total results Set Size: 2072898048 
+Node Laucnher time: 103.168427
+Total Time: 104.012595
+
+Time to read in file: 0.485179
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.021000 
+*********************************
+
+Layer 0 Selecting RP 5 with Nodes: 16 and calcs: 15786445839984
+Build Time: 0.008000, Calc Time: 315.728917
+Layer 1 Selecting RP 7 with Nodes: 161 and calcs: 11415399357920
+Build Time: 2.755702, Calc Time: 228.307987
+Layer 2 Selecting RP 5 with Nodes: 1055 and calcs: 9217353898994
+Build Time: 0.975007, Calc Time: 184.347078
+Layer 3 Selecting RP 8 with Nodes: 3086 and calcs: 7620836346730
+Build Time: 0.416309, Calc Time: 152.416727
+Layer 4 Selecting RP 3 with Nodes: 9222 and calcs: 6493354082374
+Build Time: 0.473022, Calc Time: 129.867082
+Layer 5 Selecting RP 7 with Nodes: 18376 and calcs: 5997235948302
+Build Time: 1.414013, Calc Time: 119.944719
+Layer 6 Selecting RP 0 with Nodes: 36986 and calcs: 5264490763890
+Build Time: 3.895860, Calc Time: 105.289815
+Layer 7 Selecting RP 6 with Nodes: 58559 and calcs: 4746365610510
+Build Time: 10.099199, Calc Time: 94.927312
+Final graph has 58559 nodes with: 4746365610510 calcs and sumSqrs: 25233564462
+Node Construct time: 17.238386
+Total Number of Batches: 11 , with calcs per threads: 226324
+Total results Set Size: 5457260816 
+Node Laucnher time: 149.401876
+Total Time: 150.251463
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+
+Time to read in file: 1.732695
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.010000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 27 and calcs: 38474612440442
+Build Time: 0.013500, Calc Time: 769.492249
+Layer 1 Selecting RP 5 with Nodes: 365 and calcs: 16198963708034
+Build Time: 5.596516, Calc Time: 323.979274
+Layer 2 Selecting RP 3 with Nodes: 2866 and calcs: 8582923976898
+Build Time: 3.079968, Calc Time: 171.658480
+Layer 3 Selecting RP 8 with Nodes: 17604 and calcs: 4408569804842
+Build Time: 5.419125, Calc Time: 88.171396
+Layer 4 Selecting RP 1 with Nodes: 84986 and calcs: 2473908017558
+Build Time: 12.522773, Calc Time: 49.478160
+Final graph has 84986 nodes with: 2473908017558 calcs and sumSqrs: 16064155798
+Node Construct time: 13.169070
+Total Number of Batches: 11 , with calcs per threads: 117965
+Total results Set Size: 11566498 
+Node Laucnher time: 69.524520
+Total Time: 72.721709
+
+Time to read in file: 1.604595
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.021375 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 13 and calcs: 74441187486930
+Build Time: 0.006500, Calc Time: 1488.823750
+Layer 1 Selecting RP 5 with Nodes: 95 and calcs: 53899501861104
+Build Time: 1.813824, Calc Time: 1077.990037
+Layer 2 Selecting RP 3 with Nodes: 453 and calcs: 43612574243070
+Build Time: 1.217156, Calc Time: 872.251485
+Layer 3 Selecting RP 8 with Nodes: 1775 and calcs: 35596692363696
+Build Time: 1.409262, Calc Time: 711.933847
+Layer 4 Selecting RP 1 with Nodes: 6166 and calcs: 29528252158072
+Build Time: 1.402311, Calc Time: 590.565043
+Layer 5 Selecting RP 8 with Nodes: 17630 and calcs: 25529853684888
+Build Time: 2.182414, Calc Time: 510.597074
+Layer 6 Selecting RP 0 with Nodes: 46483 and calcs: 21849071277546
+Build Time: 6.922583, Calc Time: 436.981426
+Layer 7 Selecting RP 5 with Nodes: 102479 and calcs: 19396588491586
+Build Time: 39.015000, Calc Time: 387.931770
+Final graph has 102479 nodes with: 19396588491586 calcs and sumSqrs: 47443374874
+Node Construct time: 38.930983
+Total Number of Batches: 38 , with calcs per threads: 250000
+Total results Set Size: 11660630 
+Node Laucnher time: 597.825317
+Total Time: 601.077095
+Tiny____________________________________________________
+Tiny____________________________________________________
+Tiny____________________________________________________
+
+Time to read in file: 12.506930
+
+Number points: 5000000 
+Number Dimensions: 384 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.200000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 17 and calcs: 9224939816732
+Build Time: 0.008500, Calc Time: 184.498796
+Layer 1 Selecting RP 8 with Nodes: 53 and calcs: 7840657163138
+Build Time: 0.818163, Calc Time: 156.813143
+Layer 2 Selecting RP 2 with Nodes: 138 and calcs: 7377726222764
+Build Time: 0.839023, Calc Time: 147.554524
+Layer 3 Selecting RP 3 with Nodes: 289 and calcs: 7001613790844
+Build Time: 0.529521, Calc Time: 140.032276
+Layer 4 Selecting RP 6 with Nodes: 644 and calcs: 6753201165828
+Build Time: 0.513270, Calc Time: 135.064023
+Layer 5 Selecting RP 4 with Nodes: 1160 and calcs: 6551231754168
+Build Time: 0.491625, Calc Time: 131.024635
+Layer 6 Selecting RP 8 with Nodes: 1809 and calcs: 6403648311208
+Build Time: 0.358376, Calc Time: 128.072966
+Layer 7 Selecting RP 3 with Nodes: 2914 and calcs: 6280844849964
+Build Time: 0.531401, Calc Time: 125.616897
+Layer 8 Selecting RP 2 with Nodes: 4420 and calcs: 6178057281616
+Build Time: 0.410495, Calc Time: 123.561146
+Layer 9 Selecting RP 4 with Nodes: 6532 and calcs: 6076174736216
+Build Time: 0.470244, Calc Time: 121.523495
+Layer 10 Selecting RP 4 with Nodes: 9352 and calcs: 5997780577980
+Build Time: 1.169092, Calc Time: 119.955612
+Layer 11 Selecting RP 9 with Nodes: 12947 and calcs: 5927330674810
+Build Time: 3.739748, Calc Time: 118.546613
+Layer 12 Selecting RP 4 with Nodes: 18207 and calcs: 5854135639144
+Build Time: 6.768362, Calc Time: 117.082713
+Layer 13 Selecting RP 2 with Nodes: 24298 and calcs: 5801006144684
+Build Time: 7.731291, Calc Time: 116.020123
+Layer 14 Selecting RP 7 with Nodes: 33088 and calcs: 5753936917270
+Build Time: 12.763794, Calc Time: 115.078738
+Final graph has 33088 nodes with: 5753936917270 calcs and sumSqrs: 50622792778
+Node Construct time: 53.459069
+Total Number of Batches: 12 , with calcs per threads: 250000
+Total results Set Size: 53619112 
+Node Laucnher time: 579.915428
+Total Time: 602.432499
+
+Time to read in file: 12.174326
+
+Number points: 5000000 
+Number Dimensions: 384 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.260000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 13 and calcs: 11630594670776
+Build Time: 0.006500, Calc Time: 232.611893
+Layer 1 Selecting RP 2 with Nodes: 37 and calcs: 9979813642876
+Build Time: 0.884700, Calc Time: 199.596273
+Layer 2 Selecting RP 1 with Nodes: 80 and calcs: 9445121023966
+Build Time: 0.738484, Calc Time: 188.902420
+Layer 3 Selecting RP 4 with Nodes: 167 and calcs: 9021820586820
+Build Time: 0.596095, Calc Time: 180.436412
+Layer 4 Selecting RP 4 with Nodes: 272 and calcs: 8808436553940
+Build Time: 0.449864, Calc Time: 176.168731
+Layer 5 Selecting RP 1 with Nodes: 465 and calcs: 8616096788780
+Build Time: 0.430299, Calc Time: 172.321936
+Layer 6 Selecting RP 8 with Nodes: 716 and calcs: 8483308573188
+Build Time: 0.445689, Calc Time: 169.666171
+Layer 7 Selecting RP 3 with Nodes: 1107 and calcs: 8340733133146
+Build Time: 0.359122, Calc Time: 166.814663
+Layer 8 Selecting RP 2 with Nodes: 1687 and calcs: 8236886100040
+Build Time: 0.463022, Calc Time: 164.737722
+Layer 9 Selecting RP 7 with Nodes: 2374 and calcs: 8135516123166
+Build Time: 0.373540, Calc Time: 162.710322
+Layer 10 Selecting RP 4 with Nodes: 3307 and calcs: 8052291999874
+Build Time: 0.811890, Calc Time: 161.045840
+Layer 11 Selecting RP 3 with Nodes: 4255 and calcs: 7976915370466
+Build Time: 0.391429, Calc Time: 159.538307
+Layer 12 Selecting RP 4 with Nodes: 5953 and calcs: 7919553479054
+Build Time: 0.628545, Calc Time: 158.391070
+Layer 13 Selecting RP 2 with Nodes: 8039 and calcs: 7856977148488
+Build Time: 1.661855, Calc Time: 157.139543
+Layer 14 Selecting RP 2 with Nodes: 10364 and calcs: 7806452120360
+Build Time: 2.522886, Calc Time: 156.129042
+Layer 15 Selecting RP 7 with Nodes: 14281 and calcs: 7744776788574
+Build Time: 4.990945, Calc Time: 154.895536
+Layer 16 Selecting RP 1 with Nodes: 19213 and calcs: 7674885953490
+Build Time: 5.962137, Calc Time: 153.497719
+Layer 17 Selecting RP 7 with Nodes: 24920 and calcs: 7626107527700
+Build Time: 10.531623, Calc Time: 152.522151
+Layer 18 Selecting RP 4 with Nodes: 31670 and calcs: 7577028548402
+Build Time: 16.253604, Calc Time: 151.540571
+Final graph has 31670 nodes with: 7577028548402 calcs and sumSqrs: 54889768064
+Node Construct time: 69.821414
+Total Number of Batches: 15 , with calcs per threads: 250000
+Total results Set Size: 181164422 
+Node Laucnher time: 1110.006568
+Total Time: 1132.748420
+
+Time to read in file: 12.051169
+
+Number points: 5000000 
+Number Dimensions: 384 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.320000 
+*********************************
+
+Layer 0 Selecting RP 1 with Nodes: 10 and calcs: 13801658440994
+Build Time: 0.005000, Calc Time: 276.033169
+Layer 1 Selecting RP 2 with Nodes: 28 and calcs: 12060948180552
+Build Time: 0.751432, Calc Time: 241.218964
+Layer 2 Selecting RP 7 with Nodes: 51 and calcs: 11334583811604
+Build Time: 0.532175, Calc Time: 226.691676
+Layer 3 Selecting RP 4 with Nodes: 99 and calcs: 10995806431990
+Build Time: 0.508722, Calc Time: 219.916129
+Layer 4 Selecting RP 3 with Nodes: 162 and calcs: 10701128117896
+Build Time: 0.455018, Calc Time: 214.022562
+Layer 5 Selecting RP 1 with Nodes: 267 and calcs: 10532418170252
+Build Time: 0.525077, Calc Time: 210.648363
+Layer 6 Selecting RP 4 with Nodes: 390 and calcs: 10387299912500
+Build Time: 0.377971, Calc Time: 207.745998
+Layer 7 Selecting RP 4 with Nodes: 550 and calcs: 10268610630844
+Build Time: 0.333293, Calc Time: 205.372213
+Layer 8 Selecting RP 3 with Nodes: 788 and calcs: 10145489555508
+Build Time: 0.620599, Calc Time: 202.909791
+Layer 9 Selecting RP 4 with Nodes: 1187 and calcs: 10057455857842
+Build Time: 0.374061, Calc Time: 201.149117
+Layer 10 Selecting RP 2 with Nodes: 1520 and calcs: 9973027283558
+Build Time: 0.297290, Calc Time: 199.460546
+Layer 11 Selecting RP 4 with Nodes: 1982 and calcs: 9883687773450
+Build Time: 0.341787, Calc Time: 197.673755
+Layer 12 Selecting RP 4 with Nodes: 2758 and calcs: 9812165333486
+Build Time: 0.330967, Calc Time: 196.243307
+Layer 13 Selecting RP 2 with Nodes: 3583 and calcs: 9752896040580
+Build Time: 0.329625, Calc Time: 195.057921
+Layer 14 Selecting RP 2 with Nodes: 4505 and calcs: 9697006208764
+Build Time: 0.316881, Calc Time: 193.940124
+Layer 15 Selecting RP 2 with Nodes: 5780 and calcs: 9640762357756
+Build Time: 0.893679, Calc Time: 192.815247
+Layer 16 Selecting RP 1 with Nodes: 7690 and calcs: 9573880415492
+Build Time: 0.830322, Calc Time: 191.477608
+Layer 17 Selecting RP 5 with Nodes: 9820 and calcs: 9529999149310
+Build Time: 2.890610, Calc Time: 190.599983
+Layer 18 Selecting RP 1 with Nodes: 12866 and calcs: 9488079506782
+Build Time: 4.310175, Calc Time: 189.761590
+Layer 19 Selecting RP 4 with Nodes: 14849 and calcs: 9441571653692
+Build Time: 3.208230, Calc Time: 188.831433
+Final graph has 14849 nodes with: 9441571653692 calcs and sumSqrs: 83016629854
+Node Construct time: 44.489403
+Total Number of Batches: 19 , with calcs per threads: 250000
+Total results Set Size: 630249216 
+Node Laucnher time: 1858.485154
+Total Time: 1884.393739

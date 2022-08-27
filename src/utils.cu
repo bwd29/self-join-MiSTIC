@@ -69,6 +69,15 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 
 	unsigned int test_rp = sqrt(numPoints);
 
+	#if RANDRP
+		double * testRPArray = (double*)malloc(sizeof(double)*numRP*dim);
+			
+		for(unsigned int i = 0; i < numRP*dim; i++){
+				testRPArray[i] = (double)rand()/(double)RAND_MAX;
+		}
+		return testRPArray;
+	#else
+
 
 	// double * testRPArray = new double[TEST_RP*dim];
 	double * testRPArray = (double*)malloc(sizeof(double)*test_rp*dim);
@@ -146,6 +155,7 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 	free(order);
 
     return RPArray;
+	#endif
 }
 
 

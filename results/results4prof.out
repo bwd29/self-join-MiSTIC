@@ -1,0 +1,61 @@
+rm -f build/main build/*.o
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+1024x1024*2 launches, sqrt(N) x 0.01 sampling, 32 per layer, k rps, non-rand RP, dynamic calcs per thread max 250000, 30 registers
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+==PROF== Connected to process 112657 (/home/bwd29/self-join/build/main)
+==PROF== Profiling "nodeCalculationsKernel": 0%
+==WARNING== Backing up device memory in system memory. Kernel replay might be slow. Consider using "--replay-mode application" to avoid memory save-and-restore.
+....50%....100% - 33 passes
+==PROF== Profiling "nodeCalculationsKernel": 0%....50%....100% - 33 passes
+==PROF== Profiling "nodeCalculationsKernel": 0%....50%....100% - 33 passes
+==PROF== Profiling "nodeCalculationsKernel": 0%....50%....100% - 33 passes
+
+Time to read in file: 0.490925
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Block Size: 1024, Kernel Blocks: 2048
+Using using binary searches
+Distance Threshold: 0.010000 
+*********************************
+
+Layer 0 Selecting RP 5 with Nodes: 33 and calcs: 8418473200814
+Predicted time: 0.000000, Actual Time: 0.000000
+Build Time: 0.016500, Calc Time: 168.369464, reduction -168.369464
+Layer 1 Selecting RP 7 with Nodes: 423 and calcs: 3497878046100
+Predicted time: 0.016500, Actual Time: 0.168800
+Build Time: 2.163703, Calc Time: 69.957561, reduction 98.411903
+Layer 2 Selecting RP 5 with Nodes: 2366 and calcs: 1940181862212
+Predicted time: 2.163703, Actual Time: 0.112704
+Build Time: 0.630396, Calc Time: 38.803637, reduction 31.153924
+Layer 3 Selecting RP 8 with Nodes: 6102 and calcs: 1077011108794
+Predicted time: 0.630396, Actual Time: 0.146133
+Build Time: 0.376882, Calc Time: 21.540222, reduction 17.263415
+Layer 4 Selecting RP 3 with Nodes: 12935 and calcs: 749266647406
+Predicted time: 0.376882, Actual Time: 0.130950
+Build Time: 0.277586, Calc Time: 14.985333, reduction 6.554889
+Layer 5 Selecting RP 0 with Nodes: 18144 and calcs: 645502528612
+Predicted time: 0.277586, Actual Time: 0.628070
+Build Time: 0.880998, Calc Time: 12.910051, reduction 2.075282
+Layer 6 Selecting RP 0 with Nodes: 20952 and calcs: 623050020698
+Predicted time: 0.880998, Actual Time: 0.876665
+Build Time: 1.012339, Calc Time: 12.461000, reduction 0.449050
+Final graph has 20952 nodes with: 623050020698 calcs and sumSqrs: 2742317518
+Node Construct time: 6.968970
+Total Number of Batches: 11 , with calcs per threads: 29709
+Kernel Search Time: 1788.381138
+Total results Set Size: 30844186 
+Node Laucnher time: 1796.516800
+Total Time: 1797.544883
+==PROF== Disconnected from process 112657
+==ERROR== The application returned an error code (1).
+==PROF== Report: /home/bwd29/self-join/profile10.out.ncu-rep
