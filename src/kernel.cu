@@ -462,7 +462,7 @@ void nodeCalculationsKernel_CPU( unsigned int numNodes,
     {
         unsigned int tid = h;
         if(tid < *numThreadsPerBatch){
-            if(nodeAssign[tid]>numNodes) printf("ERROR0: %u / %u", nodeAssign[tid],numNodes);
+            // if(nodeAssign[tid]>numNodes) printf("ERROR0: %u / %u", nodeAssign[tid],numNodes);
             for(unsigned int i = 0; i < numNeighbors[nodeAssign[tid]]; i++){
                 unsigned int neighborIndex = neighbors[neighborOffset[nodeAssign[tid]]+i];
                 for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[nodeAssign[tid]]* nodePoints[neighborIndex]; j += numThreadsPerNode[nodeAssign[tid]]){
@@ -567,7 +567,7 @@ inline bool distanceCheck(double epsilon2, unsigned int dim, double * data, unsi
     double sum = 0;
     for(unsigned int i = 0; i < dim; i++){
         #if DATANORM
-        sum += pow(data[i*numPoints + p1] - data[i*numPoints + p2], 2);
+        sum += (data[i*numPoints + p1] - data[i*numPoints + p2])*(data[i*numPoints + p1] - data[i*numPoints + p2]);
         #else
         sum += pow(data[p1*dim + i] - data[p2*dim + i], 2);
         #endif
@@ -592,13 +592,18 @@ void binningKernel(unsigned int * binNumbers, //array numPoints long
         return;
     }
 
-    double distance = 0;
-    for(unsigned int j = 0; j < *dim; j++){
-        distance += pow(data[tid*(*dim) + j]-RP[j],2);
-    }
+    for(unsigned int i = 0; i < RPPERLAYER; i++){
 
+        double distance = 0;
+        for(unsigned int j = 0; j < *dim; j++){
+            // distance += pow(data[tid*(*dim) + j]-RP[j + (*dim)*i],2);
+            distance += (data[tid*(*dim) + j]-RP[j + (*dim)*i]) * (data[tid*(*dim) + j]-RP[j + (*dim)*i]);
+        }
     
-    binNumbers[tid] = floor(sqrt(distance) / (*epsilon));
+        
+        binNumbers[tid+(*numPoints)*i] = floor(sqrt(distance) / (*epsilon));
+    
+    }
 
     return;
 }

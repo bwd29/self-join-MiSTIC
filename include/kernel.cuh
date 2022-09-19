@@ -1,6 +1,10 @@
 #pragma once
 
 #include "include/params.cuh"
+
+
+
+
 __global__
 void GPUGenerateRanges(unsigned int * tree, //points to the tree constructed with buildTree()
                         unsigned int * lastTreeLayer,

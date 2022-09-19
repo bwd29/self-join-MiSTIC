@@ -1341,7 +1341,7 @@ struct neighborTable * nodeLauncher(double * data,
     cudaSetDevice(CUDA_DEVICE);
     
     double time1 = omp_get_wtime();
-    std::vector<struct Node> nodes;
+    std::vector<std::vector<struct Node>> subGraphs;
 
     // build the data structure
     unsigned int numNodes = buildNodeNet(data,
@@ -1350,7 +1350,7 @@ struct neighborTable * nodeLauncher(double * data,
             numRP,
             pointArray,
             epsilon,
-            &nodes);
+            &subGraphs);
 
     
 
@@ -1401,13 +1401,18 @@ struct neighborTable * nodeLauncher(double * data,
     unsigned int neighborOffsetCount = 0;
     // std::vector<unsigned int> tempNeighbors;
 
-    for(unsigned int i = 0; i < numNodes; i++){
-        pointOffsets[i] = nodes[i].pointOffset;
-        numCalcs[i] = nodes[i].numCalcs;
-        neighborOffset[i] = neighborOffsetCount;
-        numNeighbors[i] = nodes[i].neighborIndex.size();
-        neighborOffsetCount += nodes[i].neighborIndex.size();
-        nodePoints[i] = nodes[i].numNodePoints;
+    unsigned int nodeCounter = 0;
+    for(unsigned int i = 0; i < subGraphs.size(); i++){
+        for(unsigned int j = 0; j < subGraphs[i].size(); j++){
+            pointOffsets[nodeCounter] = subGraphs[i][j].pointOffset;
+            numCalcs[nodeCounter] = subGraphs[i][j].numCalcs;
+            neighborOffset[nodeCounter] = neighborOffsetCount;
+            numNeighbors[nodeCounter] = subGraphs[i][j].neighborIndex.size();
+            neighborOffsetCount += subGraphs[i][j].neighborIndex.size();
+            nodePoints[nodeCounter] = subGraphs[i][j].numNodePoints;
+            nodeCounter++;
+        }
+
         // tempNeighbors.insert(tempNeighbors.end(), nodes[i].neighborIndex.begin(),nodes[i].neighborIndex.end());
   
     }
@@ -1415,16 +1420,24 @@ struct neighborTable * nodeLauncher(double * data,
     // printf("po:%u\n", pointOffsets[10]);
     unsigned int * neighbors = (unsigned int *)malloc(sizeof(unsigned int)*neighborOffsetCount);
     unsigned int counter = 0;
-    for(unsigned int i = 0; i < numNodes; i++){
-        for(unsigned int j = 0; j < numNeighbors[i]; j++){
-        neighbors[counter+j] = nodes[i].neighborIndex[j];   
-       }
-       counter += numNeighbors[i];
+    unsigned int graphOffset = 0;
+    for(unsigned int i = 0; i < subGraphs.size(); i++){
+        for(unsigned int j = 0; j < subGraphs[i].size(); j++){
+            for(unsigned int k = 0; k < numNeighbors[graphOffset + j]; k++){
+                neighbors[counter+k] = graphOffset + subGraphs[i][j].neighborIndex[k];   
+            }
+            counter += numNeighbors[graphOffset + j];
+        }
+        graphOffset += subGraphs[i].size();
+        
     }
 
     // printf("total num neighbors: %u\n", counter);
 
-    unsigned long long sumCalcs = totalNodeCalcs(nodes, numNodes);
+    unsigned long long sumCalcs = 0;
+    for(unsigned int i = 0; i < subGraphs.size(); i++){
+        sumCalcs += totalNodeCalcs(subGraphs[i], subGraphs[i].size());
+    }
     // printf("sum calcs: %llu\n", sumCalcs);
 
     // store the squared value of epsilon because thats all that is needed for distance calcs

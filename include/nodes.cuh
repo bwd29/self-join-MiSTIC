@@ -32,6 +32,8 @@ typedef struct Node{
 
     unsigned long long int numResults;
 
+    bool visited = false;
+    bool split = true;
 
 }Node;
 
@@ -50,10 +52,10 @@ unsigned int buildNodeNet(double * data,
     unsigned int numRP,
     unsigned int * pointArray,
     double epsilon,
-    std::vector<struct Node> * nodes);
+    std::vector<std::vector<struct Node>> * subGraphs);
 
 //splits a node based on a reference point and return the number of new nodes
-unsigned int splitNodes(double * RP, //the reference point used for the split
+unsigned int splitNodes(unsigned int * allBinNumbers, //the reference point used for the split
     std::vector<struct Node> nodes,// the array of nodes
     unsigned int numNodes,//the number of nodes
     double epsilon, //the distance threshold of the search
@@ -85,7 +87,7 @@ unsigned int initNodes(double * data,
     unsigned int dim,
     unsigned int numPoints,
     double epsilon,
-    double * RP,
+    unsigned int * binNumber,
     unsigned int * pointArray,
     std::vector<struct Node> * nodes,
     struct DevicePointers devicePointers,
@@ -94,3 +96,5 @@ unsigned int initNodes(double * data,
 unsigned long long nodeForce(std::vector<struct Node> * nodes, double epsilon, double * data, unsigned int dim, unsigned int numPoints);
 
 void updateNeighbors(std::vector<struct Node> nodes, std::vector<std::vector<struct Node>> * newNodes);
+
+std::vector<std::vector<struct Node>> genSubGraphs(std::vector<struct Node> nodes);

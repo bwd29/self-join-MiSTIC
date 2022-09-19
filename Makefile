@@ -13,7 +13,7 @@ build/launcher.o: src/launcher.cu
 	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/launcher.o src/launcher.cu -lm
 
 build/kernel.o: src/kernel.cu
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu -lm
+	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu
 
 build/nodes.o: src/nodes.cu
 	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/nodes.o src/nodes.cu -lm
