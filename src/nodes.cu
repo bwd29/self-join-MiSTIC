@@ -116,13 +116,20 @@ unsigned int buildNodeNet(double * data,
         std::vector<std::vector<struct Node>> tempGraph;
 
         // itterate through all of the subgraphs
-        for(unsigned int n = 0; n < subGraph.size() ? subGraph.size() : 1 ; n++){
+        unsigned int numSubs;
+        if(subGraph.size() == 0){
+            numSubs = 1;
+        } else {
+            numSubs = subGraph.size();
+        }
+        printf("Num subs to gen: %u\n", numSubs);
+        for(unsigned int n = 0; n < numSubs ; n++){
             
 
             #pragma omp parallel for num_threads(RPPERLAYER)
             for(unsigned int j = 0; j < RPPERLAYER; j++){
                 // need to compare num dist calcs for different potental RP
-                std::vector<struct Node> tempNodes = subGraph[n];
+                std::vector<struct Node> tempNodes;// subGraph[n];
                 unsigned int tempNumNodes = 0;
                 double tempCalcTime;
                 double tempNodePerSecond;
@@ -136,13 +143,18 @@ unsigned int buildNodeNet(double * data,
                     tempNumNodes = initNodes(data, dim, numPoints, epsilon, &allBinNumber[numPoints*j], tempPointArray, &layerNodes[j], devicePointers, &tempCalcTime);
                     free(tempPointArray);
                 }
-                else{tempNumNodes = splitNodes(&allBinNumber[numPoints*j], tempNodes, tempNodes.size(), epsilon, data, dim, numPoints, &layerNodes[j], devicePointers, &tempNodePerSecond);}
+                else{
+                    tempNodes = subGraph[n];
+                    printf("subgraph %u has %u nodes\n", n, tempNodes.size() );
+                    tempNumNodes = splitNodes(&allBinNumber[numPoints*j], tempNodes, tempNodes.size(), epsilon, data, dim, numPoints, &layerNodes[j], devicePointers, &tempNodePerSecond);
+                    printf("subgraph %u; layer %u has %u new nodes\n", n, j, tempNumNodes );
+                }
                 
                 // printf("check: %llu\n", tempNodes[0].numCalcs);
                 
                 unsigned long long numCalcs = totalNodeCalcs(layerNodes[j], tempNumNodes);
                 unsigned long long sumSqrs = nodeSumSqrs(layerNodes[j], tempNumNodes);
-                // printf("Layer %d for RP %d has Nodes: %u with calcs: %llu , and sumSQRs: %llu\n", i, j, tempNumNodes, numCalcs, sumSqrs);
+                printf("Layer %d for RP %d has Nodes: %u with calcs: %llu , and sumSQRs: %llu\n", i, j, tempNumNodes, numCalcs, sumSqrs);
 
                 #pragma omp critical
                 {
