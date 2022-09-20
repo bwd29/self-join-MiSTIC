@@ -124,7 +124,8 @@ unsigned int buildNodeNet(double * data,
         }
         printf("Num subs to gen: %u\n", numSubs);
         for(unsigned int n = 0; n < numSubs ; n++){
-            
+            unsigned long long int subLowestDistCalcs = ULLONG_MAX;
+
 
             #pragma omp parallel for num_threads(RPPERLAYER)
             for(unsigned int j = 0; j < RPPERLAYER; j++){
@@ -145,24 +146,23 @@ unsigned int buildNodeNet(double * data,
                 }
                 else{
                     tempNodes = subGraph[n];
-                    printf("subgraph %u has %u nodes\n", n, tempNodes.size() );
                     tempNumNodes = splitNodes(&allBinNumber[numPoints*j], tempNodes, tempNodes.size(), epsilon, data, dim, numPoints, &layerNodes[j], devicePointers, &tempNodePerSecond);
-                    printf("subgraph %u; layer %u has %u new nodes\n", n, j, tempNumNodes );
+                    printf("    subgraph %u with %u origional nodes; RP %u has %u nodes\n", n, tempNodes.size(), j, tempNumNodes );
                 }
                 
                 // printf("check: %llu\n", tempNodes[0].numCalcs);
                 
                 unsigned long long numCalcs = totalNodeCalcs(layerNodes[j], tempNumNodes);
-                unsigned long long sumSqrs = nodeSumSqrs(layerNodes[j], tempNumNodes);
-                printf("Layer %d for RP %d has Nodes: %u with calcs: %llu , and sumSQRs: %llu\n", i, j, tempNumNodes, numCalcs, sumSqrs);
+                // unsigned long long sumSqrs = nodeSumSqrs(layerNodes[j], tempNumNodes);
+                printf("    Layer %d for RP %d has Nodes: %u with calcs: %llu\n", i, j, tempNumNodes, numCalcs);
 
                 #pragma omp critical
                 {
-                    if(numCalcs < lowestDistCalcs){
-                        lowestDistCalcs = numCalcs;
+                    if(numCalcs < subLowestDistCalcs){
+                        subLowestDistCalcs = numCalcs;
                         bestRP = j;
                         // layerNodes = tempNodes;
-                        // numNodes = tempNumNodes;
+                        numNodes = tempNumNodes;
                         if(i==0){
                             calcTime = tempCalcTime;
                             nodePerSecond = 2000;
@@ -173,6 +173,7 @@ unsigned int buildNodeNet(double * data,
                 
             }
 
+            printf("SubGraph %u Layer %d Selecting RP %d with Nodes: %u and calcs: %llu :: ", n, i, bestRP, numNodes, subLowestDistCalcs);
             std::vector<std::vector<struct Node>> layerSubGraphs = genSubGraphs(layerNodes[bestRP]);
             tempGraph.insert(tempGraph.end(), layerSubGraphs.begin(), layerSubGraphs.end());
        
@@ -187,7 +188,7 @@ unsigned int buildNodeNet(double * data,
         subGraph = tempGraph;
 
 
-        printf("Layer %d Selecting RP %d with Nodes: %u and calcs: %llu\n", i, bestRP, numNodes, lowestDistCalcs);
+        // printf("Layer %d Selecting RP %d with Nodes: %u and calcs: %llu\n", i, bestRP, numNodes, lowestDistCalcs);
 
         
     
@@ -209,7 +210,7 @@ unsigned int buildNodeNet(double * data,
 
         #if DEVICE_BUILD
         // double calcsPerSecondDyn = calcsPerSecond;//numPoints / calcTime;
-        printf("Build Time: %f, Calc Time: %f, reduction %f\n", predictedNodeTime, calcTime, timeReduction);
+        printf("Build Time: %f, Calc Time: %f, reduction %f\n############################################\n", predictedNodeTime, calcTime, timeReduction);
         // if(i > MINRP && ( newNodes.size()*1.0 / nodePerSecond *10> lowestDistCalcs*1.0 / calcsPerSecondDyn || i >= MAXRP)){ 
         if(i > MINRP && ( numNodes*1.0 / nodePerSecond > timeReduction || i >= MAXRP)){ 
 
@@ -378,12 +379,12 @@ unsigned int initNodes(double * data,
         bcounter++;
         //check if need to make a new node
         if(i == numPoints-1 || binNumber[i] != binNumber[i+1]){
-            printf("making new node, j: %d, tempBinPointer: %d, numPoints in the new node:%d\n", i, tempBinPointer, i - tempBinPointer+1 );
-            if(i== numPoints - 1) {
-                printf("BinNumber#%u: %u->%u: p=%u->%u\n", numNewNodes, binNumber[i], 0 ,bcounter,i-tempBinPointer+1);
-            }else{ 
-                printf("BinNumber#%u: %u->%u: p=%u->%u\n", numNewNodes, binNumber[i], binNumber[i+1], bcounter,i-tempBinPointer+1);
-            }
+            // printf("making new node, j: %d, tempBinPointer: %d, numPoints in the new node:%d\n", i, tempBinPointer, i - tempBinPointer+1 );
+            // if(i== numPoints - 1) {
+            //     printf("BinNumber#%u: %u->%u: p=%u->%u\n", numNewNodes, binNumber[i], 0 ,bcounter,i-tempBinPointer+1);
+            // }else{ 
+            //     printf("BinNumber#%u: %u->%u: p=%u->%u\n", numNewNodes, binNumber[i], binNumber[i+1], bcounter,i-tempBinPointer+1);
+            // }
             //push back the new node onto the temporary vector of nodes
             newNodes.push_back( newNode(i-tempBinPointer+1, pointArray+tempBinPointer, binNumber[i], numNewNodes ) );
             tempBinPointer = i+1;
@@ -757,7 +758,7 @@ void updateNeighbors(std::vector<struct Node> nodes, std::vector<std::vector<str
             for(unsigned int k = 1; k < nodes[i].neighborIndex.size(); k++){ //and check the neighbors
                 //neighbor to check
                 unsigned int neighborNodesIndex = nodes[i].neighborIndex[k]; // this will also give the index of the vector of split nodes
-                if(neighborNodesIndex > (*newNodes).size()-1) printf("ERROR: neighbor index: %u max: %u\n", neighborNodesIndex,(*newNodes).size() );
+                if(neighborNodesIndex > (*newNodes).size()-1) printf("ERROR: neighbor index: %u max: %u\n", neighborNodesIndex,(*newNodes).size()-1 );
                 //go through each neighbors split nodes
                 for(unsigned int l = 0; l < (*newNodes)[neighborNodesIndex].size(); l++){
                     if((*newNodes)[neighborNodesIndex][l].split == false ||
@@ -953,23 +954,23 @@ std::vector<std::vector<struct Node>> genSubGraphs(std::vector<struct Node> inNo
     //fix neighbor pointers to be local to sub graphs
     unsigned int offsetCounter = 0;
     for(unsigned int i = 0; i < subGraphs.size();i++){
-        printf("\n#####################\nOffset counter for sub %u: %u  :   : %u nodes in sub\n", i, offsetCounter, subGraphs[i].size());
+        // printf("\n#####################\nOffset counter for sub %u: %u  :   : %u nodes in sub\n", i, offsetCounter, subGraphs[i].size());
         for(unsigned int j = 0; j < subGraphs[i].size(); j++){
 
             subGraphs[i][j].nodeIndex -= offsetCounter;
-            printf("sub/node: %u::%u node index: %u\n   bins:", i,j, subGraphs[i][j].nodeIndex);
-            for(unsigned int b = 0; b < subGraphs[i][j].binNumbers.size(); b++){
-                printf("%u, ",subGraphs[i][j].binNumbers[b] );
-            }
-            printf("\n  --------\n");
+            // printf("sub/node: %u::%u node index: %u\n   bins:", i,j, subGraphs[i][j].nodeIndex);
+            // for(unsigned int b = 0; b < subGraphs[i][j].binNumbers.size(); b++){
+            //     printf("%u, ",subGraphs[i][j].binNumbers[b] );
+            // }
+            // printf("\n  --------\n");
 
             for(unsigned int k = 0; k < subGraphs[i][j].neighborIndex.size(); k++){
                 
-                printf("    sub: %u, node: %u at index %u: %u\n     bins:", i, j,k, subGraphs[i][j].neighborIndex[k]);
-                for(unsigned int b = 0; b < subGraphs[i][j].binNumbers.size(); b++){
-                    printf("%u, ",subGraphs[i][j].binNumbers[b] );
-                }
-                printf("\n");
+                // printf("    sub: %u, node: %u at index %u: %u\n     bins:", i, j,k, subGraphs[i][j].neighborIndex[k]);
+                // for(unsigned int b = 0; b < subGraphs[i][j].binNumbers.size(); b++){
+                //     printf("%u, ",subGraphs[i][j].binNumbers[b] );
+                // }
+                // printf("\n");
                 subGraphs[i][j].neighborIndex[k] -= offsetCounter;
             }
             
