@@ -1,5 +1,5 @@
 NVCC = nvcc
-CUDAFLAGS = -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3
+CUDAFLAGS = -lcuda -Xcompiler -fopenmp -arch=compute_70 -code=sm_70 -O3 -G -g
 LIBDIRS = -I.
 
 

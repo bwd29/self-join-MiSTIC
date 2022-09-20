@@ -20,7 +20,7 @@ unsigned int buildNodeNet(double * data,
     double nodePerSecond;
     unsigned int numSplits = 0;
     double previousCalcTime = 0;
-    double predictedNodeTime;
+    double predictedNodeTime = 0;
     unsigned long long int  calcsPerSecond;
 
 
@@ -378,12 +378,12 @@ unsigned int initNodes(double * data,
         bcounter++;
         //check if need to make a new node
         if(i == numPoints-1 || binNumber[i] != binNumber[i+1]){
-            // printf("making new node, j: %d, tempBinPointer: %d, numPoints in the new node:%d\n", i, tempBinPointer, i - tempBinPointer+1 );
-            // if(i== numPoints - 1) {
-            //     printf("BinNumber#%u: %u->%u: p=%u->%u\n", numNewNodes, binNumber[i], 0 ,bcounter,i-tempBinPointer+1);
-            // }else{ 
-            //     printf("BinNumber#%u: %u->%u: p=%u->%u\n", numNewNodes, binNumber[i], binNumber[i+1], bcounter,i-tempBinPointer+1);
-            // }
+            printf("making new node, j: %d, tempBinPointer: %d, numPoints in the new node:%d\n", i, tempBinPointer, i - tempBinPointer+1 );
+            if(i== numPoints - 1) {
+                printf("BinNumber#%u: %u->%u: p=%u->%u\n", numNewNodes, binNumber[i], 0 ,bcounter,i-tempBinPointer+1);
+            }else{ 
+                printf("BinNumber#%u: %u->%u: p=%u->%u\n", numNewNodes, binNumber[i], binNumber[i+1], bcounter,i-tempBinPointer+1);
+            }
             //push back the new node onto the temporary vector of nodes
             newNodes.push_back( newNode(i-tempBinPointer+1, pointArray+tempBinPointer, binNumber[i], numNewNodes ) );
             tempBinPointer = i+1;
@@ -685,7 +685,7 @@ struct Node newNode(unsigned int numNodePoints, //number of points to go into th
         newNode.nodePoints[i] = nodePoints[i];
     }
     return newNode;
-};
+}; 
 
 struct Node newNode(unsigned int numNodePoints, //number of points to go into the node
                     unsigned int * nodePoints, // the start of the points that will go into the node
@@ -757,7 +757,7 @@ void updateNeighbors(std::vector<struct Node> nodes, std::vector<std::vector<str
             for(unsigned int k = 1; k < nodes[i].neighborIndex.size(); k++){ //and check the neighbors
                 //neighbor to check
                 unsigned int neighborNodesIndex = nodes[i].neighborIndex[k]; // this will also give the index of the vector of split nodes
-                
+                if(neighborNodesIndex > (*newNodes).size()-1) printf("ERROR: neighbor index: %u max: %u\n", neighborNodesIndex,(*newNodes).size() );
                 //go through each neighbors split nodes
                 for(unsigned int l = 0; l < (*newNodes)[neighborNodesIndex].size(); l++){
                     if((*newNodes)[neighborNodesIndex][l].split == false ||
@@ -934,6 +934,7 @@ std::vector<std::vector<struct Node>> genSubGraphs(std::vector<struct Node> inNo
 
             while(stack.size() > 0){
                 unsigned int current = stack.top(); 
+                stack.pop();
                 for(unsigned int j = 0; j < nodes[current].neighborIndex.size();j++){
                     if(nodes[nodes[current].neighborIndex[j]].visited == false){
                         stack.push(nodes[current].neighborIndex[j]);
@@ -941,12 +942,40 @@ std::vector<std::vector<struct Node>> genSubGraphs(std::vector<struct Node> inNo
                         nodes[nodes[current].neighborIndex[j]].visited = true;
                     }
                 }
-                stack.pop();
+                
             }
 
             subGraphs.push_back(newGraph);
         }
         
+    }
+
+    //fix neighbor pointers to be local to sub graphs
+    unsigned int offsetCounter = 0;
+    for(unsigned int i = 0; i < subGraphs.size();i++){
+        printf("\n#####################\nOffset counter for sub %u: %u  :   : %u nodes in sub\n", i, offsetCounter, subGraphs[i].size());
+        for(unsigned int j = 0; j < subGraphs[i].size(); j++){
+
+            subGraphs[i][j].nodeIndex -= offsetCounter;
+            printf("sub/node: %u::%u node index: %u\n   bins:", i,j, subGraphs[i][j].nodeIndex);
+            for(unsigned int b = 0; b < subGraphs[i][j].binNumbers.size(); b++){
+                printf("%u, ",subGraphs[i][j].binNumbers[b] );
+            }
+            printf("\n  --------\n");
+
+            for(unsigned int k = 0; k < subGraphs[i][j].neighborIndex.size(); k++){
+                
+                printf("    sub: %u, node: %u at index %u: %u\n     bins:", i, j,k, subGraphs[i][j].neighborIndex[k]);
+                for(unsigned int b = 0; b < subGraphs[i][j].binNumbers.size(); b++){
+                    printf("%u, ",subGraphs[i][j].binNumbers[b] );
+                }
+                printf("\n");
+                subGraphs[i][j].neighborIndex[k] -= offsetCounter;
+            }
+            
+        }
+        
+        offsetCounter += subGraphs[i].size();
     }
     
     printf("Num SubGraphs: %u\n", subGraphs.size());
