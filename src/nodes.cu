@@ -8,7 +8,7 @@ unsigned int buildNodeNet(double * data,
                  unsigned int numRP,
                  unsigned int * pointArray,
                  double epsilon,
-                 std::vector<std::vector<struct Node>> * subGraphs){
+                 std::vector<struct Node> * outNodes){
 
 
     cudaSetDevice(CUDA_DEVICE);
@@ -122,6 +122,8 @@ unsigned int buildNodeNet(double * data,
         } else {
             numSubs = subGraph.size();
         }
+
+        lowestDistCalcs = 0;
         printf("Num subs to gen: %u\n", numSubs);
         for(unsigned int n = 0; n < numSubs ; n++){
             unsigned long long int subLowestDistCalcs = ULLONG_MAX;
@@ -147,14 +149,14 @@ unsigned int buildNodeNet(double * data,
                 else{
                     tempNodes = subGraph[n];
                     tempNumNodes = splitNodes(&allBinNumber[numPoints*j], tempNodes, tempNodes.size(), epsilon, data, dim, numPoints, &layerNodes[j], devicePointers, &tempNodePerSecond);
-                    printf("    subgraph %u with %u origional nodes; RP %u has %u nodes\n", n, tempNodes.size(), j, tempNumNodes );
+                    // printf("    subgraph %u with %u origional nodes; RP %u has %u nodes\n", n, tempNodes.size(), j, tempNumNodes );
                 }
                 
                 // printf("check: %llu\n", tempNodes[0].numCalcs);
                 
                 unsigned long long numCalcs = totalNodeCalcs(layerNodes[j], tempNumNodes);
                 // unsigned long long sumSqrs = nodeSumSqrs(layerNodes[j], tempNumNodes);
-                printf("    Layer %d for RP %d has Nodes: %u with calcs: %llu\n", i, j, tempNumNodes, numCalcs);
+                // printf("    Layer %d for RP %d has Nodes: %u with calcs: %llu\n", i, j, tempNumNodes, numCalcs);
 
                 #pragma omp critical
                 {
@@ -174,10 +176,11 @@ unsigned int buildNodeNet(double * data,
             }
 
             printf("SubGraph %u Layer %d Selecting RP %d with Nodes: %u and calcs: %llu :: ", n, i, bestRP, numNodes, subLowestDistCalcs);
+            
             std::vector<std::vector<struct Node>> layerSubGraphs = genSubGraphs(layerNodes[bestRP]);
             tempGraph.insert(tempGraph.end(), layerSubGraphs.begin(), layerSubGraphs.end());
        
-            
+            lowestDistCalcs += subLowestDistCalcs;
         }
 
         numNodes = 0; 
@@ -192,7 +195,7 @@ unsigned int buildNodeNet(double * data,
 
         
     
-        double actualNodeTime = numNodes / nodePerSecond;
+        double actualNodeTime = numNodes*1.0 / nodePerSecond;
 
         printf("Predicted time: %f, Actual Time: %f\n", predictedNodeTime, actualNodeTime);
 
@@ -242,13 +245,37 @@ unsigned int buildNodeNet(double * data,
         #endif
     }
 
+
+
+
+    //linearize the sub graphs
+    unsigned int nodeCounter = 0;
+    for(unsigned int i = 0; i < subGraph.size(); i++){
+        for(unsigned int j = 0; j < subGraph[i].size(); j++){
+            newNodes.push_back(subGraph[i][j]);
+            newNodes[nodeCounter].nodeIndex = nodeCounter;
+            subGraph[i][j].nodeIndex = nodeCounter;
+            nodeCounter++;
+        }
+    }
+
+    nodeCounter = 0;
+    for(unsigned int i = 0; i < subGraph.size(); i++){
+        for(unsigned int j = 0; j < subGraph[i].size(); j++){
+            for(unsigned int k = 0; k < subGraph[i][j].neighborIndex.size(); k++){
+                newNodes[nodeCounter].neighborIndex[k] = subGraph[i][subGraph[i][j].neighborIndex[k]].nodeIndex;
+            }
+            nodeCounter++;
+        }
+    }
+
     // printf("check: %llu\n", newNodes[0].numCalcs);
     unsigned long long numCalcs = totalNodeCalcs(newNodes, newNodes.size());
-    unsigned long long sumSqrs = nodeSumSqrs(newNodes, newNodes.size());
+    // unsigned long long sumSqrs = nodeSumSqrs(newNodes, newNodes.size());
 
-    printf("Final graph has %u nodes with: %llu calcs and sumSqrs: %llu\n", numNodes, numCalcs, sumSqrs);
+    printf("Final graph has %u nodes with: %llu calcs\n", numNodes, numCalcs);
 
-    if(ERRORPRINT) fprintf(stderr,"%u %u %llu %llu ", numSplits, numNodes, numCalcs, sumSqrs);
+    if(ERRORPRINT) fprintf(stderr,"%u %u %llu ", numSplits, numNodes, numCalcs);
 
 
     //rearange the pointArray
@@ -262,7 +289,7 @@ unsigned int buildNodeNet(double * data,
         }
     }
 
-    *subGraphs = subGraph;
+    *outNodes = newNodes;
 
 #if DEVICE_BUILD
     cudaFree(d_data);
@@ -585,7 +612,7 @@ unsigned int splitNodes(unsigned int * allBinNumbers, //the reference point used
         //special case for the first
         if(tempNodes[0].binNumbers.back() == tempNodes[1].binNumbers.back() - 1 ){ //already know at least 2 nodes in list
             tempNodes[0].neighborIndex.push_back(1);
-        } 
+        }
 
         // handle all middle nodes
         for(unsigned int j = 1; j < numNewNodes-1; j++){
@@ -602,7 +629,7 @@ unsigned int splitNodes(unsigned int * allBinNumbers, //the reference point used
         //special case for last node
         if(tempNodes[numNewNodes-1].binNumbers.back() == tempNodes[numNewNodes-2].binNumbers.back() + 1 ){ //already know at least 2 nodes in list
             tempNodes[numNewNodes-1].neighborIndex.push_back(numNewNodes-2);
-        } 
+        }
 
         
         //copy the temp nodes back into the larger vector of nodes
@@ -772,7 +799,6 @@ void updateNeighbors(std::vector<struct Node> nodes, std::vector<std::vector<str
                                 (*newNodes)[i][j].neighborIndex.push_back((*newNodes)[neighborNodesIndex][l].nodeIndex);
                         }
                     }
-
                 }
             }
         }
@@ -948,35 +974,56 @@ std::vector<std::vector<struct Node>> genSubGraphs(std::vector<struct Node> inNo
 
             subGraphs.push_back(newGraph);
         }
-        
+         
     }
 
     //fix neighbor pointers to be local to sub graphs
-    unsigned int offsetCounter = 0;
+    // unsigned int offsetCounter = 0;
     for(unsigned int i = 0; i < subGraphs.size();i++){
         // printf("\n#####################\nOffset counter for sub %u: %u  :   : %u nodes in sub\n", i, offsetCounter, subGraphs[i].size());
         for(unsigned int j = 0; j < subGraphs[i].size(); j++){
-
-            subGraphs[i][j].nodeIndex -= offsetCounter;
+            nodes[subGraphs[i][j].nodeIndex].nodeIndex = j;
+            subGraphs[i][j].nodeIndex = j;
             // printf("sub/node: %u::%u node index: %u\n   bins:", i,j, subGraphs[i][j].nodeIndex);
             // for(unsigned int b = 0; b < subGraphs[i][j].binNumbers.size(); b++){
             //     printf("%u, ",subGraphs[i][j].binNumbers[b] );
             // }
-            // printf("\n  --------\n");
+            // printf("\n  -------- \n");
 
+            // subGraphs[i][j].neighborIndex.clear();
+        }
+
+        // for(unsigned int j = 0; j < subGraphs[i].size(); j++){
+        //     unsigned int nodeBinNumber = subGraphs[i][j].binNumbers.back();
+        //     for(unsigned int k = 0; k < subGraphs[i].size(); k++){
+        //         if(subGraphs[i][k].split == false ||
+        //                 subGraphs[i][j].split == false) {
+        //                     subGraphs[i][j].neighborIndex.push_back(subGraphs[i][k].nodeIndex);
+        //         }else{
+        //             unsigned int checkBin = subGraphs[i][k].binNumbers.back();
+        //             if( checkBin + 1 == nodeBinNumber || 
+        //                 checkBin - 1 == nodeBinNumber ||
+        //                 checkBin == nodeBinNumber){
+        //                     subGraphs[i][j].neighborIndex.push_back(subGraphs[i][k].nodeIndex);
+        //             }
+        //         }
+        //     }
+        for(unsigned int j = 0; j < subGraphs[i].size(); j++){
             for(unsigned int k = 0; k < subGraphs[i][j].neighborIndex.size(); k++){
                 
+                subGraphs[i][j].neighborIndex[k] = nodes[subGraphs[i][j].neighborIndex[k]].nodeIndex;
+
                 // printf("    sub: %u, node: %u at index %u: %u\n     bins:", i, j,k, subGraphs[i][j].neighborIndex[k]);
                 // for(unsigned int b = 0; b < subGraphs[i][j].binNumbers.size(); b++){
-                //     printf("%u, ",subGraphs[i][j].binNumbers[b] );
+                //     printf("%u, ",subGraphs[i][ subGraphs[i][j].neighborIndex[k] ].binNumbers[b] );
                 // }
                 // printf("\n");
-                subGraphs[i][j].neighborIndex[k] -= offsetCounter;
+                
             }
-            
         }
         
-        offsetCounter += subGraphs[i].size();
+        
+        // offsetCounter += subGraphs[i].size();
     }
     
     printf("Num SubGraphs: %u\n", subGraphs.size());

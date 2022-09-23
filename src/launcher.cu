@@ -1341,7 +1341,7 @@ struct neighborTable * nodeLauncher(double * data,
     cudaSetDevice(CUDA_DEVICE);
     
     double time1 = omp_get_wtime();
-    std::vector<std::vector<struct Node>> subGraphs;
+    std::vector<struct Node> nodes;
 
     // build the data structure
     unsigned int numNodes = buildNodeNet(data,
@@ -1350,15 +1350,14 @@ struct neighborTable * nodeLauncher(double * data,
             numRP,
             pointArray,
             epsilon,
-            &subGraphs);
+            &nodes);
 
-    
+
+    cudaSetDevice(CUDA_DEVICE);
 
     double time2 = omp_get_wtime();
     printf("Node Construct time: %f\n", time2 - time1);
-    if(ERRORPRINT) fprintf(stderr,"%f ",time2-time1);
 
-    #if !NODETEST
     // unsigned long long res = nodeForce(&nodes, epsilon, data, dim, numPoints);
     // printf("Res: %llu\n", res);
 
@@ -1401,43 +1400,30 @@ struct neighborTable * nodeLauncher(double * data,
     unsigned int neighborOffsetCount = 0;
     // std::vector<unsigned int> tempNeighbors;
 
-    unsigned int nodeCounter = 0;
-    for(unsigned int i = 0; i < subGraphs.size(); i++){
-        for(unsigned int j = 0; j < subGraphs[i].size(); j++){
-            pointOffsets[nodeCounter] = subGraphs[i][j].pointOffset;
-            numCalcs[nodeCounter] = subGraphs[i][j].numCalcs;
-            neighborOffset[nodeCounter] = neighborOffsetCount;
-            numNeighbors[nodeCounter] = subGraphs[i][j].neighborIndex.size();
-            neighborOffsetCount += subGraphs[i][j].neighborIndex.size();
-            nodePoints[nodeCounter] = subGraphs[i][j].numNodePoints;
-            nodeCounter++;
-        }
-
+    for(unsigned int i = 0; i < numNodes; i++){
+        pointOffsets[i] = nodes[i].pointOffset;
+        numCalcs[i] = nodes[i].numCalcs;
+        neighborOffset[i] = neighborOffsetCount;
+        numNeighbors[i] = nodes[i].neighborIndex.size();
+        neighborOffsetCount += nodes[i].neighborIndex.size();
+        nodePoints[i] = nodes[i].numNodePoints;
         // tempNeighbors.insert(tempNeighbors.end(), nodes[i].neighborIndex.begin(),nodes[i].neighborIndex.end());
-  
+    
     }
 
     // printf("po:%u\n", pointOffsets[10]);
     unsigned int * neighbors = (unsigned int *)malloc(sizeof(unsigned int)*neighborOffsetCount);
     unsigned int counter = 0;
-    unsigned int graphOffset = 0;
-    for(unsigned int i = 0; i < subGraphs.size(); i++){
-        for(unsigned int j = 0; j < subGraphs[i].size(); j++){
-            for(unsigned int k = 0; k < numNeighbors[graphOffset + j]; k++){
-                neighbors[counter+k] = graphOffset + subGraphs[i][j].neighborIndex[k];   
-            }
-            counter += numNeighbors[graphOffset + j];
+    for(unsigned int i = 0; i < numNodes; i++){
+        for(unsigned int j = 0; j < numNeighbors[i]; j++){
+        neighbors[counter+j] = nodes[i].neighborIndex[j];   
         }
-        graphOffset += subGraphs[i].size();
-        
+        counter += numNeighbors[i];
     }
 
     // printf("total num neighbors: %u\n", counter);
 
-    unsigned long long sumCalcs = 0;
-    for(unsigned int i = 0; i < subGraphs.size(); i++){
-        sumCalcs += totalNodeCalcs(subGraphs[i], subGraphs[i].size());
-    }
+    unsigned long long sumCalcs = totalNodeCalcs(nodes, numNodes);
     // printf("sum calcs: %llu\n", sumCalcs);
 
     // store the squared value of epsilon because thats all that is needed for distance calcs
@@ -1780,7 +1766,6 @@ struct neighborTable * nodeLauncher(double * data,
 
     // printf("Time to transfer: %f\n", omp_get_wtime()-launchend);
 
-    double kTime = omp_get_wtime();
     #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic) if(!HOST)
     for(unsigned int i = 0; i < numBatches; i++){
 
@@ -1899,8 +1884,6 @@ struct neighborTable * nodeLauncher(double * data,
 
     }
 
-    printf("Kernel Search Time: %f\n", omp_get_wtime()-kTime);
-
     unsigned long long totals = 0;
     for(int i = 0; i < numBatches; i++){
         totals += keyValueIndex[i];
@@ -1913,11 +1896,5 @@ struct neighborTable * nodeLauncher(double * data,
     free(numThreadsPerBatch);
     free(numThreadsPerNode);
 
-
-
     return tables;
-
-    #endif
-
-    return NULL;
 }

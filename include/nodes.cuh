@@ -52,7 +52,7 @@ unsigned int buildNodeNet(double * data,
     unsigned int numRP,
     unsigned int * pointArray,
     double epsilon,
-    std::vector<std::vector<struct Node>> * subGraphs);
+    std::vector<struct Node> * outNodes);
 
 //splits a node based on a reference point and return the number of new nodes
 unsigned int splitNodes(unsigned int * allBinNumbers, //the reference point used for the split
