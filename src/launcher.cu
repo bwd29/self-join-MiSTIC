@@ -1357,6 +1357,7 @@ struct neighborTable * nodeLauncher(double * data,
 
     double time2 = omp_get_wtime();
     printf("Node Construct time: %f\n", time2 - time1);
+    fprintf(stderr, "%f ", time2-time1);
 
     // unsigned long long res = nodeForce(&nodes, epsilon, data, dim, numPoints);
     // printf("Res: %llu\n", res);

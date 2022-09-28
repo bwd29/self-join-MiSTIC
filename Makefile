@@ -1,28 +1,35 @@
 NVCC = nvcc
 CUDAFLAGS = -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3
+DFLAGS = 
 LIBDIRS = -I.
 
+# $(CALC_MULTI)?=4
+# $(MIN_NODE_SIZE)?=1000
+
+
+DFLAGS += -DCALC_MULTI=$(CALC_MULTI)
+DFLAGS += -DMIN_NODE_SIZE=$(MIN_NODE_SIZE)
 
 build/main: build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o 
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
 
 build/main.o: src/main.cu
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/main.o src/main.cu -lm
+	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -c -o build/main.o src/main.cu -lm
 
 build/launcher.o: src/launcher.cu
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/launcher.o src/launcher.cu -lm
+	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -c -o build/launcher.o src/launcher.cu -lm
 
 build/kernel.o: src/kernel.cu
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu
+	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu
 
 build/nodes.o: src/nodes.cu
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/nodes.o src/nodes.cu -lm
+	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -c -o build/nodes.o src/nodes.cu -lm
 
 build/tree.o: src/tree.cu
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/tree.o src/tree.cu -lm
+	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -c -o build/tree.o src/tree.cu -lm
 
 build/utils.o: src/utils.cu
-	$(NVCC) $(CUDAFLAGS) $(LIBDIRS) -c -o build/utils.o src/utils.cu -lm
+	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -c -o build/utils.o src/utils.cu -lm
 
 clean:
 	rm -f build/main build/*.o

@@ -99,9 +99,9 @@ unsigned int buildNodeNet(double * data,
         double cT2 = omp_get_wtime();
 
         if(i==0){
-            calcsPerSecond = (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * 4;
+            calcsPerSecond = (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * CALC_MULTI;
         } else {
-            calcsPerSecond += (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * 4;
+            calcsPerSecond += (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * CALC_MULTI;
             calcsPerSecond = calcsPerSecond / 2;
         }
         printf("Predicted calcsPerSecond: %ull\n", calcsPerSecond);
@@ -260,7 +260,9 @@ unsigned int buildNodeNet(double * data,
     }
 
     nodeCounter = 0;
+    unsigned int largestSub = subGraph[0].size();
     for(unsigned int i = 0; i < subGraph.size(); i++){
+        if(subGraph[i].size() > largestSub) largestSub = subGraph[i].size();
         for(unsigned int j = 0; j < subGraph[i].size(); j++){
             for(unsigned int k = 0; k < subGraph[i][j].neighborIndex.size(); k++){
                 newNodes[nodeCounter].neighborIndex[k] = subGraph[i][subGraph[i][j].neighborIndex[k]].nodeIndex;
@@ -273,9 +275,9 @@ unsigned int buildNodeNet(double * data,
     unsigned long long numCalcs = totalNodeCalcs(newNodes, newNodes.size());
     // unsigned long long sumSqrs = nodeSumSqrs(newNodes, newNodes.size());
 
-    printf("Final graph has %u nodes with: %llu calcs\n", numNodes, numCalcs);
+    printf("Final graph has %u nodes, %u subgraphs, largest sub: %u, %llu calcs total\n", numNodes,subGraph.size(), largestSub, numCalcs);
 
-    if(ERRORPRINT) fprintf(stderr,"%u %u %llu ", numSplits, numNodes, numCalcs);
+    if(ERRORPRINT) fprintf(stderr,"%u %u %u %u %llu ", subGraph.size(), largestSub, numSplits, numNodes, numCalcs);
 
 
     //rearange the pointArray

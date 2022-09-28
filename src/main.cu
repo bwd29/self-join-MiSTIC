@@ -50,10 +50,11 @@ int main(int argc, char*argv[]){
 	//////////////
 	// numPoints = 10000;
 	////////////
-	if(ERRORPRINT) fprintf(stderr,"\n%f %u ", epsilon, numPoints);
+	if(ERRORPRINT) fprintf(stderr,"\n%f %u %d %d ", epsilon, numPoints, MIN_NODE_SIZE, CALC_MULTI);
 	// if(TESTING_SEARCH) fprintf(stderr,"\nRP, %d,", numRP);
 	if(TESTING_SEARCH) fprintf(stderr," E, %f,", epsilon);
 
+	
 	printf("\nNumber points: %d ", numPoints);
 	printf("\nNumber Dimensions: %d ", dim);
 	// printf("\nNumber Reference Points: %d ", numRP);
