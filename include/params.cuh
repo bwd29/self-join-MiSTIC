@@ -28,6 +28,8 @@
 #define NODETEST false
 #define RANDRP false
 
+#define SUBG false
+
 #define DEVICE_BUILD true
 
 #define CUDA_DEVICE 1

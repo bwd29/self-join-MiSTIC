@@ -17,7 +17,8 @@ module load cuda
 
 # CALC_MULTI=4 MIN_NODE_SIZE=1000 make
 
-echo -e "\nEPSILON | NUMPOINTS | MIN_NODE_SIZE | CALC_MULTI | NUMSUBS | LSUB | RP | NODES | CALCS | Construct T | Total T\n" >&2
+# echo -e "\nEPSILON | NUMPOINTS | MIN_NODE_SIZE | CALC_MULTI | NUMSUBS | LSUB | RP | NODES | CALCS | Construct T | Total T\n" >&2
+echo -e "\nEPSILON | NUMPOINTS | MIN_NODE_SIZE | CALC_MULTI | RP | NODES | CALCS | Construct T | Total T\n" >&2
 
         for i in 16 32 64 128 256 512 1024
         do

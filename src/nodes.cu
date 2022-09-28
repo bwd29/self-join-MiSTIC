@@ -104,7 +104,7 @@ unsigned int buildNodeNet(double * data,
             calcsPerSecond += (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * CALC_MULTI;
             calcsPerSecond = calcsPerSecond / 2;
         }
-        printf("Predicted calcsPerSecond: %ull\n", calcsPerSecond);
+        printf("Predicted calcsPerSecond: %llu\n", calcsPerSecond);
         
 
         assert(cudaSuccess == cudaMemcpyAsync(allBinNumber, d_binNumber, sizeof(unsigned int)*numPoints*RPPERLAYER, cudaMemcpyDeviceToHost, stream));
@@ -124,7 +124,7 @@ unsigned int buildNodeNet(double * data,
         }
 
         lowestDistCalcs = 0;
-        printf("Num subs to gen: %u\n", numSubs);
+        // printf("Num subs to gen: %u\n", numSubs);
         for(unsigned int n = 0; n < numSubs ; n++){
             unsigned long long int subLowestDistCalcs = ULLONG_MAX;
 
@@ -175,10 +175,15 @@ unsigned int buildNodeNet(double * data,
                 
             }
 
+
             printf("SubGraph %u Layer %d Selecting RP %d with Nodes: %u and calcs: %llu :: ", n, i, bestRP, numNodes, subLowestDistCalcs);
             
+            #if SUBG
             std::vector<std::vector<struct Node>> layerSubGraphs = genSubGraphs(layerNodes[bestRP]);
             tempGraph.insert(tempGraph.end(), layerSubGraphs.begin(), layerSubGraphs.end());
+            #else
+            tempGraph.push_back(layerNodes[bestRP]);
+            #endif
        
             lowestDistCalcs += subLowestDistCalcs;
         }
@@ -249,6 +254,8 @@ unsigned int buildNodeNet(double * data,
 
 
     //linearize the sub graphs
+
+    #if SUBG
     unsigned int nodeCounter = 0;
     for(unsigned int i = 0; i < subGraph.size(); i++){
         for(unsigned int j = 0; j < subGraph[i].size(); j++){
@@ -271,13 +278,27 @@ unsigned int buildNodeNet(double * data,
         }
     }
 
+        // printf("check: %llu\n", newNodes[0].numCalcs);
+        unsigned long long numCalcs = totalNodeCalcs(newNodes, newNodes.size());
+        // unsigned long long sumSqrs = nodeSumSqrs(newNodes, newNodes.size());
+    
+        printf("Final graph has %u nodes, %u subgraphs, largest sub: %u, %llu calcs total\n", numNodes,subGraph.size(), largestSub, numCalcs);
+    
+        if(ERRORPRINT) fprintf(stderr,"%u %u %u %u %llu ", subGraph.size(), largestSub, numSplits, numNodes, numCalcs);
+
+    #else
+        newNodes = subGraph[0];
+
+        unsigned long long numCalcs = totalNodeCalcs(newNodes, newNodes.size());
+        // unsigned long long sumSqrs = nodeSumSqrs(newNodes, newNodes.size());
+
+        printf("Final graph has %u nodes, %llu calcs total\n", numNodes, numCalcs);
+
+        if(ERRORPRINT) fprintf(stderr,"%u %u %llu ", numSplits, numNodes, numCalcs);
+    #endif
+
     // printf("check: %llu\n", newNodes[0].numCalcs);
-    unsigned long long numCalcs = totalNodeCalcs(newNodes, newNodes.size());
-    // unsigned long long sumSqrs = nodeSumSqrs(newNodes, newNodes.size());
 
-    printf("Final graph has %u nodes, %u subgraphs, largest sub: %u, %llu calcs total\n", numNodes,subGraph.size(), largestSub, numCalcs);
-
-    if(ERRORPRINT) fprintf(stderr,"%u %u %u %u %llu ", subGraph.size(), largestSub, numSplits, numNodes, numCalcs);
 
 
     //rearange the pointArray
