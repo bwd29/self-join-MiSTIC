@@ -99,9 +99,9 @@ unsigned int buildNodeNet(double * data,
         double cT2 = omp_get_wtime();
 
         if(i==0){
-            calcsPerSecond = (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * CALC_MULTI;
+            calcsPerSecond = (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * sqrt(dim);//CALC_MULTI;
         } else {
-            calcsPerSecond += (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * CALC_MULTI;
+            calcsPerSecond += (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * sqrt(dim);//CALC_MULTI;
             calcsPerSecond = calcsPerSecond / 2;
         }
         printf("Predicted calcsPerSecond: %llu\n", calcsPerSecond);
@@ -200,7 +200,7 @@ unsigned int buildNodeNet(double * data,
 
         
     
-        double actualNodeTime = numNodes*1.0 / nodePerSecond;
+        double actualNodeTime = numNodes*1.0 / nodePerSecond + (cT2-cT1);
 
         printf("Predicted time: %f, Actual Time: %f\n", predictedNodeTime, actualNodeTime);
 
@@ -214,13 +214,13 @@ unsigned int buildNodeNet(double * data,
         double nodeRatio = numNodes/ numPreviousNodes;
         calcTime = lowestDistCalcs*1.0 / calcsPerSecond;
         double timeReduction = previousCalcTime - calcTime;
-        predictedNodeTime = numNodes*1.0 / nodePerSecond;
+        predictedNodeTime = numNodes*1.0 / nodePerSecond + (cT2-cT1);
 
         #if DEVICE_BUILD
         // double calcsPerSecondDyn = calcsPerSecond;//numPoints / calcTime;
         printf("Build Time: %f, Calc Time: %f, reduction %f\n############################################\n", predictedNodeTime, calcTime, timeReduction);
         // if(i > MINRP && ( newNodes.size()*1.0 / nodePerSecond *10> lowestDistCalcs*1.0 / calcsPerSecondDyn || i >= MAXRP)){ 
-        if(i > MINRP && ( numNodes*1.0 / nodePerSecond > timeReduction || i >= MAXRP)){ 
+        if(i >= MINRP && ( predictedNodeTime > timeReduction || i >= MAXRP)){ 
 
             // printf("\nPrevious Calcs: %llu, Current: %llu, ratio: %f\n", previousDistCalcs, lowestDistCalcs, calcRatio);
             // printf("Previous Nodes: %u, Current Nodes: %u, ratio: %f\n",numPreviousNodes, newNodes.size(), nodeRatio);
@@ -235,7 +235,7 @@ unsigned int buildNodeNet(double * data,
         #else
         printf("Build Time: %f, Calc Time: %f, reduction %f\n", predictedNodeTime, calcTime, timeReduction);
         // if(i > MINRP && ( newNodes.size()*1.0 / nodePerSecond *10> lowestDistCalcs*1.0 / calcsPerSecond || i >= MAXRP)){ 
-        if(i > MINRP && ( numNodes*1.0 / nodePerSecond > timeReduction || i >= MAXRP)){ 
+        if(i > MINRP && ( predictedNodeTime > timeReduction || i >= MAXRP)){ 
 
             // printf("\nPrevious Calcs: %llu, Current: %llu, ratio: %f\n", previousDistCalcs, lowestDistCalcs, calcRatio);
             // printf("Previous Nodes: %u, Current Nodes: %u, ratio: %f\n",numPreviousNodes, newNodes.size(), nodeRatio);
@@ -544,7 +544,7 @@ unsigned int splitNodes(unsigned int * allBinNumbers, //the reference point used
     // go through each node and split
     for(unsigned int i = 0; i < numNodes; i++){
 
-        if(nodes[i].numNodePoints < MIN_NODE_SIZE){
+        if(nodes[i].numCalcs < MAX_CALCS_PER_NODE*1000000/*MIN_NODE_SIZE */ ){
             std::vector<struct Node> tempNodes;
             tempNodes.push_back(newNode(nodes[i].numNodePoints, &(nodes[i].nodePoints[0]), nodes[i], (unsigned int) -1, 0 ) );
             tempNodes[0].split = false;

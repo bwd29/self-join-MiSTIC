@@ -1,0 +1,49 @@
+
+EPSILON | NUMPOINTS | RP | NODES | CALCS | Construct T | Total T
+
+
+
+MSD ________________________________________________________________
+
+
+0.007000 515345 12 1457 110336137813 1.668988 4.123759 
+0.007525 515345 12 1220 118058439291 1.617919 4.707944 
+0.008050 515345 12 1066 126486095083 1.537595 5.212177 
+0.008575 515345 12 1094 133583916605 1.503204 6.207091 
+0.009100 515345 14 1280 140697463421 1.938371 7.519783 
+
+SUSY ________________________________________________________________
+
+
+0.010000 5000000 6 20393 510740552958 9.324699 17.356472 
+0.012750 5000000 7 20608 1020093402478 12.554239 30.976489 
+0.015500 5000000 7 15850 1878604586730 11.123594 48.558572 
+0.018250 5000000 8 16742 2772144678554 15.954841 80.052889 
+0.021000 5000000 9 18142 4125419237122 23.086970 134.728039 
+
+HIGGS ________________________________________________________________
+
+
+0.010000 11000000 7 71328 1524806797350 50.460448 88.894967 
+0.021375 11000000 9 60641 16881409901404 94.341041 557.680285 
+0.032750 11000000 11 40754 47691514435650 116.633223 1734.814420 
+0.044125 11000000 14 37760 74954823420816 199.090677 3267.201810 
+0.055500 11000000 15 22323 95762657050154 116.573095 terminate called after throwing an instance of 'thrust::system::detail::bad_alloc'
+  what():  std::bad_alloc: cudaErrorMemoryAllocation: out of memory
+/var/spool/slurm/slurmd/job54037853/slurm_script: line 97: 1267978 Aborted                 (core dumped) ./build/main /scratch/bwd29/data/HIGSS_Normalized.bin 28 $j
+
+Tiny____________________________________________________
+
+
+0.200000 5000000 16 16116 5561454693082 78.789914 518.621834 
+0.260000 5000000 19 13129 7501332490652 83.082632 1001.584537 
+0.320000 5000000 21 9813 9336434007598 76.735992 main: src/launcher.cu:1840: neighborTable* nodeLauncher(double*, unsigned int, unsigned int, unsigned int, unsigned int*, double): Assertion `cudaSuccess == cudaMallocHost((void**) &pointB[tid], sizeof(unsigned int)*(keyValueIndex[i] + 1))' failed.
+main: src/launcher.cu:1830: neighborTable* nodeLauncher(double*, unsigned int, unsigned int, unsigned int, unsigned int*, double): Assertion `cudaSuccess == cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid])' failed.
+/var/spool/slurm/slurmd/job54037853/slurm_script: line 105: 1312184 Aborted                 (core dumped) ./build/main /scratch/bwd29/data/TINY_Normalized.bin 384 $j
+
+0.380000 5000000 25 10902 10979792333688 99.040296 main: src/launcher.cu:1830: neighborTable* nodeLauncher(double*, unsigned int, unsigned int, unsigned int, unsigned int*, double): Assertion `cudaSuccess == cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid])' failed.
+main: src/launcher.cu:1840: neighborTable* nodeLauncher(double*, unsigned int, unsigned int, unsigned int, unsigned int*, double): Assertion `cudaSuccess == cudaMallocHost((void**) &pointB[tid], sizeof(unsigned int)*(keyValueIndex[i] + 1))' failed.
+/var/spool/slurm/slurmd/job54037853/slurm_script: line 105: 1342129 Aborted                 (core dumped) ./build/main /scratch/bwd29/data/TINY_Normalized.bin 384 $j
+
+0.440000 5000000 27 8424 12611747791082 93.775269 slurmstepd: error: *** JOB 54037853 ON cn2 CANCELLED AT 2022-10-04T19:17:34 ***
+Job has already finished for job 54037853

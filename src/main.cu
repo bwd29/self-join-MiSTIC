@@ -50,7 +50,7 @@ int main(int argc, char*argv[]){
 	//////////////
 	// numPoints = 10000;
 	////////////
-	if(ERRORPRINT) fprintf(stderr,"\n%f %u %d %d ", epsilon, numPoints, MIN_NODE_SIZE, CALC_MULTI);
+	if(ERRORPRINT) fprintf(stderr,"\n%f %u ", epsilon, numPoints);
 	// if(TESTING_SEARCH) fprintf(stderr,"\nRP, %d,", numRP);
 	if(TESTING_SEARCH) fprintf(stderr," E, %f,", epsilon);
 
@@ -100,8 +100,14 @@ int main(int argc, char*argv[]){
 	#if NODES
 
 	double time2 = omp_get_wtime();
+	// nodeLauncher(dimOrderedData,
+	// 	dim,
+	// 	numPoints,
+	// 	0, //numRP
+	// 	pointArray,
+	// 	epsilon);
 
-	nodeLauncher(dimOrderedData,
+	nodeLauncher2(dimOrderedData,
 					dim,
 					numPoints,
 					0, //numRP

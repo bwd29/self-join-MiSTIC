@@ -69,6 +69,8 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 
 	unsigned int test_rp = sqrt(numPoints);
 
+	if(RAND) srand(omp_get_wtime());
+
 	#if RANDRP
 		double * testRPArray = (double*)malloc(sizeof(double)*numRP*dim);
 			
@@ -143,12 +145,55 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 	//get first numRP rps
 	double * RPArray = (double *)malloc(sizeof(double)*numRP*dim);
 
-	// #pragma omp parallel for
+	#pragma omp parallel for
 	for(unsigned int i = 0; i < numRP; i++){
 		for(unsigned int j = 0; j < dim; j++){
 			RPArray[i*dim+j] = testRPArray[ order[i]*dim + j ];
 		}
 	}
+
+	// double * testRPArray2 = (double*)malloc(sizeof(double)*numRP/2*dim);
+
+	// //first rp is the max corner
+	// for(unsigned int i = 0; i < dim; i++)
+	// {
+	// 	testRPArray2[i] = 0;
+	// }
+	// for(int i = 0; i < numPoints; i++)
+	// {
+	// 	for(int j = 0; j < dim; j++)
+	// 	{
+	// 		if(testRPArray2[j] < data[i*dim+j])
+	// 		{
+	// 			testRPArray2[j] = data[i*dim+j];
+	// 		}
+	// 	}
+	// }
+
+	// for(int i = 1; i < numRP/2; i++) // the first rp is set
+	// {
+		
+	// 	unsigned int step = pow(2,dim) / numRP/2;
+	// 	for(int j = 0; j < dim; j++)
+	// 	{
+	// 		testRPArray2[i*dim + j] = (i*step / (int)pow(2, j) % 2)*testRPArray2[j];
+	// 			// RP[i*dim+i*step + j] = RP[j+i*step];
+	// 	}
+
+	// }
+
+	// #pragma omp parallel for
+	// for(unsigned int i = 0; i < numRP/2 +1; i++){
+	// 	for(unsigned int j = 0; j < dim; j++){
+	// 		RPArray[i*dim+j] = testRPArray[ order[i]*dim + j ];
+	// 	}
+	// }
+	// for(unsigned int i = numRP/2 ; i < numRP; i++){
+	// 	for(unsigned int j = 0; j < dim; j++){
+	// 		RPArray[i*dim+j] = testRPArray2[ (i - numRP/2)*dim + j];
+	// 	}
+	// }
+
 
 	free(testRPArray);
 	free(distmat);

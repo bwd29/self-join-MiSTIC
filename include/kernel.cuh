@@ -174,3 +174,18 @@ void binningKernel(unsigned int * binNumbers, //array numPoints long
                     double * data, //all data
                     double * RP, //single rp
                     double * epsilon);
+
+__global__ 
+void nodeByPoint( double * data, //
+                    double * epsilon2,//
+                    unsigned int * numPoints, //
+                    unsigned int * batchPoints, //
+                    unsigned int * nodeID, //
+                    unsigned int * numNeighbors, //
+                    unsigned int * numPointsNode, //
+                    unsigned int * neighborNodes, //
+                    unsigned int * neighborOffset, //
+                    unsigned int * pointOffset, //
+                    unsigned int * point_a, //
+                    unsigned int * point_b, //
+                    unsigned long long * keyValueIndex);
