@@ -40,7 +40,7 @@
 #define BUFFERSIZE 100000
 #define MAXBATCH 1000
 #define ORDP 32
-#define KTYPE 4
+// #define KTYPE 4
 
 const unsigned int RPPERLAYER = 10;
 
@@ -53,7 +53,7 @@ const unsigned int MINRP = 2;
 
 const unsigned int NUMSTREAMS = 2;
 const unsigned int BLOCK_SIZE = 1024; 
-const unsigned int KERNEL_BLOCKS = 512*1024/BLOCK_SIZE;
+const unsigned int KERNEL_BLOCKS = BS*1024/BLOCK_SIZE;
 const int BRUTE = false;
 const int RANDOM = false;
 const int BOXED_RP = false;

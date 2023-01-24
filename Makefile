@@ -15,7 +15,7 @@ LIBDIRS = -I.
 # DFLAGS += -DDIM=$(DIM)
 DFLAGS += -DKTYPE=$(KT)
 DFLAGS += -DBS=$(BS)
-DFLAGS += -DORDP=$(ORDP)
+# DFLAGS += -DORDP=$(ORDP)
 
 build/main: build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o 
 	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o

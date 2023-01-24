@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH --job-name=nodeStats
-#SBATCH --output=/home/bwd29/self-join/results/finalNEW_BS_CHECK2.out
-#SBATCH --error=/home/bwd29/self-join/results/finalNEW2_BS_CHECK2.err
-#SBATCH --time=3000:00
+#SBATCH --output=/home/bwd29/self-join/results/noBatch1.out
+#SBATCH --error=/home/bwd29/self-join/results/noBatch1.err
+#SBATCH --time=30:00
 #SBATCH --mem=0
 #SBATCH -c 64 
-#SBATCH -G 3
-#SBATCH --partition=gowanlock
-#SBATCH --account=gowanlock_condo
-#SBATCH -w cn2
+#SBATCH -G 4
+##SBATCH --partition=gowanlock
+##SBATCH --account=gowanlock_condo
+#SBATCH -w cn3
 
 
 module load cuda
@@ -21,13 +21,13 @@ module load cuda
 echo -e "\nEPSILON | NUMPOINTS | RP | NODES | CALCS | Construct T | Total T\n" >&2
 
 
-        # for i in 1
+        for i in 1
         # for i in 1024 512 256 128 64
-        for i in 64 128 256 512 #1 2 4 8 16 32
+        # for i in 64 128 256 512 #1 2 4 8 16 32
         do
 
                 make clean
-                KT=3 BS=512 ORDP=$i make
+                KT=4 BS=512 make
                 
                 echo "MSD ________________________________________________________________"
                 echo "MSD ________________________________________________________________"
