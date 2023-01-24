@@ -100,19 +100,42 @@ int main(int argc, char*argv[]){
 	#if NODES
 
 	double time2 = omp_get_wtime();
-	// nodeLauncher(dimOrderedData,
-	// 	dim,
-	// 	numPoints,
-	// 	0, //numRP
-	// 	pointArray,
-	// 	epsilon);
 
-	nodeLauncher2(dimOrderedData,
+	#if KTYPE == 1
+	nodeLauncher(dimOrderedData,
 					dim,
 					numPoints,
 					0, //numRP
 					pointArray,
 					epsilon);
+	#endif
+
+	#if KTYPE == 2
+	nodeLauncher2(dimOrderedData,
+		dim,
+		numPoints,
+		0, //numRP
+		pointArray,
+		epsilon);
+	#endif
+
+	#if KTYPE == 3
+	nodeLauncher3(dimOrderedData,
+		dim,
+		numPoints,
+		0, //numRP
+		pointArray,
+		epsilon);
+	#endif
+
+	#if KTYPE == 4
+	nodeLauncher4(dimOrderedData,
+		dim,
+		numPoints,
+		0, //numRP
+		pointArray,
+		epsilon);
+	#endif
 
 	double time3 = omp_get_wtime();
 	printf("Node Laucnher time: %f\n", time3 - time2);

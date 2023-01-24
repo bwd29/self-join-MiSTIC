@@ -12,7 +12,10 @@ LIBDIRS = -I.
 # DFLAGS += -DMAX_CALCS_PER_NODE=$(MCPN)
 # DFLAGS += -DMINRP=$(RP)
 # DFLAGS += -DMAXRP=$(RP)
-DFLAGS += -DDIM=$(DIM)
+# DFLAGS += -DDIM=$(DIM)
+DFLAGS += -DKTYPE=$(KT)
+DFLAGS += -DBS=$(BS)
+DFLAGS += -DORDP=$(ORDP)
 
 build/main: build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o 
 	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
@@ -24,7 +27,7 @@ build/launcher.o: src/launcher.cu
 	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -c -o build/launcher.o src/launcher.cu -lm
 
 build/kernel.o: src/kernel.cu
-	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu
+	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -c -o build/kernel.o src/kernel.cu
 
 build/nodes.o: src/nodes.cu
 	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -c -o build/nodes.o src/nodes.cu -lm

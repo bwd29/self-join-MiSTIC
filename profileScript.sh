@@ -5,25 +5,22 @@
 #SBATCH --time=1000:00
 #SBATCH --mem=0
 #SBATCH -c 64
-#SBATCH -G 4
-##SBATCH --partition=gowanlock
-##SBATCH --account=gowanlock_condo
-#SBATCH -w cn3
+#SBATCH -G 3
+#SBATCH --partition=gowanlock
+#SBATCH --account=gowanlock_condo
+#SBATCH -w cn2
 
 
 module load cuda
 
+# make clean
+# DIM=384 KT=1 make
+
+# ncu --set full -o profileTINYK1.out -k nodeCalculationsKernel -c 1  ./build/main /scratch/bwd29/data/TINY_Normalized.bin 384 0.2
+
 make clean
-MCPN=512 make
+ORDP=32 KT=3 BS=1024 make
+ncu --set full -o profileTINYK3-1.out -k nodeByPoint2 -c 1  ./build/main /scratch/bwd29/data/TINY_Normalized.bin 384 0.2
 
-echo "1024x1024*2 launches, sqrt(N) x 0.01 sampling, 32 per layer, k rps, non-rand RP, dynamic calcs per thread max 250000, 30 registers"
 
-       
-        echo "SUSY ________________________________________________________________"
-        echo "SUSY ________________________________________________________________"
-        echo "SUSY ________________________________________________________________"
-
-        ncu --set full -o profileMSD.out -k nodeCalculationsKernel -c 4  ./build/main /scratch/bwd29/data/MSD.bin 90 0.0091
-
-done
 echo "Completed!"

@@ -84,10 +84,10 @@ unsigned int buildNodeNet(double * data,
         cudaError_t stream_check = cudaStreamCreate(&stream);
         assert(cudaSuccess == stream_check);
 
-        unsigned int totalBlocks = ceil(numPoints*1.0/BLOCK_SIZE);
+        unsigned int totalBlocks = ceil(numPoints*1.0/1024);
 
         double cT1 = omp_get_wtime();
-        binningKernel<<<totalBlocks, BLOCK_SIZE, 0, stream>>>(d_binNumber,
+        binningKernel<<<totalBlocks, 1024, 0, stream>>>(d_binNumber,
                                                                 devicePointers.d_numPoints,
                                                                 devicePointers.d_dim,
                                                                 devicePointers.d_data,

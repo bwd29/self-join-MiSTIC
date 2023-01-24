@@ -176,7 +176,8 @@ void binningKernel(unsigned int * binNumbers, //array numPoints long
                     double * epsilon);
 
 __global__ 
-void nodeByPoint( double * data, //
+void nodeByPoint( const unsigned int dim,
+                    double * data, //
                     double * epsilon2,//
                     unsigned int * numPoints, //
                     unsigned int * batchPoints, //
@@ -189,3 +190,40 @@ void nodeByPoint( double * data, //
                     unsigned int * point_a, //
                     unsigned int * point_b, //
                     unsigned long long * keyValueIndex);
+
+__global__ 
+void nodeByPoint2( const unsigned int dim,
+                    double * data, //
+                    double * epsilon2,//
+                    unsigned int * numPoints, //
+                    unsigned int * batchPoints, //
+                    unsigned int * nodeID, //
+                    unsigned int * numNeighbors, //
+                    unsigned int * numPointsNode, //
+                    unsigned int * neighborNodes, //
+                    unsigned int * neighborOffset, //
+                    unsigned int * threadPoint,
+                    unsigned int * pointOffset, //
+                    unsigned int * point_a, //
+                    unsigned int * point_b, //
+                    unsigned long long * keyValueIndex);
+
+__global__ 
+void nodeByPoint3( const unsigned int dim,
+                  double * data, //
+                  double * epsilon2,//
+                  unsigned int * numPoints, //
+                  unsigned int * nodeID, //
+                  unsigned int * numNeighbors, //
+                  unsigned int * numPointsNode, //
+                  unsigned int * neighborNodes, //
+                  unsigned int * neighborOffset, //
+                  unsigned int * pointOffset, //
+                  unsigned int * point_a, //
+                  unsigned int * point_b, //
+                  unsigned long long * keyValueIndex,
+                  unsigned int * pointIdent,
+                  unsigned int * pointIndex);
+
+__host__ __device__
+inline bool cachedDistanceCheck(double epsilon2, unsigned int dim, double * data, double * p1, unsigned int p2, unsigned int numPoints);

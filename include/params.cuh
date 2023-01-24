@@ -37,8 +37,13 @@
 // #define MIN_NODE_SIZE 1000
 #define MAX_CALCS_PER_NODE 64
 #define TPP 8
+#define BUFFERSIZE 100000
+#define MAXBATCH 1000
+// #define ORDP 32
+// #define KTYPE 2
 
-const unsigned int RPPERLAYER = 30;
+const unsigned int RPPERLAYER = 10;
+
 
 
 const unsigned int MAXRP = 30;
@@ -47,8 +52,8 @@ const unsigned int MINRP = 2;
 
 
 const unsigned int NUMSTREAMS = 2;
-const unsigned int BLOCK_SIZE = 32; 
-const unsigned int KERNEL_BLOCKS = 1024*1024/BLOCK_SIZE;
+const unsigned int BLOCK_SIZE = 1024; 
+const unsigned int KERNEL_BLOCKS = BS*1024/BLOCK_SIZE;
 const int BRUTE = false;
 const int RANDOM = false;
 const int BOXED_RP = false;
@@ -69,4 +74,4 @@ const double LAYER_DIFF = 1.25;
 
 const int RAND = false;
 const unsigned long long initalPinnedResultsSize = 100000;
-const unsigned long long int resultsSize = 800000000; // 400MB
+const unsigned long long int resultsSize = 500000000; // 400MB
