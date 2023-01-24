@@ -2975,14 +2975,17 @@ struct neighborTable * nodeLauncher4(double * data,
     // printf("Time to transfer: %f\n", omp_get_wtime()-launchend);
     printf("Batchs: %d\n",numBatches);
     const unsigned int cdim = dim;
+    bool flag = false;
     #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic) if(!HOST)
     for(unsigned int i = 0; i < numBatches; i++){
+        
+        if(flag) continue;
         
         unsigned int tid = omp_get_thread_num();
             
         assert(cudaSuccess ==  cudaMemcpyAsync(pointIndex, d_pointIndex, sizeof(unsigned int ), cudaMemcpyDeviceToHost, stream[tid]));
             
-        if(*pointIndex >= numPoints) break;
+        if(*pointIndex >= numPoints) flag = true;
 
             
         cudaSetDevice(CUDA_DEVICE);
@@ -2998,7 +3001,6 @@ struct neighborTable * nodeLauncher4(double * data,
                                                                     d_data,
                                                                     d_epsilon2,
                                                                     d_numPoints,
-                                                                    &d_batchPoints[i],
                                                                     d_nodeID,
                                                                     d_numNeighbors,
                                                                     d_nodePoints,
@@ -3008,7 +3010,7 @@ struct neighborTable * nodeLauncher4(double * data,
                                                                     d_pointA[tid],
                                                                     d_pointB[tid],
                                                                     &d_keyValueIndex[i],
-                                                                    &d_pointIdent[tid],
+                                                                    d_pointIdent[tid],
                                                                     d_pointIndex);
 
 

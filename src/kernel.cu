@@ -799,7 +799,7 @@ void nodeByPoint3( const unsigned int dim,
                   unsigned long long * keyValueIndex,
                   unsigned int * pointIdent,
                   unsigned int * pointIndex){
-`
+
     unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
     
     unsigned int point;
@@ -815,7 +815,7 @@ void nodeByPoint3( const unsigned int dim,
 
     }
 
-    if(point >= (*numPoints) || keyValueIndex > BUFFERSIZE * 0.75 ){
+    if(point >= (*numPoints) || *keyValueIndex > (unsigned long long) (BUFFERSIZE * 0.75) ){
         return;
     }
  
