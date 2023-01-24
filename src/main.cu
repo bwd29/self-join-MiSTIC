@@ -101,7 +101,7 @@ int main(int argc, char*argv[]){
 
 	double time2 = omp_get_wtime();
 
-	#if KTYPE == 1
+	#if KT == 1
 	nodeLauncher(dimOrderedData,
 					dim,
 					numPoints,
@@ -110,7 +110,7 @@ int main(int argc, char*argv[]){
 					epsilon);
 	#endif
 
-	#if KTYPE == 2
+	#if KT == 2
 	nodeLauncher2(dimOrderedData,
 		dim,
 		numPoints,
@@ -119,7 +119,7 @@ int main(int argc, char*argv[]){
 		epsilon);
 	#endif
 
-	#if KTYPE == 3
+	#if KT == 3
 	nodeLauncher3(dimOrderedData,
 		dim,
 		numPoints,
@@ -128,7 +128,7 @@ int main(int argc, char*argv[]){
 		epsilon);
 	#endif
 
-	#if KTYPE == 4
+	#if KT == 4
 	nodeLauncher4(dimOrderedData,
 		dim,
 		numPoints,

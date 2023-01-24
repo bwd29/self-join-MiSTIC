@@ -2797,7 +2797,7 @@ struct neighborTable * nodeLauncher4(double * data,
     double epsilon2 = epsilon*epsilon;
 
  
-    unsigned int numBatches = MAXBATCH;//ceil(numPoints*1.0/(KERNEL_BLOCKS*BLOCK_SIZE))*TPP;
+    unsigned int numBatches = MAXBATCH; //ceil(numPoints*1.0/(KERNEL_BLOCKS*BLOCK_SIZE))*TPP;
     // unsigned int leftOverBatch = floor(numPoints*1.0/(KERNEL_BLOCKS*BLOCK_SIZE / TPP));
     // unsigned int * batchPoints = (unsigned int *)malloc(sizeof(unsigned int )*numBatches);
     // unsigned int batchOffset = 0;
@@ -2928,11 +2928,10 @@ struct neighborTable * nodeLauncher4(double * data,
         assert(cudaSuccess == cudaMalloc((void**)&d_pointIdent[i], sizeof(unsigned int)*BLOCK_SIZE*KERNEL_BLOCKS / TPP));
     }
 
-    unsigned int * pointIndex;
-    *pointIndex = 0;
+    unsigned int pointIndex = 0;
     unsigned int * d_pointIndex;
     assert(cudaSuccess == cudaMalloc((void**)&d_pointIndex, sizeof(unsigned int)));
-    assert(cudaSuccess ==  cudaMemcpy(d_pointIndex, pointIndex, sizeof(unsigned int), cudaMemcpyHostToDevice));
+    assert(cudaSuccess ==  cudaMemcpy(d_pointIndex, &pointIndex, sizeof(unsigned int), cudaMemcpyHostToDevice));
 
 
     unsigned int ** dataArray = (unsigned int **)malloc(sizeof(unsigned int*)*numBatches);
@@ -2944,7 +2943,7 @@ struct neighborTable * nodeLauncher4(double * data,
     for (unsigned int i = 0; i < numPoints; i++){	
         struct neighborTable temp;
         tables[i] = temp;
-        //tables[i] = (struct neighborTable)malloc(sizeof(struct neighborTable));
+        // tables[i] = (struct neighborTable)malloc(sizeof(struct neighborTable));
 
         tables[i].cntNDataArrays = 1; 
         tables[i].vectindexmin.resize(numBatches+1);
@@ -2983,9 +2982,9 @@ struct neighborTable * nodeLauncher4(double * data,
         
         unsigned int tid = omp_get_thread_num();
             
-        assert(cudaSuccess ==  cudaMemcpyAsync(pointIndex, d_pointIndex, sizeof(unsigned int ), cudaMemcpyDeviceToHost, stream[tid]));
+        assert(cudaSuccess ==  cudaMemcpyAsync(&pointIndex, d_pointIndex, sizeof(unsigned int ), cudaMemcpyDeviceToHost, stream[tid]));
             
-        if(*pointIndex >= numPoints) flag = true;
+        if(pointIndex >= numPoints) flag = true;
 
             
         cudaSetDevice(CUDA_DEVICE);

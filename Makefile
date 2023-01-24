@@ -1,5 +1,5 @@
 NVCC = nvcc
-CUDAFLAGS = -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3
+CUDAFLAGS = -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -g
 DFLAGS = 
 LIBDIRS = -I.
 
@@ -13,8 +13,8 @@ LIBDIRS = -I.
 # DFLAGS += -DMINRP=$(RP)
 # DFLAGS += -DMAXRP=$(RP)
 # DFLAGS += -DDIM=$(DIM)
-DFLAGS += -DKTYPE=$(KT)
-DFLAGS += -DBS=$(BS)
+# DFLAGS += -DKTYPE=$(KT)
+# DFLAGS += -DBS=$(BS)
 # DFLAGS += -DORDP=$(ORDP)
 
 build/main: build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o 
