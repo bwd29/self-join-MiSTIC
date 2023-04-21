@@ -1,0 +1,30 @@
+rm -f build/main build/*.o
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+==PROF== Connected to process 784639 (/home/bwd29/self-join/build/main)
+
+Time to read in file: 0.252621
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.091000 
+*********************************
+
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 1 pass
+
+==ERROR== LaunchFailed
+
+==ERROR== LaunchFailed
+==PROF== Trying to shutdown target application
+==ERROR== The application returned an error code (9).
+==ERROR== An error occurred while trying to profile.
+==PROF== Report: /home/bwd29/self-join/profileMSDKT5.out.ncu-rep
+Completed!

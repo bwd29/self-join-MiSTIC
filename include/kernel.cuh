@@ -173,7 +173,8 @@ void binningKernel(unsigned int * binNumbers, //array numPoints long
                     unsigned int * dim,
                     double * data, //all data
                     double * RP, //single rp
-                    double * epsilon);
+                    double * epsilon,
+                    const unsigned int rPPerLayer);
 
 __global__ 
 void nodeByPoint( const unsigned int dim,
@@ -224,6 +225,41 @@ void nodeByPoint3( const unsigned int dim,
                   unsigned long long * keyValueIndex,
                   unsigned int * pointIdent,
                   unsigned int * pointIndex);
+
+__global__ 
+void nodeByPoint4( const unsigned int dim,
+                  double * data, //
+                  double * epsilon2,//
+                  unsigned int * numPoints, //
+                  unsigned int * nodeID, //
+                  unsigned int * numNeighbors, //
+                  unsigned int * numPointsNode, //
+                  unsigned int * neighborNodes, //
+                  unsigned int * neighborOffset, //
+                  unsigned int * pointOffset, //
+                  unsigned int * point_a, //
+                  unsigned int * point_b, //
+                  unsigned long long * keyValueIndex,
+                  unsigned int * pointIdent,
+                  unsigned int * pointIndex);
+
+__global__ 
+void nodeByPoint5( const unsigned int dim,
+                double * data, //
+                double * epsilon2,//
+                unsigned int * numPoints, //
+                unsigned int * batchPoints, //
+                unsigned int * nodeID, //
+                unsigned int * numNeighbors, //
+                unsigned int * numPointsNode, //
+                unsigned int * neighborNodes, //
+                unsigned int * neighborOffset, //
+                unsigned int * pointOffset, //
+                unsigned int * point_a, //
+                unsigned int * point_b, //
+                unsigned long long * keyValueIndex,
+                unsigned int * tpp,
+                unsigned int * pointsPerBatch);
 
 __host__ __device__
 inline bool cachedDistanceCheck(double epsilon2, unsigned int dim, double * data, double * p1, unsigned int p2, unsigned int numPoints);

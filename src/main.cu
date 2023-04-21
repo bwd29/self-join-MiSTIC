@@ -137,6 +137,15 @@ int main(int argc, char*argv[]){
 		epsilon);
 	#endif
 
+	#if KT == 5
+	nodeLauncher5(dimOrderedData,
+		dim,
+		numPoints,
+		0, //numRP
+		pointArray,
+		epsilon);
+	#endif
+
 	double time3 = omp_get_wtime();
 	printf("Node Laucnher time: %f\n", time3 - time2);
 	if(ERRORPRINT) fprintf(stderr,"%f ",time3-time2);

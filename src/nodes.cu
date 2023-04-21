@@ -23,6 +23,10 @@ unsigned int buildNodeNet(double * data,
     double predictedNodeTime = 0;
     unsigned long long int  calcsPerSecond;
 
+    unsigned int tempRPCalc = ceil(pow(1+epsilon,20))*3 + 10;
+    const unsigned int rPPerLayer = tempRPCalc < 100 ? tempRPCalc:100;
+    std::cerr << rPPerLayer << " ";
+
 
     struct DevicePointers devicePointers;
 
@@ -60,25 +64,25 @@ unsigned int buildNodeNet(double * data,
     for(unsigned int i = 0; i < MAXRP; i++){ 
 
         // generate some reference points
-        double * RPArray = createRPArray(data, RPPERLAYER, dim, numPoints);
+        double * RPArray = createRPArray(data, rPPerLayer, dim, numPoints);
     
         std::vector<std::vector<struct Node>> layerNodes;
-        layerNodes.resize(RPPERLAYER);
+        layerNodes.resize(rPPerLayer);
         unsigned long long int lowestDistCalcs = ULLONG_MAX;
         unsigned int bestRP = 0;
 
         
         #if DEVICE_BUILD
 
-        unsigned int * allBinNumber = (unsigned int * )malloc(sizeof(unsigned int)*numPoints*RPPERLAYER);
+        unsigned int * allBinNumber = (unsigned int * )malloc(sizeof(unsigned int)*numPoints*rPPerLayer);
 
         //create bin number arrays on device
         unsigned int  * d_binNumber;
-        assert(cudaSuccess == cudaMalloc((void**)&d_binNumber, sizeof(unsigned int)*numPoints*RPPERLAYER));
+        assert(cudaSuccess == cudaMalloc((void**)&d_binNumber, sizeof(unsigned int)*numPoints*rPPerLayer));
 
         double * d_RP;
-        assert(cudaSuccess == cudaMalloc((void**)&d_RP, sizeof(double)*dim*RPPERLAYER));
-        assert(cudaSuccess == cudaMemcpy(d_RP, RPArray, sizeof(double)*dim*RPPERLAYER, cudaMemcpyHostToDevice));
+        assert(cudaSuccess == cudaMalloc((void**)&d_RP, sizeof(double)*dim*rPPerLayer));
+        assert(cudaSuccess == cudaMemcpy(d_RP, RPArray, sizeof(double)*dim*rPPerLayer, cudaMemcpyHostToDevice));
 
         cudaStream_t stream;
         cudaError_t stream_check = cudaStreamCreate(&stream);
@@ -92,24 +96,28 @@ unsigned int buildNodeNet(double * data,
                                                                 devicePointers.d_dim,
                                                                 devicePointers.d_data,
                                                                 d_RP,
-                                                                devicePointers.d_epsilon);
+                                                                devicePointers.d_epsilon,
+                                                                rPPerLayer);
 
         cudaStreamSynchronize(stream);
 
         double cT2 = omp_get_wtime();
 
         if(i==0){
-            calcsPerSecond = (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * sqrt(dim);//CALC_MULTI;
+            calcsPerSecond = (unsigned long long int) numPoints*rPPerLayer / (cT2-cT1) * sqrt(dim) / (floor(pow(1+epsilon, 20))*10); //(sqrt(numPoints*pow(dim,2))/(1000*dim));//CALC_MULTI;
         } else {
-            calcsPerSecond += (unsigned long long int) numPoints*RPPERLAYER / (cT2-cT1) * sqrt(dim);//CALC_MULTI;
-            calcsPerSecond = calcsPerSecond / 2;
+            calcsPerSecond += (unsigned long long int) numPoints*rPPerLayer / (cT2-cT1) * sqrt(dim) / (floor(pow(1+epsilon,20))*10); //(sqrt(numPoints*pow(dim,2))/(1000*dim));//CALC_MULTI;
+            calcsPerSecond = calcsPerSecond * CALC_MULTI;
         }
         printf("Predicted calcsPerSecond: %llu\n", calcsPerSecond);
         
 
-        assert(cudaSuccess == cudaMemcpyAsync(allBinNumber, d_binNumber, sizeof(unsigned int)*numPoints*RPPERLAYER, cudaMemcpyDeviceToHost, stream));
+        assert(cudaSuccess == cudaMemcpyAsync(allBinNumber, d_binNumber, sizeof(unsigned int)*numPoints*rPPerLayer, cudaMemcpyDeviceToHost, stream));
 
         cudaStreamSynchronize(stream);
+
+        cudaFree(d_binNumber);
+        cudaFree(d_RP);
 
         #endif  
 
@@ -129,8 +137,8 @@ unsigned int buildNodeNet(double * data,
             unsigned long long int subLowestDistCalcs = ULLONG_MAX;
 
 
-            #pragma omp parallel for num_threads(RPPERLAYER)
-            for(unsigned int j = 0; j < RPPERLAYER; j++){
+            #pragma omp parallel for num_threads(rPPerLayer)
+            for(unsigned int j = 0; j < rPPerLayer; j++){
                 // need to compare num dist calcs for different potental RP
                 std::vector<struct Node> tempNodes;// subGraph[n];
                 unsigned int tempNumNodes = 0;
@@ -220,7 +228,8 @@ unsigned int buildNodeNet(double * data,
         // double calcsPerSecondDyn = calcsPerSecond;//numPoints / calcTime;
         printf("Build Time: %f, Calc Time: %f, reduction %f\n############################################\n", predictedNodeTime, calcTime, timeReduction);
         // if(i > MINRP && ( newNodes.size()*1.0 / nodePerSecond *10> lowestDistCalcs*1.0 / calcsPerSecondDyn || i >= MAXRP)){ 
-        if(i >= MINRP && ( predictedNodeTime > timeReduction || i >= MAXRP)){ 
+        //if(i >= MINRP && ( predictedNodeTime > timeReduction || i >= MAXRP)){ 
+        if(i >= MINRP &&  (1.0*lowestDistCalcs / numPoints / numPoints < 0.5 || calcRatio > 0.99) && ( predictedNodeTime > timeReduction || i >= MAXRP)){ 
 
             // printf("\nPrevious Calcs: %llu, Current: %llu, ratio: %f\n", previousDistCalcs, lowestDistCalcs, calcRatio);
             // printf("Previous Nodes: %u, Current Nodes: %u, ratio: %f\n",numPreviousNodes, newNodes.size(), nodeRatio);
@@ -359,7 +368,7 @@ unsigned int initNodes(double * data,
 
 //     unsigned int totalBlocks = ceil(numPoints*1.0/BLOCK_SIZE);
 
-//     double time1 = omp_get_wtime();
+    // double time1 = omp_get_wtime();
     
 //     binningKernel<<<totalBlocks, BLOCK_SIZE, 0, stream>>>(d_binNumber,
 //                                                             devicePointers.d_numPoints,
@@ -370,12 +379,13 @@ unsigned int initNodes(double * data,
 
 //     cudaStreamSynchronize(stream);
 
-//     double time2 = omp_get_wtime();
+    // double time2 = omp_get_wtime();
 
-//     *calcTime = time2-time1;
+    // *calcTime = time2-time1;
     // sort the node points based on their bin numbers
     thrust::sort_by_key(thrust::omp::par, &binNumber[0], &binNumber[numPoints], &pointArray[0]);
 
+    // *calcTime = time2-time1;
     // thrust::sort_by_key(thrust::cuda::par.on(stream), d_binNumber, d_binNumber + numPoints, pointArray);
 
     // cudaStreamSynchronize(stream);
@@ -800,7 +810,7 @@ unsigned long long nodeSumSqrs(std::vector<struct Node> nodes, unsigned int numN
 
 void updateNeighbors(std::vector<struct Node> nodes, std::vector<std::vector<struct Node>> * newNodes){
         // go through the old node list and compare bins to adjacent splits of old nodes
-    #pragma omp parallel for //num_threads(64/RPPERLAYER)
+    #pragma omp parallel for //num_threads(64/rPPerLayer)
     for(unsigned int i = 0; i < nodes.size(); i++){ //for each old node
         for(unsigned int j = 0; j < (*newNodes)[i].size(); j++){ //go through each split off node
             // bin number that we are looking for adjacents to

@@ -1,5 +1,5 @@
 NVCC = nvcc
-CUDAFLAGS = -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -g
+CUDAFLAGS = -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3
 DFLAGS = 
 LIBDIRS = -I.
 
@@ -7,15 +7,18 @@ LIBDIRS = -I.
 # $(MIN_NODE_SIZE)?=1000
 
 
-# DFLAGS += -DCALC_MULTI=$(CALC_MULTI)
+DFLAGS += -DCALC_MULTI=$(CALC_MULTI)
 # DFLAGS += -DMIN_NODE_SIZE=$(MIN_NODE_SIZE)
 # DFLAGS += -DMAX_CALCS_PER_NODE=$(MCPN)
 # DFLAGS += -DMINRP=$(RP)
 # DFLAGS += -DMAXRP=$(RP)
 # DFLAGS += -DDIM=$(DIM)
 # DFLAGS += -DKTYPE=$(KT)
-# DFLAGS += -DBS=$(BS)
+DFLAGS += -DBS=$(BS)
+DFLAGS += -DCMP=$(CMP)
 # DFLAGS += -DORDP=$(ORDP)
+DFLAGS += -DCPB=$(CPB)
+# DFLAGS += -DTPP=$(TPP)
 
 build/main: build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o 
 	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o

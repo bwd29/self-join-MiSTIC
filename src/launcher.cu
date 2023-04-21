@@ -821,7 +821,8 @@ struct neighborTable * launchKernel(unsigned int numLayers,// the number of laye
     unsigned long long sumAdds,//the total number of addresses that will be compared to by other addresses for distance calcs
     unsigned int * linearRangeID,// an array for keeping trackj of starting points in the linear arrays
     unsigned int * linearRangeIndexes,// a linear version of rangeIndexes
-    unsigned int * linearRangeSizes){ // a linear version of rangeSizes
+    unsigned int * linearRangeSizes)
+    { // a linear version of rangeSizes
 
 
         cudaSetDevice(CUDA_DEVICE);
@@ -2809,6 +2810,7 @@ struct neighborTable * nodeLauncher4(double * data,
 
 
     // printf("Launch setup time: %f\n", launchend - launchstart);
+    double launchend = omp_get_wtime();
     ////////////////////////////////////////////////
     //     Perfoming Data Transfers to Device     //
     ////////////////////////////////////////////////
@@ -2827,6 +2829,446 @@ struct neighborTable * nodeLauncher4(double * data,
     // unsigned int * d_batchPoints;
     // assert(cudaSuccess == cudaMalloc((void**)&d_batchPoints, sizeof(unsigned int)*numBatches));
     // assert(cudaSuccess ==  cudaMemcpy(d_batchPoints, batchPoints, sizeof(unsigned int)*numBatches, cudaMemcpyHostToDevice));
+    
+
+    //the number of adjacent non-empty indexes for each non-empty index
+    unsigned int * d_nodeID;
+    assert(cudaSuccess == cudaMalloc((void**)&d_nodeID, sizeof(unsigned int)*numPoints));
+    assert(cudaSuccess ==  cudaMemcpy(d_nodeID, nodeID, sizeof(unsigned int)*numPoints, cudaMemcpyHostToDevice));
+    
+    // copy over the linear rangeIDs for keeping track of loactions in the linear arrays
+    unsigned int * d_pointOffsets;
+    assert(cudaSuccess == cudaMalloc((void**)&d_pointOffsets, sizeof(unsigned int)*numNodes));
+    assert(cudaSuccess ==  cudaMemcpy(d_pointOffsets, pointOffsets, sizeof(unsigned int)*numNodes, cudaMemcpyHostToDevice));
+
+    //copy over the linear range indexes wich kkeps track of the locations of adjacent non-empty indexes for each non-empty index
+    unsigned int * d_neighborOffset; //double check this for errors
+    assert(cudaSuccess == cudaMalloc((void**)&d_neighborOffset, sizeof(unsigned int)*numNodes));
+    assert(cudaSuccess ==  cudaMemcpy(d_neighborOffset, neighborOffset, sizeof(unsigned int)*numNodes, cudaMemcpyHostToDevice));
+
+    // copy over the size of the ranges in each adjacent non-empty index for each non-empty index
+    unsigned int * d_nodePoints;
+    assert(cudaSuccess == cudaMalloc((void**)&d_nodePoints, sizeof(unsigned int)*numNodes));
+    assert(cudaSuccess ==  cudaMemcpy(d_nodePoints, nodePoints, sizeof(unsigned int)*numNodes, cudaMemcpyHostToDevice));
+
+    // copy over array to keep track of number of points in each non-empty index
+    unsigned int * d_neighbors;
+    assert(cudaSuccess == cudaMalloc((void**)&d_neighbors, sizeof(unsigned int)*neighborOffsetCount));
+    assert(cudaSuccess ==  cudaMemcpy(d_neighbors, neighbors, sizeof(unsigned int)*neighborOffsetCount, cudaMemcpyHostToDevice));
+
+
+    // keep track of the number of pairs found in each batch
+    unsigned long long * keyValueIndex;
+    //use pinned memory for async copies back to the host
+    assert(cudaSuccess == cudaMallocHost((void**)&keyValueIndex, sizeof(unsigned long long )*numBatches));
+    for(int i = 0; i < numBatches; i++){
+        keyValueIndex[i] = 0;
+    }
+
+    //copy over the array to keep track of the pairs found in each batch
+    unsigned long long * d_keyValueIndex;
+    assert(cudaSuccess == cudaMalloc((void**)&d_keyValueIndex, sizeof(unsigned long long)*numBatches));
+    assert(cudaSuccess ==  cudaMemcpy(d_keyValueIndex, keyValueIndex, sizeof(unsigned long long)*numBatches, cudaMemcpyHostToDevice));
+
+
+    // copying over the squared epsilon value
+    double *d_epsilon2;
+    assert(cudaSuccess == cudaMalloc((void**)&d_epsilon2, sizeof(double)));
+    assert(cudaSuccess ==  cudaMemcpy(d_epsilon2, &epsilon2, sizeof(double), cudaMemcpyHostToDevice));
+
+    // copying over the dimensionality of the data
+    unsigned int *d_dim;
+    assert(cudaSuccess == cudaMalloc((void**)&d_dim, sizeof(unsigned int)));
+    assert(cudaSuccess ==  cudaMemcpy(d_dim, &dim, sizeof(unsigned int), cudaMemcpyHostToDevice));
+
+    // copy over the number of points in the dataset
+    unsigned int * d_numPoints;
+    assert(cudaSuccess == cudaMalloc((void**)&d_numPoints, sizeof(unsigned int)));
+    assert(cudaSuccess ==  cudaMemcpy(d_numPoints, &numPoints, sizeof(unsigned int), cudaMemcpyHostToDevice));
+
+
+    //array for keeping track of the paris found, this tyracks first value in pair
+    unsigned int * d_pointA[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_pointA[i], sizeof(unsigned int)*resultsSize));
+    }
+
+    //array for keeping track of the paris found, this tyracks second value in pair
+    unsigned int * d_pointB[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_pointB[i], sizeof(unsigned int)*resultsSize));
+    }
+
+    unsigned int * pointB[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMallocHost((void**)&pointB[i], sizeof(unsigned int)*initalPinnedResultsSize));
+    }
+
+    unsigned int *uniqueCnt;
+    assert(cudaSuccess == cudaMallocHost((void**)&uniqueCnt, numBatches*sizeof(unsigned int)));
+    for (unsigned int i = 0; i < numBatches; i++) {
+        uniqueCnt[i] = 0;
+    }
+
+    unsigned int *d_uniqueCnt;
+    assert(cudaSuccess == cudaMalloc((void**)&d_uniqueCnt, sizeof(unsigned int)*numBatches));
+    assert(cudaSuccess ==  cudaMemcpy(d_uniqueCnt, uniqueCnt, sizeof(unsigned int)*numBatches, cudaMemcpyHostToDevice));
+
+    unsigned int *d_uniqueKeyPosition[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_uniqueKeyPosition[i], sizeof(unsigned int)*numPoints));
+    }
+
+    unsigned int *d_uniqueKeys[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_uniqueKeys[i], sizeof(unsigned int)*numPoints));
+    }
+
+    unsigned int *d_pointIdent[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_pointIdent[i], sizeof(unsigned int)*BLOCK_SIZE*KERNEL_BLOCKS*TPP));
+    }
+
+    unsigned int pointIndex = 0;
+    unsigned int * d_pointIndex;
+    assert(cudaSuccess == cudaMalloc((void**)&d_pointIndex, sizeof(unsigned int)));
+    assert(cudaSuccess ==  cudaMemcpy(d_pointIndex, &pointIndex, sizeof(unsigned int), cudaMemcpyHostToDevice));
+
+
+    unsigned int ** dataArray = (unsigned int **)malloc(sizeof(unsigned int*)*numBatches);
+
+    //struct for storing the results
+    struct neighborTable * tables = (struct neighborTable*)malloc(sizeof(struct neighborTable)*numPoints);
+    
+    #if !HOST
+    for (unsigned int i = 0; i < numPoints; i++){	
+        struct neighborTable temp;
+        tables[i] = temp;
+        // tables[i] = (struct neighborTable)malloc(sizeof(struct neighborTable));
+
+        tables[i].cntNDataArrays = 1; 
+        tables[i].vectindexmin.resize(numBatches+1);
+        tables[i].vectindexmin[0] = i;
+        tables[i].vectindexmax.resize(numBatches+1);
+        tables[i].vectindexmax[0] = i;
+        tables[i].vectdataPtr.resize(numBatches+1);
+        tables[i].vectdataPtr[0] = pointArray;
+        omp_init_lock(&tables[i].pointLock);
+    }
+    #endif
+
+    cudaDeviceSynchronize(); 
+
+    cudaStream_t stream[NUMSTREAMS];
+    for (unsigned int i = 0; i < NUMSTREAMS; i++){
+        cudaError_t stream_check = cudaStreamCreate(stream+i);
+        assert(cudaSuccess == stream_check);
+    }
+
+    unsigned long long bufferSizes[NUMSTREAMS];
+    // double totalKernelTime[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        bufferSizes[i] = initalPinnedResultsSize;
+        // totalKernelTime[NUMSTREAMS] = 0;
+    }
+
+    printf("Time to transfer: %f\n", omp_get_wtime()-launchend);
+    printf("Batchs: %d\n",numBatches);
+    const unsigned int cdim = dim;
+    bool flag = false;
+    #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic) if(!HOST)
+    for(unsigned int i = 0; i < numBatches; i++){
+        
+        if(flag) continue;
+        
+        unsigned int tid = omp_get_thread_num();
+            
+        assert(cudaSuccess ==  cudaMemcpyAsync(&pointIndex, d_pointIndex, sizeof(unsigned int ), cudaMemcpyDeviceToHost, stream[tid]));
+            
+        if(pointIndex >= numPoints) {
+            flag = true;
+            i+=MAXBATCH;
+            continue;
+        }
+
+            
+        cudaSetDevice(CUDA_DEVICE);
+
+            
+
+        // printf("BatchNumber: %d/%d\n", i+1, numBatches);
+
+        // double kernelStartTime = omp_get_wtime();
+
+        //launch distance kernel
+        nodeByPoint4<<<KERNEL_BLOCKS*TPP, BLOCK_SIZE, 0, stream[tid]>>>( cdim, 
+                                                                    d_data,
+                                                                    d_epsilon2,
+                                                                    d_numPoints,
+                                                                    d_nodeID,
+                                                                    d_numNeighbors,
+                                                                    d_nodePoints,
+                                                                    d_neighbors,
+                                                                    d_neighborOffset,
+                                                                    d_pointOffsets,
+                                                                    d_pointA[tid],
+                                                                    d_pointB[tid],
+                                                                    &d_keyValueIndex[i],
+                                                                    d_pointIdent[tid],
+                                                                    d_pointIndex);
+
+
+
+        cudaStreamSynchronize(stream[tid]);
+
+        // totalKernelTime[tid] += omp_get_wtime() - kernelStartTime;
+
+        assert(cudaSuccess ==  cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid]));
+        cudaStreamSynchronize(stream[tid]);
+
+        printf("Batch %d Results: %llu\n", i,keyValueIndex[i]);
+
+
+        if(keyValueIndex[i] > bufferSizes[tid]){
+            //  printf("tid: %d first run\n", tid);
+            cudaFreeHost(pointB[tid]);
+            //printf("tid: %d freed memory\n", tid);
+            assert(cudaSuccess == cudaMallocHost((void**) &pointB[tid], sizeof(unsigned int)*(keyValueIndex[i] + 1)));
+            //printf("tid: %d pinned memory\n", tid);
+            bufferSizes[tid] = keyValueIndex[i];
+        }
+
+        // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_pointA[tid], d_pointA[tid] + keyValueIndex[i], d_pointB[tid]);
+        GPU_SortbyKey(stream[tid], d_pointA[tid], (unsigned int)keyValueIndex[i], d_pointB[tid]);
+
+
+        assert(cudaSuccess == cudaMemcpyAsync(pointB[tid], d_pointB[tid], sizeof(unsigned int)*keyValueIndex[i], cudaMemcpyDeviceToHost, stream[tid]));
+
+        cudaStreamSynchronize(stream[tid]);
+
+        unsigned int totalBlocksUnique = ceil((1.0*keyValueIndex[i])/(1.0*BLOCK_SIZE));	
+        kernelUniqueKeys<<<totalBlocksUnique, BLOCK_SIZE,0,stream[tid]>>>(d_pointA[tid],
+                                    &d_keyValueIndex[i], 
+                                    d_uniqueKeys[tid], 
+                                    d_uniqueKeyPosition[tid], 
+                                    &d_uniqueCnt[i]);
+
+        cudaStreamSynchronize(stream[tid]);
+
+        assert(cudaSuccess == cudaMemcpyAsync(&uniqueCnt[i], &d_uniqueCnt[i], sizeof(unsigned int), cudaMemcpyDeviceToHost, stream[tid]));
+
+        cudaStreamSynchronize(stream[tid]);
+
+        // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_uniqueKeys[tid], d_uniqueKeys[tid]+uniqueCnt[i], d_uniqueKeyPosition[tid]);
+        GPU_SortbyKey(stream[tid], d_uniqueKeys[tid], uniqueCnt[i], d_uniqueKeyPosition[tid]);
+
+
+        unsigned int * uniqueKeys = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
+        assert(cudaSuccess == cudaMemcpyAsync(uniqueKeys, d_uniqueKeys[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
+
+        unsigned int * uniqueKeyPosition = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
+        assert(cudaSuccess == cudaMemcpyAsync(uniqueKeyPosition, d_uniqueKeyPosition[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
+
+        dataArray[i] = (unsigned int*)malloc(sizeof(unsigned int)*keyValueIndex[i]);
+
+        cudaStreamSynchronize(stream[tid]);
+
+        constructNeighborTable(pointB[tid], dataArray[i], &keyValueIndex[i], uniqueKeys,uniqueKeyPosition, uniqueCnt[i], tables);
+
+        free(uniqueKeys);
+        free(uniqueKeyPosition);
+
+    }
+
+    unsigned long long totals = 0;
+    for(int i = 0; i < numBatches; i++){
+        totals += keyValueIndex[i];
+    }
+
+    printf("Total results Set Size: %llu \n", totals);
+
+    return tables;
+}
+
+struct neighborTable * nodeLauncher5(double * data,
+    unsigned int dim,
+    unsigned int numPoints,
+    unsigned int numRP,
+    unsigned int * pointArray,
+    double epsilon){
+
+
+    cudaSetDevice(CUDA_DEVICE);
+    
+    double time1 = omp_get_wtime();
+    std::vector<struct Node> nodes;
+
+    // build the data structure
+    unsigned int numNodes = buildNodeNet(data,
+            dim,
+            numPoints,
+            numRP,
+            pointArray,
+            epsilon,
+            &nodes);
+
+
+    cudaSetDevice(CUDA_DEVICE);
+
+    double time2 = omp_get_wtime();
+    printf("Node Construct time: %f\n", time2 - time1);
+    fprintf(stderr, "%f ", time2-time1);
+
+    // unsigned long long res = nodeForce(&nodes, epsilon, data, dim, numPoints);
+    // printf("Res: %llu\n", res);
+
+    // allocate a data array for used with distance calcs
+    // the data is moved around so that point in bin are near eachother in the array
+    // the location is based  on the point array that was altered during tree construction
+    // data can be organized 2 ways:
+    // 1. if DATANORM = true
+    //    the data is organized so that the the dimensions of each point are next to eachother
+    //	  this allows for coalesced memory accsess on the gpu to increase perfomance
+    //
+    // 2. if DATANORM is false
+    //	  this is the standard stride that was used after dimensional ordering
+
+    double * normData = (double *)malloc(sizeof(double)*numPoints*dim);
+    #pragma omp parallel for
+        for(unsigned int i = 0; i < numPoints; i++){
+            for(unsigned int j = 0; j < dim; j++){
+            #if DATANORM
+                normData[i+numPoints*j] = data[pointArray[i]*dim+j];
+            #else
+                normData[i*dim+j] = data[pointArray[i]*dim+j];
+            #endif
+        }
+    }
+
+    // printf("P1: %d, P2: %d\n", pointArray[0], nodes[0].nodePoints[0]);
+    //build array of point offsets
+    unsigned int * pointOffsets = (unsigned int *)malloc(sizeof(unsigned int)*numNodes);
+    //build array of number of calcs needed
+    unsigned long long * numCalcs = (unsigned long long *)malloc(sizeof(unsigned long long)*numNodes);
+    //build array of number of neighbors
+    unsigned int * numNeighbors = (unsigned int*)malloc(sizeof(unsigned int)*numNodes);
+    //array to count total number of neighbors for linear id
+    unsigned int * neighborOffset = (unsigned int *)malloc(sizeof(unsigned int)*numNodes);
+    // number of points in each node
+    unsigned int * nodePoints = (unsigned int *)malloc(sizeof(unsigned int)*numNodes);
+
+    unsigned int * nodeID = (unsigned int *)malloc(sizeof(unsigned int)*numPoints); 
+
+
+    //counter for neighbor offsets
+    unsigned int neighborOffsetCount = 0;
+    // std::vector<unsigned int> tempNeighbors;
+
+    unsigned int previous = 0;
+    for(unsigned int i = 0; i < numNodes; i++){
+        pointOffsets[i] = nodes[i].pointOffset;
+        numCalcs[i] = nodes[i].numCalcs;
+        neighborOffset[i] = neighborOffsetCount;
+        numNeighbors[i] = nodes[i].neighborIndex.size();
+        neighborOffsetCount += nodes[i].neighborIndex.size();
+        nodePoints[i] = nodes[i].numNodePoints;
+        // tempNeighbors.insert(tempNeighbors.end(), nodes[i].neighborIndex.begin(),nodes[i].neighborIndex.end());
+        for(unsigned int j = previous; j < previous+nodePoints[i]; j++){
+            nodeID[j] = i;
+        }
+        previous += nodePoints[i]; // maybe-1 here
+    }
+
+
+    // printf("po:%u\n", pointOffsets[10]);
+    unsigned int * neighbors = (unsigned int *)malloc(sizeof(unsigned int)*neighborOffsetCount);
+
+    unsigned int counter = 0;
+    for(unsigned int i = 0; i < numNodes; i++){
+        for(unsigned int j = 0; j < numNeighbors[i]; j++){
+        neighbors[counter+j] = nodes[i].neighborIndex[j];   
+        }
+        counter += numNeighbors[i];
+    }
+
+    // printf("total num neighbors: %u\n", counter);
+
+    unsigned long long sumCalcs = totalNodeCalcs(nodes, numNodes);
+    // printf("sum calcs: %llu\n", sumCalcs);
+
+    // store the squared value of epsilon because thats all that is needed for distance calcs
+    double epsilon2 = epsilon*epsilon;
+
+    //calculate the number of batches
+    double varCalc = sumCalcs*1.0 / numPoints / numPoints; 
+    unsigned int batchCount = 0;
+    unsigned long long calcCounter = 0;
+    unsigned int pointCounter = 0;
+    std::vector<unsigned int> pointsPerBatchVec;
+    std::vector<unsigned int> tppVec;
+    for(unsigned int i = 0; i < numNodes; i++){
+        for(unsigned int j = 0; j < nodePoints[i]; j++){
+            calcCounter += (numCalcs[i]/nodePoints[i]);
+            pointCounter++;
+            if(calcCounter * (1+varCalc*CMP)*2500/sqrt(numPoints) >= CALC_PER_BATCH*pow(10,10)|| pointCounter >= KERNEL_BLOCKS*BLOCK_SIZE ){
+                batchCount++;
+                calcCounter = 0;
+                pointsPerBatchVec.push_back(pointCounter);
+                tppVec.push_back(KERNEL_BLOCKS*BLOCK_SIZE / pointCounter);
+                pointCounter = 0;
+            }
+        }
+    }
+
+    batchCount++;
+    pointsPerBatchVec.push_back(pointCounter);
+    tppVec.push_back(KERNEL_BLOCKS*BLOCK_SIZE / pointCounter);
+
+ 
+    unsigned int numBatches = batchCount;
+    if(ERRORPRINT) fprintf(stderr,"%u %f ", numBatches, varCalc);
+
+    // unsigned int leftOverBatch = floor(numPoints*1.0/(KERNEL_BLOCKS*BLOCK_SIZE / TPP));
+    unsigned int * batchPoints = (unsigned int *)malloc(sizeof(unsigned int )*numBatches);
+    unsigned int * pointsPerBatch = (unsigned int *)malloc(sizeof(unsigned int )*numBatches);
+    unsigned int * tpp = (unsigned int *)malloc(sizeof(unsigned int )*numBatches);
+    unsigned int offsetCount = 0;
+    for(unsigned int i = 0; i < numBatches; i++){
+        batchPoints[i] = offsetCount;
+        offsetCount += pointsPerBatchVec[i];
+        pointsPerBatch[i] = pointsPerBatchVec[i];
+        tpp[i] = tppVec[i];
+    }
+
+
+
+    // printf("Launch setup time: %f\n", launchend - launchstart);
+    ////////////////////////////////////////////////
+    //     Perfoming Data Transfers to Device     //
+    ////////////////////////////////////////////////
+
+    //device array which holds the dataset
+    double * d_data;
+    assert(cudaSuccess == cudaMalloc((void**)&d_data, sizeof(double)*numPoints*dim));
+    assert(cudaSuccess ==  cudaMemcpy(d_data, normData, sizeof(double)*numPoints*dim, cudaMemcpyHostToDevice));
+
+    //the number of adjacent non-empty indexes for each non-empty index
+    unsigned int * d_numNeighbors;
+    assert(cudaSuccess == cudaMalloc((void**)&d_numNeighbors, sizeof(unsigned int)*numNodes));
+    assert(cudaSuccess ==  cudaMemcpy(d_numNeighbors, numNeighbors, sizeof(unsigned int)*numNodes, cudaMemcpyHostToDevice));
+
+    //the number of adjacent non-empty indexes for each non-empty index
+    unsigned int * d_batchPoints;
+    assert(cudaSuccess == cudaMalloc((void**)&d_batchPoints, sizeof(unsigned int)*numBatches));
+    assert(cudaSuccess ==  cudaMemcpy(d_batchPoints, batchPoints, sizeof(unsigned int)*numBatches, cudaMemcpyHostToDevice));
+
+    unsigned int * d_pointsPerBatch;
+    assert(cudaSuccess == cudaMalloc((void**)&d_pointsPerBatch, sizeof(unsigned int)*numBatches));
+    assert(cudaSuccess ==  cudaMemcpy(d_pointsPerBatch, pointsPerBatch, sizeof(unsigned int)*numBatches, cudaMemcpyHostToDevice));
+
+    unsigned int * d_tpp;
+    assert(cudaSuccess == cudaMalloc((void**)&d_tpp, sizeof(unsigned int)*numBatches));
+    assert(cudaSuccess ==  cudaMemcpy(d_tpp, tpp, sizeof(unsigned int)*numBatches, cudaMemcpyHostToDevice));
     
 
     //the number of adjacent non-empty indexes for each non-empty index
@@ -2923,17 +3365,6 @@ struct neighborTable * nodeLauncher4(double * data,
         assert(cudaSuccess == cudaMalloc((void**)&d_uniqueKeys[i], sizeof(unsigned int)*numPoints));
     }
 
-    unsigned int *d_pointIdent[NUMSTREAMS];
-    for(unsigned int i = 0; i < NUMSTREAMS; i++){
-        assert(cudaSuccess == cudaMalloc((void**)&d_pointIdent[i], sizeof(unsigned int)*BLOCK_SIZE*KERNEL_BLOCKS / TPP));
-    }
-
-    unsigned int pointIndex = 0;
-    unsigned int * d_pointIndex;
-    assert(cudaSuccess == cudaMalloc((void**)&d_pointIndex, sizeof(unsigned int)));
-    assert(cudaSuccess ==  cudaMemcpy(d_pointIndex, &pointIndex, sizeof(unsigned int), cudaMemcpyHostToDevice));
-
-
     unsigned int ** dataArray = (unsigned int **)malloc(sizeof(unsigned int*)*numBatches);
 
     //struct for storing the results
@@ -2943,7 +3374,7 @@ struct neighborTable * nodeLauncher4(double * data,
     for (unsigned int i = 0; i < numPoints; i++){	
         struct neighborTable temp;
         tables[i] = temp;
-        // tables[i] = (struct neighborTable)malloc(sizeof(struct neighborTable));
+        //tables[i] = (struct neighborTable)malloc(sizeof(struct neighborTable));
 
         tables[i].cntNDataArrays = 1; 
         tables[i].vectindexmin.resize(numBatches+1);
@@ -2970,108 +3401,101 @@ struct neighborTable * nodeLauncher4(double * data,
         bufferSizes[i] = initalPinnedResultsSize;
         // totalKernelTime[NUMSTREAMS] = 0;
     }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // return tables;
 
     // printf("Time to transfer: %f\n", omp_get_wtime()-launchend);
     printf("Batchs: %d\n",numBatches);
     const unsigned int cdim = dim;
-    bool flag = false;
+
+    double kstartTime = omp_get_wtime();
     #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic) if(!HOST)
     for(unsigned int i = 0; i < numBatches; i++){
-        
-        if(flag) continue;
-        
-        unsigned int tid = omp_get_thread_num();
-            
-        assert(cudaSuccess ==  cudaMemcpyAsync(&pointIndex, d_pointIndex, sizeof(unsigned int ), cudaMemcpyDeviceToHost, stream[tid]));
-            
-        if(pointIndex >= numPoints) flag = true;
+            cudaSetDevice(CUDA_DEVICE);
 
-            
-        cudaSetDevice(CUDA_DEVICE);
+            unsigned int tid = omp_get_thread_num();
 
-            
+            // printf("BatchNumber: %d/%d\n", i+1, numBatches);
 
-        // printf("BatchNumber: %d/%d\n", i+1, numBatches);
+            // double kernelStartTime = omp_get_wtime();
 
-        // double kernelStartTime = omp_get_wtime();
-
-        //launch distance kernel
-        nodeByPoint3<<<KERNEL_BLOCKS*TPP, BLOCK_SIZE, 0, stream[tid]>>>( cdim, 
-                                                                    d_data,
-                                                                    d_epsilon2,
-                                                                    d_numPoints,
-                                                                    d_nodeID,
-                                                                    d_numNeighbors,
-                                                                    d_nodePoints,
-                                                                    d_neighbors,
-                                                                    d_neighborOffset,
-                                                                    d_pointOffsets,
-                                                                    d_pointA[tid],
-                                                                    d_pointB[tid],
-                                                                    &d_keyValueIndex[i],
-                                                                    d_pointIdent[tid],
-                                                                    d_pointIndex);
+            //launch distance kernel
+            nodeByPoint5<<<KERNEL_BLOCKS, BLOCK_SIZE, 0, stream[tid]>>>( cdim, 
+                                                                        d_data,
+                                                                        d_epsilon2,
+                                                                        d_numPoints,
+                                                                        &d_batchPoints[i],
+                                                                        d_nodeID,
+                                                                        d_numNeighbors,
+                                                                        d_nodePoints,
+                                                                        d_neighbors,
+                                                                        d_neighborOffset,
+                                                                        d_pointOffsets,
+                                                                        d_pointA[tid],
+                                                                        d_pointB[tid],
+                                                                        &d_keyValueIndex[i],
+                                                                        &d_tpp[i],
+                                                                        &d_pointsPerBatch[i]);
 
 
 
-        cudaStreamSynchronize(stream[tid]);
+            cudaStreamSynchronize(stream[tid]);
 
-        // totalKernelTime[tid] += omp_get_wtime() - kernelStartTime;
+            // totalKernelTime[tid] += omp_get_wtime() - kernelStartTime;
 
-        assert(cudaSuccess ==  cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid]));
-        cudaStreamSynchronize(stream[tid]);
+            assert(cudaSuccess ==  cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid]));
+            cudaStreamSynchronize(stream[tid]);
 
-        // printf("Batch %d Results: %llu\n", i,keyValueIndex[i]);
-
-
-        if(keyValueIndex[i] > bufferSizes[tid]){
-            //  printf("tid: %d first run\n", tid);
-            cudaFreeHost(pointB[tid]);
-            //printf("tid: %d freed memory\n", tid);
-            assert(cudaSuccess == cudaMallocHost((void**) &pointB[tid], sizeof(unsigned int)*(keyValueIndex[i] + 1)));
-            //printf("tid: %d pinned memory\n", tid);
-            bufferSizes[tid] = keyValueIndex[i];
-        }
-
-        // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_pointA[tid], d_pointA[tid] + keyValueIndex[i], d_pointB[tid]);
-        GPU_SortbyKey(stream[tid], d_pointA[tid], (unsigned int)keyValueIndex[i], d_pointB[tid]);
+            // printf("Batch %d Results: %llu\n", i,keyValueIndex[i]);
 
 
-        assert(cudaSuccess == cudaMemcpyAsync(pointB[tid], d_pointB[tid], sizeof(unsigned int)*keyValueIndex[i], cudaMemcpyDeviceToHost, stream[tid]));
+            if(keyValueIndex[i] > bufferSizes[tid]){
+                //  printf("tid: %d first run\n", tid);
+                cudaFreeHost(pointB[tid]);
+                //printf("tid: %d freed memory\n", tid);
+                assert(cudaSuccess == cudaMallocHost((void**) &pointB[tid], sizeof(unsigned int)*(keyValueIndex[i] + 1)));
+                //printf("tid: %d pinned memory\n", tid);
+                bufferSizes[tid] = keyValueIndex[i];
+            }
 
-        cudaStreamSynchronize(stream[tid]);
+            // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_pointA[tid], d_pointA[tid] + keyValueIndex[i], d_pointB[tid]);
+            GPU_SortbyKey(stream[tid], d_pointA[tid], (unsigned int)keyValueIndex[i], d_pointB[tid]);
 
-        unsigned int totalBlocksUnique = ceil((1.0*keyValueIndex[i])/(1.0*BLOCK_SIZE));	
-        kernelUniqueKeys<<<totalBlocksUnique, BLOCK_SIZE,0,stream[tid]>>>(d_pointA[tid],
-                                    &d_keyValueIndex[i], 
-                                    d_uniqueKeys[tid], 
-                                    d_uniqueKeyPosition[tid], 
-                                    &d_uniqueCnt[i]);
+            assert(cudaSuccess == cudaMemcpyAsync(pointB[tid], d_pointB[tid], sizeof(unsigned int)*keyValueIndex[i], cudaMemcpyDeviceToHost, stream[tid]));
 
-        cudaStreamSynchronize(stream[tid]);
+            cudaStreamSynchronize(stream[tid]);
 
-        assert(cudaSuccess == cudaMemcpyAsync(&uniqueCnt[i], &d_uniqueCnt[i], sizeof(unsigned int), cudaMemcpyDeviceToHost, stream[tid]));
+            unsigned int totalBlocksUnique = ceil((1.0*keyValueIndex[i])/(1.0*BLOCK_SIZE));	
+            kernelUniqueKeys<<<totalBlocksUnique, BLOCK_SIZE,0,stream[tid]>>>(d_pointA[tid],
+                                        &d_keyValueIndex[i], 
+                                        d_uniqueKeys[tid], 
+                                        d_uniqueKeyPosition[tid], 
+                                        &d_uniqueCnt[i]);
 
-        cudaStreamSynchronize(stream[tid]);
+            cudaStreamSynchronize(stream[tid]);
 
-        // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_uniqueKeys[tid], d_uniqueKeys[tid]+uniqueCnt[i], d_uniqueKeyPosition[tid]);
-        GPU_SortbyKey(stream[tid], d_uniqueKeys[tid], uniqueCnt[i], d_uniqueKeyPosition[tid]);
+            assert(cudaSuccess == cudaMemcpyAsync(&uniqueCnt[i], &d_uniqueCnt[i], sizeof(unsigned int), cudaMemcpyDeviceToHost, stream[tid]));
+
+            cudaStreamSynchronize(stream[tid]);
+
+            // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_uniqueKeys[tid], d_uniqueKeys[tid]+uniqueCnt[i], d_uniqueKeyPosition[tid]);
+            GPU_SortbyKey(stream[tid], d_uniqueKeys[tid], uniqueCnt[i], d_uniqueKeyPosition[tid]);
 
 
-        unsigned int * uniqueKeys = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
-        assert(cudaSuccess == cudaMemcpyAsync(uniqueKeys, d_uniqueKeys[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
+            unsigned int * uniqueKeys = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
+            assert(cudaSuccess == cudaMemcpyAsync(uniqueKeys, d_uniqueKeys[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
 
-        unsigned int * uniqueKeyPosition = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
-        assert(cudaSuccess == cudaMemcpyAsync(uniqueKeyPosition, d_uniqueKeyPosition[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
+            unsigned int * uniqueKeyPosition = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
+            assert(cudaSuccess == cudaMemcpyAsync(uniqueKeyPosition, d_uniqueKeyPosition[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
 
-        dataArray[i] = (unsigned int*)malloc(sizeof(unsigned int)*keyValueIndex[i]);
+            dataArray[i] = (unsigned int*)malloc(sizeof(unsigned int)*keyValueIndex[i]);
 
-        cudaStreamSynchronize(stream[tid]);
+            cudaStreamSynchronize(stream[tid]);
 
-        constructNeighborTable(pointB[tid], dataArray[i], &keyValueIndex[i], uniqueKeys,uniqueKeyPosition, uniqueCnt[i], tables);
+            constructNeighborTable(pointB[tid], dataArray[i], &keyValueIndex[i], uniqueKeys,uniqueKeyPosition, uniqueCnt[i], tables);
 
-        free(uniqueKeys);
-        free(uniqueKeyPosition);
+            free(uniqueKeys);
+            free(uniqueKeyPosition);
 
     }
 
@@ -3079,8 +3503,10 @@ struct neighborTable * nodeLauncher4(double * data,
     for(int i = 0; i < numBatches; i++){
         totals += keyValueIndex[i];
     }
-
+    double kendTime = omp_get_wtime();
     printf("Total results Set Size: %llu \n", totals);
+    printf("Kernel Time: %f\n", kendTime - kstartTime);
+    std::cerr << kendTime-kstartTime << " ";
 
     return tables;
 }

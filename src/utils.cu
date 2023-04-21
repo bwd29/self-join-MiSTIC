@@ -67,7 +67,7 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 
 	unsigned int sample_size = numPoints*SAMPLE_PER;
 
-	unsigned int test_rp = sqrt(numPoints);
+	unsigned int test_rp = numRP * 2;
 
 	if(RAND) srand(omp_get_wtime());
 
@@ -145,12 +145,19 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 	//get first numRP rps
 	double * RPArray = (double *)malloc(sizeof(double)*numRP*dim);
 
-	#pragma omp parallel for
+	// #pragma omp parallel for
 	for(unsigned int i = 0; i < numRP; i++){
 		for(unsigned int j = 0; j < dim; j++){
 			RPArray[i*dim+j] = testRPArray[ order[i]*dim + j ];
 		}
 	}
+
+	// for(unsigned int i = 0; i < numRP - numRP/2; i++){
+	// 	for(unsigned int j = 0; j < dim; j++){
+	// 		RPArray[i*dim+j] = (double)rand()/(double)RAND_MAX;
+	// 	}
+	// 	// testRPArray[i] = (double)rand()/(double)RAND_MAX;
+	// }
 
 	// double * testRPArray2 = (double*)malloc(sizeof(double)*numRP/2*dim);
 

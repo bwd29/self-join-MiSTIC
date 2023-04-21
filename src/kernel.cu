@@ -418,16 +418,37 @@ void nodeCalculationsKernel(unsigned int *numPoints,
         return;
     }
     // unsigned int assignedNode = nodeAssign[tid];
+    // unsigned int prevJ = threadOffsets[tid];
+    // unsigned int pBase = pointOffsets[ nodeAssign[tid]];
+
+    // double pData[DIM];
 
     for(unsigned int i = 0; i < numNeighbors[ nodeAssign[tid]]; i++){
         unsigned int neighborIndex = neighbors[neighborOffset[nodeAssign[tid]] + i];
-        // unsigned int neighborPoints = nodePoints[neighborIndex];
+        unsigned int neighborPoints = nodePoints[neighborIndex];
         // unsigned long long numCals = (unsigned long long int)nodePoints[ nodeAssign[tid]]* nodePoints[ neighbors[neighborOffset[ nodeAssign[tid]] + i]];
-        for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[ nodeAssign[tid]]* nodePoints[ neighborIndex]; j += numThreadsPerNode[ nodeAssign[tid]]){
+        // unsigned int p1 = pBase + prevJ / nodePoints[ neighborIndex];
+        // for(unsigned int k = 0; k < DIM; i++){
+        //     pData[k] = data[k*(*numPoints) + pBase];
+        // }
+        // cache
+        for(unsigned long long int j = threadOffsets[tid]; j < (unsigned long long int)nodePoints[ nodeAssign[tid]]* neighborPoints; j += numThreadsPerNode[ nodeAssign[tid]]){
 
-            unsigned int p1 = pointOffsets[ nodeAssign[tid]] + j / nodePoints[ neighborIndex];
-            unsigned int p2 = pointOffsets[ neighborIndex] + j % nodePoints[ neighborIndex];
+            // if(j / neighborPoints != prevJ){
+            //     prevJ = j / neighborPoints;
+            //     p1 = pBase + j / neighborPoints;
+            //     //update cache
+            //     for(unsigned int k = 0; k < DIM; k++){
+            //         pData[k] = data[k*(*numPoints) + pBase];
+            //     }
+            // }
 
+
+            unsigned int p1 = pointOffsets[ nodeAssign[tid]] + j / neighborPoints;
+
+            unsigned int p2 = pointOffsets[ neighborIndex] + j % neighborPoints;
+
+            // if (cachedDistanceCheck((*epsilon2), DIM, data, pData, p2, (*numPoints))){
             if (distanceCheck((*epsilon2), (*dim), data, p1, p2, (*numPoints))){
             // if (sum <= *epsilon2){
                 //  store point
@@ -675,6 +696,68 @@ void nodeByPoint2( const unsigned int dim,
     }
 
 }
+
+__global__ 
+void nodeByPoint3( const unsigned int dim,
+                  double * data, //
+                  double * epsilon2,//
+                  unsigned int * numPoints, //
+                  unsigned int * batchPoints, //
+                  unsigned int * nodeID, //
+                  unsigned int * numNeighbors, //
+                  unsigned int * numPointsNode, //
+                  unsigned int * neighborNodes, //
+                  unsigned int * neighborOffset, //
+                  unsigned int * threadPoint,
+                  unsigned int * pointOffset, //
+                  unsigned int * point_a, //
+                  unsigned int * point_b, //
+                  unsigned long long * keyValueIndex){
+
+    unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
+
+
+    if((*batchPoints) + tid/TPP >= (*numPoints) ){
+        return;
+    }
+
+    unsigned int point = threadPoint[(*batchPoints) + tid/TPP];
+
+
+    unsigned int node = nodeID[point];
+
+    // double pData[DIM];
+
+    // for(unsigned int i = 0; i < DIM; i++){
+    //     pData[i] = data[i*(*numPoints) + point];
+    // }
+
+    //for every neighboring node
+    for(unsigned int i = 0; i < numNeighbors[node]; i++){
+        
+        unsigned int neighborNodeIndex = neighborNodes[neighborOffset[node]+i];
+
+        for(unsigned int j = tid%TPP; j < numPointsNode[neighborNodeIndex]; j+=TPP){
+            // unsigned int comparePoint = pointOffset[neighborNodeIndex]+j;
+            
+            // double sum = 0;
+            // for(unsigned int k = 0; k < DIM; i++){
+            //     sum += (pData[k] - data[k*(*numPoints) + comparePoint])*(pData[k] - data[k*(*numPoints) + comparePoint]);
+            // }
+            // if(sum <= (*epsilon2)){
+            if (distanceCheck((*epsilon2), dim, data, point, pointOffset[neighborNodeIndex]+j, (*numPoints))){
+            // if (cachedDistanceCheck((*epsilon2), DIM, data, pData, comparePoint, (*numPoints))){
+                //  store point
+                unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
+                point_a[index] = point; //stores the first point Number
+                point_b[index] = pointOffset[neighborNodeIndex]+j; // this stores the coresponding point number to form a pair
+            }
+        }
+    }
+
+}
+
+
 __host__ __device__ //may need to switch to inline (i did)
 inline bool cachedDistanceCheck(double epsilon2, unsigned int dim, double * data, double * p1, unsigned int p2, unsigned int numPoints){
     
@@ -716,32 +799,6 @@ inline bool cachedDistanceCheck(double epsilon2, unsigned int dim, double * data
 
 __host__ __device__ //may need to switch to inline (i did)
 inline bool distanceCheck(double epsilon2, unsigned int dim, double * data, unsigned int p1, unsigned int p2, unsigned int numPoints){
-    
-    // double sum[8];
-    
-    // #pragma unroll
-    // for(unsigned int i = 0; i < 8; i++){
-    //     sum[i] = 0;
-    // }
-
-    // for(unsigned int i = 0; i < DIM; i+=8){
-        
-    //     #pragma unroll
-    //     for(unsigned int j = 0; j < 8 && (i + j) < DIM; j++){
-    //         sum[j] += (data[(i+j)*numPoints + p1] - data[(i+j)*numPoints + p2])*(data[(i+j)*numPoints + p1] - data[(i+j)*numPoints + p2]);
-    //     }
-
-    //     #pragma unroll
-    //     for(unsigned int j = 1; j < 8; j++){
-    //         sum[0] += sum[j];
-    //         sum[j] = 0;
-    //     }
-
-    //     if(sum[0] > epsilon2) return false;
-        
-    // }
-
-//########################################################################################
 
     double sum = 0;
     for(unsigned int i = 0; i < dim; i++){
@@ -758,7 +815,8 @@ void binningKernel(unsigned int * binNumbers, //array numPoints long
                     unsigned int * dim,
                     double * data, //all data
                     double * RP, //single rp
-                    double * epsilon){
+                    double * epsilon,
+                    const unsigned int rPPerLayer){
 
     unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
 
@@ -766,7 +824,7 @@ void binningKernel(unsigned int * binNumbers, //array numPoints long
         return;
     }
 
-    for(unsigned int i = 0; i < RPPERLAYER; i++){
+    for(unsigned int i = 0; i < rPPerLayer; i++){
 
         double distance = 0;
         for(unsigned int j = 0; j < *dim; j++){
@@ -784,7 +842,7 @@ void binningKernel(unsigned int * binNumbers, //array numPoints long
 
 
 __global__ 
-void nodeByPoint3( const unsigned int dim,
+void nodeByPoint4( const unsigned int dim,
                   double * data, //
                   double * epsilon2,//
                   unsigned int * numPoints, //
@@ -802,46 +860,104 @@ void nodeByPoint3( const unsigned int dim,
 
     unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
     
-    unsigned int point;
-    if(tid % TPP == 0){
-        point = atomicAdd(pointIndex, 1);
-        pointIdent[tid / TPP] = point;
+    while (true){
+
+        if (*keyValueIndex > (BUFFERSIZE * 0.80) ){
+            return;
+        }
+
+        unsigned int point;
+        // if(tid % TPP == 0){
+            point = atomicAdd(pointIndex, 1);
+            // pointIdent[tid / TPP] = point;
+        // }
+
+        // __syncthreads();
+
+        // if(tid % TPP != 0){
+        //     point = pointIdent[tid/TPP];
+
+        // }
+
+        if(point >= (*numPoints)){
+            return;
+        }
+
+
+
+    
+        unsigned int node = nodeID[point];
+
+        // double pData[DIM];
+
+        // for(unsigned int i = 0; i < DIM; i++){
+        //     pData[i] = data[i*(*numPoints) + point];
+        // }
+
+        //for every neighboring node
+        for(unsigned int i = 0; i < numNeighbors[node]; i++){
+            
+            unsigned int neighborNodeIndex = neighborNodes[neighborOffset[node]+i];
+
+            for(unsigned int j = tid%TPP; j < numPointsNode[neighborNodeIndex]; j+=TPP){
+                // unsigned int comparePoint = pointOffset[neighborNodeIndex]+j;
+                
+                // double sum = 0;
+                // for(unsigned int k = 0; k < DIM; i++){
+                //     sum += (pData[k] - data[k*(*numPoints) + comparePoint])*(pData[k] - data[k*(*numPoints) + comparePoint]);
+                // }
+                // if(sum <= (*epsilon2)){
+                if (distanceCheck((*epsilon2), dim, data, point, pointOffset[neighborNodeIndex]+j, (*numPoints))){
+                // if (cachedDistanceCheck((*epsilon2), DIM, data, pData, comparePoint, (*numPoints))){
+                    //  store point
+                    unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
+                    point_a[index] = point; //stores the first point Number
+                    point_b[index] = pointOffset[neighborNodeIndex]+j; // this stores the coresponding point number to form a pair
+                }
+            }
+        }
     }
 
-    __syncthreads();
+}
 
-    if(tid % TPP != 0){
-        point = pointIdent[tid/TPP];
 
-    }
+__global__ 
+void nodeByPoint5( const unsigned int dim,
+                  double * data, //
+                  double * epsilon2,//
+                  unsigned int * numPoints, //
+                  unsigned int * batchPoints, //
+                  unsigned int * nodeID, //
+                  unsigned int * numNeighbors, //
+                  unsigned int * numPointsNode, //
+                  unsigned int * neighborNodes, //
+                  unsigned int * neighborOffset, //
+                  unsigned int * pointOffset, //
+                  unsigned int * point_a, //
+                  unsigned int * point_b, //
+                  unsigned long long * keyValueIndex,
+                  unsigned int * tpp,
+                  unsigned int * pointsPerBatch){
 
-    if(point >= (*numPoints) || *keyValueIndex > (unsigned long long) (BUFFERSIZE * 0.75) ){
+    const unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
+
+
+    if((*batchPoints) + tid/(*tpp) >= (*numPoints) ||  tid/(*tpp) >= (*pointsPerBatch)){
         return;
     }
- 
-    unsigned int node = nodeID[point];
 
-    // double pData[DIM];
+    const unsigned int point = (*batchPoints) + tid/(*tpp);
 
-    // for(unsigned int i = 0; i < DIM; i++){
-    //     pData[i] = data[i*(*numPoints) + point];
-    // }
+    const unsigned int node = nodeID[point];
 
     //for every neighboring node
     for(unsigned int i = 0; i < numNeighbors[node]; i++){
         
-        unsigned int neighborNodeIndex = neighborNodes[neighborOffset[node]+i];
+        const unsigned int neighborNodeIndex = neighborNodes[neighborOffset[node]+i];
 
-        for(unsigned int j = tid%TPP; j < numPointsNode[neighborNodeIndex]; j+=TPP){
-            // unsigned int comparePoint = pointOffset[neighborNodeIndex]+j;
-            
-            // double sum = 0;
-            // for(unsigned int k = 0; k < DIM; i++){
-            //     sum += (pData[k] - data[k*(*numPoints) + comparePoint])*(pData[k] - data[k*(*numPoints) + comparePoint]);
-            // }
-            // if(sum <= (*epsilon2)){
+        for(unsigned int j = tid%(*tpp); j < numPointsNode[neighborNodeIndex]; j+=(*tpp)){
+
             if (distanceCheck((*epsilon2), dim, data, point, pointOffset[neighborNodeIndex]+j, (*numPoints))){
-            // if (cachedDistanceCheck((*epsilon2), DIM, data, pData, comparePoint, (*numPoints))){
                 //  store point
                 unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
                 point_a[index] = point; //stores the first point Number
@@ -849,5 +965,4 @@ void nodeByPoint3( const unsigned int dim,
             }
         }
     }
-
 }

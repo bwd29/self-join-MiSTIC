@@ -74,3 +74,10 @@ struct neighborTable * nodeLauncher4(double * data,
     unsigned int * pointArray,
     double epsilon);
         
+struct neighborTable * nodeLauncher5(double * data,
+    unsigned int dim,
+    unsigned int numPoints,
+    unsigned int numRP,
+    unsigned int * pointArray,
+    double epsilon);
+        
