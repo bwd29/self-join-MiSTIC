@@ -3204,13 +3204,17 @@ struct neighborTable * nodeLauncher5(double * data,
     unsigned int batchCount = 0;
     unsigned long long calcCounter = 0;
     unsigned int pointCounter = 0;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    double factor1 = (1+varCalc*CMP)*2000/sqrt(numPoints);
+    double factor2 = CALC_PER_BATCH * pow(10,10) * 1.0 * sqrt(pow(1+epsilon,20));
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     std::vector<unsigned int> pointsPerBatchVec;
     std::vector<unsigned int> tppVec;
     for(unsigned int i = 0; i < numNodes; i++){
         for(unsigned int j = 0; j < nodePoints[i]; j++){
             calcCounter += (numCalcs[i]/nodePoints[i]);
             pointCounter++;
-            if(calcCounter * (1+varCalc*CMP)*2500/sqrt(numPoints) >= CALC_PER_BATCH*pow(10,10)|| pointCounter >= KERNEL_BLOCKS*BLOCK_SIZE ){
+            if(calcCounter * factor1 >= factor2 || pointCounter >= KERNEL_BLOCKS*BLOCK_SIZE ){
                 batchCount++;
                 calcCounter = 0;
                 pointsPerBatchVec.push_back(pointCounter);
@@ -3313,19 +3317,19 @@ struct neighborTable * nodeLauncher5(double * data,
 
 
     // copying over the squared epsilon value
-    double *d_epsilon2;
-    assert(cudaSuccess == cudaMalloc((void**)&d_epsilon2, sizeof(double)));
-    assert(cudaSuccess ==  cudaMemcpy(d_epsilon2, &epsilon2, sizeof(double), cudaMemcpyHostToDevice));
+    const double d_epsilon2 = epsilon2;
+    // assert(cudaSuccess == cudaMalloc((void**)&d_epsilon2, sizeof(double)));
+    // assert(cudaSuccess ==  cudaMemcpy(d_epsilon2, &epsilon2, sizeof(double), cudaMemcpyHostToDevice));
 
     // copying over the dimensionality of the data
-    unsigned int *d_dim;
-    assert(cudaSuccess == cudaMalloc((void**)&d_dim, sizeof(unsigned int)));
-    assert(cudaSuccess ==  cudaMemcpy(d_dim, &dim, sizeof(unsigned int), cudaMemcpyHostToDevice));
+    const unsigned int d_dim = dim;
+    // assert(cudaSuccess == cudaMalloc((void**)&d_dim, sizeof(unsigned int)));
+    // assert(cudaSuccess ==  cudaMemcpy(d_dim, &dim, sizeof(unsigned int), cudaMemcpyHostToDevice));
 
     // copy over the number of points in the dataset
-    unsigned int * d_numPoints;
-    assert(cudaSuccess == cudaMalloc((void**)&d_numPoints, sizeof(unsigned int)));
-    assert(cudaSuccess ==  cudaMemcpy(d_numPoints, &numPoints, sizeof(unsigned int), cudaMemcpyHostToDevice));
+    const unsigned int d_numPoints = numPoints;
+    // assert(cudaSuccess == cudaMalloc((void**)&d_numPoints, sizeof(unsigned int)));
+    // assert(cudaSuccess ==  cudaMemcpy(d_numPoints, &numPoints, sizeof(unsigned int), cudaMemcpyHostToDevice));
 
 
     //array for keeping track of the paris found, this tyracks first value in pair
@@ -3406,7 +3410,6 @@ struct neighborTable * nodeLauncher5(double * data,
 
     // printf("Time to transfer: %f\n", omp_get_wtime()-launchend);
     printf("Batchs: %d\n",numBatches);
-    const unsigned int cdim = dim;
 
     double kstartTime = omp_get_wtime();
     #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic) if(!HOST)
@@ -3420,7 +3423,7 @@ struct neighborTable * nodeLauncher5(double * data,
             // double kernelStartTime = omp_get_wtime();
 
             //launch distance kernel
-            nodeByPoint5<<<KERNEL_BLOCKS, BLOCK_SIZE, 0, stream[tid]>>>( cdim, 
+            nodeByPoint5<<<KERNEL_BLOCKS, BLOCK_SIZE, 0, stream[tid]>>>(d_dim, 
                                                                         d_data,
                                                                         d_epsilon2,
                                                                         d_numPoints,
@@ -3507,6 +3510,18 @@ struct neighborTable * nodeLauncher5(double * data,
     printf("Total results Set Size: %llu \n", totals);
     printf("Kernel Time: %f\n", kendTime - kstartTime);
     std::cerr << kendTime-kstartTime << " ";
+
+
+    cudaFree(d_data);
+    cudaFree(d_numNeighbors);
+    cudaFree(d_batchPoints);
+    cudaFree(d_pointsPerBatch);
+    cudaFree(d_tpp);
+    cudaFree(d_nodeID);
+    cudaFree(d_pointOffsets);
+    cudaFree(d_neighbors);
+    cudaFree(d_keyValueIndex);
+    
 
     return tables;
 }

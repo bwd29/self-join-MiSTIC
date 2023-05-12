@@ -7,7 +7,7 @@ LIBDIRS = -I.
 # $(MIN_NODE_SIZE)?=1000
 
 
-DFLAGS += -DCALC_MULTI=$(CALC_MULTI)
+# DFLAGS += -DCALC_MULTI=$(CALC_MULTI)
 # DFLAGS += -DMIN_NODE_SIZE=$(MIN_NODE_SIZE)
 # DFLAGS += -DMAX_CALCS_PER_NODE=$(MCPN)
 # DFLAGS += -DMINRP=$(RP)
@@ -15,9 +15,10 @@ DFLAGS += -DCALC_MULTI=$(CALC_MULTI)
 # DFLAGS += -DDIM=$(DIM)
 # DFLAGS += -DKTYPE=$(KT)
 DFLAGS += -DBS=$(BS)
-DFLAGS += -DCMP=$(CMP)
+DFLAGS += -DKB=$(KB)
+# DFLAGS += -DCMP=$(CMP)
 # DFLAGS += -DORDP=$(ORDP)
-DFLAGS += -DCPB=$(CPB)
+# DFLAGS += -DCPB=$(CPB)
 # DFLAGS += -DTPP=$(TPP)
 
 build/main: build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o 

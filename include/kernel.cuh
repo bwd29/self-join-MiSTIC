@@ -246,8 +246,8 @@ void nodeByPoint4( const unsigned int dim,
 __global__ 
 void nodeByPoint5( const unsigned int dim,
                 double * data, //
-                double * epsilon2,//
-                unsigned int * numPoints, //
+                const double epsilon2,//
+                const unsigned int numPoints, //
                 unsigned int * batchPoints, //
                 unsigned int * nodeID, //
                 unsigned int * numNeighbors, //

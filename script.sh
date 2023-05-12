@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=nodeStats
-#SBATCH --output=/home/bwd29/self-join/results/final7.out
-#SBATCH --error=/home/bwd29/self-join/results/final7.err
+#SBATCH --output=/home/bwd29/self-join/results/final9.out
+#SBATCH --error=/home/bwd29/self-join/results/final9.err
 #SBATCH --time=3000:00
 #SBATCH --mem=0
 #SBATCH -c 64 
@@ -21,16 +21,16 @@ module load cuda
 echo -e "\nEPSILON | NUMPOINTS | RP | NODES | CALCS | Construct T | Kernel T | Total T\n" >&2
 
 
-        for i in 1
+        for i in 256
         do
-                for t in 14
+                for t in 1024
                 do
-                        for k in 1.5
+                        for k in 1
                         do
                                 make clean
-                                CALC_MULTI=$k CPB=115 BS=256 CMP=$t make #KT=4 BS=512
+                                BS=$i KB=$t make
 
-                                echo -e "\n\n _______________ $i ____________ $t __________ $k ______________________\n" >&2
+                                echo -e "\n\n _______________ $i _____ $t ____________________________\n" >&2
                                 
                                 echo "MSD ________________________________________________________________"
                                 echo "MSD ________________________________________________________________"
@@ -43,36 +43,36 @@ echo -e "\nEPSILON | NUMPOINTS | RP | NODES | CALCS | Construct T | Kernel T | T
 
                 
                                 
-                                # echo "UNI ________________________________________________________________"
-                                # echo "UNI ________________________________________________________________"
-                                # echo -e "\n\nUNI ________________________________________________________________\n" >&2
+                                echo "UNI ________________________________________________________________"
+                                echo "UNI ________________________________________________________________"
+                                echo -e "\n\nUNI ________________________________________________________________\n" >&2
 
-                                # for j in 0.25 0.3 0.35 0.4 0.45
-                                # do
-                                # ./build/main /scratch/bwd29/data/ndim_10_2mil.bin 10 $j
-                                # done
+                                for j in 0.25 0.3 0.35 0.4 0.45
+                                do
+                                ./build/main /scratch/bwd29/data/ndim_10_2mil.bin 10 $j
+                                done
 
                         
 
-                                # echo "EXPO ________________________________________________________________"
-                                # echo "EXPO ________________________________________________________________"
-                                # echo -e "\n\nEXPO ________________________________________________________________\n" >&2 
+                                echo "EXPO ________________________________________________________________"
+                                echo "EXPO ________________________________________________________________"
+                                echo -e "\n\nEXPO ________________________________________________________________\n" >&2 
 
-                                # for j in 0.03 0.03375 0.0375 0.04125 0.045
-                                # do
-                                # ./build/main /scratch/bwd29/data/2mil16dexpo.bin 16 $j
-                                # done
+                                for j in 0.03 0.03375 0.0375 0.04125 0.045
+                                do
+                                ./build/main /scratch/bwd29/data/2mil16dexpo.bin 16 $j
+                                done
 
 
 
-                                # echo "Census____________________________________________________________"
-                                # echo "Census____________________________________________________________"
-                                # echo -e "\n\nCensus____________________________________________________________\n" >&2
+                                echo "Census____________________________________________________________"
+                                echo "Census____________________________________________________________"
+                                echo -e "\n\nCensus____________________________________________________________\n" >&2
 
-                                # for j in 0.001 0.00325 0.0055 0.00775 0.01
-                                # do
-                                #         ./build/main /scratch/bwd29/data/USC_Normalized_No1Col.bin 68 $j
-                                # done
+                                for j in 0.001 0.00325 0.0055 0.00775 0.01
+                                do
+                                        ./build/main /scratch/bwd29/data/USC_Normalized_No1Col.bin 68 $j
+                                done
 
                 
                                 echo "Wave __________________________________________________"

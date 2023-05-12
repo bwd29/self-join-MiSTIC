@@ -924,8 +924,8 @@ void nodeByPoint4( const unsigned int dim,
 __global__ 
 void nodeByPoint5( const unsigned int dim,
                   double * data, //
-                  double * epsilon2,//
-                  unsigned int * numPoints, //
+                  const double epsilon2,//
+                  const unsigned int numPoints, //
                   unsigned int * batchPoints, //
                   unsigned int * nodeID, //
                   unsigned int * numNeighbors, //
@@ -942,7 +942,7 @@ void nodeByPoint5( const unsigned int dim,
     const unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
 
 
-    if((*batchPoints) + tid/(*tpp) >= (*numPoints) ||  tid/(*tpp) >= (*pointsPerBatch)){
+    if((*batchPoints) + tid/(*tpp) >= numPoints ||  tid/(*tpp) >= (*pointsPerBatch)){
         return;
     }
 
@@ -957,7 +957,7 @@ void nodeByPoint5( const unsigned int dim,
 
         for(unsigned int j = tid%(*tpp); j < numPointsNode[neighborNodeIndex]; j+=(*tpp)){
 
-            if (distanceCheck((*epsilon2), dim, data, point, pointOffset[neighborNodeIndex]+j, (*numPoints))){
+            if (distanceCheck(epsilon2, dim, data, point, pointOffset[neighborNodeIndex]+j, numPoints)){
                 //  store point
                 unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
                 point_a[index] = point; //stores the first point Number

@@ -19,8 +19,9 @@ module load cuda
 # ncu --set full -o profileTINYK1.out -k nodeCalculationsKernel -c 1  ./build/main /scratch/bwd29/data/TINY_Normalized.bin 384 0.2
 
 make clean
-CALC_MULTI=1.5 CPB=115 BS=256 CMP=14 make #KT=4 BS=512
-ncu --set full -o profileMSDKT5.out -k nodeByPoint5 -c 1 ./build/main /scratch/bwd29/data/MSD.bin 90 0.091
+BS=256 KB=1024 make
+cuda-memcheck ./build/main /scratch/bwd29/data/MSD.bin 90 0.091
+ncu --set full -o profileMSDKT23.out -k nodeByPoint5 ./build/main /scratch/bwd29/data/MSD.bin 90 0.091
 
 
 echo "Completed!"
