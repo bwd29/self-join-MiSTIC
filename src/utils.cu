@@ -67,7 +67,7 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 
 	unsigned int sample_size = numPoints*SAMPLE_PER;
 
-	unsigned int test_rp = numRP * 2;
+
 
 	if(RAND) srand(omp_get_wtime());
 
@@ -81,6 +81,8 @@ double * createRPArray(double * data, unsigned int numRP, unsigned int dim, unsi
 	#else
 
 
+	unsigned int test_rp = numRP * 2;
+	
 	// double * testRPArray = new double[TEST_RP*dim];
 	double * testRPArray = (double*)malloc(sizeof(double)*test_rp*dim);
 

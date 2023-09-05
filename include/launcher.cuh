@@ -80,4 +80,15 @@ struct neighborTable * nodeLauncher5(double * data,
     unsigned int numRP,
     unsigned int * pointArray,
     double epsilon);
-        
+    
+
+    struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
+        unsigned int numPoints, //the number of points in the data
+        unsigned int ** pointBinNumbers,  //the bin numbers ofr each point to each reference point
+        unsigned int numLayers, //the number of reference points
+        unsigned int * binSizes, // the number of bins in each layer
+        unsigned int * binAmounts, //the number of bins for each reference point
+        double * data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
+        unsigned int dim,//the dimensionality of the data
+        double epsilon,//the distance threshold being searched
+        unsigned int * pointArray);

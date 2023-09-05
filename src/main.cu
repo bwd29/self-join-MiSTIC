@@ -21,11 +21,11 @@ int main(int argc, char*argv[]){
     //reading in command line arguments
 	char *filename = argv[1]; // first argument is the file with the dataset as a .bin
 	unsigned int dim = atoi(argv[2]); // second argument is the dimensionality of the data, i.e. number of columns
-	// unsigned int numRP = atoi(argv[3]);
+	unsigned int numRP = atoi(argv[3]);
 
 	unsigned int concurent_streams = 2; // number of cuda streams, should only ever need to be 2 but can be set to a parameter
 	double epsilon;
-	sscanf(argv[3], "%lf", &epsilon); // third argumernt is the distance threshold being searched
+	sscanf(argv[4], "%lf", &epsilon); // third argumernt is the distance threshold being searched
 
 	double time0 = omp_get_wtime(); //start initial timer
 
@@ -57,7 +57,7 @@ int main(int argc, char*argv[]){
 	
 	printf("\nNumber points: %d ", numPoints);
 	printf("\nNumber Dimensions: %d ", dim);
-	// printf("\nNumber Reference Points: %d ", numRP);
+	printf("\nNumber Reference Points: %d ", numRP);
 	printf("\nNumber Concurent Streams: %d", concurent_streams);
 	printf("\nBlock Size: %d, Kernel Blocks: %d",BLOCK_SIZE,KERNEL_BLOCKS);
 	if(BINARYSEARCH == 0) printf("\nUsing tree traversals"); 
@@ -156,10 +156,10 @@ int main(int argc, char*argv[]){
 	unsigned int ** pointBinNumbers;
 
 	// binSizes is the number of bins for each layer of the tree , which includes the spread from the previous layer
-	unsigned int * binSizes = (unsigned int*)malloc(sizeof(unsigned int)*numRP);
+	unsigned int * binSizes = (unsigned int*)malloc(sizeof(unsigned int)*MAXRP);
 
 	//bin amounts is the number of bins for that reference point, i.e. the range of points / epsilon
-	unsigned int * binAmounts = (unsigned int*)malloc(sizeof(unsigned int)*numRP);
+	unsigned int * binAmounts = (unsigned int*)malloc(sizeof(unsigned int)*MAXRP);
 
 	//maxBinAmount limits the number of bins that can be in a layer to reduce space complexity, not usually an issue
 	unsigned int maxBinAmount = MAX_BIN;
@@ -178,8 +178,8 @@ int main(int argc, char*argv[]){
 					pointArray, // the ordered points, this will be rearanged when building the tree
 					&pointBinNumbers, // this will hold of the bin number for each point relative to each reference point
 					binSizes, // the width for each layer of the tree which is built in the fuinction
-					binAmounts,
-					numRP); //the number of bins for each reference point as in the range / epsilon
+					binAmounts,//the number of bins for each reference point as in the range / epsilon
+					numRP); 
 
 
 	// allocate a data array for used with distance calcs
@@ -205,7 +205,7 @@ int main(int argc, char*argv[]){
 	}
 
 
-
+	
 	
 
 	// checking that the last bin size is not negative or zero and that the tree has every data point in it
@@ -217,8 +217,22 @@ int main(int argc, char*argv[]){
 
     printf("Time to build tree: %f\n", time2-time1);
 
+	#if COSS
+	struct neighborTable * table = launchCOSS(tree,
+		numPoints,
+		pointBinNumbers,
+		numLayers,
+		binSizes,
+		binAmounts,
+		data,
+		dim,
+		epsilon,
+		pointArray);
+	#endif
+
 	#if GPUSEARCH
-	struct neighborTable * table = launchGPUSearchKernel(tree,
+
+	struct neighborTable * table1 = launchGPUSearchKernel(tree,
 														numPoints,
 														pointBinNumbers,
 														numLayers,
@@ -228,7 +242,7 @@ int main(int argc, char*argv[]){
 														dim,
 														epsilon,
 														pointArray);
-	
+
 	#else
 	// addIndexes holds the return from generating ranges which contains the non-empty index locations in the last layer of tree
     unsigned int * addIndexes;
@@ -328,7 +342,10 @@ int main(int argc, char*argv[]){
 
 
 	#if !TESTING_SEARCH
-	struct neighborTable * table =  launchKernel(numLayers, // the number of layers in the tree
+
+	
+
+	struct neighborTable * table1 =  launchKernel(numLayers, // the number of layers in the tree
 				data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
 				dim, //the dimensionality of the data
 				numPoints, //the number of points in the dataset
@@ -351,6 +368,7 @@ int main(int argc, char*argv[]){
 	double time4 = omp_get_wtime();
     printf("Kernel time: %f\n", time4-time3);
 	#endif
+
 
 	#endif
 

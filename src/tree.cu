@@ -12,7 +12,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 						unsigned int * binAmounts,
 						unsigned int numRP){ // the range / epsilon for that rp of that layer of the tree
 
-	unsigned int maxRP = numRP; // setting the max number of reference points
+	unsigned int maxRP = MAXRP; // setting the max number of reference points
 	unsigned int numRPperLayer = RPPERLAYER; //could use log2(numPoints) // setting how many reference points are checked for each layer
 
 	printf("Selecting %d Rp from a pool of %d\n", numRPperLayer, (int)sqrt(numPoints));
@@ -40,6 +40,11 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	//an array to hold the final sum sqrs for each layer, helps determine the number of reference points to use
 	double * sumSqrsLayers = (double*)malloc(sizeof(double)*maxRP);
 
+	//array to track average number of points per bin
+	double * averageNonEmptyBinCountTemp = (double *)malloc(sizeof(double)*numRPperLayer);
+	double * averageNonEmptyBinCountLayers = (double *)malloc(sizeof(double)*maxRP);
+
+
 	// variable for exiting the while loop, evaluates to false when sumsqrs is beyond a threshold
 	bool check = true;
 
@@ -56,6 +61,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		for(unsigned int i = 0; i < numRPperLayer; i++){
 			sumSqrsTemp[i] = 0;
 		}
+
 
 		// if we want full random, then set seed based on time
 		if(RAND){
@@ -108,12 +114,12 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 			for(unsigned int j = 0; j < numPoints; j++){
 				distMat[i*numPoints + j] = euclideanDistance(&data[j*dim], dim , &RPArray[i*dim]);
 
-				// checking fot the max distance
+				// checking for the max distance
 				if(distMat[i*numPoints + j] > maxDistance){
 					maxDistance = distMat[i*numPoints + j];
 				}
 
-				//checkign for the min distance
+				//checking for the min distance
 				if(distMat[i*numPoints + j] < minDistance){
 					minDistance = distMat[i*numPoints + j];
 				}
@@ -172,12 +178,12 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 					// the offset will be the bin number of the previous layer, which will be the number of non empty bins before it, times the number of bins for the reference point in the current layer
 					unsigned int offset = (bins[currentLayer -1][pointBinOffsets[currentLayer-1][j]]-1)*layerNumBins[i];
 
-					// the bin number will be the the floor of this distance from the point to the reference point - the numebr of bins we skipped on the start
+					// the bin number will be the the floor of this distance from the point to the reference point - the number of bins we skipped on the start
 					unsigned int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
 
-					// if(offset+binNumber > layerBinCount[i] && checkers == true) {
-					// 	checkers = false;
-					// 	printf("offset+binNumber is the problem with offset = %d, binnumber = %d, and layerbincount = %d, pointBinOff = %d, bins = %d\n", offset,binNumber,layerBinCount[i], part1, part2);
+					// if(offset+binNumber > layerBinCount[i]) {
+					// 	// checkers = false;
+					// 	printf("offset+binNumber is the problem with offset = %d, binnumber = %d, and layerbincount = %d", offset,binNumber,layerBinCount[i]);
 					// }
 					
 					// if the bin was empty, then increment the number of non empty bins
@@ -197,9 +203,12 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 
 			// calculate the sum of squares based on the number of points in each bin. 
 			// the lower the sum of squares, the more even the distribution of points
+			averageNonEmptyBinCountTemp[i] = numPoints / layerBinNonEmpty[i];
 			for(unsigned int j = 0; j < layerBinCount[i]; j++){
-				sumSqrsTemp[i] += layerBins[i][j] * layerBins[i][j];
+				sumSqrsTemp[i] += (layerBins[i][j] - averageNonEmptyBinCountTemp[i]) * (layerBins[i][j] - averageNonEmptyBinCountTemp[i]);
 			}
+
+
 
 
 			// //join to the bins
@@ -218,7 +227,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 				minSumIdx = i; 
 			}
 			#else
-			if(sumSqrsTemp[minSumIdx] < sumSqrsTemp[i] ){
+			if(averageNonEmptyBinCountTemp[minSumIdx] > averageNonEmptyBinCountTemp[i] ){
 				minSumIdx = i; 
 			}
 			#endif
@@ -226,6 +235,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 
 		// assign the sum sqrs for the layer as the one chosen
 		sumSqrsLayers[currentLayer] = sumSqrsTemp[minSumIdx];
+		averageNonEmptyBinCountLayers[currentLayer] = averageNonEmptyBinCountTemp[minSumIdx];
 
 		// copy over the bin offsets based on the reference point that was chosen
 		for(unsigned int i = 0; i < numPoints; i++){
@@ -267,30 +277,30 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		}
 
 		// check if the current layer is at least the min number of layers for the tree
-		if(currentLayer == maxRP-1){
+		// if(currentLayer == maxRP-1){
 			// check if the sum of sqrs is still decreasing by adding layers or if we are at the max number of layers
-			if(sumSqrsLayers[currentLayer-1]/sumSqrsLayers[currentLayer] < LAYER_DIFF || currentLayer == maxRP - 1){
+		if( currentLayer >= MINRP && (sumSqrsLayers[currentLayer-1]/sumSqrsLayers[currentLayer] < 3 || averageNonEmptyBinCountLayers[currentLayer] <= 10.0 || currentLayer == maxRP - 1)){
+			
+			//set check to false to exit the while loop
+			check = false;
+
+			// keep track of the running total of points in bins
+			unsigned int runningTotal = 0;
+
+			// go through each bin of the final layer
+			for(unsigned int i = 0; i < binSizes[currentLayer]; i++){
+				// the final layer of the tree will have the running total of points in the bins as values
+				bins[currentLayer][i] = runningTotal;
+				// update the running total number of points
+				runningTotal += layerBins[minSumIdx][i];
 				
-				//set check to false to exit the while loop
-				check = false;
-
-				// keep track of the running total of points in bins
-				unsigned int runningTotal = 0;
-
-				// go through each bin of the final layer
-				for(unsigned int i = 0; i < binSizes[currentLayer]; i++){
-					// the final layer of the tree will have the running total of points in the bins as values
-					bins[currentLayer][i] = runningTotal;
-					// update the running total number of points
-					runningTotal += layerBins[minSumIdx][i];
-					
-				}
 			}
-		} 
 
-		//move on to the next layer
+			
+		}
+
 		currentLayer++;
-
+		// } 
 		//free all the memory used for construction of this layer
 		free(distMat);
 		for(unsigned int i = 0; i < numRPperLayer; i++){
@@ -304,6 +314,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		free(layerNumBins);
 		free(skipBins);
 		free(RPArray);
+
 	}
 
 	// the number of layers/ reference points is the current layer
@@ -313,7 +324,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 
 	for(unsigned int i = 0; i < snumRP; i++){
 		if(TESTING_SEARCH) fprintf(stderr," L%d, %f,", i, sumSqrsLayers[i]);
-		printf("Layer %d sumqrs: %f\n", i, sumSqrsLayers[i]);
+		printf("Layer %d sumqrs: %f BinCount: %u AverageBinsCount: %f, nonEmpty: %u\n", i, sumSqrsLayers[i], binSizes[i], averageNonEmptyBinCountLayers[i], binNonEmpty[i]);
 	}
 
     // sort the point arrays from bottom to top using a stable sort
@@ -374,6 +385,8 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	free(pointBinOffsets);
 	free(binNonEmpty);
 	free(sumSqrsLayers);
+	free(averageNonEmptyBinCountLayers);
+	free(averageNonEmptyBinCountTemp);
 	free(sumSqrsTemp);
 
 	// return the tree

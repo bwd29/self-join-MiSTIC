@@ -3241,7 +3241,11 @@ struct neighborTable * nodeLauncher5(double * data,
         batchPoints[i] = offsetCount;
         offsetCount += pointsPerBatchVec[i];
         pointsPerBatch[i] = pointsPerBatchVec[i];
+        #if TPP == 1
+        tpp[i] = 1;
+        #else
         tpp[i] = tppVec[i];
+        #endif
     }
 
 
@@ -3461,8 +3465,8 @@ struct neighborTable * nodeLauncher5(double * data,
                 bufferSizes[tid] = keyValueIndex[i];
             }
 
-            // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_pointA[tid], d_pointA[tid] + keyValueIndex[i], d_pointB[tid]);
-            GPU_SortbyKey(stream[tid], d_pointA[tid], (unsigned int)keyValueIndex[i], d_pointB[tid]);
+            thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_pointA[tid], d_pointA[tid] + keyValueIndex[i], d_pointB[tid]);
+            // GPU_SortbyKey(stream[tid], d_pointA[tid], (unsigned int)keyValueIndex[i], d_pointB[tid]);
 
             assert(cudaSuccess == cudaMemcpyAsync(pointB[tid], d_pointB[tid], sizeof(unsigned int)*keyValueIndex[i], cudaMemcpyDeviceToHost, stream[tid]));
 
@@ -3481,8 +3485,8 @@ struct neighborTable * nodeLauncher5(double * data,
 
             cudaStreamSynchronize(stream[tid]);
 
-            // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_uniqueKeys[tid], d_uniqueKeys[tid]+uniqueCnt[i], d_uniqueKeyPosition[tid]);
-            GPU_SortbyKey(stream[tid], d_uniqueKeys[tid], uniqueCnt[i], d_uniqueKeyPosition[tid]);
+            thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_uniqueKeys[tid], d_uniqueKeys[tid]+uniqueCnt[i], d_uniqueKeyPosition[tid]);
+            // GPU_SortbyKey(stream[tid], d_uniqueKeys[tid], uniqueCnt[i], d_uniqueKeyPosition[tid]);
 
 
             unsigned int * uniqueKeys = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
@@ -3524,4 +3528,293 @@ struct neighborTable * nodeLauncher5(double * data,
     
 
     return tables;
+}
+
+
+
+struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
+    unsigned int numPoints, //the number of points in the data
+    unsigned int ** pointBinNumbers,  //the bin numbers ofr each point to each reference point
+    unsigned int numLayers, //the number of reference points
+    unsigned int * binSizes, // the number of bins in each layer
+    unsigned int * binAmounts, //the number of bins for each reference point
+    double * data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
+    unsigned int dim,//the dimensionality of the data
+    double epsilon,//the distance threshold being searched
+    unsigned int * pointArray)// the array of point numbers ordered to match the sequence in the last array of the tree and the data
+{
+
+    printf("Starting Kernel Launcher\n");
+    // the number of searches that are needed for a full search is the number of referecnes point cubed. This is always true, mostly.
+    const unsigned int numSearches = pow(3,numLayers);
+
+    const unsigned int numBatches = ceil(numPoints*1.0/(KERNEL_BLOCKS*BLOCK_SIZE));
+    unsigned int*tempIndexes = (unsigned int*)malloc(sizeof(unsigned int)*binSizes[numLayers-1]);
+
+	// the number of non empty bins in the final layer or number of addresses with points
+    unsigned int nonEmptyBins = 0;
+
+	// counting the number of non empty bins and keeping track of the indexes of those nonempty bins
+    for(unsigned int i = 0; i < binSizes[numLayers-1]-1; i++){ 
+        
+		// if the tree value on the last layer is less than the next then it has points in it
+		if(tree[numLayers-1][i] < tree[numLayers-1][i+1]){
+			//keep track of that non empty index
+            tempIndexes[nonEmptyBins] = i;
+            nonEmptyBins++;
+        }
+    }
+
+    // an array for holding the non empty index locations in the final tree layer
+    unsigned int * addIndexes = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins);
+
+	// copy the temp indexes which keeps track of the nonepty indexes into an array that is the correct size
+    #pragma omp parallel for num_threads(8)
+    for(unsigned int i = 0; i < nonEmptyBins; i++){
+        addIndexes[i] = tempIndexes[i];
+    }
+
+	// free the overallocated array now that we have the data stored in tempAddIndexes
+    free(tempIndexes);
+
+    //array to hold the point bin numbers
+	unsigned int * binNumbers = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins*(numLayers+1));
+    unsigned int * pointBinIndex = (unsigned int *)malloc(sizeof(unsigned int)*numPoints);
+
+    
+	for(unsigned int i = 0; i < nonEmptyBins; i++){
+        binNumbers[i*(numLayers+1)] = tree[ numLayers-1 ][ addIndexes[i] ];
+        for(unsigned int j = 0; j < numLayers; j++){
+			binNumbers[i*(numLayers+1)+j+1] = pointBinNumbers[ tree[ numLayers-1 ][ addIndexes[i] ]][j];
+		}
+	}
+
+
+    for(unsigned int i = 0; i < nonEmptyBins-1; i++){
+        for(unsigned int j = binNumbers[i*(numLayers+1)]; j < binNumbers[(i+1)*(numLayers+1)]; j++){
+            pointBinIndex[j] = i;
+        }
+    }
+
+    for(unsigned int j = binNumbers[(nonEmptyBins-1)*(numLayers+1)]; j < numPoints; j++){
+        pointBinIndex[j] = nonEmptyBins - 1;
+    }
+
+
+
+    // printf(" last pointBinIndex: %u, should be : %u\n", pointBinIndex[numPoints-1], nonEmptyBins-1);
+
+    printf("Starting CUDA Mem transfers\n");
+
+    //device memory to hold the bin number arrays
+    unsigned int * d_binNumbers;
+    assert(cudaSuccess == cudaMalloc((void**)&d_binNumbers, sizeof(unsigned int)*nonEmptyBins*(numLayers+1)));
+    assert(cudaSuccess ==  cudaMemcpy(d_binNumbers, binNumbers, sizeof(unsigned int )*nonEmptyBins*(numLayers+1), cudaMemcpyHostToDevice));
+
+    unsigned int * d_pointBinIndex;
+    assert(cudaSuccess == cudaMalloc((void**)&d_pointBinIndex, sizeof(unsigned int)*numPoints));
+    assert(cudaSuccess ==  cudaMemcpy(d_pointBinIndex, pointBinIndex, sizeof(unsigned int )*numPoints, cudaMemcpyHostToDevice));
+ 
+    double * d_data;
+    assert(cudaSuccess == cudaMalloc((void**)&d_data, sizeof(double)*numPoints*dim));
+    assert(cudaSuccess ==  cudaMemcpy(d_data, data, sizeof(double)*numPoints*dim, cudaMemcpyHostToDevice));
+
+    unsigned int * d_pointArray;
+    assert(cudaSuccess == cudaMalloc((void**)&d_pointArray, sizeof(unsigned int)*numPoints));
+    assert(cudaSuccess ==  cudaMemcpy(d_pointArray, pointArray, sizeof(unsigned int)*numPoints, cudaMemcpyHostToDevice));
+
+    // keep track of the number of pairs found in each batch
+    unsigned long long * keyValueIndex;
+    //use pinned memory for async copies back to the host
+    assert(cudaSuccess == cudaMallocHost((void**)&keyValueIndex, sizeof(unsigned long long )*numBatches));
+    for(int i = 0; i < numBatches; i++){
+        keyValueIndex[i] = 0;
+    }
+    
+    //copy over the array to keep track of the pairs found in each batch
+    unsigned long long * d_keyValueIndex;
+    assert(cudaSuccess == cudaMalloc((void**)&d_keyValueIndex, sizeof(unsigned long long)*numBatches));
+    assert(cudaSuccess ==  cudaMemcpy(d_keyValueIndex, keyValueIndex, sizeof(unsigned long long)*numBatches, cudaMemcpyHostToDevice));
+
+    //array for keeping track of the paris found, this tyracks first value in pair
+    unsigned int * d_pointA[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_pointA[i], sizeof(unsigned int)*resultsSize));
+    }
+
+    //array for keeping track of the paris found, this tyracks second value in pair
+    unsigned int * d_pointB[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_pointB[i], sizeof(unsigned int)*resultsSize));
+    }
+
+    unsigned int * pointB[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMallocHost((void**)&pointB[i], sizeof(unsigned int)*initalPinnedResultsSize));
+    }
+
+    unsigned int *uniqueCnt;
+    assert(cudaSuccess == cudaMallocHost((void**)&uniqueCnt, numBatches*sizeof(unsigned int)));
+    for (unsigned int i = 0; i < numBatches; i++) {
+        uniqueCnt[i] = 0;
+    }
+
+    unsigned int *d_uniqueCnt;
+    assert(cudaSuccess == cudaMalloc((void**)&d_uniqueCnt, sizeof(unsigned int)*numBatches));
+    assert(cudaSuccess ==  cudaMemcpy(d_uniqueCnt, uniqueCnt, sizeof(unsigned int)*numBatches, cudaMemcpyHostToDevice));
+    
+    unsigned int *d_uniqueKeyPosition[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_uniqueKeyPosition[i], sizeof(unsigned int)*numPoints));
+    }
+
+    unsigned int *d_uniqueKeys[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_uniqueKeys[i], sizeof(unsigned int)*numPoints));
+    }
+
+    unsigned int ** dataArray = (unsigned int **)malloc(sizeof(unsigned int*)*numBatches);
+
+    printf("Building Neighbor Tables\n");
+    //struct for sotring the results
+    struct neighborTable * tables = (struct neighborTable*)malloc(sizeof(struct neighborTable)*numPoints);
+    // tables = new neighborTable[numPoints];
+    for (unsigned int i = 0; i < numPoints; i++)
+        {	
+        struct neighborTable temp; 
+        tables[i] = temp;
+        //tables[i] = (struct neighborTable)malloc(sizeof(struct neighborTable));
+
+        tables[i].cntNDataArrays = 1; 
+        tables[i].vectindexmin.resize(numBatches+1);
+        tables[i].vectindexmin[0] = i;
+        tables[i].vectindexmax.resize(numBatches+1);
+        tables[i].vectindexmax[0] = i;
+        tables[i].vectdataPtr.resize(numBatches+1);
+        tables[i].vectdataPtr[0] = pointArray;
+        omp_init_lock(&tables[i].pointLock);
+    }
+    
+    cudaDeviceSynchronize(); 
+
+    printf("Creating CUDA Streams\n");
+
+    cudaStream_t stream[NUMSTREAMS];
+    for (unsigned int i = 0; i < NUMSTREAMS; i++){
+        cudaError_t stream_check = cudaStreamCreate(stream+i);
+        assert(cudaSuccess == stream_check);
+    }
+
+    unsigned long long bufferSizes[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        bufferSizes[i] = initalPinnedResultsSize;
+    }
+
+    const unsigned int d_numPoints = numPoints;
+    const unsigned int d_arrayCounter = nonEmptyBins;
+    const unsigned int d_numLayers = numLayers;
+    const unsigned int d_dim = dim;
+    const double d_epsilon2 = epsilon*epsilon;
+
+
+    printf("Starting COSS style Kernel\n");
+    double time3 = omp_get_wtime();
+
+
+    #pragma omp parallel for num_threads(NUMSTREAMS) schedule(dynamic)
+    for(unsigned int i = 0; i < numBatches; i++){
+
+        const unsigned int totalBlocks = ceil(TPP*KERNEL_BLOCKS);
+        
+        unsigned int tid = omp_get_thread_num();
+
+        const int d_batch_num = i;
+
+        searchKernelCOSS<<<totalBlocks,BLOCK_SIZE, (BLOCK_SIZE)*(numLayers+1)*sizeof(unsigned int), stream[tid]>>>(
+			d_batch_num,
+            d_data,
+			d_numPoints,
+			d_pointA[tid],
+			d_pointB[tid],
+			d_binNumbers,
+			&d_keyValueIndex[i],
+			d_pointArray,
+			d_arrayCounter,
+			d_numLayers,
+			d_dim,
+			d_epsilon2,
+			d_pointBinIndex);
+
+
+        cudaStreamSynchronize(stream[tid]);
+
+        assert(cudaSuccess ==  cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid]));
+        cudaStreamSynchronize(stream[tid]);
+
+        printf("Batch %d Results: %llu, total Blocks: %u, BlockSize: %u \n", i,keyValueIndex[i], totalBlocks, BLOCK_SIZE);
+
+
+        if(keyValueIndex[i] > bufferSizes[tid]){
+            //  printf("tid: %d first run\n", tid);
+            cudaFreeHost(pointB[tid]);
+            //printf("tid: %d freed memory\n", tid);
+            assert(cudaSuccess == cudaMallocHost((void**) &pointB[tid], sizeof(unsigned int)*(keyValueIndex[i] + 1)));
+            //printf("tid: %d pinned memory\n", tid);
+            bufferSizes[tid] = keyValueIndex[i];
+        }
+
+        // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_pointA[tid], d_pointA[tid] + keyValueIndex[i], d_pointB[tid]);
+        GPU_SortbyKey(stream[tid], d_pointA[tid], (unsigned int)keyValueIndex[i], d_pointB[tid]);
+
+        assert(cudaSuccess == cudaMemcpyAsync(pointB[tid], d_pointB[tid], sizeof(unsigned int)*keyValueIndex[i], cudaMemcpyDeviceToHost, stream[tid]));
+
+        cudaStreamSynchronize(stream[tid]);
+
+        unsigned int totalBlocksUnique = ceil((1.0*keyValueIndex[i])/(1.0*BLOCK_SIZE));	
+        kernelUniqueKeys<<<totalBlocksUnique, BLOCK_SIZE,0,stream[tid]>>>(d_pointA[tid],
+                                                            &d_keyValueIndex[i], 
+                                                            d_uniqueKeys[tid], 
+                                                            d_uniqueKeyPosition[tid], 
+                                                            &d_uniqueCnt[i]);
+
+        cudaStreamSynchronize(stream[tid]);
+
+        assert(cudaSuccess == cudaMemcpyAsync(&uniqueCnt[i], &d_uniqueCnt[i], sizeof(unsigned int), cudaMemcpyDeviceToHost, stream[tid]));
+
+        cudaStreamSynchronize(stream[tid]);
+
+        // thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_uniqueKeys[tid], d_uniqueKeys[tid]+uniqueCnt[i], d_uniqueKeyPosition[tid]);
+        GPU_SortbyKey(stream[tid], d_uniqueKeys[tid], uniqueCnt[i], d_uniqueKeyPosition[tid]);
+
+
+        unsigned int * uniqueKeys = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
+        assert(cudaSuccess == cudaMemcpyAsync(uniqueKeys, d_uniqueKeys[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
+
+        unsigned int * uniqueKeyPosition = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
+        assert(cudaSuccess == cudaMemcpyAsync(uniqueKeyPosition, d_uniqueKeyPosition[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
+
+        dataArray[i] = (unsigned int*)malloc(sizeof(unsigned int)*keyValueIndex[i]);
+
+        cudaStreamSynchronize(stream[tid]);
+
+        constructNeighborTable(pointB[tid], dataArray[i], &keyValueIndex[i], uniqueKeys,uniqueKeyPosition, uniqueCnt[i], tables);
+
+        free(uniqueKeys);
+        free(uniqueKeyPosition);
+
+    }
+
+    double time4 = omp_get_wtime();
+    printf("Kernel time: %f\n", time4-time3);
+
+
+    unsigned long long totals = 0;
+    for(int i = 0; i < numBatches; i++){
+        totals += keyValueIndex[i];
+    }
+
+    printf("Total results Set Size: %llu \n", totals);
+
+    return tables;
+
 }

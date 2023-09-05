@@ -4,3 +4,78 @@ nvcc  -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80
 nvcc  -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
 nvcc  -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
 nvcc  -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+==PROF== Connected to process 2141335 (/home/bwd29/self-join/build/main)
+
+Time to read in file: 2.708455
+
+Number points: 3422222 
+Number Dimensions: 90 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.021375 
+*********************************
+
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+==PROF== Profiling "nodeByPoint5": 0%....50%....100% - 43 passes
+Predicted calcsPerSecond: 895040223
+SubGraph 0 Layer 0 Selecting RP 3 with Nodes: 14 and calcs: 8003691193006 :: Predicted time: 0.000000, Actual Time: 0.065037
+Build Time: 0.065037, Calc Time: 8942.269841, reduction -8942.269841
+############################################
+Predicted calcsPerSecond: 2686156357
+SubGraph 0 Layer 1 Selecting RP 8 with Nodes: 90 and calcs: 6021513925334 :: Predicted time: 0.065037, Actual Time: 0.564608
+Build Time: 0.564608, Calc Time: 2241.684074, reduction 6700.585768
+############################################
+Predicted calcsPerSecond: 5372403636
+SubGraph 0 Layer 2 Selecting RP 10 with Nodes: 350 and calcs: 4713267088222 :: Predicted time: 0.564608, Actual Time: 0.309795
+Build Time: 0.309795, Calc Time: 877.310680, reduction 1364.373394
+############################################
+Predicted calcsPerSecond: 9402380851
+SubGraph 0 Layer 3 Selecting RP 8 with Nodes: 1177 and calcs: 3860747720116 :: Predicted time: 0.309795, Actual Time: 0.312937
+Build Time: 0.312937, Calc Time: 410.613841, reduction 466.696839
+############################################
+Predicted calcsPerSecond: 15446582119
+SubGraph 0 Layer 4 Selecting RP 9 with Nodes: 3206 and calcs: 3131898623936 :: Predicted time: 0.312937, Actual Time: 0.314244
+Build Time: 0.314244, Calc Time: 202.756739, reduction 207.857102
+############################################
+Predicted calcsPerSecond: 24513945321
+SubGraph 0 Layer 5 Selecting RP 9 with Nodes: 8371 and calcs: 2554095621260 :: Predicted time: 0.314244, Actual Time: 0.989534
+Build Time: 0.989534, Calc Time: 104.189497, reduction 98.567243
+############################################
+Predicted calcsPerSecond: 38113504557
+SubGraph 0 Layer 6 Selecting RP 7 with Nodes: 17126 and calcs: 2160353858622 :: Predicted time: 0.989534, Actual Time: 3.330783
+Build Time: 3.330783, Calc Time: 56.682110, reduction 47.507387
+############################################
+Predicted calcsPerSecond: 58514777130
+SubGraph 0 Layer 7 Selecting RP 0 with Nodes: 33371 and calcs: 1839118131644 :: Predicted time: 3.330783, Actual Time: 5.500309
+Build Time: 5.500309, Calc Time: 31.429978, reduction 25.252132
+############################################
+Predicted calcsPerSecond: 89114245942
+SubGraph 0 Layer 8 Selecting RP 9 with Nodes: 53709 and calcs: 1604634597324 :: Predicted time: 5.500309, Actual Time: 22.107499
+Build Time: 22.107499, Calc Time: 18.006488, reduction 13.423490
+############################################
+Final graph has 53709 nodes, 1604634597324 calcs total
+Node Construct time: 26.997930
+Batchs: 14
+Total results Set Size: 3422222 
+Kernel Time: 10325.331417
+Node Laucnher time: 10353.539118
+Total Time: 10356.437765
+==PROF== Disconnected from process 2141335
+==ERROR== The application returned an error code (1).
+==PROF== Report: /home/bwd29/self-join/profileHiggs.out.ncu-rep
+Completed!

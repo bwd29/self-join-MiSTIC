@@ -1,5 +1,80 @@
 #include "include/kernel.cuh"
 
+
+
+__device__ int pow_int(int x, int y){
+	int answ = 1;
+	for(int i = 0; i < y; i++){
+		answ *= x;
+	}
+	return answ;
+}
+__host__ __device__
+bool add_comparison_ls(unsigned int *add1, unsigned int *add2, const int rps)
+{
+  for(char i = 0; i < rps; i++){
+    if(*(add1+i+1) < *(add2+i+1))
+    {
+      return true;
+    } else if (*(add1+i+1) > *(add2+i+1)){
+			return false;
+		}
+  }
+  return false;
+}
+
+//compares 2 addresses and returns true if 1 is equal or less than 2
+__host__ __device__
+bool add_comparison_eq_ls(unsigned int *add1, unsigned int *add2, const int rps)
+{
+  for(char i = 0; i < rps; i++){
+    if(*(add1+i+1) > *(add2+i+1))
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+//compares 2 addresses and returns true if  they are both equal
+__host__ __device__
+bool add_comparison_eq(unsigned int *add1, unsigned int *add2, const int rps)
+{
+  for(char i = 0; i < rps; i++){
+    if(*(add1+i+1) != *(add2+i+1))
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+__device__ __host__
+int binary_search_basic(unsigned int *array, //points to an array
+                        const unsigned int array_size, //points to an int
+                        unsigned int *search, //points to an array
+                        const int rps) //points to an int
+{
+	int first = 0;
+	int last = array_size;
+	int middle = (first+last)/2;
+	int strider = (rps+1);
+
+	while (first <= last){
+
+		if(add_comparison_ls(array+middle*strider, search, rps)){
+			first = middle + 1;
+			middle = first+(last-first)/2;
+		} else if (add_comparison_eq(array+middle*strider, search, rps)){
+			return middle;
+		}else{
+			last = middle - 1;
+			middle = first+(last-first)/2;
+		}
+	}
+	return -1;
+}
+
 __global__
 void GPUGenerateRanges(unsigned int * tree, //points to the tree constructed with buildTree()
                         unsigned int * lastTreeLayer,
@@ -29,7 +104,7 @@ void GPUGenerateRanges(unsigned int * tree, //points to the tree constructed wit
         return;
     }
 
-    //searches can be perfomed with either dynamic programming or witht he single thread sequentialy
+    //searches can be perfomed with either dynamic programming or with the single thread sequentialy
 
     #if BINARYSEARCH
         // call the GPU binary sesarch with dynamic programing
@@ -758,39 +833,31 @@ void nodeByPoint3( const unsigned int dim,
 }
 
 
-__host__ __device__ //may need to switch to inline (i did)
-inline bool cachedDistanceCheck(double epsilon2, unsigned int dim, double * data, double * p1, unsigned int p2, unsigned int numPoints){
-    
-    // double sum[8];
-    
-    // #pragma unroll
-    // for(unsigned int i = 0; i < 8; i++){
-    //     sum[i] = 0;
-    // }
+__forceinline__ __host__ __device__ //may need to switch to inline (i did)
+bool cachedDistanceCheck(double epsilon2, double * data, double * p1, unsigned int p2, const unsigned int numPoints){
 
-    // for(unsigned int i = 0; i < DIM; i+=8){
-        
-    //     #pragma unroll
-    //     for(unsigned int j = 0; j < 8 && (i + j) < DIM; j++){
-    //         sum[j] += (p1[i]- data[(i+j)*numPoints + p2])*(p1[i] - data[(i+j)*numPoints + p2]);
-    //     }
+    double runningDist[ILP];
 
-    //     #pragma unroll
-    //     for(unsigned int j = 1; j < 8; j++){
-    //         sum[0] += sum[j];
-    //         sum[j] = 0;
-    //     }
+    #pragma unroll
+	for(int j=0; j<ILP; j++){
+		runningDist[j]=0;
+    }
 
-    //     if(sum[0] > epsilon2) return false;
-        
-    // }
+    for(int l=0; l<DIM; l+=ILP) {
+        #pragma unroll
+        for(int j=0; j<ILP && (l+j) < DIM; j++) {
+            runningDist[j] += (p1[l+j]- data[(l+j)*numPoints + p2])*(p1[l+j] - data[(l+j)*numPoints + p2]);
+        }
 
-//########################################################################################
+        #pragma unroll
+        for(int j=1; j<ILP; j++) {
+            runningDist[0] += runningDist[j];
+            runningDist[j]=0;
+        }
 
-    double sum = 0;
-    for(unsigned int i = 0; i < dim; i++){
-        sum += (p1[i] - data[i*numPoints + p2])*(p1[i] - data[i*numPoints + p2]);
-        if(sum > epsilon2) return false;
+        if (runningDist[0] > epsilon2) {
+                return false;
+            }
     }
 
     return true;
@@ -950,6 +1017,15 @@ void nodeByPoint5( const unsigned int dim,
 
     const unsigned int node = nodeID[point];
 
+    ///////////////////////////////////////////
+    double pData[DIM];
+
+    for(unsigned int i = 0; i < DIM; i++){
+        pData[i] = data[i*numPoints + point];
+    }
+
+    ////////////////////////////////////////
+
     //for every neighboring node
     for(unsigned int i = 0; i < numNeighbors[node]; i++){
         
@@ -957,7 +1033,8 @@ void nodeByPoint5( const unsigned int dim,
 
         for(unsigned int j = tid%(*tpp); j < numPointsNode[neighborNodeIndex]; j+=(*tpp)){
 
-            if (distanceCheck(epsilon2, dim, data, point, pointOffset[neighborNodeIndex]+j, numPoints)){
+            // if (distanceCheck(epsilon2, dim, data, point, pointOffset[neighborNodeIndex]+j, numPoints)){
+            if(cachedDistanceCheck(epsilon2, data, pData, pointOffset[neighborNodeIndex]+j, numPoints)){
                 //  store point
                 unsigned long long int index = atomicAdd(keyValueIndex,(unsigned long long int)1);
                 point_a[index] = point; //stores the first point Number
@@ -965,4 +1042,109 @@ void nodeByPoint5( const unsigned int dim,
             }
         }
     }
+}
+
+
+extern __shared__ unsigned int address_shared[];
+__global__ 
+void searchKernelCOSS(const unsigned int batch_num,
+                    double * A, // this is the imported data
+					const unsigned int num_points, // total number of points
+					unsigned int * point_a, // an array which will store the first point in a pair
+					unsigned int * point_b, // an array vector that will store a second point in a pair
+					unsigned int * address_array, // the array of all generated addresses
+					unsigned long long int * key_value_index, //a simple counter to keep track of how many results in a batch
+					unsigned int * point_array,//the ordered points
+					const unsigned int array_counter, //the number of arrays
+					const unsigned int rps, //the number of reference points
+					const unsigned int dim, //the number of dimensions
+					const double epsilon2, //the distance threshold
+					unsigned int *point_address_array)
+
+{
+  //the thread id is the id in the block plus the max id of the last batch
+    const unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x + (BLOCK_SIZE*KERNEL_BLOCKS)*(batch_num);
+    const char stride = rps+1;
+    unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
+
+	// an exit clause if the number of threads wanted does not line up with block sizes
+	if ( blockIdx.x*blockDim.x+threadIdx.x >= BLOCK_SIZE*KERNEL_BLOCKS || tid >= TPP*num_points)
+	{
+
+		return;
+	}
+
+	//find the point number and the address number
+	const int point_location = tid/(TPP);
+    const int address_num = point_address_array[tid/(TPP)];
+	
+
+
+    //number possible combos is rps - the first odd address
+	for (int i = 0; i < pow_int(3, rps); i++) // this itterates through every possible address combo
+    {	
+		
+
+		for(int j = 0; j < rps; j++){
+
+			int temp = (i / pow_int(3, j) ) % 3;
+			if (temp == 2){
+				temp = -1;
+			}
+			*(address_shared+threadIdx.x*stride+j+1) =  temp + address_array[(address_num)*stride+j+1];
+
+		}
+
+		int address_location = -1;
+		address_location = binary_search_basic(address_array, array_counter, &address_shared[threadIdx.x*stride], rps);
+
+		if( address_location < 0)
+		{
+			continue;
+		}
+
+
+		//getting the ranges of the points
+		const int start = address_array[address_location*stride]; //range_array[2*address_array[address_location*stride]];//inclusive
+		const int end = address_location == array_counter-1 ? num_points:address_array[(address_location+1)*stride]; //range_array[2*address_array[address_location*stride]+1];//exclusive
+
+		for(int j = start+(tid % (TPP)); j < end; j+=(TPP))
+		{
+			if(j == point_location){continue;}
+			double distance = 0; // a double to hold intermediate values
+			//we calculate the distance in every dimension
+			for(int k = 0; k < (dim - dim % 2); k += 2)
+			{         
+				//distance += (A[point_location*(dim) + k]-A[j*(dim) + k])*(A[point_location*(dim) + k]-A[j*(dim) + k]);
+				distance += pow(A[point_location*(dim) + k]-A[j*(dim) + k],2);
+				//distance += (A[point_location*(dim) + k+1]-A[j*(dim) + k+1])*(A[point_location*(dim) + k+1]-A[j*(dim) + k+1]);
+				distance += pow(A[point_location*(dim) + k+1]-A[j*(dim) + k+1],2);
+				if(distance > (epsilon2)){break;} //this checks to see if we can short circuit
+
+				// distance += (A[point_location*(dim) + k+2]-A[j*(dim) + k+2])*(A[point_location*(dim) + k+2]-A[j*(dim) + k+2]);
+
+				// distance += (A[point_location*(dim) + k+3]-A[j*(dim) + k+3])*(A[point_location*(dim) + k+3]-A[j*(dim) + k+3]);
+			
+				// distance += (A[point_location*(dim) + k+4]-A[j*(dim) + k+4])*(A[point_location*(dim) + k+4]-A[j*(dim) + k+4]);
+
+			}
+	
+			for ( int k = (dim - dim % 2); k < dim; k ++){
+				// distance += (A[point_location*(dim) + k]-A[j*(dim) + k])*(A[point_location*(dim) + k]-A[j*(dim) + k]);         
+				distance += pow(A[point_location*(dim) + k]-A[j*(dim) + k],2);
+				if(distance > (epsilon2)){break;} //this checks to see if we can short circuit
+
+			}
+
+			if(distance <= (epsilon2)) //if sqrt of the distance is <= epsilon
+			{
+				unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
+				point_a[index] = point_location; //stores the first point Number
+				point_b[index] = j; // this store the cooresponding point number to form a pair
+		
+			}
+		}
+			// }
+		// }
+	}
 }

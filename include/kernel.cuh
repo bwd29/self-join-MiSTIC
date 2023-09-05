@@ -261,5 +261,20 @@ void nodeByPoint5( const unsigned int dim,
                 unsigned int * tpp,
                 unsigned int * pointsPerBatch);
 
-__host__ __device__
-inline bool cachedDistanceCheck(double epsilon2, unsigned int dim, double * data, double * p1, unsigned int p2, unsigned int numPoints);
+__forceinline__ __host__ __device__ //may need to switch to inline (i did)
+bool cachedDistanceCheck(double epsilon2, double * data, double * p1, unsigned int p2, const unsigned int numPoints);
+
+__global__ 
+void searchKernelCOSS(const unsigned int batch_num,
+                    double * A, // this is the imported data
+					const unsigned int num_points, // total number of points
+					unsigned int * point_a, // an array which will store the first point in a pair
+					unsigned int * point_b, // an array vector that will store a second point in a pair
+					unsigned int * address_array, // the array of all generated addresses
+					unsigned long long int * key_value_index, //a simple counter to keep track of how many results in a batch
+					unsigned int * point_array,//the ordered points
+					const unsigned int array_counter, //the number of arrays
+					const unsigned int rps, //the number of reference points
+					const unsigned int dim, //the number of dimensions
+					const double epsilon2, //the distance threshold
+					unsigned int *point_address_array);

@@ -17,13 +17,15 @@
 #include <vector>
 #include <stack>
 
+#define COSS true
+
 #define DATANORM true
 #define HOST false
 #define BINARYSEARCH 1
 #define GPUSEARCH false
 #define TESTING_SEARCH false
 #define MINSQRS true
-#define NODES true
+#define NODES false
 #define ERRORPRINT true
 #define NODETEST false
 #define RANDRP true
@@ -42,7 +44,8 @@
 #define ORDP 32
 #define KT 5
 #define CMP 14
-
+#define ILP 8
+#define DIM 90
 const unsigned int RPPERLAYER = 32;
 
 
@@ -53,8 +56,8 @@ const unsigned int MINRP = 3;
 
 
 const unsigned int NUMSTREAMS = 2;
-const unsigned int BLOCK_SIZE = BS; 
-const unsigned int KERNEL_BLOCKS = KB;// * 1024 / BLOCK_SIZE;
+const unsigned int BLOCK_SIZE = 512;//BS; 
+const unsigned int KERNEL_BLOCKS = 1024;//KB;// * 1024 / BLOCK_SIZE;
 const int BRUTE = false;
 const int RANDOM = false;
 const int BOXED_RP = false;
@@ -63,8 +66,8 @@ const double SAMPLE_PER = 0.01;
 // const unsigned int MIN_NODE_SIZE = 1000; //value of 1 shuts this off
 
 const unsigned long long int CALC_PER_BATCH = 115;
-const unsigned int CALCS_PER_THREAD = 300000;
-const unsigned int MAX_CALCS_PER_THREAD = 600000;
+const unsigned int CALCS_PER_THREAD = 30000000;
+const unsigned int MAX_CALCS_PER_THREAD = 6000000;
 const unsigned int MIN_CALCS_PER_THREAD = 10000;
 
 const unsigned int MAX_BIN = 100000; 

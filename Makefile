@@ -14,12 +14,13 @@ LIBDIRS = -I.
 # DFLAGS += -DMAXRP=$(RP)
 # DFLAGS += -DDIM=$(DIM)
 # DFLAGS += -DKTYPE=$(KT)
-DFLAGS += -DBS=$(BS)
-DFLAGS += -DKB=$(KB)
+# DFLAGS += -DBS=$(BS)
+# DFLAGS += -DKB=$(KB)
 # DFLAGS += -DCMP=$(CMP)
 # DFLAGS += -DORDP=$(ORDP)
 # DFLAGS += -DCPB=$(CPB)
 # DFLAGS += -DTPP=$(TPP)
+# DFLAGS += -DILP=$(ILP)
 
 build/main: build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o 
 	$(NVCC) $(DFLAGS) $(CUDAFLAGS) $(LIBDIRS) -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o

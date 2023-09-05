@@ -20,8 +20,8 @@ module load cuda
 
 make clean
 BS=256 KB=1024 make
-cuda-memcheck ./build/main /scratch/bwd29/data/MSD.bin 90 0.091
-ncu --set full -o profileMSDKT23.out -k nodeByPoint5 ./build/main /scratch/bwd29/data/MSD.bin 90 0.091
+
+ncu --set full -o profileHiggs.out -k nodeByPoint5 ./build/main /scratch/bwd29/data/HIGSS_Normalized.bin 90 0.021375
 
 
 echo "Completed!"
