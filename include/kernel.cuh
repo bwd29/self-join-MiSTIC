@@ -277,4 +277,5 @@ void searchKernelCOSS(const unsigned int batch_num,
 					const unsigned int rps, //the number of reference points
 					const unsigned int dim, //the number of dimensions
 					const double epsilon2, //the distance threshold
-					unsigned int *point_address_array);
+					unsigned int *point_address_array,
+                    unsigned int * address_shared);

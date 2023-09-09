@@ -1045,7 +1045,7 @@ void nodeByPoint5( const unsigned int dim,
 }
 
 
-extern __shared__ unsigned int address_shared[];
+// extern __shared__ unsigned int address_shared[];
 __global__ 
 void searchKernelCOSS(const unsigned int batch_num,
                     double * A, // this is the imported data
@@ -1059,26 +1059,26 @@ void searchKernelCOSS(const unsigned int batch_num,
 					const unsigned int rps, //the number of reference points
 					const unsigned int dim, //the number of dimensions
 					const double epsilon2, //the distance threshold
-					unsigned int *point_address_array)
+					unsigned int *point_address_array,
+                    unsigned int * address_shared)
 
 {
   //the thread id is the id in the block plus the max id of the last batch
-    const unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x + (BLOCK_SIZE*KERNEL_BLOCKS)*(batch_num);
+    const unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
     const char stride = rps+1;
-    unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
+    const int point_location = (tid+(BLOCK_SIZE*KERNEL_BLOCKS*TPP)*(batch_num))/(TPP);
 
+    // unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
 	// an exit clause if the number of threads wanted does not line up with block sizes
-	if ( blockIdx.x*blockDim.x+threadIdx.x >= BLOCK_SIZE*KERNEL_BLOCKS || tid >= TPP*num_points)
+	if ( blockIdx.x*blockDim.x+threadIdx.x >= BLOCK_SIZE*TPP*KERNEL_BLOCKS || point_location >= num_points)
 	{
 
 		return;
 	}
 
 	//find the point number and the address number
-	const int point_location = tid/(TPP);
-    const int address_num = point_address_array[tid/(TPP)];
+    const int address_num = point_address_array[(tid+(BLOCK_SIZE*KERNEL_BLOCKS*TPP)*(batch_num))/(TPP)];
 	
-
 
     //number possible combos is rps - the first odd address
 	for (int i = 0; i < pow_int(3, rps); i++) // this itterates through every possible address combo
@@ -1091,12 +1091,14 @@ void searchKernelCOSS(const unsigned int batch_num,
 			if (temp == 2){
 				temp = -1;
 			}
-			*(address_shared+threadIdx.x*stride+j+1) =  temp + address_array[(address_num)*stride+j+1];
-
+			// *(address_shared+threadIdx.x*stride+j+1) =  temp + address_array[(address_num)*stride+j+1];
+            address_shared[tid*stride+j+1] = temp + address_array[(address_num)*stride+j+1];
 		}
 
 		int address_location = -1;
-		address_location = binary_search_basic(address_array, array_counter, &address_shared[threadIdx.x*stride], rps);
+		// address_location = binary_search_basic(address_array, array_counter, &address_shared[threadIdx.x*stride], rps);
+        address_location = binary_search_basic(address_array, array_counter, &address_shared[tid*stride], rps);
+
 
 		if( address_location < 0)
 		{

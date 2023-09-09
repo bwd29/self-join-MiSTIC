@@ -3673,6 +3673,11 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
         assert(cudaSuccess == cudaMalloc((void**)&d_uniqueKeys[i], sizeof(unsigned int)*numPoints));
     }
 
+    unsigned int *d_addressStorageSpace[NUMSTREAMS];
+    for(unsigned int i = 0; i < NUMSTREAMS; i++){
+        assert(cudaSuccess == cudaMalloc((void**)&d_addressStorageSpace[i], sizeof(unsigned int)*(numLayers+1)*TPP*KERNEL_BLOCKS*BLOCK_SIZE));
+    }
+
     unsigned int ** dataArray = (unsigned int **)malloc(sizeof(unsigned int*)*numBatches);
 
     printf("Building Neighbor Tables\n");
@@ -3730,7 +3735,7 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
 
         const int d_batch_num = i;
 
-        searchKernelCOSS<<<totalBlocks,BLOCK_SIZE, (BLOCK_SIZE)*(numLayers+1)*sizeof(unsigned int), stream[tid]>>>(
+        searchKernelCOSS<<<totalBlocks,BLOCK_SIZE, 0, stream[tid]>>>(
 			d_batch_num,
             d_data,
 			d_numPoints,
@@ -3743,7 +3748,8 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
 			d_numLayers,
 			d_dim,
 			d_epsilon2,
-			d_pointBinIndex);
+			d_pointBinIndex,
+            d_addressStorageSpace[tid]);
 
 
         cudaStreamSynchronize(stream[tid]);
