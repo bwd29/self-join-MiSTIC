@@ -212,8 +212,9 @@ int main(int argc, char*argv[]){
 	printf("Last Layer Bin Count: %d\nTree Check: %d\n",binSizes[numLayers-1], tree[numLayers-1][binSizes[numLayers-1]-1]);
 
 	double time2 = omp_get_wtime();
-
-	if(TESTING_SEARCH) fprintf(stderr," TT, %f,", time2-time1);
+	if(ERRORPRINT) fprintf(stderr,"%u ",numLayers);
+	// if(TESTING_SEARCH) fprintf(stderr," TT, %f,", time2-time1);
+	if(ERRORPRINT) fprintf(stderr,"%f ",time2-time1);
 
     printf("Time to build tree: %f\n", time2-time1);
 
@@ -230,152 +231,152 @@ int main(int argc, char*argv[]){
 		pointArray);
 	#endif
 
-	#if GPUSEARCH
+	// #if GPUSEARCH
 
-	struct neighborTable * table1 = launchGPUSearchKernel(tree,
-														numPoints,
-														pointBinNumbers,
-														numLayers,
-														binSizes,
-														binAmounts,
-														data,
-														dim,
-														epsilon,
-														pointArray);
+	// struct neighborTable * table1 = launchGPUSearchKernel(tree,
+	// 													numPoints,
+	// 													pointBinNumbers,
+	// 													numLayers,
+	// 													binSizes,
+	// 													binAmounts,
+	// 													data,
+	// 													dim,
+	// 													epsilon,
+	// 													pointArray);
 
-	#else
-	// addIndexes holds the return from generating ranges which contains the non-empty index locations in the last layer of tree
-    unsigned int * addIndexes;
+	// #else
+	// // addIndexes holds the return from generating ranges which contains the non-empty index locations in the last layer of tree
+    // unsigned int * addIndexes;
 
-	// rangeIndexes holds the return from generating ranges that correspond to the non-empty indexes 
-	// and has the adjacent non-empty index locations
-    unsigned int ** rangeIndexes;
+	// // rangeIndexes holds the return from generating ranges that correspond to the non-empty indexes 
+	// // and has the adjacent non-empty index locations
+    // unsigned int ** rangeIndexes;
 
-	// range sizes has the number of points in the adjacent ranges in rangeIndexes
-    unsigned int ** rangeSizes;
+	// // range sizes has the number of points in the adjacent ranges in rangeIndexes
+    // unsigned int ** rangeSizes;
 
-	// the number of adjacent indexes for each noin-empty index
-    unsigned int * numValidRanges;
+	// // the number of adjacent indexes for each noin-empty index
+    // unsigned int * numValidRanges;
 
-	//the number of distance calculations that will be needed for each non-empty index
-    unsigned long long * calcPerAdd;
+	// //the number of distance calculations that will be needed for each non-empty index
+    // unsigned long long * calcPerAdd;
 
-	// the number of points in each non-empty index
-	unsigned int *numPointsInAdd;
+	// // the number of points in each non-empty index
+	// unsigned int *numPointsInAdd;
 
 
-	//generate the ranges and perform the searches
-    unsigned int nonEmptyBins = generateRanges(tree, //the tree arrays pointer
-									  numPoints, //the number of points in the dataset
-									  pointBinNumbers, // the bin numbers for each point
-									  numLayers, // the number of layers of the tree
-									  binSizes, // the width of each layer of the tree
-									  binAmounts, // the number of bins for each reference point
-									  &addIndexes, // for returning the addIndex info
-									  &rangeIndexes, //for returning the range index info
-									  &rangeSizes,// for returning the range size info
-									  &numValidRanges, //for returning the valid range count
-									  &calcPerAdd, // for returning the number of clacs for each address
-									  &numPointsInAdd); //for returning the number of points in each non-empty index
+	// //generate the ranges and perform the searches
+    // unsigned int nonEmptyBins = generateRanges(tree, //the tree arrays pointer
+	// 								  numPoints, //the number of points in the dataset
+	// 								  pointBinNumbers, // the bin numbers for each point
+	// 								  numLayers, // the number of layers of the tree
+	// 								  binSizes, // the width of each layer of the tree
+	// 								  binAmounts, // the number of bins for each reference point
+	// 								  &addIndexes, // for returning the addIndex info
+	// 								  &rangeIndexes, //for returning the range index info
+	// 								  &rangeSizes,// for returning the range size info
+	// 								  &numValidRanges, //for returning the valid range count
+	// 								  &calcPerAdd, // for returning the number of clacs for each address
+	// 								  &numPointsInAdd); //for returning the number of points in each non-empty index
 
-	// keep track of the number of total calcs needed
-    unsigned long long sumCalcs = 0;
+	// // keep track of the number of total calcs needed
+    // unsigned long long sumCalcs = 0;
 
-	//keep track of the number of address that were found in searching for each address
-    unsigned long long sumAdds = 0;
+	// //keep track of the number of address that were found in searching for each address
+    // unsigned long long sumAdds = 0;
 
-	//itterating through just to find sum values
-    for(unsigned int i = 0; i < nonEmptyBins; i++){
-        sumCalcs += calcPerAdd[i];
-        sumAdds += numValidRanges[i];
-    }
+	// //itterating through just to find sum values
+    // for(unsigned int i = 0; i < nonEmptyBins; i++){
+    //     sumCalcs += calcPerAdd[i];
+    //     sumAdds += numValidRanges[i];
+    // }
 
-	// add index range has the values at each nonempty index of the last layer of the tree
-	unsigned int * addIndexRange = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins);
-	for(unsigned int i = 0; i < nonEmptyBins; i++){
-		addIndexRange[i] = tree[numLayers-1][addIndexes[i]];
-	}
+	// // add index range has the values at each nonempty index of the last layer of the tree
+	// unsigned int * addIndexRange = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins);
+	// for(unsigned int i = 0; i < nonEmptyBins; i++){
+	// 	addIndexRange[i] = tree[numLayers-1][addIndexes[i]];
+	// }
 
-	// an array for keeping track of where the linear indexs start for each elemetn in the 2d one
-	unsigned int * linearRangeID = (unsigned int*)malloc(sizeof(unsigned int) * nonEmptyBins);
+	// // an array for keeping track of where the linear indexs start for each elemetn in the 2d one
+	// unsigned int * linearRangeID = (unsigned int*)malloc(sizeof(unsigned int) * nonEmptyBins);
 
-	// a linear range index made from the 2d range index array to keep track of adjacent non-empty indexes for each non-empty index
-	unsigned int * linearRangeIndexes = (unsigned int*)malloc(sizeof(unsigned int)*sumAdds);
+	// // a linear range index made from the 2d range index array to keep track of adjacent non-empty indexes for each non-empty index
+	// unsigned int * linearRangeIndexes = (unsigned int*)malloc(sizeof(unsigned int)*sumAdds);
 
-	//a linear range sizes made from the range siezes array to keep track of the number of points in adjacent indexes
-	unsigned int * linearRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*sumAdds);
+	// //a linear range sizes made from the range siezes array to keep track of the number of points in adjacent indexes
+	// unsigned int * linearRangeSizes = (unsigned int*)malloc(sizeof(unsigned int)*sumAdds);
 
-	//running total for keeping track of starts for each index in the linear arrays
-	unsigned int runningTotal = 0;
-	//linearizeing 2d arrays to 1d arrays for GPU work
-	for(unsigned int i = 0; i < nonEmptyBins; i++){
+	// //running total for keeping track of starts for each index in the linear arrays
+	// unsigned int runningTotal = 0;
+	// //linearizeing 2d arrays to 1d arrays for GPU work
+	// for(unsigned int i = 0; i < nonEmptyBins; i++){
 
-		//keeping track of start locations in the linear arrays
-		linearRangeID[i] = runningTotal;
+	// 	//keeping track of start locations in the linear arrays
+	// 	linearRangeID[i] = runningTotal;
 		
 
-		//populating the linear arrays from the 2d ones
-		for(unsigned int j = 0; j < numValidRanges[i]; j++){
-			linearRangeIndexes[runningTotal + j] = tree[numLayers-1][rangeIndexes[i][j]];
-			linearRangeSizes[runningTotal + j] = rangeSizes[i][j];
-		}
+	// 	//populating the linear arrays from the 2d ones
+	// 	for(unsigned int j = 0; j < numValidRanges[i]; j++){
+	// 		linearRangeIndexes[runningTotal + j] = tree[numLayers-1][rangeIndexes[i][j]];
+	// 		linearRangeSizes[runningTotal + j] = rangeSizes[i][j];
+	// 	}
 
-		//increment the running total by the number of ranges for the current index
-		runningTotal += numValidRanges[i];
-	}
+	// 	//increment the running total by the number of ranges for the current index
+	// 	runningTotal += numValidRanges[i];
+	// }
 
-	if(TESTING_SEARCH) fprintf(stderr," NB, %d, NC, %llu, NA, %llu", nonEmptyBins, sumCalcs, sumAdds );
+	// if(TESTING_SEARCH) fprintf(stderr," NB, %d, NC, %llu, NA, %llu", nonEmptyBins, sumCalcs, sumAdds );
 
-    printf("Number non-empty bins: %d\nNumber of calcs: %llu\nNumber Address for calcs: %llu\n", nonEmptyBins, sumCalcs, sumAdds);
-
-
-	double time3 = omp_get_wtime();
+    // printf("Number non-empty bins: %d\nNumber of calcs: %llu\nNumber Address for calcs: %llu\n", nonEmptyBins, sumCalcs, sumAdds);
 
 
-	if((log2(nonEmptyBins) < numLayers && BINARYSEARCH == 2) || BINARYSEARCH == true){
-		printf("Tree BINARY search time: %f\n", time3-time2);
-		if(TESTING_SEARCH) fprintf(stderr," B, %f,", time3-time2);
-	}else{
-		printf("Tree TRAVERSAL search time: %f\n", time3-time2);
-		if(TESTING_SEARCH) fprintf(stderr," T, %f,", time3-time2);
-	}
+	// double time3 = omp_get_wtime();
 
 
-	#if !TESTING_SEARCH
+	// if((log2(nonEmptyBins) < numLayers && BINARYSEARCH == 2) || BINARYSEARCH == true){
+	// 	printf("Tree BINARY search time: %f\n", time3-time2);
+	// 	if(TESTING_SEARCH) fprintf(stderr," B, %f,", time3-time2);
+	// }else{
+	// 	printf("Tree TRAVERSAL search time: %f\n", time3-time2);
+	// 	if(TESTING_SEARCH) fprintf(stderr," T, %f,", time3-time2);
+	// }
+
+
+	// #if !TESTING_SEARCH
 
 	
 
-	struct neighborTable * table1 =  launchKernel(numLayers, // the number of layers in the tree
-				data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
-				dim, //the dimensionality of the data
-				numPoints, //the number of points in the dataset
-				epsilon, //the distance threshold being searched
-				addIndexes, //the non-empty index locations in the last layer of the tree
-			    addIndexRange, // the value of the non empty index locations  in the last layer of the tree, so the starting point number
-				pointArray, // the array of point numbers ordered to match the sequence in the last array of the tree and the data
-				rangeIndexes, // the non-empty adjacent indexes for each non-empty index 
-				rangeSizes, // the size of the non-empty adjacent indexes for each non-empty index
-				numValidRanges, // the number of adjacent non-empty indexes for each non-empty index
-				numPointsInAdd, // the number of points in each non-empty index
-				calcPerAdd, // the number of calculations needed for each non-mepty index
-				nonEmptyBins, //the number of nonempty indexes
-				sumCalcs, // the total number of calculations that will need to be made
-				sumAdds, //the total number of addresses that will be compared to by other addresses for distance calcs
-				linearRangeID, // an array for keeping trackj of starting points in the linear arrays
-				linearRangeIndexes, // a linear version of rangeIndexes
-				linearRangeSizes); // a linear version of 
+	// struct neighborTable * table1 =  launchKernel(numLayers, // the number of layers in the tree
+	// 			data, //the dataset that has been ordered by dimensoins and possibly reorganized for colasced memory accsess
+	// 			dim, //the dimensionality of the data
+	// 			numPoints, //the number of points in the dataset
+	// 			epsilon, //the distance threshold being searched
+	// 			addIndexes, //the non-empty index locations in the last layer of the tree
+	// 		    addIndexRange, // the value of the non empty index locations  in the last layer of the tree, so the starting point number
+	// 			pointArray, // the array of point numbers ordered to match the sequence in the last array of the tree and the data
+	// 			rangeIndexes, // the non-empty adjacent indexes for each non-empty index 
+	// 			rangeSizes, // the size of the non-empty adjacent indexes for each non-empty index
+	// 			numValidRanges, // the number of adjacent non-empty indexes for each non-empty index
+	// 			numPointsInAdd, // the number of points in each non-empty index
+	// 			calcPerAdd, // the number of calculations needed for each non-mepty index
+	// 			nonEmptyBins, //the number of nonempty indexes
+	// 			sumCalcs, // the total number of calculations that will need to be made
+	// 			sumAdds, //the total number of addresses that will be compared to by other addresses for distance calcs
+	// 			linearRangeID, // an array for keeping trackj of starting points in the linear arrays
+	// 			linearRangeIndexes, // a linear version of rangeIndexes
+	// 			linearRangeSizes); // a linear version of 
 				
-	double time4 = omp_get_wtime();
-    printf("Kernel time: %f\n", time4-time3);
-	#endif
+	// double time4 = omp_get_wtime();
+    // printf("Kernel time: %f\n", time4-time3);
+	// #endif
 
 
-	#endif
+	// #endif
 
 	#endif
 
 	printf("Total Time: %f\n",omp_get_wtime()-time1); //note that this does not include time to read in the data from disk to main memory
-
+	if(ERRORPRINT) fprintf(stderr,"%f ",omp_get_wtime()-time1);
 
 
 

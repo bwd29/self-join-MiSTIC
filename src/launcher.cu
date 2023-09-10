@@ -3682,8 +3682,8 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
 
     printf("Building Neighbor Tables\n");
     //struct for sotring the results
-    struct neighborTable * tables = (struct neighborTable*)malloc(sizeof(struct neighborTable)*numPoints);
-    // tables = new neighborTable[numPoints];
+    // struct neighborTable * tables = (struct neighborTable*)malloc(sizeof(struct neighborTable)*numPoints);
+    struct neighborTable * tables = new neighborTable[numPoints];
     for (unsigned int i = 0; i < numPoints; i++)
         {	
         struct neighborTable temp; 
@@ -3699,7 +3699,7 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
         tables[i].vectdataPtr[0] = pointArray;
         omp_init_lock(&tables[i].pointLock);
     }
-    
+     
     cudaDeviceSynchronize(); 
 
     printf("Creating CUDA Streams\n");
@@ -3753,6 +3753,7 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
 
 
         cudaStreamSynchronize(stream[tid]);
+        // assert(cudaSuccess == cudaGetLastError());
 
         assert(cudaSuccess ==  cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid]));
         cudaStreamSynchronize(stream[tid]);
@@ -3812,6 +3813,7 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
 
     double time4 = omp_get_wtime();
     printf("Kernel time: %f\n", time4-time3);
+    if(ERRORPRINT) fprintf(stderr,"%f ",time4-time3);
 
 
     unsigned long long totals = 0;

@@ -1,0 +1,10 @@
+rm -f build/main build/*.o
+nvcc  -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+MSD ________________________________________________________________
+MSD ________________________________________________________________

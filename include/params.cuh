@@ -38,7 +38,7 @@
 #define CALC_MULTI 1.5
 // #define MIN_NODE_SIZE 1000
 #define MAX_CALCS_PER_NODE 32 //millions
-#define TPP 1
+#define TPP 8
 #define BUFFERSIZE 1000000
 #define MAXBATCH 100
 #define ORDP 32
@@ -50,12 +50,12 @@ const unsigned int RPPERLAYER = 32;
 
 
 
-const unsigned int MAXRP = 30;
+const unsigned int MAXRP = 6;
 
 const unsigned int MINRP = 3;
 
 
-const unsigned int NUMSTREAMS = 2;
+const unsigned int NUMSTREAMS = 1;
 const unsigned int BLOCK_SIZE = 512;//BS; 
 const unsigned int KERNEL_BLOCKS = 1024;//KB;// * 1024 / BLOCK_SIZE;
 const int BRUTE = false;

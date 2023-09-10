@@ -15,7 +15,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	unsigned int maxRP = MAXRP; // setting the max number of reference points
 	unsigned int numRPperLayer = RPPERLAYER; //could use log2(numPoints) // setting how many reference points are checked for each layer
 
-	printf("Selecting %d Rp from a pool of %d\n", numRPperLayer, (int)sqrt(numPoints));
+	// printf("Selecting %d Rp from a pool of %d\n", numRPperLayer, (int)sqrt(numPoints));
 	//an array to hold the bins of the tree that will be passed back to the calling function in rbins
 	unsigned int ** bins = (unsigned int **)malloc(sizeof(unsigned int*)*maxRP);
 
@@ -62,12 +62,6 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 			sumSqrsTemp[i] = 0;
 		}
 
-
-		// if we want full random, then set seed based on time
-		if(RAND){
-			srand(omp_get_wtime());
-		} 
-
 		// make the array of reference points
 		double * RPArray = createRPArray(data, numRPperLayer, dim, numPoints);
 		
@@ -100,7 +94,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		// printf("refChecking: \n");
 
 		// entering into a loop to create a bunch of different possible layers for the current layer. then the best one is chosen
-		#pragma omp parallel for num_threads(numRPperLayer)
+		#pragma omp parallel for //num_threads(numRPperLayer)
 		for(unsigned int i = 0; i < numRPperLayer; i++){
 
 			//set the current number of non empty bins to 0
@@ -111,6 +105,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 			double minDistance = euclideanDistance(&data[0*dim], dim , &RPArray[i*dim]); // the min distance starts as just a point
 
 			// going through each point to build the distance matrix
+			#pragma omp parallel for
 			for(unsigned int j = 0; j < numPoints; j++){
 				distMat[i*numPoints + j] = euclideanDistance(&data[j*dim], dim , &RPArray[i*dim]);
 
@@ -277,9 +272,9 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		}
 
 		// check if the current layer is at least the min number of layers for the tree
-		// if(currentLayer == maxRP-1){
+		if(currentLayer == maxRP-1){
 			// check if the sum of sqrs is still decreasing by adding layers or if we are at the max number of layers
-		if( currentLayer >= MINRP && (sumSqrsLayers[currentLayer-1]/sumSqrsLayers[currentLayer] < 3 || averageNonEmptyBinCountLayers[currentLayer] <= 10.0 || currentLayer == maxRP - 1)){
+		// if( currentLayer >= MINRP && (sumSqrsLayers[currentLayer-1]/sumSqrsLayers[currentLayer] < 3 || averageNonEmptyBinCountLayers[currentLayer] <= 10.0 || currentLayer == maxRP - 1)){
 			
 			//set check to false to exit the while loop
 			check = false;

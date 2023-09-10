@@ -58,7 +58,7 @@ int binary_search_basic(unsigned int *array, //points to an array
 	int first = 0;
 	int last = array_size;
 	int middle = (first+last)/2;
-	int strider = (rps+1);
+	const int strider = (rps+1);
 
 	while (first <= last){
 
@@ -1068,13 +1068,12 @@ void searchKernelCOSS(const unsigned int batch_num,
     const char stride = rps+1;
     const int point_location = (tid+(BLOCK_SIZE*KERNEL_BLOCKS*TPP)*(batch_num))/(TPP);
 
-    // unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
 	// an exit clause if the number of threads wanted does not line up with block sizes
 	if ( blockIdx.x*blockDim.x+threadIdx.x >= BLOCK_SIZE*TPP*KERNEL_BLOCKS || point_location >= num_points)
 	{
-
 		return;
 	}
+
 
 	//find the point number and the address number
     const int address_num = point_address_array[(tid+(BLOCK_SIZE*KERNEL_BLOCKS*TPP)*(batch_num))/(TPP)];
@@ -1105,6 +1104,8 @@ void searchKernelCOSS(const unsigned int batch_num,
 			continue;
 		}
 
+        // unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
+
 
 		//getting the ranges of the points
 		const int start = address_array[address_location*stride]; //range_array[2*address_array[address_location*stride]];//inclusive
@@ -1112,33 +1113,9 @@ void searchKernelCOSS(const unsigned int batch_num,
 
 		for(int j = start+(tid % (TPP)); j < end; j+=(TPP))
 		{
-			if(j == point_location){continue;}
-			double distance = 0; // a double to hold intermediate values
-			//we calculate the distance in every dimension
-			for(int k = 0; k < (dim - dim % 2); k += 2)
-			{         
-				//distance += (A[point_location*(dim) + k]-A[j*(dim) + k])*(A[point_location*(dim) + k]-A[j*(dim) + k]);
-				distance += pow(A[point_location*(dim) + k]-A[j*(dim) + k],2);
-				//distance += (A[point_location*(dim) + k+1]-A[j*(dim) + k+1])*(A[point_location*(dim) + k+1]-A[j*(dim) + k+1]);
-				distance += pow(A[point_location*(dim) + k+1]-A[j*(dim) + k+1],2);
-				if(distance > (epsilon2)){break;} //this checks to see if we can short circuit
 
-				// distance += (A[point_location*(dim) + k+2]-A[j*(dim) + k+2])*(A[point_location*(dim) + k+2]-A[j*(dim) + k+2]);
-
-				// distance += (A[point_location*(dim) + k+3]-A[j*(dim) + k+3])*(A[point_location*(dim) + k+3]-A[j*(dim) + k+3]);
-			
-				// distance += (A[point_location*(dim) + k+4]-A[j*(dim) + k+4])*(A[point_location*(dim) + k+4]-A[j*(dim) + k+4]);
-
-			}
-	
-			for ( int k = (dim - dim % 2); k < dim; k ++){
-				// distance += (A[point_location*(dim) + k]-A[j*(dim) + k])*(A[point_location*(dim) + k]-A[j*(dim) + k]);         
-				distance += pow(A[point_location*(dim) + k]-A[j*(dim) + k],2);
-				if(distance > (epsilon2)){break;} //this checks to see if we can short circuit
-
-			}
-
-			if(distance <= (epsilon2)) //if sqrt of the distance is <= epsilon
+			// if(distance <= (epsilon2)) //if sqrt of the distance is <= epsilon
+            if (distanceCheck(epsilon2, dim, A, point_location, j, num_points))
 			{
 				unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
 				point_a[index] = point_location; //stores the first point Number
