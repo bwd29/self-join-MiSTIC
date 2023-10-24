@@ -256,7 +256,7 @@ void GPUTreeTraversal(unsigned int tid,
 
         //perform the search and get the index location of the return 
 
-        int index = GPUDepthSearch(tid, tree, binSizes, binAmounts, numLayers, &tempAdd[tid*numLayers]);
+        int index = GPUDepthSearch(tree, binSizes, binAmounts, numLayers, &tempAdd[tid*numLayers]);
 
         //check if the index location was non empty
         if(index >= 0){
@@ -279,7 +279,7 @@ void GPUTreeTraversal(unsigned int tid,
     }
 
     // get the index of the home address
-    int homeIndex = GPUDepthSearch(tid, tree, binSizes, binAmounts, numLayers, &binNumbers[tid*numLayers]);
+    int homeIndex = GPUDepthSearch(tree, binSizes, binAmounts, numLayers, &binNumbers[tid*numLayers]);
 
     // find the number of points in the home address
     *numPointsInAdd = lastTreeLayer[homeIndex+1] - lastTreeLayer[homeIndex]; //may need to +- one to index here !!!!!!!!!
@@ -294,11 +294,8 @@ void GPUTreeTraversal(unsigned int tid,
 
 
 
-
-
 __device__
-int GPUDepthSearch(unsigned int tid,
-                    unsigned int * tree, //pointer to the tree built with buildTree()
+int GPUDepthSearch( unsigned int * tree, //pointer to the tree built with buildTree()
                     unsigned int * binSizes,
                     unsigned int * binAmounts, // the number of bins for each reference point, i.e. range/epsilon
                     unsigned int numLayers, //the number of layers in the tree
@@ -308,25 +305,27 @@ int GPUDepthSearch(unsigned int tid,
     unsigned int offset = 0;
     unsigned int layerOffset = 0;
     //go through each layer up to the last to determine if the index is non-empty and if it is then find the offset into the next layer
-    for(unsigned int i = 0; i < numLayers-1; i++){
+    for(unsigned int i = 0; i < numLayers - 1; i++){
 
-        //check the current layer at the bin number + offset may or may not need -1 here
-        if (tree[layerOffset +offset + searchBins[i]] == 0){
+        //check the current layer at the bin number + offset
+        if (tree[layerOffset + offset + searchBins[i+1]] == 0){
+            // if( i != 0) printf("%d, ", i);
             return -2;
         }
 
         // the next offset will be the previous layer index number * the number of bins for the reference point in the next layer
-        offset = (tree[layerOffset + searchBins[i]+offset]-1)*binAmounts[i+1];
+        offset = (tree[layerOffset + searchBins[i+1]+offset]-1)*binAmounts[i+1];
 
         layerOffset += binSizes[i];
     }
 
     //the index will be the last layers bin number plus the offset for the last layer
-    long int index = searchBins[ numLayers-1]+offset;
-
-    //if last layer has poionts then return the index value
+    int index = searchBins[ numLayers-1+1] + offset;
+    // printf("%d, ",index);
+    //if last layer has points then return the index value
     if(tree[layerOffset + index] < tree[layerOffset+index+1]){
         return index;
+        // printf("%d, ",index);
     }else{
         return -1;
     }
@@ -834,7 +833,7 @@ void nodeByPoint3( const unsigned int dim,
 
 
 __forceinline__ __host__ __device__ //may need to switch to inline (i did)
-bool cachedDistanceCheck(double epsilon2, double * data, double * p1, unsigned int p2, const unsigned int numPoints){
+int cachedDistanceCheck(double epsilon2, double * data, double * p1, unsigned int p2, const unsigned int numPoints){
 
     double runningDist[ILP];
 
@@ -843,10 +842,12 @@ bool cachedDistanceCheck(double epsilon2, double * data, double * p1, unsigned i
 		runningDist[j]=0;
     }
 
-    for(int l=0; l<DIM; l+=ILP) {
+    // int counter = 0;
+    for(int l=0; l < DIM; l+=ILP) {
         #pragma unroll
-        for(int j=0; j<ILP && (l+j) < DIM; j++) {
+        for(int j=0; j<ILP && l+j < DIM; j++) {
             runningDist[j] += (p1[l+j]- data[(l+j)*numPoints + p2])*(p1[l+j] - data[(l+j)*numPoints + p2]);
+            // counter++;
         }
 
         #pragma unroll
@@ -856,11 +857,13 @@ bool cachedDistanceCheck(double epsilon2, double * data, double * p1, unsigned i
         }
 
         if (runningDist[0] > epsilon2) {
-                return false;
+                // return counter;
+                return 0;
             }
     }
 
-    return true;
+    // return counter;
+    return 1;
 }
 
 
@@ -1067,6 +1070,10 @@ void searchKernelCOSS(const unsigned int batch_num,
     const unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
     const char stride = rps+1;
     const int point_location = (tid+(BLOCK_SIZE*KERNEL_BLOCKS*TPP)*(batch_num))/(TPP);
+    double cachedPoint[DIM];
+    for(unsigned int i = 0; i < DIM; i++){
+        cachedPoint[i] = A[num_points*i + point_location];
+    }
 
 	// an exit clause if the number of threads wanted does not line up with block sizes
 	if ( blockIdx.x*blockDim.x+threadIdx.x >= BLOCK_SIZE*TPP*KERNEL_BLOCKS || point_location >= num_points)
@@ -1115,7 +1122,114 @@ void searchKernelCOSS(const unsigned int batch_num,
 		{
 
 			// if(distance <= (epsilon2)) //if sqrt of the distance is <= epsilon
-            if (distanceCheck(epsilon2, dim, A, point_location, j, num_points))
+            // if (distanceCheck(epsilon2, dim, A, point_location, j, num_points))
+            if(cachedDistanceCheck(epsilon2, A, cachedPoint, j, num_points))
+			{
+				unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
+				point_a[index] = point_location; //stores the first point Number
+				point_b[index] = j; // this store the cooresponding point number to form a pair
+		
+			}
+		}
+			// }
+		// }
+	}
+}
+
+__global__ 
+void searchKernelCOSStree(const unsigned int batch_num,
+                    double * A, // this is the imported data
+					const unsigned int num_points, // total number of points
+					unsigned int * point_a, // an array which will store the first point in a pair
+					unsigned int * point_b, // an array vector that will store a second point in a pair
+					unsigned int * address_array, // the array of all generated addresses
+					unsigned long long int * key_value_index, //a simple counter to keep track of how many results in a batch
+					unsigned int * point_array,//the ordered points
+					const unsigned int array_counter, //the number of arrays
+					const unsigned int rps, //the number of reference points
+					const unsigned int dim, //the number of dimensions
+					const double epsilon2, //the distance threshold
+					unsigned int *point_address_array,
+                    unsigned int * address_shared,
+                    unsigned int * tree,
+                    unsigned int * binSizes,
+                    unsigned int * binAmounts,
+                    const unsigned int lastLayerOffset)
+
+{
+  //the thread id is the id in the block plus the max id of the last batch
+    const unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
+    const char stride = rps+1;
+    const int point_location = (tid+(BLOCK_SIZE*KERNEL_BLOCKS*TPP)*(batch_num))/(TPP);
+    double cachedPoint[DIM];
+    for(unsigned int i = 0; i < DIM; i++){
+        cachedPoint[i] = A[num_points*i + point_location];
+    }
+
+	// an exit clause if the number of threads wanted does not line up with block sizes
+	if ( blockIdx.x*blockDim.x+threadIdx.x >= BLOCK_SIZE*TPP*KERNEL_BLOCKS || point_location >= num_points)
+	{
+		return;
+	}
+
+
+	//find the point number and the address number
+    const int address_num = point_address_array[(tid+(BLOCK_SIZE*KERNEL_BLOCKS*TPP)*(batch_num))/(TPP)];
+	
+
+    //number possible combos is rps - the first odd address
+	for (int i = 0; i < pow_int(3, rps); i++) // this itterates through every possible address combo
+    {	
+		
+
+		for(int j = 0; j < rps; j++){
+
+			int temp = (i / pow_int(3, j) ) % 3;
+			if (temp == 2){
+				temp = -1;
+			}
+			// *(address_shared+threadIdx.x*stride+j+1) =  temp + address_array[(address_num)*stride+j+1];
+            address_shared[tid*stride+j+1] = temp + address_array[(address_num)*stride+j+1];
+		}
+
+		int address_location = -1;
+		// address_location = binary_search_basic(address_array, array_counter, &address_shared[threadIdx.x*stride], rps);
+        #if BINARYSEARCH == 1
+        address_location = binary_search_basic(address_array, array_counter, &address_shared[tid*stride], rps);
+        #elif BINARYSEARCH == 2
+        address_location = GPUDepthSearch(tree, binSizes, binAmounts, rps, &address_shared[tid*stride]);
+        #endif
+
+		if( address_location < 0)
+		{
+			continue;
+		}
+
+        // unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
+
+
+		//getting the ranges of the points
+        #if BINARYSEARCH == 1
+		const int start = address_array[address_location*stride]; //range_array[2*address_array[address_location*stride]];//inclusive
+		const int end = address_location == array_counter-1 ? num_points:address_array[(address_location+1)*stride]; //range_array[2*address_array[address_location*stride]+1];//exclusive
+        #else
+        const int start = tree[lastLayerOffset+address_location];
+        const int end = tree[lastLayerOffset+address_location+1];
+        #endif
+
+        // unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1);
+		for(int j = start+(tid % (TPP)); j < end; j+=(TPP))
+		{
+
+            // unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
+
+
+			// // if(distance <= (epsilon2)) //if sqrt of the distance is <= epsilon
+            // // if (distanceCheck(epsilon2, dim, A, point_location, j, num_points))
+            // unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)cachedDistanceCheck(epsilon2, A, cachedPoint, j, num_points)); // atomic add to count results
+            // unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
+
+            if(cachedDistanceCheck(epsilon2, A, cachedPoint, j, num_points))
 			{
 				unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1); // atomic add to count results
 				point_a[index] = point_location; //stores the first point Number

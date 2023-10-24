@@ -1,0 +1,240 @@
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+
+Time to read in file: 0.277489
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.007600 
+*********************************
+
+Selected RPs: 16, 7, 0, 5, 4, 2
+Selected 6 reference points
+Layer 0 sumqrs: 31060026403.000000 BinCount: 56 AverageBinsCount: 14315.000000, nonEmpty: 36
+Layer 1 sumqrs: 22948807103.000000 BinCount: 1116 AverageBinsCount: 1689.000000, nonEmpty: 305
+Layer 2 sumqrs: 14923301473.000000 BinCount: 6405 AverageBinsCount: 454.000000, nonEmpty: 1134
+Layer 3 sumqrs: 11174770027.000000 BinCount: 21546 AverageBinsCount: 185.000000, nonEmpty: 2781
+Layer 4 sumqrs: 8002202935.000000 BinCount: 66744 AverageBinsCount: 96.000000, nonEmpty: 5327
+Layer 5 sumqrs: 5937658544.000000 BinCount: 133175 AverageBinsCount: 61.000000, nonEmpty: 8417
+Last Layer Bin Count: 133175
+Tree Check: 515345
+Time to build tree: 1.366358
+Starting Kernel Launcher
+Non Empty Bins in last layer: 8417
+Total Bin Count in Tree: 229042
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 154143508484, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 309318430878, total Blocks: 1024, BlockSize: 256 
+Kernel time: 85.381527
+Total results Set Size: 463461939362 
+Total Time: 86.889768
+
+Time to read in file: 0.295047
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.009130 
+*********************************
+
+Selected RPs: 16, 6, 15, 1, 4, 3
+Selected 6 reference points
+Layer 0 sumqrs: 36768422687.000000 BinCount: 47 AverageBinsCount: 16624.000000, nonEmpty: 31
+Layer 1 sumqrs: 29190958361.000000 BinCount: 527 AverageBinsCount: 2538.000000, nonEmpty: 203
+Layer 2 sumqrs: 21347347055.000000 BinCount: 5684 AverageBinsCount: 564.000000, nonEmpty: 913
+Layer 3 sumqrs: 15778554873.000000 BinCount: 20086 AverageBinsCount: 259.000000, nonEmpty: 1988
+Layer 4 sumqrs: 12098104311.000000 BinCount: 41748 AverageBinsCount: 148.000000, nonEmpty: 3479
+Layer 5 sumqrs: 8760274551.000000 BinCount: 59143 AverageBinsCount: 92.000000, nonEmpty: 5556
+Last Layer Bin Count: 59143
+Tree Check: 515345
+Time to build tree: 1.664521
+Starting Kernel Launcher
+Non Empty Bins in last layer: 5556
+Total Bin Count in Tree: 127235
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 199215099576, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 439487498278, total Blocks: 1024, BlockSize: 256 
+Kernel time: 103.195084
+Total results Set Size: 638702597854 
+Total Time: 105.002060
+
+Time to read in file: 0.281166
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.011334 
+*********************************
+
+Selected RPs: 16, 7, 13, 14, 0, 8
+Selected 6 reference points
+Layer 0 sumqrs: 45084231779.000000 BinCount: 38 AverageBinsCount: 20613.000000, nonEmpty: 25
+Layer 1 sumqrs: 37052927945.000000 BinCount: 550 AverageBinsCount: 3123.000000, nonEmpty: 165
+Layer 2 sumqrs: 27069950811.000000 BinCount: 4125 AverageBinsCount: 812.000000, nonEmpty: 634
+Layer 3 sumqrs: 20557332419.000000 BinCount: 8876 AverageBinsCount: 408.000000, nonEmpty: 1262
+Layer 4 sumqrs: 16119420105.000000 BinCount: 25240 AverageBinsCount: 231.000000, nonEmpty: 2229
+Layer 5 sumqrs: 12038181599.000000 BinCount: 40122 AverageBinsCount: 147.000000, nonEmpty: 3493
+Last Layer Bin Count: 40122
+Tree Check: 515345
+Time to build tree: 1.364509
+Starting Kernel Launcher
+Non Empty Bins in last layer: 3493
+Total Bin Count in Tree: 78951
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 278826405904, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 715679515182, total Blocks: 1024, BlockSize: 256 
+Kernel time: 124.949407
+Total results Set Size: 994505921086 
+Total Time: 126.433468
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+Wave __________________________________________________
+Wave __________________________________________________
+
+Time to read in file: 0.087331
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.005400 
+*********************************
+
+Selected RPs: 17, 13, 0, 15, 13, 0
+Selected 6 reference points
+Layer 0 sumqrs: 5545126636.000000 BinCount: 141 AverageBinsCount: 4499.000000, nonEmpty: 64
+Layer 1 sumqrs: 6897830421.000000 BinCount: 1600 AverageBinsCount: 1507.000000, nonEmpty: 191
+Layer 2 sumqrs: 4307066535.000000 BinCount: 2865 AverageBinsCount: 630.000000, nonEmpty: 457
+Layer 3 sumqrs: 3866155652.000000 BinCount: 11425 AverageBinsCount: 323.000000, nonEmpty: 891
+Layer 4 sumqrs: 2711871005.000000 BinCount: 21384 AverageBinsCount: 159.000000, nonEmpty: 1800
+Layer 5 sumqrs: 2096644399.000000 BinCount: 18000 AverageBinsCount: 99.000000, nonEmpty: 2909
+Last Layer Bin Count: 18000
+Tree Check: 287999
+Time to build tree: 0.893754
+Starting Kernel Launcher
+Non Empty Bins in last layer: 2909
+Total Bin Count in Tree: 55415
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 87596849913, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 996727832, total Blocks: 1024, BlockSize: 256 
+Kernel time: 13.850267
+Total results Set Size: 88593577745 
+Total Time: 14.813400
+
+Time to read in file: 0.097258
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.007020 
+*********************************
+
+Selected RPs: 17, 13, 0, 13, 13, 8
+Selected 6 reference points
+Layer 0 sumqrs: 7181157557.000000 BinCount: 110 AverageBinsCount: 5759.000000, nonEmpty: 50
+Layer 1 sumqrs: 9165445189.000000 BinCount: 1000 AverageBinsCount: 2322.000000, nonEmpty: 124
+Layer 2 sumqrs: 6166108463.000000 BinCount: 1488 AverageBinsCount: 1086.000000, nonEmpty: 265
+Layer 3 sumqrs: 5661283663.000000 BinCount: 5300 AverageBinsCount: 581.000000, nonEmpty: 495
+Layer 4 sumqrs: 4550309079.000000 BinCount: 9405 AverageBinsCount: 324.000000, nonEmpty: 888
+Layer 5 sumqrs: 3354723803.000000 BinCount: 16872 AverageBinsCount: 181.000000, nonEmpty: 1587
+Last Layer Bin Count: 16872
+Tree Check: 287999
+Time to build tree: 0.984861
+Starting Kernel Launcher
+Non Empty Bins in last layer: 1587
+Total Bin Count in Tree: 34175
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 141192999823, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 1431314666, total Blocks: 1024, BlockSize: 256 
+Kernel time: 17.492672
+Total results Set Size: 142624314489 
+Total Time: 18.566586
+
+Time to read in file: 0.096792
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.008358 
+*********************************
+
+Selected RPs: 17, 13, 6, 8, 13, 0
+Selected 6 reference points
+Layer 0 sumqrs: 8298124444.000000 BinCount: 93 AverageBinsCount: 6697.000000, nonEmpty: 43
+Layer 1 sumqrs: 11909337195.000000 BinCount: 774 AverageBinsCount: 3063.000000, nonEmpty: 94
+Layer 2 sumqrs: 7804794419.000000 BinCount: 1692 AverageBinsCount: 1404.000000, nonEmpty: 205
+Layer 3 sumqrs: 6023101049.000000 BinCount: 3280 AverageBinsCount: 748.000000, nonEmpty: 385
+Layer 4 sumqrs: 5037391842.000000 BinCount: 6545 AverageBinsCount: 411.000000, nonEmpty: 700
+Layer 5 sumqrs: 3800134629.000000 BinCount: 5600 AverageBinsCount: 272.000000, nonEmpty: 1058
+Last Layer Bin Count: 5600
+Tree Check: 287999
+Time to build tree: 0.781671
+Starting Kernel Launcher
+Non Empty Bins in last layer: 1058
+Total Bin Count in Tree: 17984
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 214870729701, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 1787314868, total Blocks: 1024, BlockSize: 256 
+Kernel time: 20.087232
+Total results Set Size: 216658044569 
+Total Time: 20.937160
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+BIGCROSS____________________________________________________________
+BIGCROSS____________________________________________________________

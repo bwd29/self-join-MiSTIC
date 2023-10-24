@@ -1,0 +1,1879 @@
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+Census____________________________________________________________
+Census____________________________________________________________
+
+Time to read in file: 1.928851
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 32, Kernel Blocks: 256
+Using dynamic searching
+Distance Threshold: 0.020000 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 1153546575833.000000 BinCount: 14 AverageBinsCount: 223480.000000, nonEmpty: 11
+Layer 1 sumqrs: 1006638906469.000000 BinCount: 132 AverageBinsCount: 49165.000000, nonEmpty: 50
+Layer 2 sumqrs: 711763781963.000000 BinCount: 600 AverageBinsCount: 18623.000000, nonEmpty: 132
+Layer 3 sumqrs: 516405972853.000000 BinCount: 1452 AverageBinsCount: 10200.000000, nonEmpty: 241
+Layer 4 sumqrs: 343348736451.000000 BinCount: 3133 AverageBinsCount: 5690.000000, nonEmpty: 432
+Layer 5 sumqrs: 231043950737.000000 BinCount: 5184 AverageBinsCount: 3155.000000, nonEmpty: 779
+Last Layer Bin Count: 5184
+Tree Check: 2458285
+Time to build tree: 4.545075
+Starting Kernel Launcher
+Non Empty Bins in last layer: 779
+Total Bin Count in Tree: 10515
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 127982, total Blocks: 2048, BlockSize: 32 
+Batch 1 Results: 159298, total Blocks: 2048, BlockSize: 32 
+Batch 2 Results: 148264, total Blocks: 2048, BlockSize: 32 
+Batch 3 Results: 266818, total Blocks: 2048, BlockSize: 32 
+Batch 4 Results: 302774, total Blocks: 2048, BlockSize: 32 
+Batch 5 Results: 273667, total Blocks: 2048, BlockSize: 32 
+Batch 6 Results: 196566, total Blocks: 2048, BlockSize: 32 
+Batch 7 Results: 134182, total Blocks: 2048, BlockSize: 32 
+Batch 8 Results: 352652, total Blocks: 2048, BlockSize: 32 
+Batch 9 Results: 370611, total Blocks: 2048, BlockSize: 32 
+Batch 10 Results: 429174, total Blocks: 2048, BlockSize: 32 
+Batch 11 Results: 426324, total Blocks: 2048, BlockSize: 32 
+Batch 12 Results: 173397, total Blocks: 2048, BlockSize: 32 
+Batch 13 Results: 234620, total Blocks: 2048, BlockSize: 32 
+Batch 14 Results: 659110, total Blocks: 2048, BlockSize: 32 
+Batch 15 Results: 903646, total Blocks: 2048, BlockSize: 32 
+Batch 16 Results: 1121106, total Blocks: 2048, BlockSize: 32 
+Batch 17 Results: 998577, total Blocks: 2048, BlockSize: 32 
+Batch 18 Results: 956025, total Blocks: 2048, BlockSize: 32 
+Batch 19 Results: 2169802, total Blocks: 2048, BlockSize: 32 
+Batch 20 Results: 1550227, total Blocks: 2048, BlockSize: 32 
+Batch 21 Results: 1952950, total Blocks: 2048, BlockSize: 32 
+Batch 22 Results: 1947097, total Blocks: 2048, BlockSize: 32 
+Batch 23 Results: 466666, total Blocks: 2048, BlockSize: 32 
+Batch 24 Results: 1775720, total Blocks: 2048, BlockSize: 32 
+Batch 25 Results: 1753248, total Blocks: 2048, BlockSize: 32 
+Batch 26 Results: 1802551, total Blocks: 2048, BlockSize: 32 
+Batch 27 Results: 1738889, total Blocks: 2048, BlockSize: 32 
+Batch 28 Results: 1898189, total Blocks: 2048, BlockSize: 32 
+Batch 29 Results: 2625468, total Blocks: 2048, BlockSize: 32 
+Batch 30 Results: 650858, total Blocks: 2048, BlockSize: 32 
+Batch 31 Results: 1607655, total Blocks: 2048, BlockSize: 32 
+Batch 32 Results: 3755047, total Blocks: 2048, BlockSize: 32 
+Batch 33 Results: 2008371, total Blocks: 2048, BlockSize: 32 
+Batch 34 Results: 3089537, total Blocks: 2048, BlockSize: 32 
+Batch 35 Results: 3149796, total Blocks: 2048, BlockSize: 32 
+Batch 36 Results: 3135802, total Blocks: 2048, BlockSize: 32 
+Batch 37 Results: 3093271, total Blocks: 2048, BlockSize: 32 
+Batch 38 Results: 3162803, total Blocks: 2048, BlockSize: 32 
+Batch 39 Results: 3150848, total Blocks: 2048, BlockSize: 32 
+Batch 40 Results: 3153019, total Blocks: 2048, BlockSize: 32 
+Batch 41 Results: 3037529, total Blocks: 2048, BlockSize: 32 
+Batch 42 Results: 3151909, total Blocks: 2048, BlockSize: 32 
+Batch 43 Results: 3169299, total Blocks: 2048, BlockSize: 32 
+Batch 44 Results: 3061347, total Blocks: 2048, BlockSize: 32 
+Batch 45 Results: 3140724, total Blocks: 2048, BlockSize: 32 
+Batch 46 Results: 3151078, total Blocks: 2048, BlockSize: 32 
+Batch 47 Results: 3129199, total Blocks: 2048, BlockSize: 32 
+Batch 48 Results: 3128966, total Blocks: 2048, BlockSize: 32 
+Batch 49 Results: 3155726, total Blocks: 2048, BlockSize: 32 
+Batch 50 Results: 3123864, total Blocks: 2048, BlockSize: 32 
+Batch 51 Results: 3130295, total Blocks: 2048, BlockSize: 32 
+Batch 52 Results: 3176892, total Blocks: 2048, BlockSize: 32 
+Batch 53 Results: 3021801, total Blocks: 2048, BlockSize: 32 
+Batch 54 Results: 4241422, total Blocks: 2048, BlockSize: 32 
+Batch 55 Results: 7886892, total Blocks: 2048, BlockSize: 32 
+Batch 56 Results: 7762250, total Blocks: 2048, BlockSize: 32 
+Batch 57 Results: 7859242, total Blocks: 2048, BlockSize: 32 
+Batch 58 Results: 7659457, total Blocks: 2048, BlockSize: 32 
+Batch 59 Results: 4808944, total Blocks: 2048, BlockSize: 32 
+Batch 60 Results: 2277495, total Blocks: 2048, BlockSize: 32 
+Batch 61 Results: 2296377, total Blocks: 2048, BlockSize: 32 
+Batch 62 Results: 2284290, total Blocks: 2048, BlockSize: 32 
+Batch 63 Results: 2253756, total Blocks: 2048, BlockSize: 32 
+Batch 64 Results: 2318133, total Blocks: 2048, BlockSize: 32 
+Batch 65 Results: 2301609, total Blocks: 2048, BlockSize: 32 
+Batch 66 Results: 13768729, total Blocks: 2048, BlockSize: 32 
+Batch 67 Results: 15004668, total Blocks: 2048, BlockSize: 32 
+Batch 68 Results: 15388125, total Blocks: 2048, BlockSize: 32 
+Batch 69 Results: 14780998, total Blocks: 2048, BlockSize: 32 
+Batch 70 Results: 12306444, total Blocks: 2048, BlockSize: 32 
+Batch 71 Results: 12191769, total Blocks: 2048, BlockSize: 32 
+Batch 72 Results: 12350496, total Blocks: 2048, BlockSize: 32 
+Batch 73 Results: 12000434, total Blocks: 2048, BlockSize: 32 
+Batch 74 Results: 11827493, total Blocks: 2048, BlockSize: 32 
+Batch 75 Results: 12050792, total Blocks: 2048, BlockSize: 32 
+Batch 76 Results: 12153585, total Blocks: 2048, BlockSize: 32 
+Batch 77 Results: 12149645, total Blocks: 2048, BlockSize: 32 
+Batch 78 Results: 11919092, total Blocks: 2048, BlockSize: 32 
+Batch 79 Results: 12175809, total Blocks: 2048, BlockSize: 32 
+Batch 80 Results: 13075312, total Blocks: 2048, BlockSize: 32 
+Batch 81 Results: 15245580, total Blocks: 2048, BlockSize: 32 
+Batch 82 Results: 15154287, total Blocks: 2048, BlockSize: 32 
+Batch 83 Results: 14238840, total Blocks: 2048, BlockSize: 32 
+Batch 84 Results: 13884645, total Blocks: 2048, BlockSize: 32 
+Batch 85 Results: 15999618, total Blocks: 2048, BlockSize: 32 
+Batch 86 Results: 20587821, total Blocks: 2048, BlockSize: 32 
+Batch 87 Results: 20549366, total Blocks: 2048, BlockSize: 32 
+Batch 88 Results: 3114550, total Blocks: 2048, BlockSize: 32 
+Batch 89 Results: 1958157, total Blocks: 2048, BlockSize: 32 
+Batch 90 Results: 2014097, total Blocks: 2048, BlockSize: 32 
+Batch 91 Results: 3669843, total Blocks: 2048, BlockSize: 32 
+Batch 92 Results: 5110212, total Blocks: 2048, BlockSize: 32 
+Batch 93 Results: 4631249, total Blocks: 2048, BlockSize: 32 
+Batch 94 Results: 4559181, total Blocks: 2048, BlockSize: 32 
+Batch 95 Results: 4496729, total Blocks: 2048, BlockSize: 32 
+Batch 96 Results: 4752581, total Blocks: 2048, BlockSize: 32 
+Batch 97 Results: 7458007, total Blocks: 2048, BlockSize: 32 
+Batch 98 Results: 9200965, total Blocks: 2048, BlockSize: 32 
+Batch 99 Results: 9034473, total Blocks: 2048, BlockSize: 32 
+Batch 100 Results: 9039269, total Blocks: 2048, BlockSize: 32 
+Batch 101 Results: 9062232, total Blocks: 2048, BlockSize: 32 
+Batch 102 Results: 9056359, total Blocks: 2048, BlockSize: 32 
+Batch 103 Results: 9016626, total Blocks: 2048, BlockSize: 32 
+Batch 104 Results: 9452228, total Blocks: 2048, BlockSize: 32 
+Batch 105 Results: 8187248, total Blocks: 2048, BlockSize: 32 
+Batch 106 Results: 7625164, total Blocks: 2048, BlockSize: 32 
+Batch 107 Results: 12265830, total Blocks: 2048, BlockSize: 32 
+Batch 108 Results: 12067673, total Blocks: 2048, BlockSize: 32 
+Batch 109 Results: 11988299, total Blocks: 2048, BlockSize: 32 
+Batch 110 Results: 12310457, total Blocks: 2048, BlockSize: 32 
+Batch 111 Results: 12312000, total Blocks: 2048, BlockSize: 32 
+Batch 112 Results: 12425603, total Blocks: 2048, BlockSize: 32 
+Batch 113 Results: 12991288, total Blocks: 2048, BlockSize: 32 
+Batch 114 Results: 14379618, total Blocks: 2048, BlockSize: 32 
+Batch 115 Results: 14269326, total Blocks: 2048, BlockSize: 32 
+Batch 116 Results: 6968246, total Blocks: 2048, BlockSize: 32 
+Batch 117 Results: 2513958, total Blocks: 2048, BlockSize: 32 
+Batch 118 Results: 2833965, total Blocks: 2048, BlockSize: 32 
+Batch 119 Results: 3681018, total Blocks: 2048, BlockSize: 32 
+Batch 120 Results: 1988056, total Blocks: 2048, BlockSize: 32 
+Batch 121 Results: 2832850, total Blocks: 2048, BlockSize: 32 
+Batch 122 Results: 8199442, total Blocks: 2048, BlockSize: 32 
+Batch 123 Results: 12527587, total Blocks: 2048, BlockSize: 32 
+Batch 124 Results: 5821414, total Blocks: 2048, BlockSize: 32 
+Batch 125 Results: 21026714, total Blocks: 2048, BlockSize: 32 
+Batch 126 Results: 36653088, total Blocks: 2048, BlockSize: 32 
+Batch 127 Results: 37029651, total Blocks: 2048, BlockSize: 32 
+Batch 128 Results: 36525323, total Blocks: 2048, BlockSize: 32 
+Batch 129 Results: 36449670, total Blocks: 2048, BlockSize: 32 
+Batch 130 Results: 25932245, total Blocks: 2048, BlockSize: 32 
+Batch 131 Results: 6518789, total Blocks: 2048, BlockSize: 32 
+Batch 132 Results: 6985600, total Blocks: 2048, BlockSize: 32 
+Batch 133 Results: 6914448, total Blocks: 2048, BlockSize: 32 
+Batch 134 Results: 6582203, total Blocks: 2048, BlockSize: 32 
+Batch 135 Results: 6576171, total Blocks: 2048, BlockSize: 32 
+Batch 136 Results: 6569646, total Blocks: 2048, BlockSize: 32 
+Batch 137 Results: 6542284, total Blocks: 2048, BlockSize: 32 
+Batch 138 Results: 6537806, total Blocks: 2048, BlockSize: 32 
+Batch 139 Results: 6283700, total Blocks: 2048, BlockSize: 32 
+Batch 140 Results: 7893923, total Blocks: 2048, BlockSize: 32 
+Batch 141 Results: 44923492, total Blocks: 2048, BlockSize: 32 
+Batch 142 Results: 44193173, total Blocks: 2048, BlockSize: 32 
+Batch 143 Results: 43832313, total Blocks: 2048, BlockSize: 32 
+Batch 144 Results: 43855049, total Blocks: 2048, BlockSize: 32 
+Batch 145 Results: 44280358, total Blocks: 2048, BlockSize: 32 
+Batch 146 Results: 43750911, total Blocks: 2048, BlockSize: 32 
+Batch 147 Results: 45020104, total Blocks: 2048, BlockSize: 32 
+Batch 148 Results: 43037729, total Blocks: 2048, BlockSize: 32 
+Batch 149 Results: 43542303, total Blocks: 2048, BlockSize: 32 
+Batch 150 Results: 44188055, total Blocks: 2048, BlockSize: 32 
+Batch 151 Results: 44342861, total Blocks: 2048, BlockSize: 32 
+Batch 152 Results: 43224292, total Blocks: 2048, BlockSize: 32 
+Batch 153 Results: 44301973, total Blocks: 2048, BlockSize: 32 
+Batch 154 Results: 44701351, total Blocks: 2048, BlockSize: 32 
+Batch 155 Results: 35004193, total Blocks: 2048, BlockSize: 32 
+Batch 156 Results: 24177964, total Blocks: 2048, BlockSize: 32 
+Batch 157 Results: 24048308, total Blocks: 2048, BlockSize: 32 
+Batch 158 Results: 24333838, total Blocks: 2048, BlockSize: 32 
+Batch 159 Results: 24041106, total Blocks: 2048, BlockSize: 32 
+Batch 160 Results: 23807340, total Blocks: 2048, BlockSize: 32 
+Batch 161 Results: 23720509, total Blocks: 2048, BlockSize: 32 
+Batch 162 Results: 24212947, total Blocks: 2048, BlockSize: 32 
+Batch 163 Results: 23956011, total Blocks: 2048, BlockSize: 32 
+Batch 164 Results: 24171737, total Blocks: 2048, BlockSize: 32 
+Batch 165 Results: 24842127, total Blocks: 2048, BlockSize: 32 
+Batch 166 Results: 23838080, total Blocks: 2048, BlockSize: 32 
+Batch 167 Results: 24143826, total Blocks: 2048, BlockSize: 32 
+Batch 168 Results: 24294564, total Blocks: 2048, BlockSize: 32 
+Batch 169 Results: 24237314, total Blocks: 2048, BlockSize: 32 
+Batch 170 Results: 24683632, total Blocks: 2048, BlockSize: 32 
+Batch 171 Results: 24930331, total Blocks: 2048, BlockSize: 32 
+Batch 172 Results: 25683286, total Blocks: 2048, BlockSize: 32 
+Batch 173 Results: 26229423, total Blocks: 2048, BlockSize: 32 
+Batch 174 Results: 9626689, total Blocks: 2048, BlockSize: 32 
+Batch 175 Results: 24163845, total Blocks: 2048, BlockSize: 32 
+Batch 176 Results: 21549118, total Blocks: 2048, BlockSize: 32 
+Batch 177 Results: 3802306, total Blocks: 2048, BlockSize: 32 
+Batch 178 Results: 6467929, total Blocks: 2048, BlockSize: 32 
+Batch 179 Results: 32337637, total Blocks: 2048, BlockSize: 32 
+Batch 180 Results: 32776632, total Blocks: 2048, BlockSize: 32 
+Batch 181 Results: 32041990, total Blocks: 2048, BlockSize: 32 
+Batch 182 Results: 32038772, total Blocks: 2048, BlockSize: 32 
+Batch 183 Results: 32122849, total Blocks: 2048, BlockSize: 32 
+Batch 184 Results: 33528293, total Blocks: 2048, BlockSize: 32 
+Batch 185 Results: 32930467, total Blocks: 2048, BlockSize: 32 
+Batch 186 Results: 32932382, total Blocks: 2048, BlockSize: 32 
+Batch 187 Results: 32350205, total Blocks: 2048, BlockSize: 32 
+Batch 188 Results: 32242564, total Blocks: 2048, BlockSize: 32 
+Batch 189 Results: 33769355, total Blocks: 2048, BlockSize: 32 
+Batch 190 Results: 32722933, total Blocks: 2048, BlockSize: 32 
+Batch 191 Results: 32827037, total Blocks: 2048, BlockSize: 32 
+Batch 192 Results: 32289005, total Blocks: 2048, BlockSize: 32 
+Batch 193 Results: 33265145, total Blocks: 2048, BlockSize: 32 
+Batch 194 Results: 32551763, total Blocks: 2048, BlockSize: 32 
+Batch 195 Results: 32895155, total Blocks: 2048, BlockSize: 32 
+Batch 196 Results: 32126343, total Blocks: 2048, BlockSize: 32 
+Batch 197 Results: 32492688, total Blocks: 2048, BlockSize: 32 
+Batch 198 Results: 32659673, total Blocks: 2048, BlockSize: 32 
+Batch 199 Results: 33012594, total Blocks: 2048, BlockSize: 32 
+Batch 200 Results: 31893306, total Blocks: 2048, BlockSize: 32 
+Batch 201 Results: 32496617, total Blocks: 2048, BlockSize: 32 
+Batch 202 Results: 32446175, total Blocks: 2048, BlockSize: 32 
+Batch 203 Results: 32328575, total Blocks: 2048, BlockSize: 32 
+Batch 204 Results: 32989351, total Blocks: 2048, BlockSize: 32 
+Batch 205 Results: 32060513, total Blocks: 2048, BlockSize: 32 
+Batch 206 Results: 32735928, total Blocks: 2048, BlockSize: 32 
+Batch 207 Results: 92550134, total Blocks: 2048, BlockSize: 32 
+Batch 208 Results: 107831191, total Blocks: 2048, BlockSize: 32 
+Batch 209 Results: 108237683, total Blocks: 2048, BlockSize: 32 
+Batch 210 Results: 110224726, total Blocks: 2048, BlockSize: 32 
+Batch 211 Results: 108095447, total Blocks: 2048, BlockSize: 32 
+Batch 212 Results: 109333760, total Blocks: 2048, BlockSize: 32 
+Batch 213 Results: 111359898, total Blocks: 2048, BlockSize: 32 
+Batch 214 Results: 107864427, total Blocks: 2048, BlockSize: 32 
+Batch 215 Results: 109028148, total Blocks: 2048, BlockSize: 32 
+Batch 216 Results: 108157949, total Blocks: 2048, BlockSize: 32 
+Batch 217 Results: 107394345, total Blocks: 2048, BlockSize: 32 
+Batch 218 Results: 109499965, total Blocks: 2048, BlockSize: 32 
+Batch 219 Results: 107933590, total Blocks: 2048, BlockSize: 32 
+Batch 220 Results: 110179614, total Blocks: 2048, BlockSize: 32 
+Batch 221 Results: 108880054, total Blocks: 2048, BlockSize: 32 
+Batch 222 Results: 108598657, total Blocks: 2048, BlockSize: 32 
+Batch 223 Results: 106519289, total Blocks: 2048, BlockSize: 32 
+Batch 224 Results: 37682689, total Blocks: 2048, BlockSize: 32 
+Batch 225 Results: 5441224, total Blocks: 2048, BlockSize: 32 
+Batch 226 Results: 5428944, total Blocks: 2048, BlockSize: 32 
+Batch 227 Results: 5483760, total Blocks: 2048, BlockSize: 32 
+Batch 228 Results: 9318819, total Blocks: 2048, BlockSize: 32 
+Batch 229 Results: 13674808, total Blocks: 2048, BlockSize: 32 
+Batch 230 Results: 32217776, total Blocks: 2048, BlockSize: 32 
+Batch 231 Results: 42890390, total Blocks: 2048, BlockSize: 32 
+Batch 232 Results: 42958365, total Blocks: 2048, BlockSize: 32 
+Batch 233 Results: 38671237, total Blocks: 2048, BlockSize: 32 
+Batch 234 Results: 27784967, total Blocks: 2048, BlockSize: 32 
+Batch 235 Results: 6483041, total Blocks: 2048, BlockSize: 32 
+Batch 236 Results: 6175709, total Blocks: 2048, BlockSize: 32 
+Batch 237 Results: 87791800, total Blocks: 2048, BlockSize: 32 
+Batch 238 Results: 106857633, total Blocks: 2048, BlockSize: 32 
+Batch 239 Results: 104893116, total Blocks: 2048, BlockSize: 32 
+Batch 240 Results: 104956848, total Blocks: 2048, BlockSize: 32 
+Batch 241 Results: 105252105, total Blocks: 2048, BlockSize: 32 
+Batch 242 Results: 106216030, total Blocks: 2048, BlockSize: 32 
+Batch 243 Results: 105418087, total Blocks: 2048, BlockSize: 32 
+Batch 244 Results: 106623272, total Blocks: 2048, BlockSize: 32 
+Batch 245 Results: 106840748, total Blocks: 2048, BlockSize: 32 
+Batch 246 Results: 105556323, total Blocks: 2048, BlockSize: 32 
+Batch 247 Results: 105277832, total Blocks: 2048, BlockSize: 32 
+Batch 248 Results: 106362366, total Blocks: 2048, BlockSize: 32 
+Batch 249 Results: 69629477, total Blocks: 2048, BlockSize: 32 
+Batch 250 Results: 47177744, total Blocks: 2048, BlockSize: 32 
+Batch 251 Results: 47704071, total Blocks: 2048, BlockSize: 32 
+Batch 252 Results: 48767425, total Blocks: 2048, BlockSize: 32 
+Batch 253 Results: 164471343, total Blocks: 2048, BlockSize: 32 
+Batch 254 Results: 264062370, total Blocks: 2048, BlockSize: 32 
+Batch 255 Results: 313928271, total Blocks: 2048, BlockSize: 32 
+Batch 256 Results: 329765461, total Blocks: 2048, BlockSize: 32 
+Batch 257 Results: 419578034, total Blocks: 2048, BlockSize: 32 
+Batch 258 Results: 417025584, total Blocks: 2048, BlockSize: 32 
+Batch 259 Results: 417028070, total Blocks: 2048, BlockSize: 32 
+Batch 260 Results: 419792978, total Blocks: 2048, BlockSize: 32 
+Batch 261 Results: 419307732, total Blocks: 2048, BlockSize: 32 
+Batch 262 Results: 418142196, total Blocks: 2048, BlockSize: 32 
+Batch 263 Results: 417801537, total Blocks: 2048, BlockSize: 32 
+Batch 264 Results: 417631070, total Blocks: 2048, BlockSize: 32 
+Batch 265 Results: 417872146, total Blocks: 2048, BlockSize: 32 
+Batch 266 Results: 424752769, total Blocks: 2048, BlockSize: 32 
+Batch 267 Results: 431612359, total Blocks: 2048, BlockSize: 32 
+Batch 268 Results: 431888011, total Blocks: 2048, BlockSize: 32 
+Batch 269 Results: 412757721, total Blocks: 2048, BlockSize: 32 
+Batch 270 Results: 254752983, total Blocks: 2048, BlockSize: 32 
+Batch 271 Results: 211810390, total Blocks: 2048, BlockSize: 32 
+Batch 272 Results: 136916718, total Blocks: 2048, BlockSize: 32 
+Batch 273 Results: 241983520, total Blocks: 2048, BlockSize: 32 
+Batch 274 Results: 242956262, total Blocks: 2048, BlockSize: 32 
+Batch 275 Results: 243374112, total Blocks: 2048, BlockSize: 32 
+Batch 276 Results: 243551262, total Blocks: 2048, BlockSize: 32 
+Batch 277 Results: 238849693, total Blocks: 2048, BlockSize: 32 
+Batch 278 Results: 304235863, total Blocks: 2048, BlockSize: 32 
+Batch 279 Results: 303093399, total Blocks: 2048, BlockSize: 32 
+Batch 280 Results: 27777424, total Blocks: 2048, BlockSize: 32 
+Batch 281 Results: 81364276, total Blocks: 2048, BlockSize: 32 
+Batch 282 Results: 151769259, total Blocks: 2048, BlockSize: 32 
+Batch 283 Results: 1906318, total Blocks: 2048, BlockSize: 32 
+Batch 284 Results: 3395367, total Blocks: 2048, BlockSize: 32 
+Batch 285 Results: 6177554, total Blocks: 2048, BlockSize: 32 
+Batch 286 Results: 36438592, total Blocks: 2048, BlockSize: 32 
+Batch 287 Results: 34243472, total Blocks: 2048, BlockSize: 32 
+Batch 288 Results: 14243094, total Blocks: 2048, BlockSize: 32 
+Batch 289 Results: 49686364, total Blocks: 2048, BlockSize: 32 
+Batch 290 Results: 65074736, total Blocks: 2048, BlockSize: 32 
+Batch 291 Results: 65871551, total Blocks: 2048, BlockSize: 32 
+Batch 292 Results: 63982302, total Blocks: 2048, BlockSize: 32 
+Batch 293 Results: 65700268, total Blocks: 2048, BlockSize: 32 
+Batch 294 Results: 66083236, total Blocks: 2048, BlockSize: 32 
+Batch 295 Results: 67026170, total Blocks: 2048, BlockSize: 32 
+Batch 296 Results: 71317634, total Blocks: 2048, BlockSize: 32 
+Batch 297 Results: 71461922, total Blocks: 2048, BlockSize: 32 
+Batch 298 Results: 46724501, total Blocks: 2048, BlockSize: 32 
+Batch 299 Results: 58347724, total Blocks: 2048, BlockSize: 32 
+Batch 300 Results: 4900198, total Blocks: 2048, BlockSize: 32 
+Kernel time: 248.927544
+Total results Set Size: 16659725345 
+Total Time: 256.546533
+
+Time to read in file: 2.030709
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 32, Kernel Blocks: 256
+Using dynamic searching
+Distance Threshold: 0.023000 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 1175511066807.000000 BinCount: 13 AverageBinsCount: 245828.000000, nonEmpty: 10
+Layer 1 sumqrs: 1074291092689.000000 BinCount: 100 AverageBinsCount: 63032.000000, nonEmpty: 39
+Layer 2 sumqrs: 849270566553.000000 BinCount: 390 AverageBinsCount: 27621.000000, nonEmpty: 89
+Layer 3 sumqrs: 559185678672.000000 BinCount: 801 AverageBinsCount: 15657.000000, nonEmpty: 157
+Layer 4 sumqrs: 372685347213.000000 BinCount: 1727 AverageBinsCount: 8506.000000, nonEmpty: 289
+Layer 5 sumqrs: 263300599790.000000 BinCount: 3179 AverageBinsCount: 4839.000000, nonEmpty: 508
+Last Layer Bin Count: 3179
+Tree Check: 2458285
+Time to build tree: 4.439745
+Starting Kernel Launcher
+Non Empty Bins in last layer: 508
+Total Bin Count in Tree: 6210
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 221374, total Blocks: 2048, BlockSize: 32 
+Batch 1 Results: 333370, total Blocks: 2048, BlockSize: 32 
+Batch 2 Results: 459506, total Blocks: 2048, BlockSize: 32 
+Batch 3 Results: 836709, total Blocks: 2048, BlockSize: 32 
+Batch 4 Results: 856728, total Blocks: 2048, BlockSize: 32 
+Batch 5 Results: 819774, total Blocks: 2048, BlockSize: 32 
+Batch 6 Results: 877218, total Blocks: 2048, BlockSize: 32 
+Batch 7 Results: 948599, total Blocks: 2048, BlockSize: 32 
+Batch 8 Results: 1366238, total Blocks: 2048, BlockSize: 32 
+Batch 9 Results: 641534, total Blocks: 2048, BlockSize: 32 
+Batch 10 Results: 984805, total Blocks: 2048, BlockSize: 32 
+Batch 11 Results: 1461560, total Blocks: 2048, BlockSize: 32 
+Batch 12 Results: 2115741, total Blocks: 2048, BlockSize: 32 
+Batch 13 Results: 2103236, total Blocks: 2048, BlockSize: 32 
+Batch 14 Results: 2119382, total Blocks: 2048, BlockSize: 32 
+Batch 15 Results: 2114506, total Blocks: 2048, BlockSize: 32 
+Batch 16 Results: 2168636, total Blocks: 2048, BlockSize: 32 
+Batch 17 Results: 3798970, total Blocks: 2048, BlockSize: 32 
+Batch 18 Results: 1534498, total Blocks: 2048, BlockSize: 32 
+Batch 19 Results: 1489617, total Blocks: 2048, BlockSize: 32 
+Batch 20 Results: 977221, total Blocks: 2048, BlockSize: 32 
+Batch 21 Results: 1109017, total Blocks: 2048, BlockSize: 32 
+Batch 22 Results: 1109898, total Blocks: 2048, BlockSize: 32 
+Batch 23 Results: 3174039, total Blocks: 2048, BlockSize: 32 
+Batch 24 Results: 7198341, total Blocks: 2048, BlockSize: 32 
+Batch 25 Results: 7211777, total Blocks: 2048, BlockSize: 32 
+Batch 26 Results: 7364602, total Blocks: 2048, BlockSize: 32 
+Batch 27 Results: 7325515, total Blocks: 2048, BlockSize: 32 
+Batch 28 Results: 7190423, total Blocks: 2048, BlockSize: 32 
+Batch 29 Results: 7031764, total Blocks: 2048, BlockSize: 32 
+Batch 30 Results: 7021956, total Blocks: 2048, BlockSize: 32 
+Batch 31 Results: 7309430, total Blocks: 2048, BlockSize: 32 
+Batch 32 Results: 7284935, total Blocks: 2048, BlockSize: 32 
+Batch 33 Results: 7298949, total Blocks: 2048, BlockSize: 32 
+Batch 34 Results: 7264606, total Blocks: 2048, BlockSize: 32 
+Batch 35 Results: 7175632, total Blocks: 2048, BlockSize: 32 
+Batch 36 Results: 7146606, total Blocks: 2048, BlockSize: 32 
+Batch 37 Results: 7222068, total Blocks: 2048, BlockSize: 32 
+Batch 38 Results: 7266186, total Blocks: 2048, BlockSize: 32 
+Batch 39 Results: 7142005, total Blocks: 2048, BlockSize: 32 
+Batch 40 Results: 7177107, total Blocks: 2048, BlockSize: 32 
+Batch 41 Results: 7121873, total Blocks: 2048, BlockSize: 32 
+Batch 42 Results: 11609220, total Blocks: 2048, BlockSize: 32 
+Batch 43 Results: 14939455, total Blocks: 2048, BlockSize: 32 
+Batch 44 Results: 15121671, total Blocks: 2048, BlockSize: 32 
+Batch 45 Results: 14864352, total Blocks: 2048, BlockSize: 32 
+Batch 46 Results: 15280930, total Blocks: 2048, BlockSize: 32 
+Batch 47 Results: 14983494, total Blocks: 2048, BlockSize: 32 
+Batch 48 Results: 15044723, total Blocks: 2048, BlockSize: 32 
+Batch 49 Results: 14915410, total Blocks: 2048, BlockSize: 32 
+Batch 50 Results: 15313025, total Blocks: 2048, BlockSize: 32 
+Batch 51 Results: 14938522, total Blocks: 2048, BlockSize: 32 
+Batch 52 Results: 15278899, total Blocks: 2048, BlockSize: 32 
+Batch 53 Results: 15171998, total Blocks: 2048, BlockSize: 32 
+Batch 54 Results: 14797889, total Blocks: 2048, BlockSize: 32 
+Batch 55 Results: 14779753, total Blocks: 2048, BlockSize: 32 
+Batch 56 Results: 15347857, total Blocks: 2048, BlockSize: 32 
+Batch 57 Results: 15385982, total Blocks: 2048, BlockSize: 32 
+Batch 58 Results: 14760781, total Blocks: 2048, BlockSize: 32 
+Batch 59 Results: 15137004, total Blocks: 2048, BlockSize: 32 
+Batch 60 Results: 15119794, total Blocks: 2048, BlockSize: 32 
+Batch 61 Results: 15330443, total Blocks: 2048, BlockSize: 32 
+Batch 62 Results: 15058906, total Blocks: 2048, BlockSize: 32 
+Batch 63 Results: 14832266, total Blocks: 2048, BlockSize: 32 
+Batch 64 Results: 14882571, total Blocks: 2048, BlockSize: 32 
+Batch 65 Results: 14883574, total Blocks: 2048, BlockSize: 32 
+Batch 66 Results: 23359517, total Blocks: 2048, BlockSize: 32 
+Batch 67 Results: 14525878, total Blocks: 2048, BlockSize: 32 
+Batch 68 Results: 12206543, total Blocks: 2048, BlockSize: 32 
+Batch 69 Results: 11944147, total Blocks: 2048, BlockSize: 32 
+Batch 70 Results: 15732809, total Blocks: 2048, BlockSize: 32 
+Batch 71 Results: 17124749, total Blocks: 2048, BlockSize: 32 
+Batch 72 Results: 17008990, total Blocks: 2048, BlockSize: 32 
+Batch 73 Results: 19113416, total Blocks: 2048, BlockSize: 32 
+Batch 74 Results: 38922278, total Blocks: 2048, BlockSize: 32 
+Batch 75 Results: 38959105, total Blocks: 2048, BlockSize: 32 
+Batch 76 Results: 19616942, total Blocks: 2048, BlockSize: 32 
+Batch 77 Results: 19809189, total Blocks: 2048, BlockSize: 32 
+Batch 78 Results: 5130395, total Blocks: 2048, BlockSize: 32 
+Batch 79 Results: 6639823, total Blocks: 2048, BlockSize: 32 
+Batch 80 Results: 8378834, total Blocks: 2048, BlockSize: 32 
+Batch 81 Results: 23302384, total Blocks: 2048, BlockSize: 32 
+Batch 82 Results: 23647870, total Blocks: 2048, BlockSize: 32 
+Batch 83 Results: 23502720, total Blocks: 2048, BlockSize: 32 
+Batch 84 Results: 23979136, total Blocks: 2048, BlockSize: 32 
+Batch 85 Results: 22947866, total Blocks: 2048, BlockSize: 32 
+Batch 86 Results: 22972918, total Blocks: 2048, BlockSize: 32 
+Batch 87 Results: 23122683, total Blocks: 2048, BlockSize: 32 
+Batch 88 Results: 23244247, total Blocks: 2048, BlockSize: 32 
+Batch 89 Results: 23095959, total Blocks: 2048, BlockSize: 32 
+Batch 90 Results: 23416947, total Blocks: 2048, BlockSize: 32 
+Batch 91 Results: 23313758, total Blocks: 2048, BlockSize: 32 
+Batch 92 Results: 24487084, total Blocks: 2048, BlockSize: 32 
+Batch 93 Results: 40534937, total Blocks: 2048, BlockSize: 32 
+Batch 94 Results: 39542180, total Blocks: 2048, BlockSize: 32 
+Batch 95 Results: 39985617, total Blocks: 2048, BlockSize: 32 
+Batch 96 Results: 40386290, total Blocks: 2048, BlockSize: 32 
+Batch 97 Results: 40380660, total Blocks: 2048, BlockSize: 32 
+Batch 98 Results: 39800818, total Blocks: 2048, BlockSize: 32 
+Batch 99 Results: 40888470, total Blocks: 2048, BlockSize: 32 
+Batch 100 Results: 39813750, total Blocks: 2048, BlockSize: 32 
+Batch 101 Results: 40889788, total Blocks: 2048, BlockSize: 32 
+Batch 102 Results: 40362881, total Blocks: 2048, BlockSize: 32 
+Batch 103 Results: 39938473, total Blocks: 2048, BlockSize: 32 
+Batch 104 Results: 40828513, total Blocks: 2048, BlockSize: 32 
+Batch 105 Results: 42641834, total Blocks: 2048, BlockSize: 32 
+Batch 106 Results: 65831375, total Blocks: 2048, BlockSize: 32 
+Batch 107 Results: 35292266, total Blocks: 2048, BlockSize: 32 
+Batch 108 Results: 21232649, total Blocks: 2048, BlockSize: 32 
+Batch 109 Results: 23010381, total Blocks: 2048, BlockSize: 32 
+Batch 110 Results: 23442613, total Blocks: 2048, BlockSize: 32 
+Batch 111 Results: 23759147, total Blocks: 2048, BlockSize: 32 
+Batch 112 Results: 23477390, total Blocks: 2048, BlockSize: 32 
+Batch 113 Results: 40731357, total Blocks: 2048, BlockSize: 32 
+Batch 114 Results: 40923966, total Blocks: 2048, BlockSize: 32 
+Batch 115 Results: 40723587, total Blocks: 2048, BlockSize: 32 
+Batch 116 Results: 40884675, total Blocks: 2048, BlockSize: 32 
+Batch 117 Results: 40492751, total Blocks: 2048, BlockSize: 32 
+Batch 118 Results: 40557259, total Blocks: 2048, BlockSize: 32 
+Batch 119 Results: 41219338, total Blocks: 2048, BlockSize: 32 
+Batch 120 Results: 49777876, total Blocks: 2048, BlockSize: 32 
+Batch 121 Results: 51024291, total Blocks: 2048, BlockSize: 32 
+Batch 122 Results: 31032568, total Blocks: 2048, BlockSize: 32 
+Batch 123 Results: 19027702, total Blocks: 2048, BlockSize: 32 
+Batch 124 Results: 15793163, total Blocks: 2048, BlockSize: 32 
+Batch 125 Results: 13410076, total Blocks: 2048, BlockSize: 32 
+Batch 126 Results: 5764601, total Blocks: 2048, BlockSize: 32 
+Batch 127 Results: 7757407, total Blocks: 2048, BlockSize: 32 
+Batch 128 Results: 6768103, total Blocks: 2048, BlockSize: 32 
+Batch 129 Results: 5615383, total Blocks: 2048, BlockSize: 32 
+Batch 130 Results: 10448261, total Blocks: 2048, BlockSize: 32 
+Batch 131 Results: 17084244, total Blocks: 2048, BlockSize: 32 
+Batch 132 Results: 17205225, total Blocks: 2048, BlockSize: 32 
+Batch 133 Results: 17200264, total Blocks: 2048, BlockSize: 32 
+Batch 134 Results: 17569158, total Blocks: 2048, BlockSize: 32 
+Batch 135 Results: 17084397, total Blocks: 2048, BlockSize: 32 
+Batch 136 Results: 17273214, total Blocks: 2048, BlockSize: 32 
+Batch 137 Results: 17448819, total Blocks: 2048, BlockSize: 32 
+Batch 138 Results: 16240145, total Blocks: 2048, BlockSize: 32 
+Batch 139 Results: 34045777, total Blocks: 2048, BlockSize: 32 
+Batch 140 Results: 19278952, total Blocks: 2048, BlockSize: 32 
+Batch 141 Results: 10411764, total Blocks: 2048, BlockSize: 32 
+Batch 142 Results: 67094380, total Blocks: 2048, BlockSize: 32 
+Batch 143 Results: 64715738, total Blocks: 2048, BlockSize: 32 
+Batch 144 Results: 64912537, total Blocks: 2048, BlockSize: 32 
+Batch 145 Results: 65493584, total Blocks: 2048, BlockSize: 32 
+Batch 146 Results: 66840876, total Blocks: 2048, BlockSize: 32 
+Batch 147 Results: 64320832, total Blocks: 2048, BlockSize: 32 
+Batch 148 Results: 65994263, total Blocks: 2048, BlockSize: 32 
+Batch 149 Results: 65216712, total Blocks: 2048, BlockSize: 32 
+Batch 150 Results: 65383557, total Blocks: 2048, BlockSize: 32 
+Batch 151 Results: 64212771, total Blocks: 2048, BlockSize: 32 
+Batch 152 Results: 64380386, total Blocks: 2048, BlockSize: 32 
+Batch 153 Results: 64610246, total Blocks: 2048, BlockSize: 32 
+Batch 154 Results: 65894608, total Blocks: 2048, BlockSize: 32 
+Batch 155 Results: 65087561, total Blocks: 2048, BlockSize: 32 
+Batch 156 Results: 65608617, total Blocks: 2048, BlockSize: 32 
+Batch 157 Results: 66595313, total Blocks: 2048, BlockSize: 32 
+Batch 158 Results: 65042101, total Blocks: 2048, BlockSize: 32 
+Batch 159 Results: 76900745, total Blocks: 2048, BlockSize: 32 
+Batch 160 Results: 88619763, total Blocks: 2048, BlockSize: 32 
+Batch 161 Results: 87530554, total Blocks: 2048, BlockSize: 32 
+Batch 162 Results: 87871100, total Blocks: 2048, BlockSize: 32 
+Batch 163 Results: 89341502, total Blocks: 2048, BlockSize: 32 
+Batch 164 Results: 89883725, total Blocks: 2048, BlockSize: 32 
+Batch 165 Results: 89380668, total Blocks: 2048, BlockSize: 32 
+Batch 166 Results: 91450899, total Blocks: 2048, BlockSize: 32 
+Batch 167 Results: 88052634, total Blocks: 2048, BlockSize: 32 
+Batch 168 Results: 88620028, total Blocks: 2048, BlockSize: 32 
+Batch 169 Results: 57257514, total Blocks: 2048, BlockSize: 32 
+Batch 170 Results: 11699020, total Blocks: 2048, BlockSize: 32 
+Batch 171 Results: 71947208, total Blocks: 2048, BlockSize: 32 
+Batch 172 Results: 92429270, total Blocks: 2048, BlockSize: 32 
+Batch 173 Results: 91901616, total Blocks: 2048, BlockSize: 32 
+Batch 174 Results: 91070483, total Blocks: 2048, BlockSize: 32 
+Batch 175 Results: 93363402, total Blocks: 2048, BlockSize: 32 
+Batch 176 Results: 91701039, total Blocks: 2048, BlockSize: 32 
+Batch 177 Results: 91274253, total Blocks: 2048, BlockSize: 32 
+Batch 178 Results: 93092147, total Blocks: 2048, BlockSize: 32 
+Batch 179 Results: 88378348, total Blocks: 2048, BlockSize: 32 
+Batch 180 Results: 75413054, total Blocks: 2048, BlockSize: 32 
+Batch 181 Results: 75023020, total Blocks: 2048, BlockSize: 32 
+Batch 182 Results: 74006373, total Blocks: 2048, BlockSize: 32 
+Batch 183 Results: 75595689, total Blocks: 2048, BlockSize: 32 
+Batch 184 Results: 75538856, total Blocks: 2048, BlockSize: 32 
+Batch 185 Results: 75278790, total Blocks: 2048, BlockSize: 32 
+Batch 186 Results: 75437434, total Blocks: 2048, BlockSize: 32 
+Batch 187 Results: 75535035, total Blocks: 2048, BlockSize: 32 
+Batch 188 Results: 169568859, total Blocks: 2048, BlockSize: 32 
+Batch 189 Results: 178598725, total Blocks: 2048, BlockSize: 32 
+Batch 190 Results: 181384123, total Blocks: 2048, BlockSize: 32 
+Batch 191 Results: 178439509, total Blocks: 2048, BlockSize: 32 
+Batch 192 Results: 183605589, total Blocks: 2048, BlockSize: 32 
+Batch 193 Results: 181571268, total Blocks: 2048, BlockSize: 32 
+Batch 194 Results: 179009107, total Blocks: 2048, BlockSize: 32 
+Batch 195 Results: 180726124, total Blocks: 2048, BlockSize: 32 
+Batch 196 Results: 180334957, total Blocks: 2048, BlockSize: 32 
+Batch 197 Results: 179552967, total Blocks: 2048, BlockSize: 32 
+Batch 198 Results: 179964808, total Blocks: 2048, BlockSize: 32 
+Batch 199 Results: 182118792, total Blocks: 2048, BlockSize: 32 
+Batch 200 Results: 170002229, total Blocks: 2048, BlockSize: 32 
+Batch 201 Results: 197266424, total Blocks: 2048, BlockSize: 32 
+Batch 202 Results: 74284311, total Blocks: 2048, BlockSize: 32 
+Batch 203 Results: 42628189, total Blocks: 2048, BlockSize: 32 
+Batch 204 Results: 42453874, total Blocks: 2048, BlockSize: 32 
+Batch 205 Results: 42593595, total Blocks: 2048, BlockSize: 32 
+Batch 206 Results: 50654335, total Blocks: 2048, BlockSize: 32 
+Batch 207 Results: 75132215, total Blocks: 2048, BlockSize: 32 
+Batch 208 Results: 73594686, total Blocks: 2048, BlockSize: 32 
+Batch 209 Results: 73966078, total Blocks: 2048, BlockSize: 32 
+Batch 210 Results: 76051106, total Blocks: 2048, BlockSize: 32 
+Batch 211 Results: 75992256, total Blocks: 2048, BlockSize: 32 
+Batch 212 Results: 74800536, total Blocks: 2048, BlockSize: 32 
+Batch 213 Results: 74782278, total Blocks: 2048, BlockSize: 32 
+Batch 214 Results: 73677892, total Blocks: 2048, BlockSize: 32 
+Batch 215 Results: 75438315, total Blocks: 2048, BlockSize: 32 
+Batch 216 Results: 74487363, total Blocks: 2048, BlockSize: 32 
+Batch 217 Results: 73150038, total Blocks: 2048, BlockSize: 32 
+Batch 218 Results: 75104201, total Blocks: 2048, BlockSize: 32 
+Batch 219 Results: 74565784, total Blocks: 2048, BlockSize: 32 
+Batch 220 Results: 74162420, total Blocks: 2048, BlockSize: 32 
+Batch 221 Results: 73075594, total Blocks: 2048, BlockSize: 32 
+Batch 222 Results: 74022513, total Blocks: 2048, BlockSize: 32 
+Batch 223 Results: 80879604, total Blocks: 2048, BlockSize: 32 
+Batch 224 Results: 110882595, total Blocks: 2048, BlockSize: 32 
+Batch 225 Results: 111068357, total Blocks: 2048, BlockSize: 32 
+Batch 226 Results: 110445112, total Blocks: 2048, BlockSize: 32 
+Batch 227 Results: 57795579, total Blocks: 2048, BlockSize: 32 
+Batch 228 Results: 15936760, total Blocks: 2048, BlockSize: 32 
+Batch 229 Results: 13436887, total Blocks: 2048, BlockSize: 32 
+Batch 230 Results: 11097829, total Blocks: 2048, BlockSize: 32 
+Batch 231 Results: 34257298, total Blocks: 2048, BlockSize: 32 
+Batch 232 Results: 33974389, total Blocks: 2048, BlockSize: 32 
+Batch 233 Results: 78736378, total Blocks: 2048, BlockSize: 32 
+Batch 234 Results: 67803244, total Blocks: 2048, BlockSize: 32 
+Batch 235 Results: 112179137, total Blocks: 2048, BlockSize: 32 
+Batch 236 Results: 59354261, total Blocks: 2048, BlockSize: 32 
+Batch 237 Results: 119640065, total Blocks: 2048, BlockSize: 32 
+Batch 238 Results: 123642604, total Blocks: 2048, BlockSize: 32 
+Batch 239 Results: 221104652, total Blocks: 2048, BlockSize: 32 
+Batch 240 Results: 152862380, total Blocks: 2048, BlockSize: 32 
+Batch 241 Results: 139753255, total Blocks: 2048, BlockSize: 32 
+Batch 242 Results: 139589018, total Blocks: 2048, BlockSize: 32 
+Batch 243 Results: 138818817, total Blocks: 2048, BlockSize: 32 
+Batch 244 Results: 64752386, total Blocks: 2048, BlockSize: 32 
+Batch 245 Results: 12335395, total Blocks: 2048, BlockSize: 32 
+Batch 246 Results: 14547252, total Blocks: 2048, BlockSize: 32 
+Batch 247 Results: 42371302, total Blocks: 2048, BlockSize: 32 
+Batch 248 Results: 48714487, total Blocks: 2048, BlockSize: 32 
+Batch 249 Results: 49281573, total Blocks: 2048, BlockSize: 32 
+Batch 250 Results: 532701681, total Blocks: 2048, BlockSize: 32 
+Batch 251 Results: 724011161, total Blocks: 2048, BlockSize: 32 
+Batch 252 Results: 721088797, total Blocks: 2048, BlockSize: 32 
+Batch 253 Results: 622727366, total Blocks: 2048, BlockSize: 32 
+Batch 254 Results: 491352671, total Blocks: 2048, BlockSize: 32 
+Batch 255 Results: 493665368, total Blocks: 2048, BlockSize: 32 
+Batch 256 Results: 491775849, total Blocks: 2048, BlockSize: 32 
+Batch 257 Results: 492690479, total Blocks: 2048, BlockSize: 32 
+Batch 258 Results: 487417808, total Blocks: 2048, BlockSize: 32 
+Batch 259 Results: 492777341, total Blocks: 2048, BlockSize: 32 
+Batch 260 Results: 492183398, total Blocks: 2048, BlockSize: 32 
+Batch 261 Results: 493292952, total Blocks: 2048, BlockSize: 32 
+Batch 262 Results: 491476589, total Blocks: 2048, BlockSize: 32 
+Batch 263 Results: 486506313, total Blocks: 2048, BlockSize: 32 
+Batch 264 Results: 494912528, total Blocks: 2048, BlockSize: 32 
+Batch 265 Results: 491318329, total Blocks: 2048, BlockSize: 32 
+Batch 266 Results: 495166791, total Blocks: 2048, BlockSize: 32 
+Batch 267 Results: 490917934, total Blocks: 2048, BlockSize: 32 
+Batch 268 Results: 490100026, total Blocks: 2048, BlockSize: 32 
+Batch 269 Results: 490539394, total Blocks: 2048, BlockSize: 32 
+Batch 270 Results: 494212064, total Blocks: 2048, BlockSize: 32 
+Batch 271 Results: 490253239, total Blocks: 2048, BlockSize: 32 
+Batch 272 Results: 488421116, total Blocks: 2048, BlockSize: 32 
+Batch 273 Results: 495301559, total Blocks: 2048, BlockSize: 32 
+Batch 274 Results: 489116288, total Blocks: 2048, BlockSize: 32 
+Batch 275 Results: 494056292, total Blocks: 2048, BlockSize: 32 
+Batch 276 Results: 420072217, total Blocks: 2048, BlockSize: 32 
+Batch 277 Results: 452153432, total Blocks: 2048, BlockSize: 32 
+Batch 278 Results: 454896879, total Blocks: 2048, BlockSize: 32 
+Batch 279 Results: 451693092, total Blocks: 2048, BlockSize: 32 
+Batch 280 Results: 454461740, total Blocks: 2048, BlockSize: 32 
+Batch 281 Results: 451890730, total Blocks: 2048, BlockSize: 32 
+Batch 282 Results: 66780927, total Blocks: 2048, BlockSize: 32 
+Batch 283 Results: 2698645, total Blocks: 2048, BlockSize: 32 
+Batch 284 Results: 7354727, total Blocks: 2048, BlockSize: 32 
+Batch 285 Results: 12119683, total Blocks: 2048, BlockSize: 32 
+Batch 286 Results: 20702953, total Blocks: 2048, BlockSize: 32 
+Batch 287 Results: 33054771, total Blocks: 2048, BlockSize: 32 
+Batch 288 Results: 47049753, total Blocks: 2048, BlockSize: 32 
+Batch 289 Results: 83197070, total Blocks: 2048, BlockSize: 32 
+Batch 290 Results: 98503591, total Blocks: 2048, BlockSize: 32 
+Batch 291 Results: 99679550, total Blocks: 2048, BlockSize: 32 
+Batch 292 Results: 99753495, total Blocks: 2048, BlockSize: 32 
+Batch 293 Results: 98384343, total Blocks: 2048, BlockSize: 32 
+Batch 294 Results: 99269089, total Blocks: 2048, BlockSize: 32 
+Batch 295 Results: 94788171, total Blocks: 2048, BlockSize: 32 
+Batch 296 Results: 125472080, total Blocks: 2048, BlockSize: 32 
+Batch 297 Results: 124013343, total Blocks: 2048, BlockSize: 32 
+Batch 298 Results: 126257643, total Blocks: 2048, BlockSize: 32 
+Batch 299 Results: 125119860, total Blocks: 2048, BlockSize: 32 
+Batch 300 Results: 9100501, total Blocks: 2048, BlockSize: 32 
+Kernel time: 328.665932
+Total results Set Size: 29588966557 
+Total Time: 336.169757
+
+Time to read in file: 1.999014
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 32, Kernel Blocks: 256
+Using dynamic searching
+Distance Threshold: 0.026000 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 1250281846208.000000 BinCount: 11 AverageBinsCount: 307285.000000, nonEmpty: 8
+Layer 1 sumqrs: 1151647245257.000000 BinCount: 72 AverageBinsCount: 79299.000000, nonEmpty: 31
+Layer 2 sumqrs: 882261800209.000000 BinCount: 341 AverageBinsCount: 31516.000000, nonEmpty: 78
+Layer 3 sumqrs: 567074802521.000000 BinCount: 702 AverageBinsCount: 17685.000000, nonEmpty: 139
+Layer 4 sumqrs: 383279165027.000000 BinCount: 1668 AverageBinsCount: 9207.000000, nonEmpty: 267
+Layer 5 sumqrs: 252003859882.000000 BinCount: 2403 AverageBinsCount: 5487.000000, nonEmpty: 448
+Last Layer Bin Count: 2403
+Tree Check: 2458285
+Time to build tree: 4.155339
+Starting Kernel Launcher
+Non Empty Bins in last layer: 448
+Total Bin Count in Tree: 5197
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 1230660, total Blocks: 2048, BlockSize: 32 
+Batch 1 Results: 1715995, total Blocks: 2048, BlockSize: 32 
+Batch 2 Results: 1757423, total Blocks: 2048, BlockSize: 32 
+Batch 3 Results: 1708616, total Blocks: 2048, BlockSize: 32 
+Batch 4 Results: 1691345, total Blocks: 2048, BlockSize: 32 
+Batch 5 Results: 1570245, total Blocks: 2048, BlockSize: 32 
+Batch 6 Results: 1233437, total Blocks: 2048, BlockSize: 32 
+Batch 7 Results: 1231256, total Blocks: 2048, BlockSize: 32 
+Batch 8 Results: 2336985, total Blocks: 2048, BlockSize: 32 
+Batch 9 Results: 2617814, total Blocks: 2048, BlockSize: 32 
+Batch 10 Results: 2452101, total Blocks: 2048, BlockSize: 32 
+Batch 11 Results: 2227856, total Blocks: 2048, BlockSize: 32 
+Batch 12 Results: 2328363, total Blocks: 2048, BlockSize: 32 
+Batch 13 Results: 2677403, total Blocks: 2048, BlockSize: 32 
+Batch 14 Results: 2199697, total Blocks: 2048, BlockSize: 32 
+Batch 15 Results: 3091220, total Blocks: 2048, BlockSize: 32 
+Batch 16 Results: 2663534, total Blocks: 2048, BlockSize: 32 
+Batch 17 Results: 12136548, total Blocks: 2048, BlockSize: 32 
+Batch 18 Results: 9700218, total Blocks: 2048, BlockSize: 32 
+Batch 19 Results: 4273831, total Blocks: 2048, BlockSize: 32 
+Batch 20 Results: 13077333, total Blocks: 2048, BlockSize: 32 
+Batch 21 Results: 15596720, total Blocks: 2048, BlockSize: 32 
+Batch 22 Results: 15766307, total Blocks: 2048, BlockSize: 32 
+Batch 23 Results: 15547240, total Blocks: 2048, BlockSize: 32 
+Batch 24 Results: 15200071, total Blocks: 2048, BlockSize: 32 
+Batch 25 Results: 15664236, total Blocks: 2048, BlockSize: 32 
+Batch 26 Results: 15702996, total Blocks: 2048, BlockSize: 32 
+Batch 27 Results: 15700501, total Blocks: 2048, BlockSize: 32 
+Batch 28 Results: 15758012, total Blocks: 2048, BlockSize: 32 
+Batch 29 Results: 15464822, total Blocks: 2048, BlockSize: 32 
+Batch 30 Results: 15332549, total Blocks: 2048, BlockSize: 32 
+Batch 31 Results: 15152062, total Blocks: 2048, BlockSize: 32 
+Batch 32 Results: 15308538, total Blocks: 2048, BlockSize: 32 
+Batch 33 Results: 22157572, total Blocks: 2048, BlockSize: 32 
+Batch 34 Results: 27187610, total Blocks: 2048, BlockSize: 32 
+Batch 35 Results: 26421452, total Blocks: 2048, BlockSize: 32 
+Batch 36 Results: 26916844, total Blocks: 2048, BlockSize: 32 
+Batch 37 Results: 27405051, total Blocks: 2048, BlockSize: 32 
+Batch 38 Results: 26427666, total Blocks: 2048, BlockSize: 32 
+Batch 39 Results: 26258322, total Blocks: 2048, BlockSize: 32 
+Batch 40 Results: 26797090, total Blocks: 2048, BlockSize: 32 
+Batch 41 Results: 26517227, total Blocks: 2048, BlockSize: 32 
+Batch 42 Results: 27351713, total Blocks: 2048, BlockSize: 32 
+Batch 43 Results: 25373000, total Blocks: 2048, BlockSize: 32 
+Batch 44 Results: 27236583, total Blocks: 2048, BlockSize: 32 
+Batch 45 Results: 26552966, total Blocks: 2048, BlockSize: 32 
+Batch 46 Results: 26649077, total Blocks: 2048, BlockSize: 32 
+Batch 47 Results: 26020202, total Blocks: 2048, BlockSize: 32 
+Batch 48 Results: 25127779, total Blocks: 2048, BlockSize: 32 
+Batch 49 Results: 30505995, total Blocks: 2048, BlockSize: 32 
+Batch 50 Results: 42112000, total Blocks: 2048, BlockSize: 32 
+Batch 51 Results: 42486422, total Blocks: 2048, BlockSize: 32 
+Batch 52 Results: 42791405, total Blocks: 2048, BlockSize: 32 
+Batch 53 Results: 42754373, total Blocks: 2048, BlockSize: 32 
+Batch 54 Results: 41552084, total Blocks: 2048, BlockSize: 32 
+Batch 55 Results: 41627581, total Blocks: 2048, BlockSize: 32 
+Batch 56 Results: 42519790, total Blocks: 2048, BlockSize: 32 
+Batch 57 Results: 41211889, total Blocks: 2048, BlockSize: 32 
+Batch 58 Results: 42887579, total Blocks: 2048, BlockSize: 32 
+Batch 59 Results: 41589054, total Blocks: 2048, BlockSize: 32 
+Batch 60 Results: 41637898, total Blocks: 2048, BlockSize: 32 
+Batch 61 Results: 42056903, total Blocks: 2048, BlockSize: 32 
+Batch 62 Results: 39510628, total Blocks: 2048, BlockSize: 32 
+Batch 63 Results: 43564921, total Blocks: 2048, BlockSize: 32 
+Batch 64 Results: 43359596, total Blocks: 2048, BlockSize: 32 
+Batch 65 Results: 43614899, total Blocks: 2048, BlockSize: 32 
+Batch 66 Results: 42872397, total Blocks: 2048, BlockSize: 32 
+Batch 67 Results: 42905620, total Blocks: 2048, BlockSize: 32 
+Batch 68 Results: 43363049, total Blocks: 2048, BlockSize: 32 
+Batch 69 Results: 42392374, total Blocks: 2048, BlockSize: 32 
+Batch 70 Results: 43377796, total Blocks: 2048, BlockSize: 32 
+Batch 71 Results: 43244127, total Blocks: 2048, BlockSize: 32 
+Batch 72 Results: 42913093, total Blocks: 2048, BlockSize: 32 
+Batch 73 Results: 43040571, total Blocks: 2048, BlockSize: 32 
+Batch 74 Results: 43766745, total Blocks: 2048, BlockSize: 32 
+Batch 75 Results: 42805066, total Blocks: 2048, BlockSize: 32 
+Batch 76 Results: 43656359, total Blocks: 2048, BlockSize: 32 
+Batch 77 Results: 42557773, total Blocks: 2048, BlockSize: 32 
+Batch 78 Results: 43155133, total Blocks: 2048, BlockSize: 32 
+Batch 79 Results: 43672039, total Blocks: 2048, BlockSize: 32 
+Batch 80 Results: 31787529, total Blocks: 2048, BlockSize: 32 
+Batch 81 Results: 11408402, total Blocks: 2048, BlockSize: 32 
+Batch 82 Results: 16066154, total Blocks: 2048, BlockSize: 32 
+Batch 83 Results: 16255472, total Blocks: 2048, BlockSize: 32 
+Batch 84 Results: 45833151, total Blocks: 2048, BlockSize: 32 
+Batch 85 Results: 45693815, total Blocks: 2048, BlockSize: 32 
+Batch 86 Results: 39206902, total Blocks: 2048, BlockSize: 32 
+Batch 87 Results: 25237384, total Blocks: 2048, BlockSize: 32 
+Batch 88 Results: 72448209, total Blocks: 2048, BlockSize: 32 
+Batch 89 Results: 72228429, total Blocks: 2048, BlockSize: 32 
+Batch 90 Results: 72440436, total Blocks: 2048, BlockSize: 32 
+Batch 91 Results: 70856106, total Blocks: 2048, BlockSize: 32 
+Batch 92 Results: 71390027, total Blocks: 2048, BlockSize: 32 
+Batch 93 Results: 72223089, total Blocks: 2048, BlockSize: 32 
+Batch 94 Results: 72824714, total Blocks: 2048, BlockSize: 32 
+Batch 95 Results: 73043649, total Blocks: 2048, BlockSize: 32 
+Batch 96 Results: 69997191, total Blocks: 2048, BlockSize: 32 
+Batch 97 Results: 69175992, total Blocks: 2048, BlockSize: 32 
+Batch 98 Results: 17600434, total Blocks: 2048, BlockSize: 32 
+Batch 99 Results: 26669917, total Blocks: 2048, BlockSize: 32 
+Batch 100 Results: 7723076, total Blocks: 2048, BlockSize: 32 
+Batch 101 Results: 5078540, total Blocks: 2048, BlockSize: 32 
+Batch 102 Results: 8601451, total Blocks: 2048, BlockSize: 32 
+Batch 103 Results: 13267177, total Blocks: 2048, BlockSize: 32 
+Batch 104 Results: 11681062, total Blocks: 2048, BlockSize: 32 
+Batch 105 Results: 33166999, total Blocks: 2048, BlockSize: 32 
+Batch 106 Results: 45318565, total Blocks: 2048, BlockSize: 32 
+Batch 107 Results: 46453701, total Blocks: 2048, BlockSize: 32 
+Batch 108 Results: 46875703, total Blocks: 2048, BlockSize: 32 
+Batch 109 Results: 48849076, total Blocks: 2048, BlockSize: 32 
+Batch 110 Results: 42973516, total Blocks: 2048, BlockSize: 32 
+Batch 111 Results: 71961694, total Blocks: 2048, BlockSize: 32 
+Batch 112 Results: 114974920, total Blocks: 2048, BlockSize: 32 
+Batch 113 Results: 114264990, total Blocks: 2048, BlockSize: 32 
+Batch 114 Results: 115569931, total Blocks: 2048, BlockSize: 32 
+Batch 115 Results: 114183266, total Blocks: 2048, BlockSize: 32 
+Batch 116 Results: 114351046, total Blocks: 2048, BlockSize: 32 
+Batch 117 Results: 113414209, total Blocks: 2048, BlockSize: 32 
+Batch 118 Results: 115044709, total Blocks: 2048, BlockSize: 32 
+Batch 119 Results: 116933546, total Blocks: 2048, BlockSize: 32 
+Batch 120 Results: 93277218, total Blocks: 2048, BlockSize: 32 
+Batch 121 Results: 51840625, total Blocks: 2048, BlockSize: 32 
+Batch 122 Results: 32794807, total Blocks: 2048, BlockSize: 32 
+Batch 123 Results: 51993446, total Blocks: 2048, BlockSize: 32 
+Batch 124 Results: 141458544, total Blocks: 2048, BlockSize: 32 
+Batch 125 Results: 141237223, total Blocks: 2048, BlockSize: 32 
+Batch 126 Results: 139744933, total Blocks: 2048, BlockSize: 32 
+Batch 127 Results: 140746646, total Blocks: 2048, BlockSize: 32 
+Batch 128 Results: 121681690, total Blocks: 2048, BlockSize: 32 
+Batch 129 Results: 100402197, total Blocks: 2048, BlockSize: 32 
+Batch 130 Results: 101614629, total Blocks: 2048, BlockSize: 32 
+Batch 131 Results: 102284988, total Blocks: 2048, BlockSize: 32 
+Batch 132 Results: 101748895, total Blocks: 2048, BlockSize: 32 
+Batch 133 Results: 103701850, total Blocks: 2048, BlockSize: 32 
+Batch 134 Results: 101093781, total Blocks: 2048, BlockSize: 32 
+Batch 135 Results: 110477679, total Blocks: 2048, BlockSize: 32 
+Batch 136 Results: 110584818, total Blocks: 2048, BlockSize: 32 
+Batch 137 Results: 112335332, total Blocks: 2048, BlockSize: 32 
+Batch 138 Results: 111862615, total Blocks: 2048, BlockSize: 32 
+Batch 139 Results: 112114436, total Blocks: 2048, BlockSize: 32 
+Batch 140 Results: 112315515, total Blocks: 2048, BlockSize: 32 
+Batch 141 Results: 113674569, total Blocks: 2048, BlockSize: 32 
+Batch 142 Results: 56932412, total Blocks: 2048, BlockSize: 32 
+Batch 143 Results: 17290800, total Blocks: 2048, BlockSize: 32 
+Batch 144 Results: 17419221, total Blocks: 2048, BlockSize: 32 
+Batch 145 Results: 17294236, total Blocks: 2048, BlockSize: 32 
+Batch 146 Results: 17691383, total Blocks: 2048, BlockSize: 32 
+Batch 147 Results: 16994821, total Blocks: 2048, BlockSize: 32 
+Batch 148 Results: 45961713, total Blocks: 2048, BlockSize: 32 
+Batch 149 Results: 47030676, total Blocks: 2048, BlockSize: 32 
+Batch 150 Results: 46597796, total Blocks: 2048, BlockSize: 32 
+Batch 151 Results: 45706769, total Blocks: 2048, BlockSize: 32 
+Batch 152 Results: 70526274, total Blocks: 2048, BlockSize: 32 
+Batch 153 Results: 79294646, total Blocks: 2048, BlockSize: 32 
+Batch 154 Results: 78543024, total Blocks: 2048, BlockSize: 32 
+Batch 155 Results: 79090794, total Blocks: 2048, BlockSize: 32 
+Batch 156 Results: 78959915, total Blocks: 2048, BlockSize: 32 
+Batch 157 Results: 78165951, total Blocks: 2048, BlockSize: 32 
+Batch 158 Results: 77964013, total Blocks: 2048, BlockSize: 32 
+Batch 159 Results: 76058850, total Blocks: 2048, BlockSize: 32 
+Batch 160 Results: 47747663, total Blocks: 2048, BlockSize: 32 
+Batch 161 Results: 44962652, total Blocks: 2048, BlockSize: 32 
+Batch 162 Results: 43231951, total Blocks: 2048, BlockSize: 32 
+Batch 163 Results: 23244590, total Blocks: 2048, BlockSize: 32 
+Batch 164 Results: 23832646, total Blocks: 2048, BlockSize: 32 
+Batch 165 Results: 105013514, total Blocks: 2048, BlockSize: 32 
+Batch 166 Results: 173246425, total Blocks: 2048, BlockSize: 32 
+Batch 167 Results: 173790435, total Blocks: 2048, BlockSize: 32 
+Batch 168 Results: 175720724, total Blocks: 2048, BlockSize: 32 
+Batch 169 Results: 174608242, total Blocks: 2048, BlockSize: 32 
+Batch 170 Results: 174066991, total Blocks: 2048, BlockSize: 32 
+Batch 171 Results: 171550082, total Blocks: 2048, BlockSize: 32 
+Batch 172 Results: 262937497, total Blocks: 2048, BlockSize: 32 
+Batch 173 Results: 292316189, total Blocks: 2048, BlockSize: 32 
+Batch 174 Results: 243984912, total Blocks: 2048, BlockSize: 32 
+Batch 175 Results: 156374398, total Blocks: 2048, BlockSize: 32 
+Batch 176 Results: 154828495, total Blocks: 2048, BlockSize: 32 
+Batch 177 Results: 154872007, total Blocks: 2048, BlockSize: 32 
+Batch 178 Results: 154199840, total Blocks: 2048, BlockSize: 32 
+Batch 179 Results: 152915041, total Blocks: 2048, BlockSize: 32 
+Batch 180 Results: 158033386, total Blocks: 2048, BlockSize: 32 
+Batch 181 Results: 154758713, total Blocks: 2048, BlockSize: 32 
+Batch 182 Results: 154641395, total Blocks: 2048, BlockSize: 32 
+Batch 183 Results: 156221647, total Blocks: 2048, BlockSize: 32 
+Batch 184 Results: 154979037, total Blocks: 2048, BlockSize: 32 
+Batch 185 Results: 157965911, total Blocks: 2048, BlockSize: 32 
+Batch 186 Results: 158729467, total Blocks: 2048, BlockSize: 32 
+Batch 187 Results: 156855800, total Blocks: 2048, BlockSize: 32 
+Batch 188 Results: 155254912, total Blocks: 2048, BlockSize: 32 
+Batch 189 Results: 155294507, total Blocks: 2048, BlockSize: 32 
+Batch 190 Results: 155788005, total Blocks: 2048, BlockSize: 32 
+Batch 191 Results: 154258086, total Blocks: 2048, BlockSize: 32 
+Batch 192 Results: 155986173, total Blocks: 2048, BlockSize: 32 
+Batch 193 Results: 154782153, total Blocks: 2048, BlockSize: 32 
+Batch 194 Results: 157654517, total Blocks: 2048, BlockSize: 32 
+Batch 195 Results: 153814118, total Blocks: 2048, BlockSize: 32 
+Batch 196 Results: 138303412, total Blocks: 2048, BlockSize: 32 
+Batch 197 Results: 127807766, total Blocks: 2048, BlockSize: 32 
+Batch 198 Results: 127675765, total Blocks: 2048, BlockSize: 32 
+Batch 199 Results: 131498237, total Blocks: 2048, BlockSize: 32 
+Batch 200 Results: 131888458, total Blocks: 2048, BlockSize: 32 
+Batch 201 Results: 128532056, total Blocks: 2048, BlockSize: 32 
+Batch 202 Results: 129836780, total Blocks: 2048, BlockSize: 32 
+Batch 203 Results: 132698578, total Blocks: 2048, BlockSize: 32 
+Batch 204 Results: 128428644, total Blocks: 2048, BlockSize: 32 
+Batch 205 Results: 127900548, total Blocks: 2048, BlockSize: 32 
+Batch 206 Results: 127805275, total Blocks: 2048, BlockSize: 32 
+Batch 207 Results: 130546642, total Blocks: 2048, BlockSize: 32 
+Batch 208 Results: 132397965, total Blocks: 2048, BlockSize: 32 
+Batch 209 Results: 130201049, total Blocks: 2048, BlockSize: 32 
+Batch 210 Results: 130501846, total Blocks: 2048, BlockSize: 32 
+Batch 211 Results: 130376481, total Blocks: 2048, BlockSize: 32 
+Batch 212 Results: 130823971, total Blocks: 2048, BlockSize: 32 
+Batch 213 Results: 131529937, total Blocks: 2048, BlockSize: 32 
+Batch 214 Results: 90152586, total Blocks: 2048, BlockSize: 32 
+Batch 215 Results: 224187116, total Blocks: 2048, BlockSize: 32 
+Batch 216 Results: 222669760, total Blocks: 2048, BlockSize: 32 
+Batch 217 Results: 222855247, total Blocks: 2048, BlockSize: 32 
+Batch 218 Results: 221922865, total Blocks: 2048, BlockSize: 32 
+Batch 219 Results: 224828312, total Blocks: 2048, BlockSize: 32 
+Batch 220 Results: 223004311, total Blocks: 2048, BlockSize: 32 
+Batch 221 Results: 223431243, total Blocks: 2048, BlockSize: 32 
+Batch 222 Results: 220493034, total Blocks: 2048, BlockSize: 32 
+Batch 223 Results: 224013814, total Blocks: 2048, BlockSize: 32 
+Batch 224 Results: 222793262, total Blocks: 2048, BlockSize: 32 
+Batch 225 Results: 222148099, total Blocks: 2048, BlockSize: 32 
+Batch 226 Results: 223774040, total Blocks: 2048, BlockSize: 32 
+Batch 227 Results: 160459457, total Blocks: 2048, BlockSize: 32 
+Batch 228 Results: 16671274, total Blocks: 2048, BlockSize: 32 
+Batch 229 Results: 29250923, total Blocks: 2048, BlockSize: 32 
+Batch 230 Results: 29489557, total Blocks: 2048, BlockSize: 32 
+Batch 231 Results: 29790956, total Blocks: 2048, BlockSize: 32 
+Batch 232 Results: 35786727, total Blocks: 2048, BlockSize: 32 
+Batch 233 Results: 93996909, total Blocks: 2048, BlockSize: 32 
+Batch 234 Results: 102607903, total Blocks: 2048, BlockSize: 32 
+Batch 235 Results: 96536769, total Blocks: 2048, BlockSize: 32 
+Batch 236 Results: 101585682, total Blocks: 2048, BlockSize: 32 
+Batch 237 Results: 121310141, total Blocks: 2048, BlockSize: 32 
+Batch 238 Results: 94124673, total Blocks: 2048, BlockSize: 32 
+Batch 239 Results: 82973789, total Blocks: 2048, BlockSize: 32 
+Batch 240 Results: 399429652, total Blocks: 2048, BlockSize: 32 
+Batch 241 Results: 436152184, total Blocks: 2048, BlockSize: 32 
+Batch 242 Results: 309922065, total Blocks: 2048, BlockSize: 32 
+Batch 243 Results: 534572821, total Blocks: 2048, BlockSize: 32 
+Batch 244 Results: 542247017, total Blocks: 2048, BlockSize: 32 
+Batch 245 Results: 541524291, total Blocks: 2048, BlockSize: 32 
+Batch 246 Results: 543789422, total Blocks: 2048, BlockSize: 32 
+Batch 247 Results: 541507004, total Blocks: 2048, BlockSize: 32 
+Batch 248 Results: 539178171, total Blocks: 2048, BlockSize: 32 
+Batch 249 Results: 540411140, total Blocks: 2048, BlockSize: 32 
+Batch 250 Results: 546635261, total Blocks: 2048, BlockSize: 32 
+Batch 251 Results: 543468106, total Blocks: 2048, BlockSize: 32 
+Batch 252 Results: 547015296, total Blocks: 2048, BlockSize: 32 
+Batch 253 Results: 357682560, total Blocks: 2048, BlockSize: 32 
+Batch 254 Results: 19303808, total Blocks: 2048, BlockSize: 32 
+Batch 255 Results: 10630900, total Blocks: 2048, BlockSize: 32 
+Batch 256 Results: 393643854, total Blocks: 2048, BlockSize: 32 
+Batch 257 Results: 512928806, total Blocks: 2048, BlockSize: 32 
+Batch 258 Results: 514109068, total Blocks: 2048, BlockSize: 32 
+Batch 259 Results: 513406068, total Blocks: 2048, BlockSize: 32 
+Batch 260 Results: 589057004, total Blocks: 2048, BlockSize: 32 
+Batch 261 Results: 600608560, total Blocks: 2048, BlockSize: 32 
+Batch 262 Results: 600592578, total Blocks: 2048, BlockSize: 32 
+Batch 263 Results: 598035523, total Blocks: 2048, BlockSize: 32 
+Batch 264 Results: 601870803, total Blocks: 2048, BlockSize: 32 
+Batch 265 Results: 601688515, total Blocks: 2048, BlockSize: 32 
+Batch 266 Results: 599684549, total Blocks: 2048, BlockSize: 32 
+Batch 267 Results: 599109443, total Blocks: 2048, BlockSize: 32 
+Batch 268 Results: 599358226, total Blocks: 2048, BlockSize: 32 
+Batch 269 Results: 594084980, total Blocks: 2048, BlockSize: 32 
+Batch 270 Results: 604276793, total Blocks: 2048, BlockSize: 32 
+Batch 271 Results: 600671356, total Blocks: 2048, BlockSize: 32 
+Batch 272 Results: 605631550, total Blocks: 2048, BlockSize: 32 
+Batch 273 Results: 597662385, total Blocks: 2048, BlockSize: 32 
+Batch 274 Results: 597969029, total Blocks: 2048, BlockSize: 32 
+Batch 275 Results: 597466058, total Blocks: 2048, BlockSize: 32 
+Batch 276 Results: 596757581, total Blocks: 2048, BlockSize: 32 
+Batch 277 Results: 598906441, total Blocks: 2048, BlockSize: 32 
+Batch 278 Results: 593760483, total Blocks: 2048, BlockSize: 32 
+Batch 279 Results: 600950360, total Blocks: 2048, BlockSize: 32 
+Batch 280 Results: 596675023, total Blocks: 2048, BlockSize: 32 
+Batch 281 Results: 600982772, total Blocks: 2048, BlockSize: 32 
+Batch 282 Results: 215686932, total Blocks: 2048, BlockSize: 32 
+Batch 283 Results: 4038431, total Blocks: 2048, BlockSize: 32 
+Batch 284 Results: 7048596, total Blocks: 2048, BlockSize: 32 
+Batch 285 Results: 14634498, total Blocks: 2048, BlockSize: 32 
+Batch 286 Results: 33020722, total Blocks: 2048, BlockSize: 32 
+Batch 287 Results: 52821446, total Blocks: 2048, BlockSize: 32 
+Batch 288 Results: 122317891, total Blocks: 2048, BlockSize: 32 
+Batch 289 Results: 122803491, total Blocks: 2048, BlockSize: 32 
+Batch 290 Results: 122692283, total Blocks: 2048, BlockSize: 32 
+Batch 291 Results: 123385625, total Blocks: 2048, BlockSize: 32 
+Batch 292 Results: 123983161, total Blocks: 2048, BlockSize: 32 
+Batch 293 Results: 124090805, total Blocks: 2048, BlockSize: 32 
+Batch 294 Results: 141832260, total Blocks: 2048, BlockSize: 32 
+Batch 295 Results: 172912439, total Blocks: 2048, BlockSize: 32 
+Batch 296 Results: 173578523, total Blocks: 2048, BlockSize: 32 
+Batch 297 Results: 173238501, total Blocks: 2048, BlockSize: 32 
+Batch 298 Results: 157440077, total Blocks: 2048, BlockSize: 32 
+Batch 299 Results: 127937533, total Blocks: 2048, BlockSize: 32 
+Batch 300 Results: 11868391, total Blocks: 2048, BlockSize: 32 
+Kernel time: 396.913941
+Total results Set Size: 43136368247 
+Total Time: 404.140919
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=512 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=512 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=512 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=512 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=512 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=512 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=512 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+Census____________________________________________________________
+Census____________________________________________________________
+
+Time to read in file: 1.954432
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 32, Kernel Blocks: 512
+Using dynamic searching
+Distance Threshold: 0.020000 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 1153546575833.000000 BinCount: 14 AverageBinsCount: 223480.000000, nonEmpty: 11
+Layer 1 sumqrs: 1006638906469.000000 BinCount: 132 AverageBinsCount: 49165.000000, nonEmpty: 50
+Layer 2 sumqrs: 711763781963.000000 BinCount: 600 AverageBinsCount: 18623.000000, nonEmpty: 132
+Layer 3 sumqrs: 516405972853.000000 BinCount: 1452 AverageBinsCount: 10200.000000, nonEmpty: 241
+Layer 4 sumqrs: 343348736451.000000 BinCount: 3133 AverageBinsCount: 5690.000000, nonEmpty: 432
+Layer 5 sumqrs: 231043950737.000000 BinCount: 5184 AverageBinsCount: 3155.000000, nonEmpty: 779
+Last Layer Bin Count: 5184
+Tree Check: 2458285
+Time to build tree: 4.403503
+Starting Kernel Launcher
+Non Empty Bins in last layer: 779
+Total Bin Count in Tree: 10515
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 287280, total Blocks: 4096, BlockSize: 32 
+Batch 1 Results: 415082, total Blocks: 4096, BlockSize: 32 
+Batch 2 Results: 576441, total Blocks: 4096, BlockSize: 32 
+Batch 3 Results: 330748, total Blocks: 4096, BlockSize: 32 
+Batch 4 Results: 723263, total Blocks: 4096, BlockSize: 32 
+Batch 5 Results: 855498, total Blocks: 4096, BlockSize: 32 
+Batch 6 Results: 408017, total Blocks: 4096, BlockSize: 32 
+Batch 7 Results: 1562756, total Blocks: 4096, BlockSize: 32 
+Batch 8 Results: 2119683, total Blocks: 4096, BlockSize: 32 
+Batch 9 Results: 3125827, total Blocks: 4096, BlockSize: 32 
+Batch 10 Results: 3503177, total Blocks: 4096, BlockSize: 32 
+Batch 11 Results: 2413763, total Blocks: 4096, BlockSize: 32 
+Batch 12 Results: 3528968, total Blocks: 4096, BlockSize: 32 
+Batch 13 Results: 3541440, total Blocks: 4096, BlockSize: 32 
+Batch 14 Results: 4523657, total Blocks: 4096, BlockSize: 32 
+Batch 15 Results: 2258513, total Blocks: 4096, BlockSize: 32 
+Batch 16 Results: 5763418, total Blocks: 4096, BlockSize: 32 
+Batch 17 Results: 6239333, total Blocks: 4096, BlockSize: 32 
+Batch 18 Results: 6229073, total Blocks: 4096, BlockSize: 32 
+Batch 19 Results: 6313651, total Blocks: 4096, BlockSize: 32 
+Batch 20 Results: 6190548, total Blocks: 4096, BlockSize: 32 
+Batch 21 Results: 6321208, total Blocks: 4096, BlockSize: 32 
+Batch 22 Results: 6202071, total Blocks: 4096, BlockSize: 32 
+Batch 23 Results: 6280277, total Blocks: 4096, BlockSize: 32 
+Batch 24 Results: 6284692, total Blocks: 4096, BlockSize: 32 
+Batch 25 Results: 6254159, total Blocks: 4096, BlockSize: 32 
+Batch 26 Results: 6198693, total Blocks: 4096, BlockSize: 32 
+Batch 27 Results: 12128314, total Blocks: 4096, BlockSize: 32 
+Batch 28 Results: 15621492, total Blocks: 4096, BlockSize: 32 
+Batch 29 Results: 12468401, total Blocks: 4096, BlockSize: 32 
+Batch 30 Results: 4573872, total Blocks: 4096, BlockSize: 32 
+Batch 31 Results: 4538046, total Blocks: 4096, BlockSize: 32 
+Batch 32 Results: 4619742, total Blocks: 4096, BlockSize: 32 
+Batch 33 Results: 28773397, total Blocks: 4096, BlockSize: 32 
+Batch 34 Results: 30169123, total Blocks: 4096, BlockSize: 32 
+Batch 35 Results: 24498213, total Blocks: 4096, BlockSize: 32 
+Batch 36 Results: 24350930, total Blocks: 4096, BlockSize: 32 
+Batch 37 Results: 23878285, total Blocks: 4096, BlockSize: 32 
+Batch 38 Results: 24303230, total Blocks: 4096, BlockSize: 32 
+Batch 39 Results: 24094901, total Blocks: 4096, BlockSize: 32 
+Batch 40 Results: 28320892, total Blocks: 4096, BlockSize: 32 
+Batch 41 Results: 29393127, total Blocks: 4096, BlockSize: 32 
+Batch 42 Results: 29884263, total Blocks: 4096, BlockSize: 32 
+Batch 43 Results: 41137187, total Blocks: 4096, BlockSize: 32 
+Batch 44 Results: 5072707, total Blocks: 4096, BlockSize: 32 
+Batch 45 Results: 5683940, total Blocks: 4096, BlockSize: 32 
+Batch 46 Results: 9741461, total Blocks: 4096, BlockSize: 32 
+Batch 47 Results: 9055910, total Blocks: 4096, BlockSize: 32 
+Batch 48 Results: 12210588, total Blocks: 4096, BlockSize: 32 
+Batch 49 Results: 18235438, total Blocks: 4096, BlockSize: 32 
+Batch 50 Results: 18101501, total Blocks: 4096, BlockSize: 32 
+Batch 51 Results: 18072985, total Blocks: 4096, BlockSize: 32 
+Batch 52 Results: 17639476, total Blocks: 4096, BlockSize: 32 
+Batch 53 Results: 19890994, total Blocks: 4096, BlockSize: 32 
+Batch 54 Results: 24055972, total Blocks: 4096, BlockSize: 32 
+Batch 55 Results: 24622457, total Blocks: 4096, BlockSize: 32 
+Batch 56 Results: 25416891, total Blocks: 4096, BlockSize: 32 
+Batch 57 Results: 28648944, total Blocks: 4096, BlockSize: 32 
+Batch 58 Results: 9482204, total Blocks: 4096, BlockSize: 32 
+Batch 59 Results: 6514983, total Blocks: 4096, BlockSize: 32 
+Batch 60 Results: 4820906, total Blocks: 4096, BlockSize: 32 
+Batch 61 Results: 20727029, total Blocks: 4096, BlockSize: 32 
+Batch 62 Results: 26848128, total Blocks: 4096, BlockSize: 32 
+Batch 63 Results: 73682739, total Blocks: 4096, BlockSize: 32 
+Batch 64 Results: 72974993, total Blocks: 4096, BlockSize: 32 
+Batch 65 Results: 32451034, total Blocks: 4096, BlockSize: 32 
+Batch 66 Results: 13900048, total Blocks: 4096, BlockSize: 32 
+Batch 67 Results: 13158374, total Blocks: 4096, BlockSize: 32 
+Batch 68 Results: 13111930, total Blocks: 4096, BlockSize: 32 
+Batch 69 Results: 12821506, total Blocks: 4096, BlockSize: 32 
+Batch 70 Results: 52817415, total Blocks: 4096, BlockSize: 32 
+Batch 71 Results: 88025486, total Blocks: 4096, BlockSize: 32 
+Batch 72 Results: 88135407, total Blocks: 4096, BlockSize: 32 
+Batch 73 Results: 88771015, total Blocks: 4096, BlockSize: 32 
+Batch 74 Results: 86580032, total Blocks: 4096, BlockSize: 32 
+Batch 75 Results: 88530916, total Blocks: 4096, BlockSize: 32 
+Batch 76 Results: 87526265, total Blocks: 4096, BlockSize: 32 
+Batch 77 Results: 79705544, total Blocks: 4096, BlockSize: 32 
+Batch 78 Results: 48226272, total Blocks: 4096, BlockSize: 32 
+Batch 79 Results: 48374944, total Blocks: 4096, BlockSize: 32 
+Batch 80 Results: 47527849, total Blocks: 4096, BlockSize: 32 
+Batch 81 Results: 48168958, total Blocks: 4096, BlockSize: 32 
+Batch 82 Results: 49013864, total Blocks: 4096, BlockSize: 32 
+Batch 83 Results: 47981906, total Blocks: 4096, BlockSize: 32 
+Batch 84 Results: 48531878, total Blocks: 4096, BlockSize: 32 
+Batch 85 Results: 49613963, total Blocks: 4096, BlockSize: 32 
+Batch 86 Results: 51912709, total Blocks: 4096, BlockSize: 32 
+Batch 87 Results: 33790534, total Blocks: 4096, BlockSize: 32 
+Batch 88 Results: 25351424, total Blocks: 4096, BlockSize: 32 
+Batch 89 Results: 38805566, total Blocks: 4096, BlockSize: 32 
+Batch 90 Results: 64818622, total Blocks: 4096, BlockSize: 32 
+Batch 91 Results: 64161621, total Blocks: 4096, BlockSize: 32 
+Batch 92 Results: 66458760, total Blocks: 4096, BlockSize: 32 
+Batch 93 Results: 65282587, total Blocks: 4096, BlockSize: 32 
+Batch 94 Results: 66011919, total Blocks: 4096, BlockSize: 32 
+Batch 95 Results: 65549970, total Blocks: 4096, BlockSize: 32 
+Batch 96 Results: 65554150, total Blocks: 4096, BlockSize: 32 
+Batch 97 Results: 65446918, total Blocks: 4096, BlockSize: 32 
+Batch 98 Results: 64619031, total Blocks: 4096, BlockSize: 32 
+Batch 99 Results: 65672267, total Blocks: 4096, BlockSize: 32 
+Batch 100 Results: 64389923, total Blocks: 4096, BlockSize: 32 
+Batch 101 Results: 64774750, total Blocks: 4096, BlockSize: 32 
+Batch 102 Results: 65049864, total Blocks: 4096, BlockSize: 32 
+Batch 103 Results: 125286062, total Blocks: 4096, BlockSize: 32 
+Batch 104 Results: 216068874, total Blocks: 4096, BlockSize: 32 
+Batch 105 Results: 218320173, total Blocks: 4096, BlockSize: 32 
+Batch 106 Results: 220693658, total Blocks: 4096, BlockSize: 32 
+Batch 107 Results: 216892575, total Blocks: 4096, BlockSize: 32 
+Batch 108 Results: 215552294, total Blocks: 4096, BlockSize: 32 
+Batch 109 Results: 217433555, total Blocks: 4096, BlockSize: 32 
+Batch 110 Results: 219059668, total Blocks: 4096, BlockSize: 32 
+Batch 111 Results: 215117946, total Blocks: 4096, BlockSize: 32 
+Batch 112 Results: 43123913, total Blocks: 4096, BlockSize: 32 
+Batch 113 Results: 10912704, total Blocks: 4096, BlockSize: 32 
+Batch 114 Results: 22993627, total Blocks: 4096, BlockSize: 32 
+Batch 115 Results: 75108166, total Blocks: 4096, BlockSize: 32 
+Batch 116 Results: 81629602, total Blocks: 4096, BlockSize: 32 
+Batch 117 Results: 34268008, total Blocks: 4096, BlockSize: 32 
+Batch 118 Results: 93967509, total Blocks: 4096, BlockSize: 32 
+Batch 119 Results: 211750749, total Blocks: 4096, BlockSize: 32 
+Batch 120 Results: 210208953, total Blocks: 4096, BlockSize: 32 
+Batch 121 Results: 211634117, total Blocks: 4096, BlockSize: 32 
+Batch 122 Results: 213464020, total Blocks: 4096, BlockSize: 32 
+Batch 123 Results: 210834155, total Blocks: 4096, BlockSize: 32 
+Batch 124 Results: 175991843, total Blocks: 4096, BlockSize: 32 
+Batch 125 Results: 94881815, total Blocks: 4096, BlockSize: 32 
+Batch 126 Results: 213238768, total Blocks: 4096, BlockSize: 32 
+Batch 127 Results: 577990641, total Blocks: 4096, BlockSize: 32 
+Batch 128 Results: 749343495, total Blocks: 4096, BlockSize: 32 
+Batch 129 Results: 834053654, total Blocks: 4096, BlockSize: 32 
+Batch 130 Results: 839100710, total Blocks: 4096, BlockSize: 32 
+Batch 131 Results: 835943733, total Blocks: 4096, BlockSize: 32 
+Batch 132 Results: 835503216, total Blocks: 4096, BlockSize: 32 
+Batch 133 Results: 856365128, total Blocks: 4096, BlockSize: 32 
+Batch 134 Results: 844645732, total Blocks: 4096, BlockSize: 32 
+Batch 135 Results: 466563373, total Blocks: 4096, BlockSize: 32 
+Batch 136 Results: 378900238, total Blocks: 4096, BlockSize: 32 
+Batch 137 Results: 486330374, total Blocks: 4096, BlockSize: 32 
+Batch 138 Results: 482400955, total Blocks: 4096, BlockSize: 32 
+Batch 139 Results: 607329262, total Blocks: 4096, BlockSize: 32 
+Batch 140 Results: 109141700, total Blocks: 4096, BlockSize: 32 
+Batch 141 Results: 153675577, total Blocks: 4096, BlockSize: 32 
+Batch 142 Results: 9572921, total Blocks: 4096, BlockSize: 32 
+Batch 143 Results: 70682064, total Blocks: 4096, BlockSize: 32 
+Batch 144 Results: 63929458, total Blocks: 4096, BlockSize: 32 
+Batch 145 Results: 130946287, total Blocks: 4096, BlockSize: 32 
+Batch 146 Results: 129682570, total Blocks: 4096, BlockSize: 32 
+Batch 147 Results: 133109406, total Blocks: 4096, BlockSize: 32 
+Batch 148 Results: 142779556, total Blocks: 4096, BlockSize: 32 
+Batch 149 Results: 105072225, total Blocks: 4096, BlockSize: 32 
+Batch 150 Results: 4900198, total Blocks: 4096, BlockSize: 32 
+Kernel time: 235.010207
+Total results Set Size: 16659725345 
+Total Time: 241.232048
+
+Time to read in file: 1.947627
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 32, Kernel Blocks: 512
+Using dynamic searching
+Distance Threshold: 0.023000 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 1175511066807.000000 BinCount: 13 AverageBinsCount: 245828.000000, nonEmpty: 10
+Layer 1 sumqrs: 1074291092689.000000 BinCount: 100 AverageBinsCount: 63032.000000, nonEmpty: 39
+Layer 2 sumqrs: 849270566553.000000 BinCount: 390 AverageBinsCount: 27621.000000, nonEmpty: 89
+Layer 3 sumqrs: 559185678672.000000 BinCount: 801 AverageBinsCount: 15657.000000, nonEmpty: 157
+Layer 4 sumqrs: 372685347213.000000 BinCount: 1727 AverageBinsCount: 8506.000000, nonEmpty: 289
+Layer 5 sumqrs: 263300599790.000000 BinCount: 3179 AverageBinsCount: 4839.000000, nonEmpty: 508
+Last Layer Bin Count: 3179
+Tree Check: 2458285
+Time to build tree: 4.473403
+Starting Kernel Launcher
+Non Empty Bins in last layer: 508
+Total Bin Count in Tree: 6210
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 554744, total Blocks: 4096, BlockSize: 32 
+Batch 1 Results: 1296215, total Blocks: 4096, BlockSize: 32 
+Batch 2 Results: 1676502, total Blocks: 4096, BlockSize: 32 
+Batch 3 Results: 1825817, total Blocks: 4096, BlockSize: 32 
+Batch 4 Results: 2007772, total Blocks: 4096, BlockSize: 32 
+Batch 5 Results: 2446365, total Blocks: 4096, BlockSize: 32 
+Batch 6 Results: 4218977, total Blocks: 4096, BlockSize: 32 
+Batch 7 Results: 4233888, total Blocks: 4096, BlockSize: 32 
+Batch 8 Results: 5967606, total Blocks: 4096, BlockSize: 32 
+Batch 9 Results: 3024115, total Blocks: 4096, BlockSize: 32 
+Batch 10 Results: 2086238, total Blocks: 4096, BlockSize: 32 
+Batch 11 Results: 4283937, total Blocks: 4096, BlockSize: 32 
+Batch 12 Results: 14410118, total Blocks: 4096, BlockSize: 32 
+Batch 13 Results: 14690117, total Blocks: 4096, BlockSize: 32 
+Batch 14 Results: 14222187, total Blocks: 4096, BlockSize: 32 
+Batch 15 Results: 14331386, total Blocks: 4096, BlockSize: 32 
+Batch 16 Results: 14583884, total Blocks: 4096, BlockSize: 32 
+Batch 17 Results: 14440238, total Blocks: 4096, BlockSize: 32 
+Batch 18 Results: 14368674, total Blocks: 4096, BlockSize: 32 
+Batch 19 Results: 14408191, total Blocks: 4096, BlockSize: 32 
+Batch 20 Results: 14298980, total Blocks: 4096, BlockSize: 32 
+Batch 21 Results: 26548675, total Blocks: 4096, BlockSize: 32 
+Batch 22 Results: 29986023, total Blocks: 4096, BlockSize: 32 
+Batch 23 Results: 30264424, total Blocks: 4096, BlockSize: 32 
+Batch 24 Results: 29960133, total Blocks: 4096, BlockSize: 32 
+Batch 25 Results: 30251547, total Blocks: 4096, BlockSize: 32 
+Batch 26 Results: 30450897, total Blocks: 4096, BlockSize: 32 
+Batch 27 Results: 29577642, total Blocks: 4096, BlockSize: 32 
+Batch 28 Results: 30733839, total Blocks: 4096, BlockSize: 32 
+Batch 29 Results: 29897785, total Blocks: 4096, BlockSize: 32 
+Batch 30 Results: 30450237, total Blocks: 4096, BlockSize: 32 
+Batch 31 Results: 29891172, total Blocks: 4096, BlockSize: 32 
+Batch 32 Results: 29766145, total Blocks: 4096, BlockSize: 32 
+Batch 33 Results: 37885395, total Blocks: 4096, BlockSize: 32 
+Batch 34 Results: 24150690, total Blocks: 4096, BlockSize: 32 
+Batch 35 Results: 32857558, total Blocks: 4096, BlockSize: 32 
+Batch 36 Results: 36122406, total Blocks: 4096, BlockSize: 32 
+Batch 37 Results: 77881383, total Blocks: 4096, BlockSize: 32 
+Batch 38 Results: 39426131, total Blocks: 4096, BlockSize: 32 
+Batch 39 Results: 11770218, total Blocks: 4096, BlockSize: 32 
+Batch 40 Results: 31681218, total Blocks: 4096, BlockSize: 32 
+Batch 41 Results: 47150590, total Blocks: 4096, BlockSize: 32 
+Batch 42 Results: 46927002, total Blocks: 4096, BlockSize: 32 
+Batch 43 Results: 46095601, total Blocks: 4096, BlockSize: 32 
+Batch 44 Results: 46340206, total Blocks: 4096, BlockSize: 32 
+Batch 45 Results: 46730705, total Blocks: 4096, BlockSize: 32 
+Batch 46 Results: 65022021, total Blocks: 4096, BlockSize: 32 
+Batch 47 Results: 79527797, total Blocks: 4096, BlockSize: 32 
+Batch 48 Results: 80766950, total Blocks: 4096, BlockSize: 32 
+Batch 49 Results: 80689288, total Blocks: 4096, BlockSize: 32 
+Batch 50 Results: 80703538, total Blocks: 4096, BlockSize: 32 
+Batch 51 Results: 80301354, total Blocks: 4096, BlockSize: 32 
+Batch 52 Results: 83470347, total Blocks: 4096, BlockSize: 32 
+Batch 53 Results: 101123641, total Blocks: 4096, BlockSize: 32 
+Batch 54 Results: 44243030, total Blocks: 4096, BlockSize: 32 
+Batch 55 Results: 47201760, total Blocks: 4096, BlockSize: 32 
+Batch 56 Results: 64208747, total Blocks: 4096, BlockSize: 32 
+Batch 57 Results: 81647553, total Blocks: 4096, BlockSize: 32 
+Batch 58 Results: 81377426, total Blocks: 4096, BlockSize: 32 
+Batch 59 Results: 81776597, total Blocks: 4096, BlockSize: 32 
+Batch 60 Results: 100802167, total Blocks: 4096, BlockSize: 32 
+Batch 61 Results: 50060270, total Blocks: 4096, BlockSize: 32 
+Batch 62 Results: 29203239, total Blocks: 4096, BlockSize: 32 
+Batch 63 Results: 13522008, total Blocks: 4096, BlockSize: 32 
+Batch 64 Results: 12383486, total Blocks: 4096, BlockSize: 32 
+Batch 65 Results: 27532505, total Blocks: 4096, BlockSize: 32 
+Batch 66 Results: 34405489, total Blocks: 4096, BlockSize: 32 
+Batch 67 Results: 34653555, total Blocks: 4096, BlockSize: 32 
+Batch 68 Results: 34722033, total Blocks: 4096, BlockSize: 32 
+Batch 69 Results: 50285922, total Blocks: 4096, BlockSize: 32 
+Batch 70 Results: 29690716, total Blocks: 4096, BlockSize: 32 
+Batch 71 Results: 131810118, total Blocks: 4096, BlockSize: 32 
+Batch 72 Results: 130406121, total Blocks: 4096, BlockSize: 32 
+Batch 73 Results: 131161708, total Blocks: 4096, BlockSize: 32 
+Batch 74 Results: 131210975, total Blocks: 4096, BlockSize: 32 
+Batch 75 Results: 129596328, total Blocks: 4096, BlockSize: 32 
+Batch 76 Results: 128990632, total Blocks: 4096, BlockSize: 32 
+Batch 77 Results: 130982169, total Blocks: 4096, BlockSize: 32 
+Batch 78 Results: 132203930, total Blocks: 4096, BlockSize: 32 
+Batch 79 Results: 141942846, total Blocks: 4096, BlockSize: 32 
+Batch 80 Results: 176150317, total Blocks: 4096, BlockSize: 32 
+Batch 81 Results: 177212602, total Blocks: 4096, BlockSize: 32 
+Batch 82 Results: 179264393, total Blocks: 4096, BlockSize: 32 
+Batch 83 Results: 179503533, total Blocks: 4096, BlockSize: 32 
+Batch 84 Results: 145877542, total Blocks: 4096, BlockSize: 32 
+Batch 85 Results: 83646228, total Blocks: 4096, BlockSize: 32 
+Batch 86 Results: 184330886, total Blocks: 4096, BlockSize: 32 
+Batch 87 Results: 184433885, total Blocks: 4096, BlockSize: 32 
+Batch 88 Results: 182975292, total Blocks: 4096, BlockSize: 32 
+Batch 89 Results: 181470495, total Blocks: 4096, BlockSize: 32 
+Batch 90 Results: 150436074, total Blocks: 4096, BlockSize: 32 
+Batch 91 Results: 149602062, total Blocks: 4096, BlockSize: 32 
+Batch 92 Results: 150817646, total Blocks: 4096, BlockSize: 32 
+Batch 93 Results: 150972469, total Blocks: 4096, BlockSize: 32 
+Batch 94 Results: 348167584, total Blocks: 4096, BlockSize: 32 
+Batch 95 Results: 359823632, total Blocks: 4096, BlockSize: 32 
+Batch 96 Results: 365176857, total Blocks: 4096, BlockSize: 32 
+Batch 97 Results: 359735231, total Blocks: 4096, BlockSize: 32 
+Batch 98 Results: 359887924, total Blocks: 4096, BlockSize: 32 
+Batch 99 Results: 362083600, total Blocks: 4096, BlockSize: 32 
+Batch 100 Results: 367268653, total Blocks: 4096, BlockSize: 32 
+Batch 101 Results: 116912500, total Blocks: 4096, BlockSize: 32 
+Batch 102 Results: 85047469, total Blocks: 4096, BlockSize: 32 
+Batch 103 Results: 125786550, total Blocks: 4096, BlockSize: 32 
+Batch 104 Results: 147560764, total Blocks: 4096, BlockSize: 32 
+Batch 105 Results: 152043362, total Blocks: 4096, BlockSize: 32 
+Batch 106 Results: 149582814, total Blocks: 4096, BlockSize: 32 
+Batch 107 Results: 149116207, total Blocks: 4096, BlockSize: 32 
+Batch 108 Results: 147637401, total Blocks: 4096, BlockSize: 32 
+Batch 109 Results: 149669985, total Blocks: 4096, BlockSize: 32 
+Batch 110 Results: 147238014, total Blocks: 4096, BlockSize: 32 
+Batch 111 Results: 154902117, total Blocks: 4096, BlockSize: 32 
+Batch 112 Results: 221950952, total Blocks: 4096, BlockSize: 32 
+Batch 113 Results: 168240691, total Blocks: 4096, BlockSize: 32 
+Batch 114 Results: 29373647, total Blocks: 4096, BlockSize: 32 
+Batch 115 Results: 45355127, total Blocks: 4096, BlockSize: 32 
+Batch 116 Results: 112710767, total Blocks: 4096, BlockSize: 32 
+Batch 117 Results: 179982381, total Blocks: 4096, BlockSize: 32 
+Batch 118 Results: 178994326, total Blocks: 4096, BlockSize: 32 
+Batch 119 Results: 344747256, total Blocks: 4096, BlockSize: 32 
+Batch 120 Results: 292615635, total Blocks: 4096, BlockSize: 32 
+Batch 121 Results: 278407835, total Blocks: 4096, BlockSize: 32 
+Batch 122 Results: 77087781, total Blocks: 4096, BlockSize: 32 
+Batch 123 Results: 56918554, total Blocks: 4096, BlockSize: 32 
+Batch 124 Results: 97996060, total Blocks: 4096, BlockSize: 32 
+Batch 125 Results: 1256712842, total Blocks: 4096, BlockSize: 32 
+Batch 126 Results: 1343816163, total Blocks: 4096, BlockSize: 32 
+Batch 127 Results: 985018039, total Blocks: 4096, BlockSize: 32 
+Batch 128 Results: 984466328, total Blocks: 4096, BlockSize: 32 
+Batch 129 Results: 980195149, total Blocks: 4096, BlockSize: 32 
+Batch 130 Results: 985476350, total Blocks: 4096, BlockSize: 32 
+Batch 131 Results: 977982902, total Blocks: 4096, BlockSize: 32 
+Batch 132 Results: 986230857, total Blocks: 4096, BlockSize: 32 
+Batch 133 Results: 986084725, total Blocks: 4096, BlockSize: 32 
+Batch 134 Results: 980639420, total Blocks: 4096, BlockSize: 32 
+Batch 135 Results: 984465303, total Blocks: 4096, BlockSize: 32 
+Batch 136 Results: 983722675, total Blocks: 4096, BlockSize: 32 
+Batch 137 Results: 983172580, total Blocks: 4096, BlockSize: 32 
+Batch 138 Results: 872225649, total Blocks: 4096, BlockSize: 32 
+Batch 139 Results: 906589971, total Blocks: 4096, BlockSize: 32 
+Batch 140 Results: 906352470, total Blocks: 4096, BlockSize: 32 
+Batch 141 Results: 69479572, total Blocks: 4096, BlockSize: 32 
+Batch 142 Results: 19474410, total Blocks: 4096, BlockSize: 32 
+Batch 143 Results: 53757724, total Blocks: 4096, BlockSize: 32 
+Batch 144 Results: 130246823, total Blocks: 4096, BlockSize: 32 
+Batch 145 Results: 198183141, total Blocks: 4096, BlockSize: 32 
+Batch 146 Results: 198137838, total Blocks: 4096, BlockSize: 32 
+Batch 147 Results: 194057260, total Blocks: 4096, BlockSize: 32 
+Batch 148 Results: 249485423, total Blocks: 4096, BlockSize: 32 
+Batch 149 Results: 251377503, total Blocks: 4096, BlockSize: 32 
+Batch 150 Results: 9100501, total Blocks: 4096, BlockSize: 32 
+Kernel time: 305.538870
+Total results Set Size: 29588966557 
+Total Time: 311.833144
+
+Time to read in file: 1.932490
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 32, Kernel Blocks: 512
+Using dynamic searching
+Distance Threshold: 0.026000 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 1250281846208.000000 BinCount: 11 AverageBinsCount: 307285.000000, nonEmpty: 8
+Layer 1 sumqrs: 1151647245257.000000 BinCount: 72 AverageBinsCount: 79299.000000, nonEmpty: 31
+Layer 2 sumqrs: 882261800209.000000 BinCount: 341 AverageBinsCount: 31516.000000, nonEmpty: 78
+Layer 3 sumqrs: 567074802521.000000 BinCount: 702 AverageBinsCount: 17685.000000, nonEmpty: 139
+Layer 4 sumqrs: 383279165027.000000 BinCount: 1668 AverageBinsCount: 9207.000000, nonEmpty: 267
+Layer 5 sumqrs: 252003859882.000000 BinCount: 2403 AverageBinsCount: 5487.000000, nonEmpty: 448
+Last Layer Bin Count: 2403
+Tree Check: 2458285
+Time to build tree: 4.504075
+Starting Kernel Launcher
+Non Empty Bins in last layer: 448
+Total Bin Count in Tree: 5197
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 2946655, total Blocks: 4096, BlockSize: 32 
+Batch 1 Results: 3466039, total Blocks: 4096, BlockSize: 32 
+Batch 2 Results: 3261590, total Blocks: 4096, BlockSize: 32 
+Batch 3 Results: 2464693, total Blocks: 4096, BlockSize: 32 
+Batch 4 Results: 4954799, total Blocks: 4096, BlockSize: 32 
+Batch 5 Results: 4679957, total Blocks: 4096, BlockSize: 32 
+Batch 6 Results: 5005766, total Blocks: 4096, BlockSize: 32 
+Batch 7 Results: 5290917, total Blocks: 4096, BlockSize: 32 
+Batch 8 Results: 14800082, total Blocks: 4096, BlockSize: 32 
+Batch 9 Results: 13974049, total Blocks: 4096, BlockSize: 32 
+Batch 10 Results: 28674053, total Blocks: 4096, BlockSize: 32 
+Batch 11 Results: 31313547, total Blocks: 4096, BlockSize: 32 
+Batch 12 Results: 30864307, total Blocks: 4096, BlockSize: 32 
+Batch 13 Results: 31403497, total Blocks: 4096, BlockSize: 32 
+Batch 14 Results: 31222834, total Blocks: 4096, BlockSize: 32 
+Batch 15 Results: 30484611, total Blocks: 4096, BlockSize: 32 
+Batch 16 Results: 37466110, total Blocks: 4096, BlockSize: 32 
+Batch 17 Results: 53609062, total Blocks: 4096, BlockSize: 32 
+Batch 18 Results: 54321895, total Blocks: 4096, BlockSize: 32 
+Batch 19 Results: 52685988, total Blocks: 4096, BlockSize: 32 
+Batch 20 Results: 53314317, total Blocks: 4096, BlockSize: 32 
+Batch 21 Results: 52724713, total Blocks: 4096, BlockSize: 32 
+Batch 22 Results: 53789549, total Blocks: 4096, BlockSize: 32 
+Batch 23 Results: 52669279, total Blocks: 4096, BlockSize: 32 
+Batch 24 Results: 55633774, total Blocks: 4096, BlockSize: 32 
+Batch 25 Results: 84598422, total Blocks: 4096, BlockSize: 32 
+Batch 26 Results: 85545778, total Blocks: 4096, BlockSize: 32 
+Batch 27 Results: 83179665, total Blocks: 4096, BlockSize: 32 
+Batch 28 Results: 83731679, total Blocks: 4096, BlockSize: 32 
+Batch 29 Results: 84476633, total Blocks: 4096, BlockSize: 32 
+Batch 30 Results: 83694801, total Blocks: 4096, BlockSize: 32 
+Batch 31 Results: 83075549, total Blocks: 4096, BlockSize: 32 
+Batch 32 Results: 86974495, total Blocks: 4096, BlockSize: 32 
+Batch 33 Results: 85778017, total Blocks: 4096, BlockSize: 32 
+Batch 34 Results: 85755423, total Blocks: 4096, BlockSize: 32 
+Batch 35 Results: 86621923, total Blocks: 4096, BlockSize: 32 
+Batch 36 Results: 85953664, total Blocks: 4096, BlockSize: 32 
+Batch 37 Results: 86571811, total Blocks: 4096, BlockSize: 32 
+Batch 38 Results: 86214132, total Blocks: 4096, BlockSize: 32 
+Batch 39 Results: 86827172, total Blocks: 4096, BlockSize: 32 
+Batch 40 Results: 43195931, total Blocks: 4096, BlockSize: 32 
+Batch 41 Results: 32321626, total Blocks: 4096, BlockSize: 32 
+Batch 42 Results: 91526966, total Blocks: 4096, BlockSize: 32 
+Batch 43 Results: 64444286, total Blocks: 4096, BlockSize: 32 
+Batch 44 Results: 144676638, total Blocks: 4096, BlockSize: 32 
+Batch 45 Results: 143296542, total Blocks: 4096, BlockSize: 32 
+Batch 46 Results: 143613116, total Blocks: 4096, BlockSize: 32 
+Batch 47 Results: 145868363, total Blocks: 4096, BlockSize: 32 
+Batch 48 Results: 139173183, total Blocks: 4096, BlockSize: 32 
+Batch 49 Results: 44270351, total Blocks: 4096, BlockSize: 32 
+Batch 50 Results: 12801616, total Blocks: 4096, BlockSize: 32 
+Batch 51 Results: 21868628, total Blocks: 4096, BlockSize: 32 
+Batch 52 Results: 44848061, total Blocks: 4096, BlockSize: 32 
+Batch 53 Results: 91772266, total Blocks: 4096, BlockSize: 32 
+Batch 54 Results: 95724779, total Blocks: 4096, BlockSize: 32 
+Batch 55 Results: 114935210, total Blocks: 4096, BlockSize: 32 
+Batch 56 Results: 229239910, total Blocks: 4096, BlockSize: 32 
+Batch 57 Results: 229753197, total Blocks: 4096, BlockSize: 32 
+Batch 58 Results: 227765255, total Blocks: 4096, BlockSize: 32 
+Batch 59 Results: 231978255, total Blocks: 4096, BlockSize: 32 
+Batch 60 Results: 145117843, total Blocks: 4096, BlockSize: 32 
+Batch 61 Results: 84788253, total Blocks: 4096, BlockSize: 32 
+Batch 62 Results: 282695767, total Blocks: 4096, BlockSize: 32 
+Batch 63 Results: 280491579, total Blocks: 4096, BlockSize: 32 
+Batch 64 Results: 222083887, total Blocks: 4096, BlockSize: 32 
+Batch 65 Results: 203899617, total Blocks: 4096, BlockSize: 32 
+Batch 66 Results: 205450745, total Blocks: 4096, BlockSize: 32 
+Batch 67 Results: 211571460, total Blocks: 4096, BlockSize: 32 
+Batch 68 Results: 222920150, total Blocks: 4096, BlockSize: 32 
+Batch 69 Results: 223977051, total Blocks: 4096, BlockSize: 32 
+Batch 70 Results: 225990084, total Blocks: 4096, BlockSize: 32 
+Batch 71 Results: 74223212, total Blocks: 4096, BlockSize: 32 
+Batch 72 Results: 34713457, total Blocks: 4096, BlockSize: 32 
+Batch 73 Results: 34686204, total Blocks: 4096, BlockSize: 32 
+Batch 74 Results: 92992389, total Blocks: 4096, BlockSize: 32 
+Batch 75 Results: 92304565, total Blocks: 4096, BlockSize: 32 
+Batch 76 Results: 149820920, total Blocks: 4096, BlockSize: 32 
+Batch 77 Results: 157633818, total Blocks: 4096, BlockSize: 32 
+Batch 78 Results: 157125866, total Blocks: 4096, BlockSize: 32 
+Batch 79 Results: 154022863, total Blocks: 4096, BlockSize: 32 
+Batch 80 Results: 92710315, total Blocks: 4096, BlockSize: 32 
+Batch 81 Results: 66476541, total Blocks: 4096, BlockSize: 32 
+Batch 82 Results: 128846160, total Blocks: 4096, BlockSize: 32 
+Batch 83 Results: 347036860, total Blocks: 4096, BlockSize: 32 
+Batch 84 Results: 350328966, total Blocks: 4096, BlockSize: 32 
+Batch 85 Results: 345617073, total Blocks: 4096, BlockSize: 32 
+Batch 86 Results: 555253686, total Blocks: 4096, BlockSize: 32 
+Batch 87 Results: 400359310, total Blocks: 4096, BlockSize: 32 
+Batch 88 Results: 309700502, total Blocks: 4096, BlockSize: 32 
+Batch 89 Results: 307114881, total Blocks: 4096, BlockSize: 32 
+Batch 90 Results: 312792099, total Blocks: 4096, BlockSize: 32 
+Batch 91 Results: 310863042, total Blocks: 4096, BlockSize: 32 
+Batch 92 Results: 312944948, total Blocks: 4096, BlockSize: 32 
+Batch 93 Results: 315585267, total Blocks: 4096, BlockSize: 32 
+Batch 94 Results: 310549419, total Blocks: 4096, BlockSize: 32 
+Batch 95 Results: 310046091, total Blocks: 4096, BlockSize: 32 
+Batch 96 Results: 310768326, total Blocks: 4096, BlockSize: 32 
+Batch 97 Results: 311468635, total Blocks: 4096, BlockSize: 32 
+Batch 98 Results: 266111178, total Blocks: 4096, BlockSize: 32 
+Batch 99 Results: 259174002, total Blocks: 4096, BlockSize: 32 
+Batch 100 Results: 260420514, total Blocks: 4096, BlockSize: 32 
+Batch 101 Results: 262535358, total Blocks: 4096, BlockSize: 32 
+Batch 102 Results: 256329192, total Blocks: 4096, BlockSize: 32 
+Batch 103 Results: 258351917, total Blocks: 4096, BlockSize: 32 
+Batch 104 Results: 262599014, total Blocks: 4096, BlockSize: 32 
+Batch 105 Results: 260878327, total Blocks: 4096, BlockSize: 32 
+Batch 106 Results: 262353908, total Blocks: 4096, BlockSize: 32 
+Batch 107 Results: 314339702, total Blocks: 4096, BlockSize: 32 
+Batch 108 Results: 445525007, total Blocks: 4096, BlockSize: 32 
+Batch 109 Results: 446751177, total Blocks: 4096, BlockSize: 32 
+Batch 110 Results: 446435554, total Blocks: 4096, BlockSize: 32 
+Batch 111 Results: 444506848, total Blocks: 4096, BlockSize: 32 
+Batch 112 Results: 444941361, total Blocks: 4096, BlockSize: 32 
+Batch 113 Results: 384233497, total Blocks: 4096, BlockSize: 32 
+Batch 114 Results: 45922197, total Blocks: 4096, BlockSize: 32 
+Batch 115 Results: 59280513, total Blocks: 4096, BlockSize: 32 
+Batch 116 Results: 129783636, total Blocks: 4096, BlockSize: 32 
+Batch 117 Results: 199144672, total Blocks: 4096, BlockSize: 32 
+Batch 118 Results: 222895823, total Blocks: 4096, BlockSize: 32 
+Batch 119 Results: 177098462, total Blocks: 4096, BlockSize: 32 
+Batch 120 Results: 835581836, total Blocks: 4096, BlockSize: 32 
+Batch 121 Results: 844494886, total Blocks: 4096, BlockSize: 32 
+Batch 122 Results: 1083771308, total Blocks: 4096, BlockSize: 32 
+Batch 123 Results: 1085296426, total Blocks: 4096, BlockSize: 32 
+Batch 124 Results: 1079589311, total Blocks: 4096, BlockSize: 32 
+Batch 125 Results: 1090103367, total Blocks: 4096, BlockSize: 32 
+Batch 126 Results: 904697856, total Blocks: 4096, BlockSize: 32 
+Batch 127 Results: 29934708, total Blocks: 4096, BlockSize: 32 
+Batch 128 Results: 906572660, total Blocks: 4096, BlockSize: 32 
+Batch 129 Results: 1027515136, total Blocks: 4096, BlockSize: 32 
+Batch 130 Results: 1189665564, total Blocks: 4096, BlockSize: 32 
+Batch 131 Results: 1198628101, total Blocks: 4096, BlockSize: 32 
+Batch 132 Results: 1203559318, total Blocks: 4096, BlockSize: 32 
+Batch 133 Results: 1198793992, total Blocks: 4096, BlockSize: 32 
+Batch 134 Results: 1193443206, total Blocks: 4096, BlockSize: 32 
+Batch 135 Results: 1204948149, total Blocks: 4096, BlockSize: 32 
+Batch 136 Results: 1203293935, total Blocks: 4096, BlockSize: 32 
+Batch 137 Results: 1195435087, total Blocks: 4096, BlockSize: 32 
+Batch 138 Results: 1195664022, total Blocks: 4096, BlockSize: 32 
+Batch 139 Results: 1194710843, total Blocks: 4096, BlockSize: 32 
+Batch 140 Results: 1197657795, total Blocks: 4096, BlockSize: 32 
+Batch 141 Results: 219725363, total Blocks: 4096, BlockSize: 32 
+Batch 142 Results: 21683094, total Blocks: 4096, BlockSize: 32 
+Batch 143 Results: 85842168, total Blocks: 4096, BlockSize: 32 
+Batch 144 Results: 245121382, total Blocks: 4096, BlockSize: 32 
+Batch 145 Results: 246077908, total Blocks: 4096, BlockSize: 32 
+Batch 146 Results: 248073966, total Blocks: 4096, BlockSize: 32 
+Batch 147 Results: 314744699, total Blocks: 4096, BlockSize: 32 
+Batch 148 Results: 346817024, total Blocks: 4096, BlockSize: 32 
+Batch 149 Results: 285377610, total Blocks: 4096, BlockSize: 32 
+Batch 150 Results: 11868391, total Blocks: 4096, BlockSize: 32 
+Kernel time: 370.030383
+Total results Set Size: 43136368247 
+Total Time: 376.341957
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=1024 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=1024 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=1024 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=1024 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=1024 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=1024 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=32 -DKB=1024 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+Census____________________________________________________________
+Census____________________________________________________________
+
+Time to read in file: 1.972196
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 32, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.020000 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 1153546575833.000000 BinCount: 14 AverageBinsCount: 223480.000000, nonEmpty: 11
+Layer 1 sumqrs: 1006638906469.000000 BinCount: 132 AverageBinsCount: 49165.000000, nonEmpty: 50
+Layer 2 sumqrs: 711763781963.000000 BinCount: 600 AverageBinsCount: 18623.000000, nonEmpty: 132
+Layer 3 sumqrs: 516405972853.000000 BinCount: 1452 AverageBinsCount: 10200.000000, nonEmpty: 241
+Layer 4 sumqrs: 343348736451.000000 BinCount: 3133 AverageBinsCount: 5690.000000, nonEmpty: 432
+Layer 5 sumqrs: 231043950737.000000 BinCount: 5184 AverageBinsCount: 3155.000000, nonEmpty: 779
+Last Layer Bin Count: 5184
+Tree Check: 2458285
+Time to build tree: 4.192791
+Starting Kernel Launcher
+Non Empty Bins in last layer: 779
+Total Bin Count in Tree: 10515
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 702362, total Blocks: 8192, BlockSize: 32 
+Batch 1 Results: 907189, total Blocks: 8192, BlockSize: 32 
+Batch 2 Results: 1578761, total Blocks: 8192, BlockSize: 32 
+Batch 3 Results: 1970773, total Blocks: 8192, BlockSize: 32 
+Batch 4 Results: 5245510, total Blocks: 8192, BlockSize: 32 
+Batch 5 Results: 5916940, total Blocks: 8192, BlockSize: 32 
+Batch 6 Results: 7070408, total Blocks: 8192, BlockSize: 32 
+Batch 7 Results: 6782170, total Blocks: 8192, BlockSize: 32 
+Batch 8 Results: 12002751, total Blocks: 8192, BlockSize: 32 
+Batch 9 Results: 12542724, total Blocks: 8192, BlockSize: 32 
+Batch 10 Results: 12511756, total Blocks: 8192, BlockSize: 32 
+Batch 11 Results: 12482348, total Blocks: 8192, BlockSize: 32 
+Batch 12 Results: 12538851, total Blocks: 8192, BlockSize: 32 
+Batch 13 Results: 18327007, total Blocks: 8192, BlockSize: 32 
+Batch 14 Results: 28089893, total Blocks: 8192, BlockSize: 32 
+Batch 15 Results: 9111918, total Blocks: 8192, BlockSize: 32 
+Batch 16 Results: 33393139, total Blocks: 8192, BlockSize: 32 
+Batch 17 Results: 54667336, total Blocks: 8192, BlockSize: 32 
+Batch 18 Results: 48229215, total Blocks: 8192, BlockSize: 32 
+Batch 19 Results: 48398131, total Blocks: 8192, BlockSize: 32 
+Batch 20 Results: 57714019, total Blocks: 8192, BlockSize: 32 
+Batch 21 Results: 71021450, total Blocks: 8192, BlockSize: 32 
+Batch 22 Results: 10756647, total Blocks: 8192, BlockSize: 32 
+Batch 23 Results: 18797371, total Blocks: 8192, BlockSize: 32 
+Batch 24 Results: 30446026, total Blocks: 8192, BlockSize: 32 
+Batch 25 Results: 36174486, total Blocks: 8192, BlockSize: 32 
+Batch 26 Results: 37530470, total Blocks: 8192, BlockSize: 32 
+Batch 27 Results: 48678429, total Blocks: 8192, BlockSize: 32 
+Batch 28 Results: 54065835, total Blocks: 8192, BlockSize: 32 
+Batch 29 Results: 15997187, total Blocks: 8192, BlockSize: 32 
+Batch 30 Results: 25547935, total Blocks: 8192, BlockSize: 32 
+Batch 31 Results: 100530867, total Blocks: 8192, BlockSize: 32 
+Batch 32 Results: 105426027, total Blocks: 8192, BlockSize: 32 
+Batch 33 Results: 27058422, total Blocks: 8192, BlockSize: 32 
+Batch 34 Results: 25933436, total Blocks: 8192, BlockSize: 32 
+Batch 35 Results: 140842901, total Blocks: 8192, BlockSize: 32 
+Batch 36 Results: 176906422, total Blocks: 8192, BlockSize: 32 
+Batch 37 Results: 175110948, total Blocks: 8192, BlockSize: 32 
+Batch 38 Results: 167231809, total Blocks: 8192, BlockSize: 32 
+Batch 39 Results: 96601216, total Blocks: 8192, BlockSize: 32 
+Batch 40 Results: 95696807, total Blocks: 8192, BlockSize: 32 
+Batch 41 Results: 96995770, total Blocks: 8192, BlockSize: 32 
+Batch 42 Results: 98145841, total Blocks: 8192, BlockSize: 32 
+Batch 43 Results: 85703243, total Blocks: 8192, BlockSize: 32 
+Batch 44 Results: 64156990, total Blocks: 8192, BlockSize: 32 
+Batch 45 Results: 128980243, total Blocks: 8192, BlockSize: 32 
+Batch 46 Results: 131741347, total Blocks: 8192, BlockSize: 32 
+Batch 47 Results: 131561889, total Blocks: 8192, BlockSize: 32 
+Batch 48 Results: 131001068, total Blocks: 8192, BlockSize: 32 
+Batch 49 Results: 130291298, total Blocks: 8192, BlockSize: 32 
+Batch 50 Results: 129164673, total Blocks: 8192, BlockSize: 32 
+Batch 51 Results: 190335926, total Blocks: 8192, BlockSize: 32 
+Batch 52 Results: 434389047, total Blocks: 8192, BlockSize: 32 
+Batch 53 Results: 437586233, total Blocks: 8192, BlockSize: 32 
+Batch 54 Results: 432985849, total Blocks: 8192, BlockSize: 32 
+Batch 55 Results: 434177614, total Blocks: 8192, BlockSize: 32 
+Batch 56 Results: 54036617, total Blocks: 8192, BlockSize: 32 
+Batch 57 Results: 98101793, total Blocks: 8192, BlockSize: 32 
+Batch 58 Results: 115897610, total Blocks: 8192, BlockSize: 32 
+Batch 59 Results: 305718258, total Blocks: 8192, BlockSize: 32 
+Batch 60 Results: 421843070, total Blocks: 8192, BlockSize: 32 
+Batch 61 Results: 424298175, total Blocks: 8192, BlockSize: 32 
+Batch 62 Results: 270873658, total Blocks: 8192, BlockSize: 32 
+Batch 63 Results: 791229409, total Blocks: 8192, BlockSize: 32 
+Batch 64 Results: 1583397149, total Blocks: 8192, BlockSize: 32 
+Batch 65 Results: 1675044443, total Blocks: 8192, BlockSize: 32 
+Batch 66 Results: 1691868344, total Blocks: 8192, BlockSize: 32 
+Batch 67 Results: 1311209105, total Blocks: 8192, BlockSize: 32 
+Batch 68 Results: 865230612, total Blocks: 8192, BlockSize: 32 
+Batch 69 Results: 1089730217, total Blocks: 8192, BlockSize: 32 
+Batch 70 Results: 262817277, total Blocks: 8192, BlockSize: 32 
+Batch 71 Results: 80254985, total Blocks: 8192, BlockSize: 32 
+Batch 72 Results: 194875745, total Blocks: 8192, BlockSize: 32 
+Batch 73 Results: 262791976, total Blocks: 8192, BlockSize: 32 
+Batch 74 Results: 247851781, total Blocks: 8192, BlockSize: 32 
+Batch 75 Results: 4900198, total Blocks: 8192, BlockSize: 32 
+Kernel time: 222.242167
+Total results Set Size: 16659725345 
+Total Time: 227.588280
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=64 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=64 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=64 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=64 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=64 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=64 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=68 -DBS=64 -DKB=256 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+Census____________________________________________________________
+Census____________________________________________________________
+
+Time to read in file: 2.005291
+
+Number points: 2458285 
+Number Dimensions: 68 
+Number Reference Points: 6 
+Number Concurent Streams: 2
+Block Size: 64, Kernel Blocks: 256
+Using dynamic searching
+Distance Threshold: 0.020000 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 1153546575833.000000 BinCount: 14 AverageBinsCount: 223480.000000, nonEmpty: 11
+Layer 1 sumqrs: 1006638906469.000000 BinCount: 132 AverageBinsCount: 49165.000000, nonEmpty: 50
+Layer 2 sumqrs: 711763781963.000000 BinCount: 600 AverageBinsCount: 18623.000000, nonEmpty: 132
+Layer 3 sumqrs: 516405972853.000000 BinCount: 1452 AverageBinsCount: 10200.000000, nonEmpty: 241
+Layer 4 sumqrs: 343348736451.000000 BinCount: 3133 AverageBinsCount: 5690.000000, nonEmpty: 432
+Layer 5 sumqrs: 231043950737.000000 BinCount: 5184 AverageBinsCount: 3155.000000, nonEmpty: 779
+Last Layer Bin Count: 5184
+Tree Check: 2458285
+Time to build tree: 4.407325
+Starting Kernel Launcher
+Non Empty Bins in last layer: 779
+Total Bin Count in Tree: 10515
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 287280, total Blocks: 2048, BlockSize: 64 
+Batch 1 Results: 415082, total Blocks: 2048, BlockSize: 64 
+Batch 2 Results: 576441, total Blocks: 2048, BlockSize: 64 
+Batch 3 Results: 330748, total Blocks: 2048, BlockSize: 64 
+Batch 4 Results: 723263, total Blocks: 2048, BlockSize: 64 
+Batch 5 Results: 855498, total Blocks: 2048, BlockSize: 64 
+Batch 6 Results: 408017, total Blocks: 2048, BlockSize: 64 
+Batch 7 Results: 1562756, total Blocks: 2048, BlockSize: 64 
+Batch 8 Results: 2119683, total Blocks: 2048, BlockSize: 64 
+Batch 9 Results: 3125827, total Blocks: 2048, BlockSize: 64 
+Batch 10 Results: 3503177, total Blocks: 2048, BlockSize: 64 
+Batch 11 Results: 2413763, total Blocks: 2048, BlockSize: 64 
+Batch 12 Results: 3528968, total Blocks: 2048, BlockSize: 64 
+Batch 13 Results: 3541440, total Blocks: 2048, BlockSize: 64 
+Batch 14 Results: 4523657, total Blocks: 2048, BlockSize: 64 
+Batch 15 Results: 2258513, total Blocks: 2048, BlockSize: 64 
+Batch 16 Results: 5763418, total Blocks: 2048, BlockSize: 64 
+Batch 17 Results: 6239333, total Blocks: 2048, BlockSize: 64 
+Batch 18 Results: 6229073, total Blocks: 2048, BlockSize: 64 
+Batch 19 Results: 6313651, total Blocks: 2048, BlockSize: 64 
+Batch 20 Results: 6190548, total Blocks: 2048, BlockSize: 64 
+Batch 21 Results: 6321208, total Blocks: 2048, BlockSize: 64 
+Batch 22 Results: 6202071, total Blocks: 2048, BlockSize: 64 
+Batch 23 Results: 6280277, total Blocks: 2048, BlockSize: 64 
+Batch 24 Results: 6284692, total Blocks: 2048, BlockSize: 64 
+Batch 25 Results: 6254159, total Blocks: 2048, BlockSize: 64 
+Batch 26 Results: 6198693, total Blocks: 2048, BlockSize: 64 
+Batch 27 Results: 12128314, total Blocks: 2048, BlockSize: 64 
+Batch 28 Results: 15621492, total Blocks: 2048, BlockSize: 64 
+Batch 29 Results: 12468401, total Blocks: 2048, BlockSize: 64 
+Batch 30 Results: 4573872, total Blocks: 2048, BlockSize: 64 
+Batch 31 Results: 4538046, total Blocks: 2048, BlockSize: 64 
+Batch 32 Results: 4619742, total Blocks: 2048, BlockSize: 64 
+Batch 33 Results: 28773397, total Blocks: 2048, BlockSize: 64 
+Batch 34 Results: 30169123, total Blocks: 2048, BlockSize: 64 
+Batch 35 Results: 24498213, total Blocks: 2048, BlockSize: 64 
+Batch 36 Results: 24350930, total Blocks: 2048, BlockSize: 64 
+Batch 37 Results: 23878285, total Blocks: 2048, BlockSize: 64 
+Batch 38 Results: 24303230, total Blocks: 2048, BlockSize: 64 
+Batch 39 Results: 24094901, total Blocks: 2048, BlockSize: 64 
+Batch 40 Results: 28320892, total Blocks: 2048, BlockSize: 64 
+Batch 41 Results: 29393127, total Blocks: 2048, BlockSize: 64 
+Batch 42 Results: 29884263, total Blocks: 2048, BlockSize: 64 
+Batch 43 Results: 41137187, total Blocks: 2048, BlockSize: 64 
+Batch 44 Results: 5072707, total Blocks: 2048, BlockSize: 64 
+Batch 45 Results: 5683940, total Blocks: 2048, BlockSize: 64 
+Batch 46 Results: 9741461, total Blocks: 2048, BlockSize: 64 
+Batch 47 Results: 9055910, total Blocks: 2048, BlockSize: 64 
+Batch 48 Results: 12210588, total Blocks: 2048, BlockSize: 64 
+Batch 49 Results: 18235438, total Blocks: 2048, BlockSize: 64 
+Batch 50 Results: 18101501, total Blocks: 2048, BlockSize: 64 
+Batch 51 Results: 18072985, total Blocks: 2048, BlockSize: 64 
+Batch 52 Results: 17639476, total Blocks: 2048, BlockSize: 64 
+Batch 53 Results: 19890994, total Blocks: 2048, BlockSize: 64 
+Batch 54 Results: 24055972, total Blocks: 2048, BlockSize: 64 
+Batch 55 Results: 24622457, total Blocks: 2048, BlockSize: 64 
+Batch 56 Results: 25416891, total Blocks: 2048, BlockSize: 64 
+Batch 57 Results: 28648944, total Blocks: 2048, BlockSize: 64 
+Batch 58 Results: 9482204, total Blocks: 2048, BlockSize: 64 
+Batch 59 Results: 6514983, total Blocks: 2048, BlockSize: 64 
+Batch 60 Results: 4820906, total Blocks: 2048, BlockSize: 64 
+Batch 61 Results: 20727029, total Blocks: 2048, BlockSize: 64 
+Batch 62 Results: 26848128, total Blocks: 2048, BlockSize: 64 
+Batch 63 Results: 73682739, total Blocks: 2048, BlockSize: 64 
+Batch 64 Results: 72974993, total Blocks: 2048, BlockSize: 64 
+Batch 65 Results: 32451034, total Blocks: 2048, BlockSize: 64 
+Batch 66 Results: 13900048, total Blocks: 2048, BlockSize: 64 
+Batch 67 Results: 13158374, total Blocks: 2048, BlockSize: 64 
+Batch 68 Results: 13111930, total Blocks: 2048, BlockSize: 64 
+Batch 69 Results: 12821506, total Blocks: 2048, BlockSize: 64 
+Batch 70 Results: 52817415, total Blocks: 2048, BlockSize: 64 
+Batch 71 Results: 88025486, total Blocks: 2048, BlockSize: 64 
+Batch 72 Results: 88135407, total Blocks: 2048, BlockSize: 64 
+Batch 73 Results: 88771015, total Blocks: 2048, BlockSize: 64 
+Batch 74 Results: 86580032, total Blocks: 2048, BlockSize: 64 
+Batch 75 Results: 88530916, total Blocks: 2048, BlockSize: 64 
+Batch 76 Results: 87526265, total Blocks: 2048, BlockSize: 64 
+Batch 77 Results: 79705544, total Blocks: 2048, BlockSize: 64 
+Batch 78 Results: 48226272, total Blocks: 2048, BlockSize: 64 
+Batch 79 Results: 48374944, total Blocks: 2048, BlockSize: 64 
+Batch 80 Results: 47527849, total Blocks: 2048, BlockSize: 64 
+Batch 81 Results: 48168958, total Blocks: 2048, BlockSize: 64 
+Batch 82 Results: 49013864, total Blocks: 2048, BlockSize: 64 
+Batch 83 Results: 47981906, total Blocks: 2048, BlockSize: 64 
+Batch 84 Results: 48531878, total Blocks: 2048, BlockSize: 64 
+Batch 85 Results: 49613963, total Blocks: 2048, BlockSize: 64 
+Batch 86 Results: 51912709, total Blocks: 2048, BlockSize: 64 
+Batch 87 Results: 33790534, total Blocks: 2048, BlockSize: 64 
+Batch 88 Results: 25351424, total Blocks: 2048, BlockSize: 64 
+Batch 89 Results: 38805566, total Blocks: 2048, BlockSize: 64 
+Batch 90 Results: 64818622, total Blocks: 2048, BlockSize: 64 
+Batch 91 Results: 64161621, total Blocks: 2048, BlockSize: 64 
+Batch 92 Results: 66458760, total Blocks: 2048, BlockSize: 64 
+Batch 93 Results: 65282587, total Blocks: 2048, BlockSize: 64 
+Batch 94 Results: 66011919, total Blocks: 2048, BlockSize: 64 
+Batch 95 Results: 65549970, total Blocks: 2048, BlockSize: 64 
+Batch 96 Results: 65554150, total Blocks: 2048, BlockSize: 64 
+Batch 97 Results: 65446918, total Blocks: 2048, BlockSize: 64 
+Batch 98 Results: 64619031, total Blocks: 2048, BlockSize: 64 
+Batch 99 Results: 65672267, total Blocks: 2048, BlockSize: 64 
+Batch 100 Results: 64389923, total Blocks: 2048, BlockSize: 64 
+Batch 101 Results: 64774750, total Blocks: 2048, BlockSize: 64 
+Batch 102 Results: 65049864, total Blocks: 2048, BlockSize: 64 
+Batch 103 Results: 125286062, total Blocks: 2048, BlockSize: 64 
+Batch 104 Results: 216068874, total Blocks: 2048, BlockSize: 64 
+Batch 105 Results: 218320173, total Blocks: 2048, BlockSize: 64 
+Batch 106 Results: 220693658, total Blocks: 2048, BlockSize: 64 
+Batch 107 Results: 216892575, total Blocks: 2048, BlockSize: 64 
+Batch 108 Results: 215552294, total Blocks: 2048, BlockSize: 64 
+Batch 109 Results: 217433555, total Blocks: 2048, BlockSize: 64 
+Batch 110 Results: 219059668, total Blocks: 2048, BlockSize: 64 
+Batch 111 Results: 215117946, total Blocks: 2048, BlockSize: 64 
+Batch 112 Results: 43123913, total Blocks: 2048, BlockSize: 64 
+Batch 113 Results: 10912704, total Blocks: 2048, BlockSize: 64 
+Batch 114 Results: 22993627, total Blocks: 2048, BlockSize: 64 
+Batch 115 Results: 75108166, total Blocks: 2048, BlockSize: 64 
+Batch 116 Results: 81629602, total Blocks: 2048, BlockSize: 64 
+Batch 117 Results: 34268008, total Blocks: 2048, BlockSize: 64 
+Batch 118 Results: 93967509, total Blocks: 2048, BlockSize: 64 
+Batch 119 Results: 211750749, total Blocks: 2048, BlockSize: 64 
+Batch 120 Results: 210208953, total Blocks: 2048, BlockSize: 64 
+Batch 121 Results: 211634117, total Blocks: 2048, BlockSize: 64 
+Batch 122 Results: 213464020, total Blocks: 2048, BlockSize: 64 
+Batch 123 Results: 210834155, total Blocks: 2048, BlockSize: 64 
+Batch 124 Results: 175991843, total Blocks: 2048, BlockSize: 64 
+Batch 125 Results: 94881815, total Blocks: 2048, BlockSize: 64 
+Batch 126 Results: 213238768, total Blocks: 2048, BlockSize: 64 
+Batch 127 Results: 577990641, total Blocks: 2048, BlockSize: 64 
+Batch 128 Results: 749343495, total Blocks: 2048, BlockSize: 64 
+Batch 129 Results: 834053654, total Blocks: 2048, BlockSize: 64 
+Batch 130 Results: 839100710, total Blocks: 2048, BlockSize: 64 
+Batch 131 Results: 835943733, total Blocks: 2048, BlockSize: 64 
+Batch 132 Results: 835503216, total Blocks: 2048, BlockSize: 64 
+Batch 133 Results: 856365128, total Blocks: 2048, BlockSize: 64 
+Batch 134 Results: 844645732, total Blocks: 2048, BlockSize: 64 
+Batch 135 Results: 466563373, total Blocks: 2048, BlockSize: 64 
+Batch 136 Results: 378900238, total Blocks: 2048, BlockSize: 64 
+Batch 137 Results: 486330374, total Blocks: 2048, BlockSize: 64 
+Batch 138 Results: 482400955, total Blocks: 2048, BlockSize: 64 
+Batch 139 Results: 607329262, total Blocks: 2048, BlockSize: 64 
+Batch 140 Results: 109141700, total Blocks: 2048, BlockSize: 64 
+Batch 141 Results: 153675577, total Blocks: 2048, BlockSize: 64 
+Batch 142 Results: 9572921, total Blocks: 2048, BlockSize: 64 
+Batch 143 Results: 70682064, total Blocks: 2048, BlockSize: 64 
+Batch 144 Results: 63929458, total Blocks: 2048, BlockSize: 64 
+Batch 145 Results: 130946287, total Blocks: 2048, BlockSize: 64 
+Batch 146 Results: 129682570, total Blocks: 2048, BlockSize: 64 
+Batch 147 Results: 133109406, total Blocks: 2048, BlockSize: 64 
+Batch 148 Results: 142779556, total Blocks: 2048, BlockSize: 64 
+Batch 149 Results: 105072225, total Blocks: 2048, BlockSize: 64 
+Batch 150 Results: 4900198, total Blocks: 2048, BlockSize: 64 
+Kernel time: 239.512336
+Total results Set Size: 16659725345 
+Total Time: 245.721309

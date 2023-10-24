@@ -205,14 +205,48 @@ int main(int argc, char*argv[]){
 	}
 
 
-	
-	
+	//git bin info
+	if(ERRORPRINT) fprintf(stderr,"%u ",numLayers);
+	if(ERRORPRINT && BINMETRICS){
+	unsigned int nonEmptyBins = 0;
+	std::vector<unsigned int> binCounts;
+	unsigned int maxBinSize = 0;
+	unsigned int minBinSize = numPoints;
+	for(unsigned int i = 0; i < binSizes[numLayers-1]-1; i++){ 
+        
+		// if the tree value on the last layer is less than the next then it has points in it
+		if(tree[numLayers-1][i] < tree[numLayers-1][i+1]){
+            nonEmptyBins++;
+			unsigned int size = tree[numLayers-1][i+1] - tree[numLayers-1][i];
+			binCounts.push_back(size);
+			if(size < minBinSize){
+				minBinSize = size;
+			}
+			if(size > maxBinSize){
+				maxBinSize = size;
+			}
+
+        }
+    }
+
+	double averageBinCount = numPoints*1.0 / nonEmptyBins;
+
+	double stdDevBins = 0;
+	double sumSqError = 0;
+	for(unsigned int i = 0; i < nonEmptyBins; i++){
+		stdDevBins += (binCounts[i]*1.0-averageBinCount)*(binCounts[i]*1.0-averageBinCount);
+	}
+	sumSqError = stdDevBins;
+	stdDevBins /= numPoints;
+	stdDevBins = sqrt(stdDevBins);
+
+	if(ERRORPRINT && BINMETRICS) fprintf(stderr,"%u %u %f %f ", minBinSize, maxBinSize, sumSqError, stdDevBins);
+	}
 
 	// checking that the last bin size is not negative or zero and that the tree has every data point in it
 	printf("Last Layer Bin Count: %d\nTree Check: %d\n",binSizes[numLayers-1], tree[numLayers-1][binSizes[numLayers-1]-1]);
 
 	double time2 = omp_get_wtime();
-	if(ERRORPRINT) fprintf(stderr,"%u ",numLayers);
 	// if(TESTING_SEARCH) fprintf(stderr," TT, %f,", time2-time1);
 	if(ERRORPRINT) fprintf(stderr,"%f ",time2-time1);
 
@@ -386,7 +420,7 @@ int main(int argc, char*argv[]){
 
 
 // just freeing memory here
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 	// for(unsigned int i = 0; i < nonEmptyBins; i++){
 	// 	free(rangeIndexes[i]);
@@ -415,6 +449,6 @@ int main(int argc, char*argv[]){
 	// free(dimOrderedData);
 	// free(addIndexRange);
 
-    return 1;
+    return 0;
 
 }

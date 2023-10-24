@@ -19,16 +19,18 @@
 
 #define COSS true
 
+#define BINMETRICS true
+
 #define DATANORM true
 #define HOST false
-#define BINARYSEARCH 1
+#define BINARYSEARCH 2 // 1 for binary 2 for depth
 #define GPUSEARCH false
 #define TESTING_SEARCH false
 #define MINSQRS true
 #define NODES false
 #define ERRORPRINT true
 #define NODETEST false
-#define RANDRP true
+#define RANDRP false
 
 #define SUBG false
 
@@ -38,26 +40,26 @@
 #define CALC_MULTI 1.5
 // #define MIN_NODE_SIZE 1000
 #define MAX_CALCS_PER_NODE 32 //millions
-#define TPP 8
+// #define TPP 8
 #define BUFFERSIZE 1000000
 #define MAXBATCH 100
 #define ORDP 32
 #define KT 5
 #define CMP 14
-#define ILP 8
-#define DIM 90
+// #define ILP 8
+// #define DIM 90
 const unsigned int RPPERLAYER = 32;
 
 
 
-const unsigned int MAXRP = 6;
+// const unsigned int MAXRP = 6;
 
 const unsigned int MINRP = 3;
 
 
 const unsigned int NUMSTREAMS = 1;
-const unsigned int BLOCK_SIZE = 512;//BS; 
-const unsigned int KERNEL_BLOCKS = 1024;//KB;// * 1024 / BLOCK_SIZE;
+const unsigned int BLOCK_SIZE = BS; 
+const unsigned int KERNEL_BLOCKS = KB;// * 1024 / BLOCK_SIZE;
 const int BRUTE = false;
 const int RANDOM = false;
 const int BOXED_RP = false;
@@ -79,4 +81,4 @@ const double LAYER_DIFF = 1.25;
 
 const int RAND = false;
 const unsigned long long initalPinnedResultsSize = 100000;
-const unsigned long long int resultsSize = 1000000000;
+const unsigned long long int resultsSize = 2500000000;

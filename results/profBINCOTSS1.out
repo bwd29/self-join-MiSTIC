@@ -1,0 +1,95 @@
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+==PROF== Connected to process 2452328 (/home/bwd29/self-join/build/main)
+==PROF== Profiling "searchKernelCOSStree": 0%
+==WARNING== An error was reported by the driver
+
+==WARNING== Backing up device memory in system memory. Kernel replay might be slow. Consider using "--replay-mode application" to avoid memory save-and-restore.
+
+==WARNING== Launching the workload is taking more time than expected. If this continues to hang, terminate the profile and re-try by profiling the range of all related launches using '--replay-mode range'. See https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#replay for more details.
+....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%
+==WARNING== Launching the workload is taking more time than expected. If this continues to hang, terminate the profile and re-try by profiling the range of all related launches using '--replay-mode range'. See https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#replay for more details.
+....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%
+==WARNING== Launching the workload is taking more time than expected. If this continues to hang, terminate the profile and re-try by profiling the range of all related launches using '--replay-mode range'. See https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#replay for more details.
+....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+==PROF== Profiling "searchKernelCOSStree": 0%....50%....100% - 44 passes
+
+Time to read in file: 0.548430
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.017030 
+*********************************
+
+Selected 6 reference points
+Layer 0 sumqrs: 4271187967894.000000 BinCount: 27 AverageBinsCount: 227272.000000, nonEmpty: 22
+Layer 1 sumqrs: 1476000951912.000000 BinCount: 462 AverageBinsCount: 26041.000000, nonEmpty: 192
+Layer 2 sumqrs: 460980113612.000000 BinCount: 5760 AverageBinsCount: 4321.000000, nonEmpty: 1157
+Layer 3 sumqrs: 159778553935.000000 BinCount: 45123 AverageBinsCount: 945.000000, nonEmpty: 5289
+Layer 4 sumqrs: 55894757132.000000 BinCount: 132225 AverageBinsCount: 316.000000, nonEmpty: 15775
+Layer 5 sumqrs: 21025624198.000000 BinCount: 425925 AverageBinsCount: 110.000000, nonEmpty: 45078
+Last Layer Bin Count: 425925
+Tree Check: 5000000
+Time to build tree: 4.699759
+Starting Kernel Launcher
+Non Empty Bins in last layer: 45078
+Total Bin Count in Tree: 609522
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 6978651, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 19714300, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 39544748, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 59148909, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 41109546, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 50155158, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 68152065, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 80202354, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 57992030, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 81401119, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 74072053, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 71723806, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 90949521, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 77814373, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 87756084, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 95151662, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 84963879, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 97252812, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 88190743, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 4257437, total Blocks: 1024, BlockSize: 256 
+Kernel time: 7249.939585
+Total results Set Size: 1276531250 
+Total Time: 7255.636476
+==PROF== Disconnected from process 2452328
+==ERROR== The application returned an error code (1).
+==PROF== Report: /home/bwd29/self-join/profileSUSYBIN.out.ncu-rep
+Completed!

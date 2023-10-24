@@ -1,0 +1,728 @@
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+
+Time to read in file: 0.383593
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.007600 
+*********************************
+
+Selected RPs: 16, 7, 0, 5, 4, 2
+Selected 6 reference points
+Layer 0 sumqrs: 31060026403.000000 BinCount: 56 AverageBinsCount: 14315.000000, nonEmpty: 36
+Layer 1 sumqrs: 22948807103.000000 BinCount: 1116 AverageBinsCount: 1689.000000, nonEmpty: 305
+Layer 2 sumqrs: 14923301473.000000 BinCount: 6405 AverageBinsCount: 454.000000, nonEmpty: 1134
+Layer 3 sumqrs: 11174770027.000000 BinCount: 21546 AverageBinsCount: 185.000000, nonEmpty: 2781
+Layer 4 sumqrs: 8002202935.000000 BinCount: 66744 AverageBinsCount: 96.000000, nonEmpty: 5327
+Layer 5 sumqrs: 5937658544.000000 BinCount: 133175 AverageBinsCount: 61.000000, nonEmpty: 8417
+Last Layer Bin Count: 133175
+Tree Check: 515345
+Time to build tree: 1.109519
+Starting Kernel Launcher
+Non Empty Bins in last layer: 8417
+Total Bin Count in Tree: 229042
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 98766697327, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 228638581141, total Blocks: 1024, BlockSize: 256 
+Kernel time: 85.621028
+Total results Set Size: 327405278468 
+Total Time: 86.848599
+
+Time to read in file: 0.261088
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.009130 
+*********************************
+
+Selected RPs: 16, 6, 15, 1, 4, 3
+Selected 6 reference points
+Layer 0 sumqrs: 36768422687.000000 BinCount: 47 AverageBinsCount: 16624.000000, nonEmpty: 31
+Layer 1 sumqrs: 29190958361.000000 BinCount: 527 AverageBinsCount: 2538.000000, nonEmpty: 203
+Layer 2 sumqrs: 21347347055.000000 BinCount: 5684 AverageBinsCount: 564.000000, nonEmpty: 913
+Layer 3 sumqrs: 15778554873.000000 BinCount: 20086 AverageBinsCount: 259.000000, nonEmpty: 1988
+Layer 4 sumqrs: 12098104311.000000 BinCount: 41748 AverageBinsCount: 148.000000, nonEmpty: 3479
+Layer 5 sumqrs: 8760274551.000000 BinCount: 59143 AverageBinsCount: 92.000000, nonEmpty: 5556
+Last Layer Bin Count: 59143
+Tree Check: 515345
+Time to build tree: 1.599247
+Starting Kernel Launcher
+Non Empty Bins in last layer: 5556
+Total Bin Count in Tree: 127235
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 130722228206, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 346383483916, total Blocks: 1024, BlockSize: 256 
+Kernel time: 103.606787
+Total results Set Size: 477105712122 
+Total Time: 105.329500
+
+Time to read in file: 0.284871
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.011334 
+*********************************
+
+Selected RPs: 16, 7, 13, 14, 0, 8
+Selected 6 reference points
+Layer 0 sumqrs: 45084231779.000000 BinCount: 38 AverageBinsCount: 20613.000000, nonEmpty: 25
+Layer 1 sumqrs: 37052927945.000000 BinCount: 550 AverageBinsCount: 3123.000000, nonEmpty: 165
+Layer 2 sumqrs: 27069950811.000000 BinCount: 4125 AverageBinsCount: 812.000000, nonEmpty: 634
+Layer 3 sumqrs: 20557332419.000000 BinCount: 8876 AverageBinsCount: 408.000000, nonEmpty: 1262
+Layer 4 sumqrs: 16119420105.000000 BinCount: 25240 AverageBinsCount: 231.000000, nonEmpty: 2229
+Layer 5 sumqrs: 12038181599.000000 BinCount: 40122 AverageBinsCount: 147.000000, nonEmpty: 3493
+Last Layer Bin Count: 40122
+Tree Check: 515345
+Time to build tree: 1.118732
+Starting Kernel Launcher
+Non Empty Bins in last layer: 3493
+Total Bin Count in Tree: 78951
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 192821389447, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 611006113475, total Blocks: 1024, BlockSize: 256 
+Kernel time: 125.479970
+Total results Set Size: 803827502922 
+Total Time: 126.719228
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+Wave __________________________________________________
+Wave __________________________________________________
+
+Time to read in file: 0.127150
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.005400 
+*********************************
+
+Selected RPs: 17, 13, 0, 15, 13, 0
+Selected 6 reference points
+Layer 0 sumqrs: 5545126636.000000 BinCount: 141 AverageBinsCount: 4499.000000, nonEmpty: 64
+Layer 1 sumqrs: 6897830421.000000 BinCount: 1600 AverageBinsCount: 1507.000000, nonEmpty: 191
+Layer 2 sumqrs: 4307066535.000000 BinCount: 2865 AverageBinsCount: 630.000000, nonEmpty: 457
+Layer 3 sumqrs: 3866155652.000000 BinCount: 11425 AverageBinsCount: 323.000000, nonEmpty: 891
+Layer 4 sumqrs: 2711871005.000000 BinCount: 21384 AverageBinsCount: 159.000000, nonEmpty: 1800
+Layer 5 sumqrs: 2096644399.000000 BinCount: 18000 AverageBinsCount: 99.000000, nonEmpty: 2909
+Last Layer Bin Count: 18000
+Tree Check: 287999
+Time to build tree: 0.506101
+Starting Kernel Launcher
+Non Empty Bins in last layer: 2909
+Total Bin Count in Tree: 55415
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 59972087154, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 535463297, total Blocks: 1024, BlockSize: 256 
+Kernel time: 13.901343
+Total results Set Size: 60507550451 
+Total Time: 14.475683
+
+Time to read in file: 0.095821
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.007020 
+*********************************
+
+Selected RPs: 17, 13, 0, 13, 13, 8
+Selected 6 reference points
+Layer 0 sumqrs: 7181157557.000000 BinCount: 110 AverageBinsCount: 5759.000000, nonEmpty: 50
+Layer 1 sumqrs: 9165445189.000000 BinCount: 1000 AverageBinsCount: 2322.000000, nonEmpty: 124
+Layer 2 sumqrs: 6166108463.000000 BinCount: 1488 AverageBinsCount: 1086.000000, nonEmpty: 265
+Layer 3 sumqrs: 5661283663.000000 BinCount: 5300 AverageBinsCount: 581.000000, nonEmpty: 495
+Layer 4 sumqrs: 4550309079.000000 BinCount: 9405 AverageBinsCount: 324.000000, nonEmpty: 888
+Layer 5 sumqrs: 3354723803.000000 BinCount: 16872 AverageBinsCount: 181.000000, nonEmpty: 1587
+Last Layer Bin Count: 16872
+Tree Check: 287999
+Time to build tree: 0.876511
+Starting Kernel Launcher
+Non Empty Bins in last layer: 1587
+Total Bin Count in Tree: 34175
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 106527484989, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 804320086, total Blocks: 1024, BlockSize: 256 
+Kernel time: 17.523422
+Total results Set Size: 107331805075 
+Total Time: 18.465153
+
+Time to read in file: 0.028343
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.008358 
+*********************************
+
+Selected RPs: 17, 13, 6, 8, 13, 0
+Selected 6 reference points
+Layer 0 sumqrs: 8298124444.000000 BinCount: 93 AverageBinsCount: 6697.000000, nonEmpty: 43
+Layer 1 sumqrs: 11909337195.000000 BinCount: 774 AverageBinsCount: 3063.000000, nonEmpty: 94
+Layer 2 sumqrs: 7804794419.000000 BinCount: 1692 AverageBinsCount: 1404.000000, nonEmpty: 205
+Layer 3 sumqrs: 6023101049.000000 BinCount: 3280 AverageBinsCount: 748.000000, nonEmpty: 385
+Layer 4 sumqrs: 5037391842.000000 BinCount: 6545 AverageBinsCount: 411.000000, nonEmpty: 700
+Layer 5 sumqrs: 3800134629.000000 BinCount: 5600 AverageBinsCount: 272.000000, nonEmpty: 1058
+Last Layer Bin Count: 5600
+Tree Check: 287999
+Time to build tree: 0.519954
+Starting Kernel Launcher
+Non Empty Bins in last layer: 1058
+Total Bin Count in Tree: 17984
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 176511912517, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 1040192532, total Blocks: 1024, BlockSize: 256 
+Kernel time: 20.160458
+Total results Set Size: 177552105049 
+Total Time: 20.747446
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+BIGCROSS____________________________________________________________
+BIGCROSS____________________________________________________________
+
+Time to read in file: 11.814070
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.013100 
+*********************************
+
+Selected RPs: 33, 16, 12, 0, 10, 5
+Selected 6 reference points
+Layer 0 sumqrs: 888251505116.000000 BinCount: 79 AverageBinsCount: 152898.000000, nonEmpty: 76
+Layer 1 sumqrs: 124032896312.000000 BinCount: 7144 AverageBinsCount: 3761.000000, nonEmpty: 3089
+Layer 2 sumqrs: 99823636962.000000 BinCount: 64869 AverageBinsCount: 1076.000000, nonEmpty: 10794
+Layer 3 sumqrs: 68072265424.000000 BinCount: 118734 AverageBinsCount: 622.000000, nonEmpty: 18659
+Layer 4 sumqrs: 56245679626.000000 BinCount: 354521 AverageBinsCount: 342.000000, nonEmpty: 33923
+Layer 5 sumqrs: 39607699064.000000 BinCount: 610614 AverageBinsCount: 219.000000, nonEmpty: 52941
+Last Layer Bin Count: 610614
+Tree Check: 11620300
+Time to build tree: 18.514282
+Starting Kernel Launcher
+Non Empty Bins in last layer: 52941
+Total Bin Count in Tree: 1155961
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 44272172145, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 72975030564, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 82136696574, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 87543563906, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 92171646813, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 92905000842, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 86041258773, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 90524112553, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 92483997288, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 106982414050, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 85887656938, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 86127811019, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 88339610993, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 98746983187, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 82560996659, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 79615973882, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 78843604444, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 74565584211, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 73602092008, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 70839533018, total Blocks: 1024, BlockSize: 256 
+Batch 20 Results: 66186145741, total Blocks: 1024, BlockSize: 256 
+Batch 21 Results: 60279058648, total Blocks: 1024, BlockSize: 256 
+Batch 22 Results: 60919625603, total Blocks: 1024, BlockSize: 256 
+Batch 23 Results: 59575524761, total Blocks: 1024, BlockSize: 256 
+Batch 24 Results: 60441160956, total Blocks: 1024, BlockSize: 256 
+Batch 25 Results: 57498504023, total Blocks: 1024, BlockSize: 256 
+Batch 26 Results: 52909955750, total Blocks: 1024, BlockSize: 256 
+Batch 27 Results: 48704461530, total Blocks: 1024, BlockSize: 256 
+Batch 28 Results: 41513703416, total Blocks: 1024, BlockSize: 256 
+Batch 29 Results: 43631834984, total Blocks: 1024, BlockSize: 256 
+Batch 30 Results: 39331573784, total Blocks: 1024, BlockSize: 256 
+Batch 31 Results: 33521450372, total Blocks: 1024, BlockSize: 256 
+Batch 32 Results: 34981700536, total Blocks: 1024, BlockSize: 256 
+Batch 33 Results: 28913477123, total Blocks: 1024, BlockSize: 256 
+Batch 34 Results: 24734245553, total Blocks: 1024, BlockSize: 256 
+Batch 35 Results: 20959792864, total Blocks: 1024, BlockSize: 256 
+Batch 36 Results: 18798225883, total Blocks: 1024, BlockSize: 256 
+Batch 37 Results: 19969836159, total Blocks: 1024, BlockSize: 256 
+Batch 38 Results: 17968036172, total Blocks: 1024, BlockSize: 256 
+Batch 39 Results: 15873757818, total Blocks: 1024, BlockSize: 256 
+Batch 40 Results: 14702083111, total Blocks: 1024, BlockSize: 256 
+Batch 41 Results: 14675525972, total Blocks: 1024, BlockSize: 256 
+Batch 42 Results: 14815077037, total Blocks: 1024, BlockSize: 256 
+Batch 43 Results: 12966931755, total Blocks: 1024, BlockSize: 256 
+Batch 44 Results: 2471928062, total Blocks: 1024, BlockSize: 256 
+Kernel time: 738.118094
+Total results Set Size: 2533509357480 
+Total Time: 760.626343
+
+Time to read in file: 11.585659
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.019940 
+*********************************
+
+Selected RPs: 33, 16, 12, 4, 15, 5
+Selected 6 reference points
+Layer 0 sumqrs: 1404376034708.000000 BinCount: 53 AverageBinsCount: 232406.000000, nonEmpty: 50
+Layer 1 sumqrs: 280844198360.000000 BinCount: 3150 AverageBinsCount: 8481.000000, nonEmpty: 1370
+Layer 2 sumqrs: 262499936650.000000 BinCount: 20550 AverageBinsCount: 2990.000000, nonEmpty: 3886
+Layer 3 sumqrs: 201922609486.000000 BinCount: 62176 AverageBinsCount: 1524.000000, nonEmpty: 7620
+Layer 4 sumqrs: 140642773570.000000 BinCount: 99060 AverageBinsCount: 975.000000, nonEmpty: 11909
+Layer 5 sumqrs: 101208771246.000000 BinCount: 154817 AverageBinsCount: 648.000000, nonEmpty: 17928
+Last Layer Bin Count: 154817
+Tree Check: 11620300
+Time to build tree: 18.284185
+Starting Kernel Launcher
+Non Empty Bins in last layer: 17928
+Total Bin Count in Tree: 339806
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 120708026805, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 164554982602, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 191418053860, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 269312193452, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 208449793872, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 251828587804, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 265573432463, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 217764881364, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 296851902231, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 206185020519, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 282626852339, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 215486861915, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 271119548989, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 212411990153, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 259177819007, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 195015482557, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 252018664517, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 179289552206, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 229440879520, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 166523953015, total Blocks: 1024, BlockSize: 256 
+Batch 20 Results: 162114507667, total Blocks: 1024, BlockSize: 256 
+Batch 21 Results: 200862078125, total Blocks: 1024, BlockSize: 256 
+Batch 22 Results: 152949771133, total Blocks: 1024, BlockSize: 256 
+Batch 23 Results: 144318561001, total Blocks: 1024, BlockSize: 256 
+Batch 24 Results: 178860624292, total Blocks: 1024, BlockSize: 256 
+Batch 25 Results: 148600837696, total Blocks: 1024, BlockSize: 256 
+Batch 26 Results: 132525264287, total Blocks: 1024, BlockSize: 256 
+Batch 27 Results: 126020787296, total Blocks: 1024, BlockSize: 256 
+Batch 28 Results: 117285294121, total Blocks: 1024, BlockSize: 256 
+Batch 29 Results: 118479575233, total Blocks: 1024, BlockSize: 256 
+Batch 30 Results: 113490165318, total Blocks: 1024, BlockSize: 256 
+Batch 31 Results: 100938847898, total Blocks: 1024, BlockSize: 256 
+Batch 32 Results: 88183437910, total Blocks: 1024, BlockSize: 256 
+Batch 33 Results: 73252992607, total Blocks: 1024, BlockSize: 256 
+Batch 34 Results: 66662541473, total Blocks: 1024, BlockSize: 256 
+Batch 35 Results: 63702620683, total Blocks: 1024, BlockSize: 256 
+Batch 36 Results: 49991071155, total Blocks: 1024, BlockSize: 256 
+Batch 37 Results: 55247011563, total Blocks: 1024, BlockSize: 256 
+Batch 38 Results: 50097865734, total Blocks: 1024, BlockSize: 256 
+Batch 39 Results: 43425471916, total Blocks: 1024, BlockSize: 256 
+Batch 40 Results: 38722084953, total Blocks: 1024, BlockSize: 256 
+Batch 41 Results: 38417981038, total Blocks: 1024, BlockSize: 256 
+Batch 42 Results: 40301873754, total Blocks: 1024, BlockSize: 256 
+Batch 43 Results: 35819484974, total Blocks: 1024, BlockSize: 256 
+Batch 44 Results: 6916246265, total Blocks: 1024, BlockSize: 256 
+Kernel time: 1890.608919
+Total results Set Size: 6802945477282 
+Total Time: 1912.747607
+
+Time to read in file: 12.880877
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.028100 
+*********************************
+
+Selected RPs: 33, 16, 12, 0, 10, 5
+Selected 6 reference points
+Layer 0 sumqrs: 2104256768444.000000 BinCount: 39 AverageBinsCount: 322786.000000, nonEmpty: 36
+Layer 1 sumqrs: 550387445222.000000 BinCount: 1656 AverageBinsCount: 16229.000000, nonEmpty: 716
+Layer 2 sumqrs: 565645412636.000000 BinCount: 8592 AverageBinsCount: 6628.000000, nonEmpty: 1753
+Layer 3 sumqrs: 348043425557.000000 BinCount: 12271 AverageBinsCount: 4353.000000, nonEmpty: 2669
+Layer 4 sumqrs: 299149626190.000000 BinCount: 29359 AverageBinsCount: 2608.000000, nonEmpty: 4454
+Layer 5 sumqrs: 223013144420.000000 BinCount: 44540 AverageBinsCount: 1744.000000, nonEmpty: 6661
+Last Layer Bin Count: 44540
+Tree Check: 11620300
+Time to build tree: 18.079403
+Starting Kernel Launcher
+Non Empty Bins in last layer: 6661
+Total Bin Count in Tree: 96457
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 211535763771, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 440675584214, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 336796009862, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 601976163094, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 385128909703, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 623970045586, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 579807708984, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 438206625949, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 694041373498, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 425862805355, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 555042946966, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 667332286546, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 407603879084, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 570527930714, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 597489359916, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 368611095780, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 558256241709, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 428441288074, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 425975638142, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 500978443784, total Blocks: 1024, BlockSize: 256 
+Batch 20 Results: 310643665256, total Blocks: 1024, BlockSize: 256 
+Batch 21 Results: 466731892884, total Blocks: 1024, BlockSize: 256 
+Batch 22 Results: 290749355440, total Blocks: 1024, BlockSize: 256 
+Batch 23 Results: 429138426020, total Blocks: 1024, BlockSize: 256 
+Batch 24 Results: 283405066055, total Blocks: 1024, BlockSize: 256 
+Batch 25 Results: 401392240929, total Blocks: 1024, BlockSize: 256 
+Batch 26 Results: 277870943646, total Blocks: 1024, BlockSize: 256 
+Batch 27 Results: 320195579001, total Blocks: 1024, BlockSize: 256 
+Batch 28 Results: 291596497031, total Blocks: 1024, BlockSize: 256 
+Batch 29 Results: 219749125013, total Blocks: 1024, BlockSize: 256 
+Batch 30 Results: 305376448091, total Blocks: 1024, BlockSize: 256 
+Batch 31 Results: 188758530251, total Blocks: 1024, BlockSize: 256 
+Batch 32 Results: 195401218702, total Blocks: 1024, BlockSize: 256 
+Batch 33 Results: 199102363825, total Blocks: 1024, BlockSize: 256 
+Batch 34 Results: 160723454958, total Blocks: 1024, BlockSize: 256 
+Batch 35 Results: 131306305171, total Blocks: 1024, BlockSize: 256 
+Batch 36 Results: 120823972016, total Blocks: 1024, BlockSize: 256 
+Batch 37 Results: 118635841344, total Blocks: 1024, BlockSize: 256 
+Batch 38 Results: 115780709417, total Blocks: 1024, BlockSize: 256 
+Batch 39 Results: 109597824268, total Blocks: 1024, BlockSize: 256 
+Batch 40 Results: 88439555249, total Blocks: 1024, BlockSize: 256 
+Batch 41 Results: 93068745346, total Blocks: 1024, BlockSize: 256 
+Batch 42 Results: 87582650898, total Blocks: 1024, BlockSize: 256 
+Batch 43 Results: 89286479339, total Blocks: 1024, BlockSize: 256 
+Batch 44 Results: 16043080787, total Blocks: 1024, BlockSize: 256 
+Kernel time: 3811.536309
+Total results Set Size: 15129660071668 
+Total Time: 3833.877266
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+
+Time to read in file: 0.662026
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.017030 
+*********************************
+
+Selected RPs: 33, 16, 0, 12, 13, 6
+Selected 6 reference points
+Layer 0 sumqrs: 3438212662689.000000 BinCount: 9 AverageBinsCount: 833333.000000, nonEmpty: 6
+Layer 1 sumqrs: 1192858477328.000000 BinCount: 186 AverageBinsCount: 39062.000000, nonEmpty: 128
+Layer 2 sumqrs: 409043126950.000000 BinCount: 3200 AverageBinsCount: 4882.000000, nonEmpty: 1024
+Layer 3 sumqrs: 129208993874.000000 BinCount: 33792 AverageBinsCount: 845.000000, nonEmpty: 5916
+Layer 4 sumqrs: 45188482658.000000 BinCount: 100572 AverageBinsCount: 311.000000, nonEmpty: 16042
+Layer 5 sumqrs: 19305973036.000000 BinCount: 352924 AverageBinsCount: 126.000000, nonEmpty: 39529
+Last Layer Bin Count: 352924
+Tree Check: 5000000
+Time to build tree: 5.497742
+Starting Kernel Launcher
+Non Empty Bins in last layer: 39529
+Total Bin Count in Tree: 490683
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 260560578865, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 197371541721, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 353834443138, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 548883307621, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 612057469298, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 237436069284, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 297396136855, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 516505713002, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 733008780976, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 709679713261, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 606111870744, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 143881654250, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 450650931635, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 712523541959, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 649455000628, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 505821131562, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 252028055624, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 435976965858, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 362015491301, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 14918559802, total Blocks: 1024, BlockSize: 256 
+Kernel time: 2403.999963
+Total results Set Size: 8600116957384 
+Total Time: 2410.639004
+
+Time to read in file: 0.544956
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.020780 
+*********************************
+
+Selected RPs: 33, 16, 0, 12, 13, 6
+Selected 6 reference points
+Layer 0 sumqrs: 4679848328790.000000 BinCount: 8 AverageBinsCount: 1000000.000000, nonEmpty: 5
+Layer 1 sumqrs: 1759831482899.000000 BinCount: 135 AverageBinsCount: 56179.000000, nonEmpty: 89
+Layer 2 sumqrs: 700300955512.000000 BinCount: 1958 AverageBinsCount: 7739.000000, nonEmpty: 646
+Layer 3 sumqrs: 255778253614.000000 BinCount: 18088 AverageBinsCount: 1448.000000, nonEmpty: 3451
+Layer 4 sumqrs: 101529503921.000000 BinCount: 51765 AverageBinsCount: 579.000000, nonEmpty: 8629
+Layer 5 sumqrs: 45826155755.000000 BinCount: 163951 AverageBinsCount: 247.000000, nonEmpty: 20184
+Last Layer Bin Count: 163951
+Tree Check: 5000000
+Time to build tree: 5.556904
+Starting Kernel Launcher
+Non Empty Bins in last layer: 20184
+Total Bin Count in Tree: 235905
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 574342907764, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 756839301830, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 375591888232, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 610319479145, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 1185444877206, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 1224451092601, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 1315995992314, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 1216470638008, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 377891624137, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 689217730912, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 1139196337336, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 1509618122304, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 1237124249317, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 1418948156087, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 941251725726, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 541154974729, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 977588243314, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 964914299313, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 722890018794, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 32386433105, total Blocks: 1024, BlockSize: 256 
+Kernel time: 4723.116544
+Total results Set Size: 17811638092174 
+Total Time: 4729.842865
+
+Time to read in file: 0.619732
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.025555 
+*********************************
+
+Selected RPs: 37, 17, 11, 12, 9, 5
+Selected 6 reference points
+Layer 0 sumqrs: 6192951602186.000000 BinCount: 7 AverageBinsCount: 1250000.000000, nonEmpty: 4
+Layer 1 sumqrs: 2354515160416.000000 BinCount: 104 AverageBinsCount: 64935.000000, nonEmpty: 77
+Layer 2 sumqrs: 1090177642155.000000 BinCount: 1309 AverageBinsCount: 12315.000000, nonEmpty: 406
+Layer 3 sumqrs: 494516243572.000000 BinCount: 9744 AverageBinsCount: 3380.000000, nonEmpty: 1479
+Layer 4 sumqrs: 195755670539.000000 BinCount: 45849 AverageBinsCount: 857.000000, nonEmpty: 5831
+Layer 5 sumqrs: 97858792267.000000 BinCount: 110789 AverageBinsCount: 381.000000, nonEmpty: 13113
+Last Layer Bin Count: 110789
+Tree Check: 5000000
+Time to build tree: 5.574879
+Starting Kernel Launcher
+Non Empty Bins in last layer: 13113
+Total Bin Count in Tree: 167802
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 1050238433986, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 1018559441824, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 1905789665943, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 1968531257118, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 1759533302490, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 1436647595141, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 1987099819092, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 1195568020721, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 857134892859, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 2073550978331, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 2140294637054, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 1671621432055, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 1923933205351, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 2226862265793, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 1273885619808, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 899619490145, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 1256305009370, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 1538359755588, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 797773630629, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 4393510652, total Blocks: 1024, BlockSize: 256 
+Kernel time: 7496.691561
+Total results Set Size: 28985701963950 
+Total Time: 7503.424767
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=1 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+
+Time to read in file: 1.834231
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.049186 
+*********************************
+
+Selected RPs: 0, 12, 3, 9, 3, 8
+Selected 6 reference points
+Layer 0 sumqrs: 49059983954365.000000 BinCount: 9 AverageBinsCount: 1833333.000000, nonEmpty: 6
+Layer 1 sumqrs: 35986642229284.000000 BinCount: 54 AverageBinsCount: 440000.000000, nonEmpty: 25
+Layer 2 sumqrs: 23597653704682.000000 BinCount: 275 AverageBinsCount: 126436.000000, nonEmpty: 87
+Layer 3 sumqrs: 13871422382525.000000 BinCount: 1131 AverageBinsCount: 39711.000000, nonEmpty: 277
+Layer 4 sumqrs: 8550295447680.000000 BinCount: 2770 AverageBinsCount: 19332.000000, nonEmpty: 569
+Layer 5 sumqrs: 5481767082050.000000 BinCount: 6259 AverageBinsCount: 9640.000000, nonEmpty: 1141
+Last Layer Bin Count: 6259
+Tree Check: 11000000
+Time to build tree: 12.795471
+Starting Kernel Launcher
+Non Empty Bins in last layer: 1141
+Total Bin Count in Tree: 10498
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 4789479155200, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 7256031491899, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 8925681752541, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 10024836707617, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 9930680822388, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 8491293337536, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 9065208224862, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 8649656990529, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 8976831357568, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 10882262541799, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 10883585039627, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 10121595803904, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 9974692971682, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 9893537393559, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 10604958204011, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 11438777377956, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 11085399870256, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 11073966007741, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 9385895416999, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 8978096052058, total Blocks: 1024, BlockSize: 256 
+Batch 20 Results: 9776804240966, total Blocks: 1024, BlockSize: 256 
+Batch 21 Results: 10115314318694, total Blocks: 1024, BlockSize: 256 
+Batch 22 Results: 9970091968769, total Blocks: 1024, BlockSize: 256 
+Batch 23 Results: 10545846261209, total Blocks: 1024, BlockSize: 256 
+Batch 24 Results: 10744936742402, total Blocks: 1024, BlockSize: 256 
+Batch 25 Results: 11311200136741, total Blocks: 1024, BlockSize: 256 
+Batch 26 Results: 11304814694677, total Blocks: 1024, BlockSize: 256 
+Batch 27 Results: 11303249073383, total Blocks: 1024, BlockSize: 256 
+Batch 28 Results: 10499929495709, total Blocks: 1024, BlockSize: 256 
+Batch 29 Results: 9374225598542, total Blocks: 1024, BlockSize: 256 
+Batch 30 Results: 9450767088450, total Blocks: 1024, BlockSize: 256 
+Batch 31 Results: 10418305250951, total Blocks: 1024, BlockSize: 256 
+Batch 32 Results: 10616676309218, total Blocks: 1024, BlockSize: 256 
+Batch 33 Results: 10615460516951, total Blocks: 1024, BlockSize: 256 
+Batch 34 Results: 10619759027965, total Blocks: 1024, BlockSize: 256 
+Batch 35 Results: 10618491271613, total Blocks: 1024, BlockSize: 256 
+Batch 36 Results: 9116760723419, total Blocks: 1024, BlockSize: 256 
+Batch 37 Results: 8952493920754, total Blocks: 1024, BlockSize: 256 
+Batch 38 Results: 8800647508006, total Blocks: 1024, BlockSize: 256 
+Batch 39 Results: 8551252394989, total Blocks: 1024, BlockSize: 256 
+Batch 40 Results: 8327971724714, total Blocks: 1024, BlockSize: 256 
+Batch 41 Results: 5590868243694, total Blocks: 1024, BlockSize: 256 
+Kernel time: 99093.971889
+Total results Set Size: 407058333031548 
+Total Time: 99110.286883

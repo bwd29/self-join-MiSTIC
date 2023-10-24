@@ -37,13 +37,6 @@ typedef struct Node{
 
 }Node;
 
-typedef struct DevicePointers{
-    double * d_epsilon;
-    unsigned int * d_dim;
-    unsigned int * d_numPoints;
-    double * d_data;
-}DevicePointers;
-
 
 
 unsigned int buildNodeNet(double * data,

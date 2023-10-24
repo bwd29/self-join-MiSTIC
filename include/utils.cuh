@@ -15,6 +15,13 @@
 
 bool compPair(const std::pair<unsigned int, unsigned int> &x, const std::pair<unsigned int, unsigned int> &y);
 
+typedef struct DevicePointers{
+    double * d_epsilon;
+    unsigned int * d_dim;
+    unsigned int * d_numPoints;
+    double * d_data;
+}DevicePointers;
+
 
 struct result{
     unsigned int pid;

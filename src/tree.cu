@@ -12,8 +12,8 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 						unsigned int * binAmounts,
 						unsigned int numRP){ // the range / epsilon for that rp of that layer of the tree
 
-	unsigned int maxRP = MAXRP; // setting the max number of reference points
-	unsigned int numRPperLayer = RPPERLAYER; //could use log2(numPoints) // setting how many reference points are checked for each layer
+	const unsigned int maxRP = MAXRP; // setting the max number of reference points
+	const unsigned int numRPperLayer = RPPERLAYER; //could use log2(numPoints) // setting how many reference points are checked for each layer
 
 	// printf("Selecting %d Rp from a pool of %d\n", numRPperLayer, (int)sqrt(numPoints));
 	//an array to hold the bins of the tree that will be passed back to the calling function in rbins
@@ -35,13 +35,13 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	}
 
 	//an array to hold the sum of squares error for calculating which reference point to use for each layer
-	double * sumSqrsTemp = (double*)malloc(sizeof(double)*numRPperLayer);
+	double * sumSqrsTemp = (double*)malloc(sizeof(double)*(maxRP+numRPperLayer));
 
 	//an array to hold the final sum sqrs for each layer, helps determine the number of reference points to use
 	double * sumSqrsLayers = (double*)malloc(sizeof(double)*maxRP);
 
 	//array to track average number of points per bin
-	double * averageNonEmptyBinCountTemp = (double *)malloc(sizeof(double)*numRPperLayer);
+	double * averageNonEmptyBinCountTemp = (double *)malloc(sizeof(double)*(maxRP+numRPperLayer));
 	double * averageNonEmptyBinCountLayers = (double *)malloc(sizeof(double)*maxRP);
 
 
@@ -51,6 +51,34 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	// keeping track of which layer of the tree is being built
 	unsigned int currentLayer = 0;
 
+	struct DevicePointers devicePointers;
+
+    double * d_data;
+    assert(cudaSuccess == cudaMalloc((void**)&d_data, sizeof(double)*numPoints*dim));
+    assert(cudaSuccess ==  cudaMemcpy(d_data, data, sizeof(double)*numPoints*dim, cudaMemcpyHostToDevice));
+
+    unsigned int *d_dim;
+    assert(cudaSuccess == cudaMalloc((void**)&d_dim, sizeof(unsigned int)));
+    assert(cudaSuccess ==  cudaMemcpy(d_dim, &dim, sizeof(unsigned int), cudaMemcpyHostToDevice));
+
+    // copy over the number of points in the dataset
+    unsigned int * d_numPoints;
+    assert(cudaSuccess == cudaMalloc((void**)&d_numPoints, sizeof(unsigned int)));
+    assert(cudaSuccess ==  cudaMemcpy(d_numPoints, &numPoints, sizeof(unsigned int), cudaMemcpyHostToDevice));
+
+    // copy over the number of points in the dataset
+    double * d_epsilon;
+    assert(cudaSuccess == cudaMalloc((void**)&d_epsilon, sizeof(double)));
+    assert(cudaSuccess ==  cudaMemcpy(d_epsilon, &epsilon, sizeof(double), cudaMemcpyHostToDevice));
+
+    
+    devicePointers.d_data = d_data;
+    devicePointers.d_dim = d_dim;
+    devicePointers.d_numPoints = d_numPoints;
+    devicePointers.d_epsilon = d_epsilon;
+
+	// printf("entering buyild loop\n");
+	
 	// cinstruct the layers in this loop, terminates when we reach the max layer count or when loss function calls for return
 	while(check && currentLayer < maxRP){
 		
@@ -65,71 +93,112 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		// make the array of reference points
 		double * RPArray = createRPArray(data, numRPperLayer, dim, numPoints);
 		
+		unsigned int * allBinNumber = (unsigned int * )malloc(sizeof(unsigned int)*numPoints*(maxRP+numRPperLayer));
+
+        //create bin number arrays on device
+        unsigned int  * d_binNumber;
+        assert(cudaSuccess == cudaMalloc((void**)&d_binNumber, sizeof(unsigned int)*numPoints*numRPperLayer));
+
+        double * d_RP;
+        assert(cudaSuccess == cudaMalloc((void**)&d_RP, sizeof(double)*dim*numRPperLayer));
+        assert(cudaSuccess == cudaMemcpy(d_RP, RPArray, sizeof(double)*dim*numRPperLayer, cudaMemcpyHostToDevice));
+
+        free(RPArray);
+
+        cudaStream_t stream;
+        cudaError_t stream_check = cudaStreamCreate(&stream);
+        assert(cudaSuccess == stream_check);
+
+        unsigned int totalBlocks = ceil(numPoints*1.0/1024);
+
+        binningKernel<<<totalBlocks, 1024, 0, stream>>>(d_binNumber,
+														devicePointers.d_numPoints,
+														devicePointers.d_dim,
+														devicePointers.d_data,
+														d_RP,
+														devicePointers.d_epsilon,
+														numRPperLayer);
+
+        cudaStreamSynchronize(stream);
+
+        assert(cudaSuccess == cudaMemcpyAsync(allBinNumber, d_binNumber, sizeof(unsigned int)*numPoints*numRPperLayer, cudaMemcpyDeviceToHost, stream));
+
+        cudaStreamSynchronize(stream);
+
+		// printf("Finished binning\n");
+        cudaFree(d_binNumber);
+        cudaFree(d_RP);
+
+
+
 		// this is the distance matrix for the points to the reference points in RPArray
-		double * distMat = (double * )malloc(sizeof(double)*numPoints*numRPperLayer);
+		// double * distMat = (double * )malloc(sizeof(double)*numPoints*numRPperLayer);
 
 		// a 2d array that keeps track of the bins for the current layer for each possible reference point
-		unsigned int ** layerBins = (unsigned int**)malloc(sizeof(unsigned int*)*numRPperLayer);
+		unsigned int ** layerBins = (unsigned int**)malloc(sizeof(unsigned int*)*(maxRP+numRPperLayer));
 
 		// an array for the number of bins in the current layer of the tree
-		unsigned int * layerBinCount = (unsigned int*)malloc(sizeof(unsigned int)*numRPperLayer);
+		unsigned int * layerBinCount = (unsigned int*)malloc(sizeof(unsigned int)*(maxRP+numRPperLayer));
 
 		// the number of non empty bins in the current layer of the tree
-		unsigned int * layerBinNonEmpty = (unsigned int*)malloc(numRPperLayer*sizeof(unsigned int));
+		unsigned int * layerBinNonEmpty = (unsigned int*)malloc((maxRP+numRPperLayer)*sizeof(unsigned int));
 
 		// the offset of each point into the current layer
-		unsigned int ** layerBinOffsets = (unsigned int**)malloc(sizeof(unsigned int*)*numRPperLayer);
+		unsigned int ** layerBinOffsets = (unsigned int**)malloc(sizeof(unsigned int*)*(maxRP+numRPperLayer));
 
 		// allocateing the 2d array structure for layer bin offsets
-		for(unsigned int i = 0; i < numRPperLayer; i ++){
+		for(unsigned int i = 0; i < (maxRP+numRPperLayer); i ++){
 			layerBinOffsets[i] = (unsigned int*)malloc(sizeof(unsigned )*numPoints);
 		}
 
 		// the nuber of bins from the reference point to points
-		unsigned int * layerNumBins = (unsigned int*)malloc(sizeof(unsigned int)*numRPperLayer);
+		unsigned int * layerNumBins = (unsigned int*)malloc(sizeof(unsigned int)*(maxRP+numRPperLayer));
 
 		//the number of bins to skip form the start of the reference point
-		unsigned int * skipBins = (unsigned int*)malloc(sizeof(unsigned int)*numRPperLayer);
+		unsigned int * skipBins = (unsigned int*)malloc(sizeof(unsigned int)*(maxRP+numRPperLayer));
 
 		// printf("refChecking: \n");
 
 		// entering into a loop to create a bunch of different possible layers for the current layer. then the best one is chosen
-		#pragma omp parallel for //num_threads(numRPperLayer)
+		#pragma omp parallel for num_threads(numRPperLayer)
 		for(unsigned int i = 0; i < numRPperLayer; i++){
 
 			//set the current number of non empty bins to 0
 			layerBinNonEmpty[i] = 0;
 
 			//fill out the distance matrix
-			double maxDistance = 0;  // for saving the max distance and used for determining layer size
-			double minDistance = euclideanDistance(&data[0*dim], dim , &RPArray[i*dim]); // the min distance starts as just a point
+			// double maxDistance = 0;  // for saving the max distance and used for determining layer size
+			// double minDistance = euclideanDistance(&data[0*dim], dim , &RPArray[i*dim]); // the min distance starts as just a point
 
 			// going through each point to build the distance matrix
-			#pragma omp parallel for
+			// #pragma omp parallel for
+			unsigned int maxBin = allBinNumber[i*numPoints];
+			unsigned int minBin = maxBin;
 			for(unsigned int j = 0; j < numPoints; j++){
-				distMat[i*numPoints + j] = euclideanDistance(&data[j*dim], dim , &RPArray[i*dim]);
+				// distMat[i*numPoints + j] = euclideanDistance(&data[j*dim], dim , &RPArray[i*dim]);
 
 				// checking for the max distance
-				if(distMat[i*numPoints + j] > maxDistance){
-					maxDistance = distMat[i*numPoints + j];
+				if(allBinNumber[i*numPoints+j] > maxBin){
+					maxBin = allBinNumber[i*numPoints+j];
 				}
 
 				//checking for the min distance
-				if(distMat[i*numPoints + j] < minDistance){
-					minDistance = distMat[i*numPoints + j];
+				if(allBinNumber[i*numPoints+j] < minBin){
+					minBin = allBinNumber[i*numPoints+j];
 				}
 			}
 
 
+			// printf("got max and min bins\n");
 
 			// a modifier for padding the bin sizes
 			unsigned int modifier = 2;
 
 			//the number of bins to skip from the beigning to save on space
-			skipBins[i] = floor(minDistance/epsilon) - modifier ;
+			skipBins[i] = minBin - modifier ;
 
 			//the number of bins for a given reference point, i.e. the farthest bin number minus the closest bin number
-			layerNumBins[i] = ceil(maxDistance / epsilon) + modifier - skipBins[i];
+			layerNumBins[i] = maxBin + modifier - skipBins[i];
 			// layerNumBins[i] = ceil(maxDistance / epsilon) + 1;
 
 			//if the current layer is the first layer, then the number of total bins for that layer will be just the number of bins for the reference point
@@ -153,7 +222,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 				// itterate through each point in the data set to assign point to bins
 				for(unsigned int j = 0; j < numPoints; j++){
 					// the bin number will be the the floor of this distance from the point to the reference point - the numebr of bins we skipped on the start
-					unsigned int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
+					unsigned int binNumber = allBinNumber[i*numPoints+j] - skipBins[i];
 
 					// if the bin is empty, then increase the non empty bin count by 1
 					if(layerBins[i][binNumber] == 0){
@@ -174,7 +243,7 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 					unsigned int offset = (bins[currentLayer -1][pointBinOffsets[currentLayer-1][j]]-1)*layerNumBins[i];
 
 					// the bin number will be the the floor of this distance from the point to the reference point - the number of bins we skipped on the start
-					unsigned int binNumber = floor(distMat[i*numPoints + j] / epsilon) - skipBins[i];
+					unsigned int binNumber = allBinNumber[i*numPoints+j] - skipBins[i];
 
 					// if(offset+binNumber > layerBinCount[i]) {
 					// 	// checkers = false;
@@ -196,15 +265,14 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 
 			}
 
+			// printf("assigned bins and counted\n");
+
 			// calculate the sum of squares based on the number of points in each bin. 
 			// the lower the sum of squares, the more even the distribution of points
 			averageNonEmptyBinCountTemp[i] = numPoints / layerBinNonEmpty[i];
 			for(unsigned int j = 0; j < layerBinCount[i]; j++){
 				sumSqrsTemp[i] += (layerBins[i][j] - averageNonEmptyBinCountTemp[i]) * (layerBins[i][j] - averageNonEmptyBinCountTemp[i]);
 			}
-
-
-
 
 			// //join to the bins
 			// std::vector<std::vector<unsigned int>> bins;
@@ -214,9 +282,121 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 
 		}
 
+		//do coordinates now
+
+		#pragma omp parallel for
+		for(unsigned int i = numRPperLayer; i < maxRP+numRPperLayer; i++){
+			layerBinNonEmpty[i] = 0;
+			unsigned int modifier = 2;
+			unsigned int currentDim = i - numRPperLayer;
+			int maxBin = ceil((data[currentDim]+0.000001) / epsilon)+10;
+			int minBin = maxBin-1;
+			for(unsigned int j = 0; j < numPoints; j++){
+				allBinNumber[i*numPoints+j] = ceil((data[j*dim+currentDim]+0.0000001) / epsilon)+10;
+				if(allBinNumber[i*numPoints+j] > maxBin) maxBin = allBinNumber[i*numPoints+j];
+				if(allBinNumber[i*numPoints+j] < minBin) minBin = allBinNumber[i*numPoints+j];
+			}
+
+			// printf("got max (%d) and min (%d) bins for %d\n", maxBin, minBin, i);
+
+			
+
+			// printf("got max and min bins\n");
+
+			// a modifier for padding the bin sizes
+			// unsigned int modifier = 2;
+
+			//the number of bins to skip from the beigning to save on space
+
+			skipBins[i] = minBin - modifier;
+
+			// printf("got max (%d) and min (%d) bins for %d with %d skips\n", maxBin, minBin, i, skipBins[i]);
+
+			//the number of bins for a given reference point, i.e. the farthest bin number minus the closest bin number
+			layerNumBins[i] = maxBin + modifier - skipBins[i];
+			// layerNumBins[i] = ceil(maxDistance / epsilon) + 1;
+
+			//if the current layer is the first layer, then the number of total bins for that layer will be just the number of bins for the reference point
+			if(currentLayer == 0){ 
+				layerBinCount[i] = layerNumBins[i];
+			} else {
+				// the number of bins in the layer is the number of bins for a reference point times the number of non empty bins in the previous layer
+				layerBinCount[i] = binNonEmpty[currentLayer - 1] * layerNumBins[i];
+			}
+			// printf("layerBinCount = %d\n", layerBinCount[i]);
+			// now that we know the size of the layer we can allocate the array to hold the bin values
+			layerBins[i] = (unsigned int*)malloc(layerBinCount[i] * sizeof(unsigned int));
+
+			// the bin values will all start at 0
+			for(unsigned int j = 0; j < layerBinCount[i]; j++){
+				layerBins[i][j] = 0;
+			}
+
+			// the first layer is unique because there are no offsets from the previous layer
+			if(currentLayer == 0){
+				// itterate through each point in the data set to assign point to bins
+				for(unsigned int j = 0; j < numPoints; j++){
+					// the bin number will be the the floor of this distance from the point to the reference point - the numebr of bins we skipped on the start
+					unsigned int binNumber = allBinNumber[i*numPoints+j] - skipBins[i];
+
+					// if the bin is empty, then increase the non empty bin count by 1
+					if(layerBins[i][binNumber] == 0){
+						layerBinNonEmpty[i]++;
+					}
+
+					//increment the value of the bin to count the number of points in that bin
+					layerBins[i][binNumber]++; 
+
+					// the offset from the first layer will be the bin number
+					layerBinOffsets[i][j] = binNumber; 
+				}
+			} else {
+				// assign every point to a bin for layers past the first one
+				for(unsigned int j = 0; j < numPoints; j++){
+
+					// the offset will be the bin number of the previous layer, which will be the number of non empty bins before it, times the number of bins for the reference point in the current layer
+					unsigned int offset = (bins[currentLayer -1][pointBinOffsets[currentLayer-1][j]]-1)*layerNumBins[i];
+
+					// the bin number will be the the floor of this distance from the point to the reference point - the number of bins we skipped on the start
+					unsigned int binNumber = allBinNumber[i*numPoints+j] - skipBins[i];
+
+					// if(offset+binNumber > layerBinCount[i]) {
+					// 	// checkers = false;
+					// 	printf("offset+binNumber is the problem with offset = %d, binnumber = %d, and layerbincount = %d", offset,binNumber,layerBinCount[i]);
+					// }
+					
+					// if the bin was empty, then increment the number of non empty bins
+					if(layerBins[i][offset+binNumber] == 0){
+						layerBinNonEmpty[i]++;
+					}
+
+					// increment the value of the bin to count the number of points in that bin
+					layerBins[i][offset+binNumber]++;
+
+					// the offset for the point will be the previous offset + the bin number
+					layerBinOffsets[i][j] = offset + binNumber;
+
+				}
+
+			}
+
+			// printf("assigned bins and counted lbne= %d\n",layerBinNonEmpty[i]);
+
+			// calculate the sum of squares based on the number of points in each bin. 
+			// the lower the sum of squares, the more even the distribution of points
+			averageNonEmptyBinCountTemp[i] = numPoints / layerBinNonEmpty[i];
+			if(averageNonEmptyBinCountTemp[i] >= numPoints / 3.0){
+				sumSqrsTemp[i] = numPoints * numPoints;
+			}
+			for(unsigned int j = 0; j < layerBinCount[i]; j++){
+				sumSqrsTemp[i] += (layerBins[i][j] - averageNonEmptyBinCountTemp[i]) * (layerBins[i][j] - averageNonEmptyBinCountTemp[i]);
+			}
+
+		}
+
 		//pick the one with lowest sum sqrs? sure why not //update: this was a bad idea
 		unsigned int minSumIdx = 0; // this will be the reference point form all of the possible one that will be used for final layer construction
-		for(unsigned int i = 1; i < numRPperLayer; i++){
+		for(unsigned int i = 1; i < numRPperLayer+maxRP; i++){
 			#if MINSQRS
 			if(sumSqrsTemp[minSumIdx] > sumSqrsTemp[i] ){
 				minSumIdx = i; 
@@ -236,6 +416,8 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		for(unsigned int i = 0; i < numPoints; i++){
 			pointBinOffsets[currentLayer][i] = layerBinOffsets[minSumIdx][i];
 		}
+
+		// printf("calced metrics\n");
 		
 		// the size of the bins will be the size of the layer form the chosen one
 		bins[currentLayer] = (unsigned int*)malloc(layerBinCount[minSumIdx]*sizeof(unsigned int));
@@ -266,10 +448,19 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		// copy the number of bins for the reference point
 		binAmounts[currentLayer] = layerNumBins[minSumIdx];
 
+
 		// assign the point bin numbers and save them
 		for(unsigned int i = 0; i < numPoints; i++){
-			pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon)-skipBins[minSumIdx];
+			// pointBinNumbers[i][currentLayer] = floor(distMat[minSumIdx*numPoints+i] / epsilon)-skipBins[minSumIdx];
+			pointBinNumbers[i][currentLayer] = allBinNumber[minSumIdx*numPoints+i]-skipBins[minSumIdx];
 		}
+
+		if(currentLayer==0){
+			printf("Selected RPs: %d", minSumIdx);
+		}else{
+			printf(", %d", minSumIdx);
+		}
+		
 
 		// check if the current layer is at least the min number of layers for the tree
 		if(currentLayer == maxRP-1){
@@ -293,12 +484,13 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 
 			
 		}
+		
 
 		currentLayer++;
 		// } 
 		//free all the memory used for construction of this layer
-		free(distMat);
-		for(unsigned int i = 0; i < numRPperLayer; i++){
+		// free(distMat);
+		for(unsigned int i = 0; i < numRPperLayer+maxRP; i++){
 			free(layerBins[i]);
 			free(layerBinOffsets[i]);
 		}
@@ -308,10 +500,12 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 		free(layerBinNonEmpty);
 		free(layerNumBins);
 		free(skipBins);
-		free(RPArray);
+		free(allBinNumber);
+		// free(RPArray);
 
 	}
 
+	printf("\n");
 	// the number of layers/ reference points is the current layer
 	unsigned int snumRP = currentLayer;
 
@@ -383,6 +577,11 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 	free(averageNonEmptyBinCountLayers);
 	free(averageNonEmptyBinCountTemp);
 	free(sumSqrsTemp);
+	cudaFree(d_data);
+	cudaFree(d_dim);
+	cudaFree(d_numPoints);
+	cudaFree(d_epsilon);
+
 
 	// return the tree
 	*rbins = bins;
@@ -581,7 +780,7 @@ long int depthSearch(unsigned int ** tree, //pointer to the tree built with buil
 	//the index will be the last layers bin number plus the offset for the last layer
 	long int index = searchBins[numLayers-1]+offset;
 
-	//if last layer has poionts then return the index value
+	//if last layer has points then return the index value
 	if(tree[numLayers-1][index] < tree[numLayers-1][index+1]){
 		return index;
 	}else{

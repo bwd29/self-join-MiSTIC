@@ -3453,7 +3453,7 @@ struct neighborTable * nodeLauncher5(double * data,
             assert(cudaSuccess ==  cudaMemcpyAsync(&keyValueIndex[i], &d_keyValueIndex[i], sizeof(unsigned long long ), cudaMemcpyDeviceToHost, stream[tid]));
             cudaStreamSynchronize(stream[tid]);
 
-            // printf("Batch %d Results: %llu\n", i,keyValueIndex[i]);
+            printf("Batch %d Results: %llu\n", i,keyValueIndex[i]);
 
 
             if(keyValueIndex[i] > bufferSizes[tid]){
@@ -3488,7 +3488,6 @@ struct neighborTable * nodeLauncher5(double * data,
             thrust::sort_by_key(thrust::cuda::par.on(stream[tid]), d_uniqueKeys[tid], d_uniqueKeys[tid]+uniqueCnt[i], d_uniqueKeyPosition[tid]);
             // GPU_SortbyKey(stream[tid], d_uniqueKeys[tid], uniqueCnt[i], d_uniqueKeyPosition[tid]);
 
-
             unsigned int * uniqueKeys = (unsigned int*)malloc(sizeof(unsigned int)*uniqueCnt[i]);
             assert(cudaSuccess == cudaMemcpyAsync(uniqueKeys, d_uniqueKeys[tid], sizeof(unsigned int)*uniqueCnt[i], cudaMemcpyDeviceToHost, stream[tid]));
 
@@ -3513,7 +3512,9 @@ struct neighborTable * nodeLauncher5(double * data,
     double kendTime = omp_get_wtime();
     printf("Total results Set Size: %llu \n", totals);
     printf("Kernel Time: %f\n", kendTime - kstartTime);
-    std::cerr << kendTime-kstartTime << " ";
+    std::cerr << kendTime-kstartTime << " " << totals << " "; 
+    // std::cerr << totals << " " ;
+    // fprintf(stderr,"%llu ",totals);
 
 
     cudaFree(d_data);
@@ -3565,6 +3566,9 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
         }
     }
 
+    printf("Non Empty Bins in last layer: %u\n", nonEmptyBins);
+    fprintf(stderr, "%u ", nonEmptyBins);
+
     // an array for holding the non empty index locations in the final tree layer
     unsigned int * addIndexes = (unsigned int*)malloc(sizeof(unsigned int)*nonEmptyBins);
 
@@ -3601,10 +3605,32 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
     }
 
 
+    unsigned int totalBinNumber = 0;
+    for(unsigned int i = 0; i < numLayers; i++){
+        totalBinNumber += binSizes[i];
+    }
+    const unsigned int lastLayerOffset = totalBinNumber - binSizes[numLayers-1];
 
+    printf("Total Bin Count in Tree: %u\n", totalBinNumber);
+
+    unsigned int binOffset = 0;
+    unsigned int *Ltree = (unsigned int *)malloc(sizeof(unsigned int)*totalBinNumber);
+    for(unsigned int i = 0; i < numLayers; i++){
+        for(unsigned int j = 0; j < binSizes[i]; j++){
+            Ltree[binOffset+j] = tree[i][j];
+        }
+        binOffset += binSizes[i];
+    }
+
+    
     // printf(" last pointBinIndex: %u, should be : %u\n", pointBinIndex[numPoints-1], nonEmptyBins-1);
 
     printf("Starting CUDA Mem transfers\n");
+
+    //device memory for the tree
+    unsigned int * d_tree;
+    assert(cudaSuccess == cudaMalloc((void**)&d_tree, sizeof(unsigned int)*totalBinNumber));
+    assert(cudaSuccess ==  cudaMemcpy(d_tree, Ltree, sizeof(unsigned int )*totalBinNumber, cudaMemcpyHostToDevice));
 
     //device memory to hold the bin number arrays
     unsigned int * d_binNumbers;
@@ -3622,7 +3648,17 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
     unsigned int * d_pointArray;
     assert(cudaSuccess == cudaMalloc((void**)&d_pointArray, sizeof(unsigned int)*numPoints));
     assert(cudaSuccess ==  cudaMemcpy(d_pointArray, pointArray, sizeof(unsigned int)*numPoints, cudaMemcpyHostToDevice));
+    
+    // the number of bins for each layer
+    unsigned int * d_binSizes;
+    assert(cudaSuccess == cudaMalloc((void**)&d_binSizes, sizeof(unsigned int)*numLayers));
+    assert(cudaSuccess ==  cudaMemcpy(d_binSizes, binSizes, sizeof(unsigned int)*numLayers, cudaMemcpyHostToDevice));
 
+    //device memory for the number of bins to each reference point
+    unsigned int * d_binAmounts;
+    assert(cudaSuccess == cudaMalloc((void**)&d_binAmounts, sizeof(unsigned int)*numLayers));
+    assert(cudaSuccess ==  cudaMemcpy(d_binAmounts, binAmounts, sizeof(unsigned int)*numLayers, cudaMemcpyHostToDevice));
+    
     // keep track of the number of pairs found in each batch
     unsigned long long * keyValueIndex;
     //use pinned memory for async copies back to the host
@@ -3735,7 +3771,7 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
 
         const int d_batch_num = i;
 
-        searchKernelCOSS<<<totalBlocks,BLOCK_SIZE, 0, stream[tid]>>>(
+        searchKernelCOSStree<<<totalBlocks,BLOCK_SIZE, 0, stream[tid]>>>(
 			d_batch_num,
             d_data,
 			d_numPoints,
@@ -3749,7 +3785,11 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
 			d_dim,
 			d_epsilon2,
 			d_pointBinIndex,
-            d_addressStorageSpace[tid]);
+            d_addressStorageSpace[tid],
+            d_tree,
+            d_binSizes,
+            d_binAmounts,   
+            lastLayerOffset);
 
 
         cudaStreamSynchronize(stream[tid]);
@@ -3820,6 +3860,7 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
     for(int i = 0; i < numBatches; i++){
         totals += keyValueIndex[i];
     }
+    if(ERRORPRINT) fprintf(stderr,"%llu ", totals);
 
     printf("Total results Set Size: %llu \n", totals);
 

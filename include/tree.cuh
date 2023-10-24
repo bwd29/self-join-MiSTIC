@@ -2,6 +2,7 @@
 
 #include "include/utils.cuh"
 #include "include/params.cuh"
+#include "include/kernel.cuh"
 
 unsigned int buildTree(unsigned int *** rbins,
 	 				  double * data,

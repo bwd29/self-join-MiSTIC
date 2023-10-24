@@ -1,0 +1,94 @@
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+==WARNING== Note: Running with unmodified GPU clocks. If not controlled otherwise, profiling results may be inconsistent.
+==PROF== Connected to process 2114458 (/home/bwd29/self-join/build/main)
+==PROF== Profiling "searchKernelCOSStree": 0%
+==WARNING== Backing up device memory in system memory. Kernel replay might be slow. Consider using application replay to avoid memory save-and-restore.
+....50%....100% - 33 passes
+
+Time to read in file: 11.463473
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.028100 
+*********************************
+
+Selected RPs: 33, 16, 12, 0, 10, 5
+Selected 6 reference points
+Layer 0 sumqrs: 2104256768444.000000 BinCount: 39 AverageBinsCount: 322786.000000, nonEmpty: 36
+Layer 1 sumqrs: 550387445222.000000 BinCount: 1656 AverageBinsCount: 16229.000000, nonEmpty: 716
+Layer 2 sumqrs: 565645412636.000000 BinCount: 8592 AverageBinsCount: 6628.000000, nonEmpty: 1753
+Layer 3 sumqrs: 348043425557.000000 BinCount: 12271 AverageBinsCount: 4353.000000, nonEmpty: 2669
+Layer 4 sumqrs: 299149626190.000000 BinCount: 29359 AverageBinsCount: 2608.000000, nonEmpty: 4454
+Layer 5 sumqrs: 223013144420.000000 BinCount: 44540 AverageBinsCount: 1744.000000, nonEmpty: 6661
+Last Layer Bin Count: 44540
+Tree Check: 11620300
+Time to build tree: 18.210848
+Starting Kernel Launcher
+Non Empty Bins in last layer: 6661
+Total Bin Count in Tree: 96457
+Starting CUDA Mem transfers
+Building Neighbor Tables
+Creating CUDA Streams
+Starting COSS style Kernel
+Batch 0 Results: 885542023, total Blocks: 1024, BlockSize: 256 
+Batch 1 Results: 1256523018, total Blocks: 1024, BlockSize: 256 
+Batch 2 Results: 1069250714, total Blocks: 1024, BlockSize: 256 
+Batch 3 Results: 1483959640, total Blocks: 1024, BlockSize: 256 
+Batch 4 Results: 1082364259, total Blocks: 1024, BlockSize: 256 
+Batch 5 Results: 1492607367, total Blocks: 1024, BlockSize: 256 
+Batch 6 Results: 1275117626, total Blocks: 1024, BlockSize: 256 
+Batch 7 Results: 1253457845, total Blocks: 1024, BlockSize: 256 
+Batch 8 Results: 1404840058, total Blocks: 1024, BlockSize: 256 
+Batch 9 Results: 1019635700, total Blocks: 1024, BlockSize: 256 
+Batch 10 Results: 1540907840, total Blocks: 1024, BlockSize: 256 
+Batch 11 Results: 1302189292, total Blocks: 1024, BlockSize: 256 
+Batch 12 Results: 1035949592, total Blocks: 1024, BlockSize: 256 
+Batch 13 Results: 1626817098, total Blocks: 1024, BlockSize: 256 
+Batch 14 Results: 1302091430, total Blocks: 1024, BlockSize: 256 
+Batch 15 Results: 1147712603, total Blocks: 1024, BlockSize: 256 
+Batch 16 Results: 1621477285, total Blocks: 1024, BlockSize: 256 
+Batch 17 Results: 1224963006, total Blocks: 1024, BlockSize: 256 
+Batch 18 Results: 1295304684, total Blocks: 1024, BlockSize: 256 
+Batch 19 Results: 1558925585, total Blocks: 1024, BlockSize: 256 
+Batch 20 Results: 966302004, total Blocks: 1024, BlockSize: 256 
+Batch 21 Results: 1418294656, total Blocks: 1024, BlockSize: 256 
+Batch 22 Results: 960747982, total Blocks: 1024, BlockSize: 256 
+Batch 23 Results: 1251902857, total Blocks: 1024, BlockSize: 256 
+Batch 24 Results: 1038523281, total Blocks: 1024, BlockSize: 256 
+Batch 25 Results: 1257362374, total Blocks: 1024, BlockSize: 256 
+Batch 26 Results: 1039139068, total Blocks: 1024, BlockSize: 256 
+Batch 27 Results: 1114809493, total Blocks: 1024, BlockSize: 256 
+Batch 28 Results: 998753786, total Blocks: 1024, BlockSize: 256 
+Batch 29 Results: 915494434, total Blocks: 1024, BlockSize: 256 
+Batch 30 Results: 1116529486, total Blocks: 1024, BlockSize: 256 
+Batch 31 Results: 755429734, total Blocks: 1024, BlockSize: 256 
+Batch 32 Results: 846808385, total Blocks: 1024, BlockSize: 256 
+Batch 33 Results: 863052549, total Blocks: 1024, BlockSize: 256 
+Batch 34 Results: 786450318, total Blocks: 1024, BlockSize: 256 
+Batch 35 Results: 679222338, total Blocks: 1024, BlockSize: 256 
+Batch 36 Results: 651125685, total Blocks: 1024, BlockSize: 256 
+Batch 37 Results: 646229431, total Blocks: 1024, BlockSize: 256 
+Batch 38 Results: 700987548, total Blocks: 1024, BlockSize: 256 
+Batch 39 Results: 757792990, total Blocks: 1024, BlockSize: 256 
+Batch 40 Results: 661470540, total Blocks: 1024, BlockSize: 256 
+Batch 41 Results: 647058773, total Blocks: 1024, BlockSize: 256 
+Batch 42 Results: 684683954, total Blocks: 1024, BlockSize: 256 
+Batch 43 Results: 857629407, total Blocks: 1024, BlockSize: 256 
+Batch 44 Results: 189106304, total Blocks: 1024, BlockSize: 256 
+Kernel time: 423.630473
+Total results Set Size: 47684544042 
+Total Time: 446.217461
+==PROF== Disconnected from process 2114458
+==PROF== Report: /home/bwd29/self-join/profileBIGCROSS3.out.ncu-rep
+Completed!
