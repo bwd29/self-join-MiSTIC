@@ -1,0 +1,1671 @@
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+
+Time to read in file: 0.285916
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.007600 
+*********************************
+
+Predicted calcsPerSecond: 901555891
+SubGraph 0 Layer 0 Selecting RP 16 with Nodes: 36 and calcs: 98125331495 and stdev 26961641902.305553:: Predicted time: 0.000000, Actual Time: 0.035353
+Build Time: 0.035353, Calc Time: 108.839987, reduction -108.839987
+############################################
+Predicted calcsPerSecond: 2723984202
+SubGraph 0 Layer 1 Selecting RP 33 with Nodes: 342 and calcs: 70614956669 and stdev 10718700945.979528:: Predicted time: 0.035353, Actual Time: 0.337103
+Build Time: 0.337103, Calc Time: 25.923409, reduction 82.916578
+############################################
+Predicted calcsPerSecond: 5461267792
+SubGraph 0 Layer 2 Selecting RP 32 with Nodes: 963 and calcs: 51177553389 and stdev 4306825623.646935:: Predicted time: 0.337103, Actual Time: 0.163625
+Build Time: 0.163625, Calc Time: 9.371002, reduction 16.552407
+############################################
+Predicted calcsPerSecond: 9562888960
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 1399 and calcs: 46813417053 and stdev 1955345784.887779:: Predicted time: 0.163625, Actual Time: 0.061539
+Build Time: 0.061539, Calc Time: 4.895322, reduction 4.475681
+############################################
+Predicted calcsPerSecond: 15718630756
+SubGraph 0 Layer 4 Selecting RP 34 with Nodes: 1787 and calcs: 42336736233 and stdev 1044136845.347509:: Predicted time: 0.061539, Actual Time: 0.053644
+Build Time: 0.053644, Calc Time: 2.693411, reduction 2.201910
+############################################
+Predicted calcsPerSecond: 24951208876
+SubGraph 0 Layer 5 Selecting RP 36 with Nodes: 2054 and calcs: 41732496571 and stdev 624300875.733691:: Predicted time: 0.053644, Actual Time: 0.071934
+Build Time: 0.071934, Calc Time: 1.672564, reduction 1.020847
+############################################
+Final graph has 2054 nodes, 41732496571 calcs total
+Node Construct time: 0.776476
+Batchs: 2
+Batch 0 Results: 278438
+Batch 1 Results: 131342251
+Total results Set Size: 131620689 
+Kernel Time: 1.660601
+Node Laucnher time: 2.606895
+Total Time: 3.118446
+
+Time to read in file: 0.093671
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.009130 
+*********************************
+
+Predicted calcsPerSecond: 890571208
+SubGraph 0 Layer 0 Selecting RP 16 with Nodes: 31 and calcs: 114923638765 and stdev 32346704670.967743:: Predicted time: 0.000000, Actual Time: 0.033067
+Build Time: 0.033067, Calc Time: 129.044862, reduction -129.044862
+############################################
+Predicted calcsPerSecond: 2697680724
+SubGraph 0 Layer 1 Selecting RP 32 with Nodes: 289 and calcs: 85739974277 and stdev 14412580842.359861:: Predicted time: 0.033067, Actual Time: 0.274763
+Build Time: 0.274763, Calc Time: 31.782847, reduction 97.262015
+############################################
+Predicted calcsPerSecond: 5404345690
+SubGraph 0 Layer 2 Selecting RP 33 with Nodes: 846 and calcs: 67775507507 and stdev 6312275006.715129:: Predicted time: 0.274763, Actual Time: 0.082515
+Build Time: 0.082515, Calc Time: 12.540928, reduction 19.241920
+############################################
+Predicted calcsPerSecond: 9459981616
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 1230 and calcs: 63577056075 and stdev 2971949682.491869:: Predicted time: 0.082515, Actual Time: 0.041713
+Build Time: 0.041713, Calc Time: 6.720632, reduction 5.820295
+############################################
+Predicted calcsPerSecond: 15549494619
+SubGraph 0 Layer 4 Selecting RP 37 with Nodes: 1537 and calcs: 62275619759 and stdev 1605369234.249835:: Predicted time: 0.041713, Actual Time: 0.108974
+Build Time: 0.108974, Calc Time: 4.004993, reduction 2.715639
+############################################
+Predicted calcsPerSecond: 24683140185
+SubGraph 0 Layer 5 Selecting RP 34 with Nodes: 1811 and calcs: 58480528153 and stdev 947284133.383767:: Predicted time: 0.108974, Actual Time: 0.062892
+Build Time: 0.062892, Calc Time: 2.369250, reduction 1.635743
+############################################
+Final graph has 1811 nodes, 58480528153 calcs total
+Node Construct time: 0.821742
+Batchs: 2
+Batch 0 Results: 383975
+Batch 1 Results: 526587314
+Total results Set Size: 526971289 
+Kernel Time: 3.943372
+Node Laucnher time: 4.941415
+Total Time: 5.448868
+
+Time to read in file: 0.081458
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.011334 
+*********************************
+
+Predicted calcsPerSecond: 899772545
+SubGraph 0 Layer 0 Selecting RP 16 with Nodes: 25 and calcs: 136860845333 and stdev 39560586766.000000:: Predicted time: 0.000000, Actual Time: 0.029887
+Build Time: 0.029887, Calc Time: 152.106047, reduction -152.106047
+############################################
+Predicted calcsPerSecond: 2723846409
+SubGraph 0 Layer 1 Selecting RP 32 with Nodes: 226 and calcs: 109119040007 and stdev 20593302982.305313:: Predicted time: 0.029887, Actual Time: 0.233503
+Build Time: 0.233503, Calc Time: 40.060644, reduction 112.045404
+############################################
+Predicted calcsPerSecond: 5458416754
+SubGraph 0 Layer 2 Selecting RP 33 with Nodes: 600 and calcs: 91709264179 and stdev 10283635783.958334:: Predicted time: 0.233503, Actual Time: 0.068648
+Build Time: 0.068648, Calc Time: 16.801440, reduction 23.259203
+############################################
+Predicted calcsPerSecond: 9562296726
+SubGraph 0 Layer 3 Selecting RP 34 with Nodes: 905 and calcs: 83887176139 and stdev 5792192693.204420:: Predicted time: 0.068648, Actual Time: 0.035865
+Build Time: 0.035865, Calc Time: 8.772702, reduction 8.028739
+############################################
+Predicted calcsPerSecond: 15714545455
+SubGraph 0 Layer 4 Selecting RP 35 with Nodes: 1168 and calcs: 81496619187 and stdev 3332686752.451200:: Predicted time: 0.035865, Actual Time: 0.078635
+Build Time: 0.078635, Calc Time: 5.186063, reduction 3.586639
+############################################
+Predicted calcsPerSecond: 24944462109
+SubGraph 0 Layer 5 Selecting RP 36 with Nodes: 1388 and calcs: 80717430363 and stdev 1958855719.448846:: Predicted time: 0.078635, Actual Time: 0.054643
+Build Time: 0.054643, Calc Time: 3.235886, reduction 1.950177
+############################################
+Final graph has 1388 nodes, 80717430363 calcs total
+Node Construct time: 0.727477
+Batchs: 2
+Batch 0 Results: 13146076
+Batch 1 Results: 2106838301
+Total results Set Size: 2119984377 
+Kernel Time: 9.326759
+Node Laucnher time: 10.239551
+Total Time: 10.748423
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+Wave __________________________________________________
+Wave __________________________________________________
+
+Time to read in file: 0.086201
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.005400 
+*********************************
+
+Predicted calcsPerSecond: 1379467168
+SubGraph 0 Layer 0 Selecting RP 21 with Nodes: 64 and calcs: 15021837699 and stdev 3986569496.984375:: Predicted time: 0.000000, Actual Time: 0.036677
+Build Time: 0.036677, Calc Time: 10.889594, reduction -10.889594
+############################################
+Predicted calcsPerSecond: 4234911183
+SubGraph 0 Layer 1 Selecting RP 33 with Nodes: 189 and calcs: 14460226141 and stdev 2096341333.756613:: Predicted time: 0.036677, Actual Time: 0.104976
+Build Time: 0.104976, Calc Time: 3.414529, reduction 7.475065
+############################################
+Predicted calcsPerSecond: 8516330757
+SubGraph 0 Layer 2 Selecting RP 36 with Nodes: 384 and calcs: 14081849345 and stdev 1026062330.997400:: Predicted time: 0.104976, Actual Time: 0.018647
+Build Time: 0.018647, Calc Time: 1.653511, reduction 1.761017
+############################################
+Predicted calcsPerSecond: 14932088269
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 451 and calcs: 13890654697 and stdev 458560255.955654:: Predicted time: 0.018647, Actual Time: 0.017428
+Build Time: 0.017428, Calc Time: 0.930255, reduction 0.723256
+############################################
+Predicted calcsPerSecond: 24568929045
+SubGraph 0 Layer 4 Selecting RP 37 with Nodes: 560 and calcs: 13743182511 and stdev 209491323.855357:: Predicted time: 0.017428, Actual Time: 0.013649
+Build Time: 0.013649, Calc Time: 0.559372, reduction 0.370883
+############################################
+Predicted calcsPerSecond: 39021583717
+SubGraph 0 Layer 5 Selecting RP 34 with Nodes: 702 and calcs: 13660192227 and stdev 111709699.357550:: Predicted time: 0.013649, Actual Time: 0.023039
+Build Time: 0.023039, Calc Time: 0.350068, reduction 0.209305
+############################################
+Final graph has 702 nodes, 13660192227 calcs total
+Node Construct time: 0.404357
+Batchs: 2
+Batch 0 Results: 73896221
+Batch 1 Results: 249002
+Total results Set Size: 74145223 
+Kernel Time: 0.491229
+Node Laucnher time: 0.994530
+Total Time: 1.157740
+
+Time to read in file: 0.033291
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.007020 
+*********************************
+
+Predicted calcsPerSecond: 1373063461
+SubGraph 0 Layer 0 Selecting RP 29 with Nodes: 50 and calcs: 18883535711 and stdev 5191192648.980000:: Predicted time: 0.000000, Actual Time: 0.029698
+Build Time: 0.029698, Calc Time: 13.752850, reduction -13.752850
+############################################
+Predicted calcsPerSecond: 4215136396
+SubGraph 0 Layer 1 Selecting RP 32 with Nodes: 77 and calcs: 16602730433 and stdev 2652135636.311690:: Predicted time: 0.029698, Actual Time: 0.049851
+Build Time: 0.049851, Calc Time: 3.938836, reduction 9.814014
+############################################
+Predicted calcsPerSecond: 8484784116
+SubGraph 0 Layer 2 Selecting RP 33 with Nodes: 168 and calcs: 16345686379 and stdev 1400614787.851192:: Predicted time: 0.049851, Actual Time: 0.011942
+Build Time: 0.011942, Calc Time: 1.926471, reduction 2.012365
+############################################
+Predicted calcsPerSecond: 14817255951
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 303 and calcs: 16199429335 and stdev 738746881.729372:: Predicted time: 0.011942, Actual Time: 0.014326
+Build Time: 0.014326, Calc Time: 1.093281, reduction 0.833189
+############################################
+Predicted calcsPerSecond: 24384976216
+SubGraph 0 Layer 4 Selecting RP 34 with Nodes: 415 and calcs: 16173306581 and stdev 373446156.708434:: Predicted time: 0.014326, Actual Time: 0.017169
+Build Time: 0.017169, Calc Time: 0.663249, reduction 0.430033
+############################################
+Predicted calcsPerSecond: 38746526230
+SubGraph 0 Layer 5 Selecting RP 37 with Nodes: 533 and calcs: 16163964495 and stdev 194705642.885553:: Predicted time: 0.017169, Actual Time: 0.018492
+Build Time: 0.018492, Calc Time: 0.417172, reduction 0.246077
+############################################
+Final graph has 533 nodes, 16163964495 calcs total
+Node Construct time: 0.377288
+Batchs: 2
+Batch 0 Results: 295977250
+Batch 1 Results: 573393
+Total results Set Size: 296550643 
+Kernel Time: 1.171094
+Node Laucnher time: 1.645138
+Total Time: 1.782124
+
+Time to read in file: 0.033797
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.008358 
+*********************************
+
+Predicted calcsPerSecond: 1392910191
+SubGraph 0 Layer 0 Selecting RP 22 with Nodes: 43 and calcs: 21610362281 and stdev 6055633975.767443:: Predicted time: 0.000000, Actual Time: 0.026131
+Build Time: 0.026131, Calc Time: 15.514541, reduction -15.514541
+############################################
+Predicted calcsPerSecond: 4262482408
+SubGraph 0 Layer 1 Selecting RP 32 with Nodes: 65 and calcs: 19695785443 and stdev 3794428496.061539:: Predicted time: 0.026131, Actual Time: 0.039926
+Build Time: 0.039926, Calc Time: 4.620731, reduction 10.893810
+############################################
+Predicted calcsPerSecond: 8576870410
+SubGraph 0 Layer 2 Selecting RP 12 with Nodes: 99 and calcs: 19695779157 and stdev 3436402329.353537:: Predicted time: 0.039926, Actual Time: 0.008700
+Build Time: 0.008700, Calc Time: 2.296383, reduction 2.324348
+############################################
+Predicted calcsPerSecond: 15041894766
+SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 139 and calcs: 19695661827 and stdev 2962462228.417268:: Predicted time: 0.008700, Actual Time: 0.007512
+Build Time: 0.007512, Calc Time: 1.309387, reduction 0.986996
+############################################
+Predicted calcsPerSecond: 24742422370
+SubGraph 0 Layer 4 Selecting RP 0 with Nodes: 176 and calcs: 19695557685 and stdev 2534035860.448864:: Predicted time: 0.007512, Actual Time: 0.008126
+Build Time: 0.008126, Calc Time: 0.796024, reduction 0.513363
+############################################
+Predicted calcsPerSecond: 39294385320
+SubGraph 0 Layer 5 Selecting RP 7 with Nodes: 237 and calcs: 19694725725 and stdev 2248087785.831225:: Predicted time: 0.008126, Actual Time: 0.008137
+Build Time: 0.008137, Calc Time: 0.501210, reduction 0.294814
+############################################
+Final graph has 237 nodes, 19694725725 calcs total
+Node Construct time: 0.335579
+Batchs: 2
+Batch 0 Results: 1174823815
+Batch 1 Results: 966518
+Total results Set Size: 1175790333 
+Kernel Time: 2.941517
+Node Laucnher time: 3.368377
+Total Time: 3.526975
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+BIGCROSS____________________________________________________________
+BIGCROSS____________________________________________________________
+
+Time to read in file: 11.575939
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.013100 
+*********************************
+
+Predicted calcsPerSecond: 1225818285
+SubGraph 0 Layer 0 Selecting RP 32 with Nodes: 76 and calcs: 7762335790000 and stdev 818118109868.421143:: Predicted time: 0.000000, Actual Time: 0.267023
+Build Time: 0.267023, Calc Time: 6332.370699, reduction -6332.370699
+############################################
+Predicted calcsPerSecond: 3680375803
+SubGraph 0 Layer 1 Selecting RP 33 with Nodes: 4727 and calcs: 695537870000 and stdev 50756893251.534790:: Predicted time: 0.267023, Actual Time: 81.302105
+Build Time: 81.302105, Calc Time: 188.985557, reduction 6143.385142
+############################################
+Predicted calcsPerSecond: 7360548894
+SubGraph 0 Layer 2 Selecting RP 34 with Nodes: 18421 and calcs: 236070390000 and stdev 5146734571.412415:: Predicted time: 81.302105, Actual Time: 10.440218
+Build Time: 10.440218, Calc Time: 32.072389, reduction 156.913167
+############################################
+Predicted calcsPerSecond: 12881520441
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 32027 and calcs: 170154750000 and stdev 1791017018.140970:: Predicted time: 10.440218, Actual Time: 4.340175
+Build Time: 4.340175, Calc Time: 13.209213, reduction 18.863176
+############################################
+Predicted calcsPerSecond: 21163825425
+SubGraph 0 Layer 4 Selecting RP 36 with Nodes: 32699 and calcs: 169541770000 and stdev 1628563956.695999:: Predicted time: 4.340175, Actual Time: 1.077536
+Build Time: 1.077536, Calc Time: 8.010923, reduction 5.198290
+############################################
+Predicted calcsPerSecond: 33587619576
+SubGraph 0 Layer 5 Selecting RP 16 with Nodes: 32726 and calcs: 169538850000 and stdev 1621607058.175800:: Predicted time: 1.077536, Actual Time: 1.550186
+Build Time: 1.550186, Calc Time: 5.047659, reduction 2.963264
+############################################
+Final graph has 32726 nodes, 169538850000 calcs total
+Node Construct time: 24.335525
+Batchs: 45
+Batch 0 Results: 74015852
+Batch 1 Results: 74309138
+Batch 2 Results: 68342791
+Batch 3 Results: 68105354
+Batch 4 Results: 67134922
+Batch 5 Results: 68324617
+Batch 6 Results: 67243231
+Batch 7 Results: 67782694
+Batch 8 Results: 66700807
+Batch 9 Results: 67315875
+Batch 10 Results: 64316664
+Batch 11 Results: 67191176
+Batch 12 Results: 71501877
+Batch 13 Results: 69780691
+Batch 14 Results: 67484783
+Batch 15 Results: 67427481
+Batch 16 Results: 72797043
+Batch 17 Results: 71960848
+Batch 18 Results: 73277801
+Batch 19 Results: 71054339
+Batch 20 Results: 70165587
+Batch 21 Results: 68914349
+Batch 22 Results: 67768069
+Batch 23 Results: 69173450
+Batch 24 Results: 69165981
+Batch 25 Results: 69197544
+Batch 26 Results: 68962640
+Batch 27 Results: 68633306
+Batch 28 Results: 69497810
+Batch 29 Results: 66595315
+Batch 30 Results: 63456818
+Batch 31 Results: 63358529
+Batch 32 Results: 62827895
+Batch 33 Results: 63895118
+Batch 34 Results: 63806245
+Batch 35 Results: 61382977
+Batch 36 Results: 62049606
+Batch 37 Results: 61862024
+Batch 38 Results: 61863197
+Batch 39 Results: 62019719
+Batch 40 Results: 62704988
+Batch 41 Results: 63345670
+Batch 42 Results: 73503462
+Batch 43 Results: 70208474
+Batch 44 Results: 19119729
+Total results Set Size: 2989546486 
+Kernel Time: 7.033937
+Node Laucnher time: 36.074013
+Total Time: 42.682835
+
+Time to read in file: 11.573173
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.019940 
+*********************************
+
+Predicted calcsPerSecond: 1226217508
+SubGraph 0 Layer 0 Selecting RP 32 with Nodes: 50 and calcs: 11762506870000 and stdev 1242338388200.000000:: Predicted time: 0.000000, Actual Time: 0.253948
+Build Time: 0.253948, Calc Time: 9592.512579, reduction -9592.512579
+############################################
+Predicted calcsPerSecond: 3680796192
+SubGraph 0 Layer 1 Selecting RP 33 with Nodes: 2094 and calcs: 1582621330000 and stdev 116485614063.991959:: Predicted time: 0.253948, Actual Time: 42.676235
+Build Time: 42.676235, Calc Time: 429.967118, reduction 9162.545461
+############################################
+Predicted calcsPerSecond: 7362039907
+SubGraph 0 Layer 2 Selecting RP 34 with Nodes: 7453 and calcs: 732706190000 and stdev 17588629338.521320:: Predicted time: 42.676235, Actual Time: 3.815610
+Build Time: 3.815610, Calc Time: 99.524887, reduction 330.442231
+############################################
+Predicted calcsPerSecond: 12884107132
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 18081 and calcs: 483363590000 and stdev 5389773719.375254:: Predicted time: 3.815610, Actual Time: 7.712102
+Build Time: 7.712102, Calc Time: 37.516266, reduction 62.008621
+############################################
+Predicted calcsPerSecond: 21167827729
+SubGraph 0 Layer 4 Selecting RP 36 with Nodes: 23154 and calcs: 432175610000 and stdev 2739849025.222346:: Predicted time: 7.712102, Actual Time: 4.565548
+Build Time: 4.565548, Calc Time: 20.416625, reduction 17.099641
+############################################
+Predicted calcsPerSecond: 33594101412
+SubGraph 0 Layer 5 Selecting RP 16 with Nodes: 24609 and calcs: 426779810736 and stdev 2142680589.362056:: Predicted time: 4.565548, Actual Time: 1.965020
+Build Time: 1.965020, Calc Time: 12.704010, reduction 7.712615
+############################################
+Final graph has 24609 nodes, 426779810736 calcs total
+Node Construct time: 21.093923
+Batchs: 45
+Batch 0 Results: 295198134
+Batch 1 Results: 282291276
+Batch 2 Results: 294861162
+Batch 3 Results: 319758200
+Batch 4 Results: 268218886
+Batch 5 Results: 299167836
+Batch 6 Results: 306289694
+Batch 7 Results: 289686074
+Batch 8 Results: 283757430
+Batch 9 Results: 296761222
+Batch 10 Results: 288778261
+Batch 11 Results: 304288708
+Batch 12 Results: 306575946
+Batch 13 Results: 318835214
+Batch 14 Results: 299507746
+Batch 15 Results: 295681952
+Batch 16 Results: 336807037
+Batch 17 Results: 313579181
+Batch 18 Results: 344018205
+Batch 19 Results: 303499825
+Batch 20 Results: 280899148
+Batch 21 Results: 306502598
+Batch 22 Results: 274358528
+Batch 23 Results: 268572486
+Batch 24 Results: 279807782
+Batch 25 Results: 284779082
+Batch 26 Results: 268855502
+Batch 27 Results: 276373178
+Batch 28 Results: 267211091
+Batch 29 Results: 255326985
+Batch 30 Results: 251936086
+Batch 31 Results: 237227484
+Batch 32 Results: 234164153
+Batch 33 Results: 221065794
+Batch 34 Results: 235015655
+Batch 35 Results: 199050933
+Batch 36 Results: 209784176
+Batch 37 Results: 203425156
+Batch 38 Results: 222067441
+Batch 39 Results: 215577457
+Batch 40 Results: 202269684
+Batch 41 Results: 211080586
+Batch 42 Results: 250776978
+Batch 43 Results: 253104113
+Batch 44 Results: 58851855
+Total results Set Size: 12015645920 
+Kernel Time: 21.709870
+Node Laucnher time: 47.495227
+Total Time: 53.925432
+
+Time to read in file: 11.395890
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.028100 
+*********************************
+
+Predicted calcsPerSecond: 1225683755
+SubGraph 0 Layer 0 Selecting RP 32 with Nodes: 36 and calcs: 16470989470000 and stdev 1791684363055.555664:: Predicted time: 0.000000, Actual Time: 0.247048
+Build Time: 0.247048, Calc Time: 13438.204923, reduction -13438.204923
+############################################
+Predicted calcsPerSecond: 3679619727
+SubGraph 0 Layer 1 Selecting RP 33 with Nodes: 1069 and calcs: 3074054110000 and stdev 228886714031.805145:: Predicted time: 0.247048, Actual Time: 31.796002
+Build Time: 31.796002, Calc Time: 835.427120, reduction 12602.777803
+############################################
+Predicted calcsPerSecond: 7360748223
+SubGraph 0 Layer 2 Selecting RP 34 with Nodes: 3341 and calcs: 1813965570000 and stdev 48033916216.701553:: Predicted time: 31.796002, Actual Time: 3.798285
+Build Time: 3.798285, Calc Time: 246.437660, reduction 588.989459
+############################################
+Predicted calcsPerSecond: 12881535319
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 8150 and calcs: 1391814950000 and stdev 20015003485.889709:: Predicted time: 3.798285, Actual Time: 7.338858
+Build Time: 7.338858, Calc Time: 108.047287, reduction 138.390373
+############################################
+Predicted calcsPerSecond: 21163091403
+SubGraph 0 Layer 4 Selecting RP 36 with Nodes: 11386 and calcs: 1391814950000 and stdev 11427568597.400850:: Predicted time: 7.338858, Actual Time: 3.369263
+Build Time: 3.369263, Calc Time: 65.766146, reduction 42.281142
+############################################
+Predicted calcsPerSecond: 33585182905
+SubGraph 0 Layer 5 Selecting RP 16 with Nodes: 15160 and calcs: 1273504146200 and stdev 8076385858.312617:: Predicted time: 3.369263, Actual Time: 1.263452
+Build Time: 1.263452, Calc Time: 37.918631, reduction 27.847515
+############################################
+Final graph has 15160 nodes, 1273504146200 calcs total
+Node Construct time: 19.379129
+Batchs: 45
+Batch 0 Results: 1021523502
+Batch 1 Results: 1394238081
+Batch 2 Results: 1038944804
+Batch 3 Results: 1433527663
+Batch 4 Results: 977407854
+Batch 5 Results: 1351650049
+Batch 6 Results: 1337894547
+Batch 7 Results: 1208197168
+Batch 8 Results: 1416582479
+Batch 9 Results: 1171411270
+Batch 10 Results: 1275952646
+Batch 11 Results: 1528835304
+Batch 12 Results: 1137658764
+Batch 13 Results: 1347236544
+Batch 14 Results: 1595113925
+Batch 15 Results: 999273034
+Batch 16 Results: 1473467132
+Batch 17 Results: 1367274769
+Batch 18 Results: 1510143134
+Batch 19 Results: 1376071793
+Batch 20 Results: 1153211307
+Batch 21 Results: 1278618995
+Batch 22 Results: 1053556921
+Batch 23 Results: 1199486545
+Batch 24 Results: 965128104
+Batch 25 Results: 1259688440
+Batch 26 Results: 995460226
+Batch 27 Results: 1066209447
+Batch 28 Results: 1139228685
+Batch 29 Results: 974159092
+Batch 30 Results: 935358675
+Batch 31 Results: 924702569
+Batch 32 Results: 807449491
+Batch 33 Results: 730058100
+Batch 34 Results: 764602810
+Batch 35 Results: 665903182
+Batch 36 Results: 672893517
+Batch 37 Results: 694914301
+Batch 38 Results: 741319877
+Batch 39 Results: 657771749
+Batch 40 Results: 647442604
+Batch 41 Results: 675964921
+Batch 42 Results: 819574974
+Batch 43 Results: 733805339
+Batch 44 Results: 165629709
+Total results Set Size: 47684544042 
+Kernel Time: 76.165539
+Node Laucnher time: 100.135086
+Total Time: 106.720629
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+
+Time to read in file: 0.580372
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.017030 
+*********************************
+
+Predicted calcsPerSecond: 5690547266
+SubGraph 0 Layer 0 Selecting RP 34 with Nodes: 5 and calcs: 14755074659050 and stdev 526196533532.000000:: Predicted time: 0.000000, Actual Time: 0.014429
+Build Time: 0.014429, Calc Time: 2592.909604, reduction -2592.909604
+############################################
+Predicted calcsPerSecond: 17236094100
+SubGraph 0 Layer 1 Selecting RP 33 with Nodes: 30 and calcs: 8887447420466 and stdev 385959963610.666687:: Predicted time: 0.014429, Actual Time: 1.696497
+Build Time: 1.696497, Calc Time: 515.630013, reduction 2077.279591
+############################################
+Predicted calcsPerSecond: 34547017471
+SubGraph 0 Layer 2 Selecting RP 35 with Nodes: 150 and calcs: 5292029641258 and stdev 142068158471.333221:: Predicted time: 1.696497, Actual Time: 1.514682
+Build Time: 1.514682, Calc Time: 153.183401, reduction 362.446611
+############################################
+Predicted calcsPerSecond: 60523519071
+SubGraph 0 Layer 3 Selecting RP 32 with Nodes: 875 and calcs: 3365674174386 and stdev 45922313250.571419:: Predicted time: 1.514682, Actual Time: 1.532084
+Build Time: 1.532084, Calc Time: 55.609360, reduction 97.574041
+############################################
+Predicted calcsPerSecond: 99372412014
+SubGraph 0 Layer 4 Selecting RP 36 with Nodes: 3239 and calcs: 2077589206110 and stdev 14273134825.304096:: Predicted time: 1.532084, Actual Time: 1.318676
+Build Time: 1.318676, Calc Time: 20.907103, reduction 34.702258
+############################################
+Predicted calcsPerSecond: 157777685797
+SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 15084 and calcs: 1408856878678 and stdev 4113224285.063374:: Predicted time: 1.318676, Actual Time: 2.424752
+Build Time: 2.424752, Calc Time: 8.929380, reduction 11.977723
+############################################
+Final graph has 15084 nodes, 1408856878678 calcs total
+Node Construct time: 7.187070
+Batchs: 20
+Batch 0 Results: 52848035
+Batch 1 Results: 58640788
+Batch 2 Results: 72123443
+Batch 3 Results: 78251087
+Batch 4 Results: 71898631
+Batch 5 Results: 73356809
+Batch 6 Results: 60689286
+Batch 7 Results: 67856392
+Batch 8 Results: 64642533
+Batch 9 Results: 69214099
+Batch 10 Results: 61897336
+Batch 11 Results: 70178393
+Batch 12 Results: 74567791
+Batch 13 Results: 67321250
+Batch 14 Results: 68288247
+Batch 15 Results: 62011237
+Batch 16 Results: 69441017
+Batch 17 Results: 64956543
+Batch 18 Results: 64997316
+Batch 19 Results: 3351017
+Total results Set Size: 1276531250 
+Kernel Time: 21.650960
+Node Laucnher time: 30.180045
+Total Time: 31.028860
+
+Time to read in file: 0.526962
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.020780 
+*********************************
+
+Predicted calcsPerSecond: 5599292944
+SubGraph 0 Layer 0 Selecting RP 36 with Nodes: 4 and calcs: 17067368949010 and stdev 358846002238.000000:: Predicted time: 0.000000, Actual Time: 0.014123
+Build Time: 0.014123, Calc Time: 3048.129312, reduction -3048.129312
+############################################
+Predicted calcsPerSecond: 16992159990
+SubGraph 0 Layer 1 Selecting RP 35 with Nodes: 16 and calcs: 11619103837582 and stdev 189717306236.000000:: Predicted time: 0.014123, Actual Time: 1.112683
+Build Time: 1.112683, Calc Time: 683.792046, reduction 2364.337266
+############################################
+Predicted calcsPerSecond: 34161186838
+SubGraph 0 Layer 2 Selecting RP 33 with Nodes: 80 and calcs: 8131121601918 and stdev 154892263950.000000:: Predicted time: 1.112683, Actual Time: 0.904261
+Build Time: 0.904261, Calc Time: 238.022222, reduction 445.769823
+############################################
+Predicted calcsPerSecond: 59938096468
+SubGraph 0 Layer 3 Selecting RP 32 with Nodes: 400 and calcs: 5922143431688 and stdev 73718337144.000000:: Predicted time: 0.904261, Actual Time: 1.566664
+Build Time: 1.566664, Calc Time: 98.804329, reduction 139.217893
+############################################
+Predicted calcsPerSecond: 98561841724
+SubGraph 0 Layer 4 Selecting RP 34 with Nodes: 1354 and calcs: 4004971104728 and stdev 31956443543.423988:: Predicted time: 1.566664, Actual Time: 0.784866
+Build Time: 0.784866, Calc Time: 40.634094, reduction 58.170236
+############################################
+Predicted calcsPerSecond: 156574366438
+SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 7618 and calcs: 2908017156964 and stdev 11775469574.080389:: Predicted time: 0.784866, Actual Time: 1.147449
+Build Time: 1.147449, Calc Time: 18.572754, reduction 22.061340
+############################################
+Final graph has 7618 nodes, 2908017156964 calcs total
+Node Construct time: 5.893930
+Batchs: 20
+Batch 0 Results: 217147176
+Batch 1 Results: 268918238
+Batch 2 Results: 237683230
+Batch 3 Results: 237337380
+Batch 4 Results: 269456862
+Batch 5 Results: 280999684
+Batch 6 Results: 286735959
+Batch 7 Results: 305927548
+Batch 8 Results: 291313980
+Batch 9 Results: 295925521
+Batch 10 Results: 278519894
+Batch 11 Results: 253802692
+Batch 12 Results: 239566559
+Batch 13 Results: 274925143
+Batch 14 Results: 243457542
+Batch 15 Results: 315051741
+Batch 16 Results: 290381234
+Batch 17 Results: 271593023
+Batch 18 Results: 199987331
+Batch 19 Results: 20173315
+Total results Set Size: 5078904052 
+Kernel Time: 48.589009
+Node Laucnher time: 55.771144
+Total Time: 56.625049
+
+Time to read in file: 0.534930
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.025555 
+*********************************
+
+Predicted calcsPerSecond: 5627796032
+SubGraph 0 Layer 0 Selecting RP 36 with Nodes: 4 and calcs: 19363219029898 and stdev 1505451602186.000000:: Predicted time: 0.000000, Actual Time: 0.014062
+Build Time: 0.014062, Calc Time: 3440.639803, reduction -3440.639803
+############################################
+Predicted calcsPerSecond: 17080380409
+SubGraph 0 Layer 1 Selecting RP 35 with Nodes: 16 and calcs: 14951652032190 and stdev 839942224296.000000:: Predicted time: 0.014062, Actual Time: 1.388891
+Build Time: 1.388891, Calc Time: 875.369967, reduction 2565.269836
+############################################
+Predicted calcsPerSecond: 34246850655
+SubGraph 0 Layer 2 Selecting RP 33 with Nodes: 64 and calcs: 11782956458644 and stdev 370207507120.000000:: Predicted time: 1.388891, Actual Time: 0.870190
+Build Time: 0.870190, Calc Time: 344.059563, reduction 531.310404
+############################################
+Predicted calcsPerSecond: 60068240848
+SubGraph 0 Layer 3 Selecting RP 32 with Nodes: 256 and calcs: 9538474712648 and stdev 163727152862.000000:: Predicted time: 0.870190, Actual Time: 0.584399
+Build Time: 0.584399, Calc Time: 158.793975, reduction 185.265588
+############################################
+Predicted calcsPerSecond: 98778466489
+SubGraph 0 Layer 4 Selecting RP 34 with Nodes: 955 and calcs: 7203333306900 and stdev 74617680310.795837:: Predicted time: 0.584399, Actual Time: 1.016663
+Build Time: 1.016663, Calc Time: 72.924126, reduction 85.869849
+############################################
+Predicted calcsPerSecond: 156846435120
+SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 4733 and calcs: 5785461748200 and stdev 30090976316.949516:: Predicted time: 1.016663, Actual Time: 0.738930
+Build Time: 0.738930, Calc Time: 36.886154, reduction 36.037972
+############################################
+Final graph has 4733 nodes, 5785461748200 calcs total
+Node Construct time: 5.682981
+Batchs: 20
+Batch 0 Results: 821589414
+Batch 1 Results: 789773816
+Batch 2 Results: 1092912820
+Batch 3 Results: 1106783123
+Batch 4 Results: 1088356546
+Batch 5 Results: 1178634368
+Batch 6 Results: 1257771725
+Batch 7 Results: 1120825660
+Batch 8 Results: 1028844157
+Batch 9 Results: 1178571636
+Batch 10 Results: 1114625877
+Batch 11 Results: 1192893033
+Batch 12 Results: 1019909917
+Batch 13 Results: 969091813
+Batch 14 Results: 979438649
+Batch 15 Results: 936545919
+Batch 16 Results: 1065236223
+Batch 17 Results: 1101009552
+Batch 18 Results: 978994129
+Batch 19 Results: 274847101
+Total results Set Size: 20296655478 
+Kernel Time: 105.697107
+Node Laucnher time: 112.695807
+Total Time: 113.560523
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+
+Time to read in file: 2.996105
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.049186 
+*********************************
+
+Predicted calcsPerSecond: 1270562179
+SubGraph 0 Layer 0 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.000000, Actual Time: 0.074299
+Build Time: 0.074299, Calc Time: 95233.434459, reduction -95233.434459
+############################################
+Predicted calcsPerSecond: 3819407628
+SubGraph 0 Layer 1 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.074299, Actual Time: 0.242160
+Build Time: 0.242160, Calc Time: 31680.305373, reduction 63553.129086
+############################################
+Predicted calcsPerSecond: 7641999022
+SubGraph 0 Layer 2 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.242160, Actual Time: 0.200360
+Build Time: 0.200360, Calc Time: 15833.553453, reduction 15846.751921
+############################################
+Predicted calcsPerSecond: 13376396149
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.200360, Actual Time: 0.254097
+Build Time: 0.254097, Calc Time: 9045.784728, reduction 6787.768725
+############################################
+Predicted calcsPerSecond: 21976927423
+SubGraph 0 Layer 4 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.254097, Actual Time: 0.257036
+Build Time: 0.257036, Calc Time: 5505.774200, reduction 3540.010528
+############################################
+Predicted calcsPerSecond: 34877387649
+SubGraph 0 Layer 5 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.257036, Actual Time: 0.383296
+Build Time: 0.383296, Calc Time: 3469.296532, reduction 2036.477668
+############################################
+Final graph has 2 nodes, 121000000000000 calcs total
+Node Construct time: 10.328996
+Batchs: 589
+Batch 0 Results: 3434864
+Batch 1 Results: 3537414
+Batch 2 Results: 3528291
+Batch 3 Results: 3440056
+Batch 4 Results: 3476131
+Batch 5 Results: 3502501
+Batch 6 Results: 3452896
+Batch 7 Results: 3513638
+Batch 8 Results: 3506016
+Batch 9 Results: 3629515
+Batch 10 Results: 3482024
+Batch 11 Results: 3350403
+Batch 12 Results: 3491650
+Batch 13 Results: 3504256
+Batch 14 Results: 3492679
+Batch 15 Results: 3424002
+Batch 16 Results: 3513871
+Batch 17 Results: 3416761
+Batch 18 Results: 3416585
+Batch 19 Results: 3511938
+Batch 20 Results: 3428330
+Batch 21 Results: 3487563
+Batch 22 Results: 3427225
+Batch 23 Results: 3528256
+Batch 24 Results: 3465836
+Batch 25 Results: 3475358
+Batch 26 Results: 3490381
+Batch 27 Results: 3426505
+Batch 28 Results: 3403831
+Batch 29 Results: 3416866
+Batch 30 Results: 3536647
+Batch 31 Results: 3416891
+Batch 32 Results: 3499694
+Batch 33 Results: 3463497
+Batch 34 Results: 3411743
+Batch 35 Results: 3429240
+Batch 36 Results: 3444691
+Batch 37 Results: 3443455
+Batch 38 Results: 3435053
+Batch 39 Results: 3429159
+Batch 40 Results: 3453557
+Batch 41 Results: 3467640
+Batch 42 Results: 3561382
+Batch 43 Results: 3475670
+Batch 44 Results: 3454567
+Batch 45 Results: 3520182
+Batch 46 Results: 3463388
+Batch 47 Results: 3509575
+Batch 48 Results: 3488117
+Batch 49 Results: 3505198
+Batch 50 Results: 3465233
+Batch 51 Results: 3462880
+Batch 52 Results: 3421243
+Batch 53 Results: 3472572
+Batch 54 Results: 3531160
+Batch 55 Results: 3501848
+Batch 56 Results: 3496805
+Batch 57 Results: 3504872
+Batch 58 Results: 3454304
+Batch 59 Results: 3527161
+Batch 60 Results: 3468661
+Batch 61 Results: 3461246
+Batch 62 Results: 3372965
+Batch 63 Results: 3440428
+Batch 64 Results: 3530073
+Batch 65 Results: 3486051
+Batch 66 Results: 3429998
+Batch 67 Results: 3433954
+Batch 68 Results: 3439675
+Batch 69 Results: 3423773
+Batch 70 Results: 3529917
+Batch 71 Results: 3429868
+Batch 72 Results: 3426642
+Batch 73 Results: 3446499
+Batch 74 Results: 3413499
+Batch 75 Results: 3427020
+Batch 76 Results: 3431767
+Batch 77 Results: 3484693
+Batch 78 Results: 3457182
+Batch 79 Results: 3551001
+Batch 80 Results: 3392870
+Batch 81 Results: 3418823
+Batch 82 Results: 3437954
+Batch 83 Results: 3484360
+Batch 84 Results: 3462457
+Batch 85 Results: 3462547
+Batch 86 Results: 3451915
+Batch 87 Results: 3491071
+Batch 88 Results: 3523428
+Batch 89 Results: 3394567
+Batch 90 Results: 3501119
+Batch 91 Results: 3479946
+Batch 92 Results: 3536049
+Batch 93 Results: 3441331
+Batch 94 Results: 3429983
+Batch 95 Results: 3512115
+Batch 96 Results: 3465460
+Batch 97 Results: 3444388
+Batch 98 Results: 3467121
+Batch 99 Results: 3462190
+Batch 100 Results: 3551351
+Batch 101 Results: 3484485
+Batch 102 Results: 3481015
+Batch 103 Results: 3557092
+Batch 104 Results: 3503821
+Batch 105 Results: 3414525
+Batch 106 Results: 3422227
+Batch 107 Results: 3477142
+Batch 108 Results: 3479247
+Batch 109 Results: 3396061
+Batch 110 Results: 3533741
+Batch 111 Results: 3501930
+Batch 112 Results: 3516693
+Batch 113 Results: 3443926
+Batch 114 Results: 3523206
+Batch 115 Results: 3437125
+Batch 116 Results: 3465155
+Batch 117 Results: 3474458
+Batch 118 Results: 3396206
+Batch 119 Results: 3434081
+Batch 120 Results: 3469692
+Batch 121 Results: 3472623
+Batch 122 Results: 3451679
+Batch 123 Results: 3429632
+Batch 124 Results: 3470212
+Batch 125 Results: 3495926
+Batch 126 Results: 3466440
+Batch 127 Results: 3405884
+Batch 128 Results: 3459286
+Batch 129 Results: 3546716
+Batch 130 Results: 3451302
+Batch 131 Results: 3421756
+Batch 132 Results: 3473395
+Batch 133 Results: 3441240
+Batch 134 Results: 3545755
+Batch 135 Results: 3460007
+Batch 136 Results: 3469869
+Batch 137 Results: 3465588
+Batch 138 Results: 3489574
+Batch 139 Results: 3512446
+Batch 140 Results: 3428546
+Batch 141 Results: 3418275
+Batch 142 Results: 3398543
+Batch 143 Results: 3383664
+Batch 144 Results: 3491291
+Batch 145 Results: 3453787
+Batch 146 Results: 3409946
+Batch 147 Results: 3487455
+Batch 148 Results: 3444168
+Batch 149 Results: 3424358
+Batch 150 Results: 3381100
+Batch 151 Results: 3360632
+Batch 152 Results: 3457727
+Batch 153 Results: 3407614
+Batch 154 Results: 3420883
+Batch 155 Results: 3466217
+Batch 156 Results: 3541374
+Batch 157 Results: 3514718
+Batch 158 Results: 3415728
+Batch 159 Results: 3447417
+Batch 160 Results: 3475877
+Batch 161 Results: 3404574
+Batch 162 Results: 3409961
+Batch 163 Results: 3450866
+Batch 164 Results: 3441314
+Batch 165 Results: 3393645
+Batch 166 Results: 3506605
+Batch 167 Results: 3426842
+Batch 168 Results: 3437507
+Batch 169 Results: 3469516
+Batch 170 Results: 3456945
+Batch 171 Results: 3439715
+Batch 172 Results: 3480195
+Batch 173 Results: 3538729
+Batch 174 Results: 3430411
+Batch 175 Results: 3372318
+Batch 176 Results: 3527443
+Batch 177 Results: 3449004
+Batch 178 Results: 3436288
+Batch 179 Results: 3473589
+Batch 180 Results: 3475107
+Batch 181 Results: 3441820
+Batch 182 Results: 3517715
+Batch 183 Results: 3443296
+Batch 184 Results: 3377903
+Batch 185 Results: 3534521
+Batch 186 Results: 3463684
+Batch 187 Results: 3458261
+Batch 188 Results: 3537936
+Batch 189 Results: 3505240
+Batch 190 Results: 3537296
+Batch 191 Results: 3483780
+Batch 192 Results: 3543170
+Batch 193 Results: 3467880
+Batch 194 Results: 3376932
+Batch 195 Results: 3509030
+Batch 196 Results: 3406816
+Batch 197 Results: 3510299
+Batch 198 Results: 3471346
+Batch 199 Results: 3408908
+Batch 200 Results: 3488165
+Batch 201 Results: 3486118
+Batch 202 Results: 3495763
+Batch 203 Results: 3470803
+Batch 204 Results: 3506545
+Batch 205 Results: 3449314
+Batch 206 Results: 3468832
+Batch 207 Results: 3425380
+Batch 208 Results: 3493925
+Batch 209 Results: 3468401
+Batch 210 Results: 3508696
+Batch 211 Results: 3505789
+Batch 212 Results: 3456659
+Batch 213 Results: 3459626
+Batch 214 Results: 3476540
+Batch 215 Results: 3468751
+Batch 216 Results: 3506675
+Batch 217 Results: 3487736
+Batch 218 Results: 3457842
+Batch 219 Results: 3504862
+Batch 220 Results: 3430822
+Batch 221 Results: 3437825
+Batch 222 Results: 3509911
+Batch 223 Results: 3470365
+Batch 224 Results: 3469717
+Batch 225 Results: 3466848
+Batch 226 Results: 3493732
+Batch 227 Results: 3477009
+Batch 228 Results: 3540296
+Batch 229 Results: 3474141
+Batch 230 Results: 3388592
+Batch 231 Results: 3601332
+Batch 232 Results: 3492213
+Batch 233 Results: 3492080
+Batch 234 Results: 3447718
+Batch 235 Results: 3509864
+Batch 236 Results: 3478986
+Batch 237 Results: 3526204
+Batch 238 Results: 3466435
+Batch 239 Results: 3397287
+Batch 240 Results: 3464875
+Batch 241 Results: 3398595
+Batch 242 Results: 3436107
+Batch 243 Results: 3431419
+Batch 244 Results: 3441283
+Batch 245 Results: 3504393
+Batch 246 Results: 3421182
+Batch 247 Results: 3463287
+Batch 248 Results: 3481370
+Batch 249 Results: 3452457
+Batch 250 Results: 3457864
+Batch 251 Results: 3444534
+Batch 252 Results: 3535947
+Batch 253 Results: 3426700
+Batch 254 Results: 3473810
+Batch 255 Results: 3445328
+Batch 256 Results: 3528300
+Batch 257 Results: 3458750
+Batch 258 Results: 3457147
+Batch 259 Results: 3450277
+Batch 260 Results: 3481569
+Batch 261 Results: 3499733
+Batch 262 Results: 3458606
+Batch 263 Results: 3472054
+Batch 264 Results: 3550198
+Batch 265 Results: 3453826
+Batch 266 Results: 3466481
+Batch 267 Results: 3393258
+Batch 268 Results: 3516182
+Batch 269 Results: 3436249
+Batch 270 Results: 3479086
+Batch 271 Results: 3485786
+Batch 272 Results: 3466801
+Batch 273 Results: 3419499
+Batch 274 Results: 3421085
+Batch 275 Results: 3461710
+Batch 276 Results: 3579368
+Batch 277 Results: 3433338
+Batch 278 Results: 3382428
+Batch 279 Results: 3424463
+Batch 280 Results: 3472038
+Batch 281 Results: 3462398
+Batch 282 Results: 3462936
+Batch 283 Results: 3432237
+Batch 284 Results: 3523690
+Batch 285 Results: 3438563
+Batch 286 Results: 3442433
+Batch 287 Results: 3473630
+Batch 288 Results: 3455644
+Batch 289 Results: 3480115
+Batch 290 Results: 3431800
+Batch 291 Results: 3447838
+Batch 292 Results: 3382788
+Batch 293 Results: 3454427
+Batch 294 Results: 3434174
+Batch 295 Results: 3403657
+Batch 296 Results: 3470249
+Batch 297 Results: 3444237
+Batch 298 Results: 3437985
+Batch 299 Results: 3483645
+Batch 300 Results: 3438265
+Batch 301 Results: 3471169
+Batch 302 Results: 3404646
+Batch 303 Results: 3403330
+Batch 304 Results: 3407258
+Batch 305 Results: 3464762
+Batch 306 Results: 3460293
+Batch 307 Results: 3490927
+Batch 308 Results: 3506159
+Batch 309 Results: 3449344
+Batch 310 Results: 3510358
+Batch 311 Results: 3432591
+Batch 312 Results: 3486382
+Batch 313 Results: 3463219
+Batch 314 Results: 3456939
+Batch 315 Results: 3483760
+Batch 316 Results: 3467726
+Batch 317 Results: 3462184
+Batch 318 Results: 3435938
+Batch 319 Results: 3357401
+Batch 320 Results: 3356958
+Batch 321 Results: 3471570
+Batch 322 Results: 3530319
+Batch 323 Results: 3448006
+Batch 324 Results: 3400730
+Batch 325 Results: 3552205
+Batch 326 Results: 3391629
+Batch 327 Results: 3438121
+Batch 328 Results: 3413288
+Batch 329 Results: 3427927
+Batch 330 Results: 3537395
+Batch 331 Results: 3465133
+Batch 332 Results: 3465585
+Batch 333 Results: 3475619
+Batch 334 Results: 3454575
+Batch 335 Results: 3437106
+Batch 336 Results: 3446365
+Batch 337 Results: 3474533
+Batch 338 Results: 3453614
+Batch 339 Results: 3474894
+Batch 340 Results: 3450718
+Batch 341 Results: 3488005
+Batch 342 Results: 3397042
+Batch 343 Results: 3405387
+Batch 344 Results: 3516150
+Batch 345 Results: 3452101
+Batch 346 Results: 3615235
+Batch 347 Results: 6648059
+Batch 348 Results: 6653029
+Batch 349 Results: 6649986
+Batch 350 Results: 6768055
+Batch 351 Results: 6800225
+Batch 352 Results: 6674652
+Batch 353 Results: 6714213
+Batch 354 Results: 6647859
+Batch 355 Results: 6717251
+Batch 356 Results: 6799989
+Batch 357 Results: 6724203
+Batch 358 Results: 6704445
+Batch 359 Results: 6711415
+Batch 360 Results: 6814760
+Batch 361 Results: 6719699
+Batch 362 Results: 6734590
+Batch 363 Results: 6697376
+Batch 364 Results: 6746797
+Batch 365 Results: 6690045
+Batch 366 Results: 6686428
+Batch 367 Results: 6592003
+Batch 368 Results: 6701882
+Batch 369 Results: 6618010
+Batch 370 Results: 6840001
+Batch 371 Results: 6855474
+Batch 372 Results: 6823278
+Batch 373 Results: 6832333
+Batch 374 Results: 6702045
+Batch 375 Results: 6741634
+Batch 376 Results: 6741828
+Batch 377 Results: 6720625
+Batch 378 Results: 6667376
+Batch 379 Results: 6741246
+Batch 380 Results: 6823073
+Batch 381 Results: 6675845
+Batch 382 Results: 6840185
+Batch 383 Results: 6766382
+Batch 384 Results: 6916300
+Batch 385 Results: 6825415
+Batch 386 Results: 6872513
+Batch 387 Results: 6727588
+Batch 388 Results: 6696375
+Batch 389 Results: 6688122
+Batch 390 Results: 6655139
+Batch 391 Results: 6748384
+Batch 392 Results: 6763407
+Batch 393 Results: 6565183
+Batch 394 Results: 6626140
+Batch 395 Results: 6735604
+Batch 396 Results: 6804833
+Batch 397 Results: 6696613
+Batch 398 Results: 6772462
+Batch 399 Results: 6774962
+Batch 400 Results: 6823194
+Batch 401 Results: 6721623
+Batch 402 Results: 6732879
+Batch 403 Results: 6738519
+Batch 404 Results: 6684620
+Batch 405 Results: 6743577
+Batch 406 Results: 6860124
+Batch 407 Results: 6587231
+Batch 408 Results: 6751847
+Batch 409 Results: 6559078
+Batch 410 Results: 6694814
+Batch 411 Results: 6709536
+Batch 412 Results: 6783203
+Batch 413 Results: 6661867
+Batch 414 Results: 6681017
+Batch 415 Results: 6615069
+Batch 416 Results: 6755395
+Batch 417 Results: 6790991
+Batch 418 Results: 6650588
+Batch 419 Results: 6683373
+Batch 420 Results: 6802145
+Batch 421 Results: 6759946
+Batch 422 Results: 6699691
+Batch 423 Results: 6825225
+Batch 424 Results: 6737811
+Batch 425 Results: 6745534
+Batch 426 Results: 6644727
+Batch 427 Results: 6795954
+Batch 428 Results: 6712358
+Batch 429 Results: 6812148
+Batch 430 Results: 6753553
+Batch 431 Results: 6717438
+Batch 432 Results: 6919958
+Batch 433 Results: 6735814
+Batch 434 Results: 6840851
+Batch 435 Results: 6805539
+Batch 436 Results: 6762261
+Batch 437 Results: 6775735
+Batch 438 Results: 6775814
+Batch 439 Results: 6754398
+Batch 440 Results: 6727061
+Batch 441 Results: 6697521
+Batch 442 Results: 6650086
+Batch 443 Results: 6730234
+Batch 444 Results: 6649365
+Batch 445 Results: 6610433
+Batch 446 Results: 6612983
+Batch 447 Results: 6728087
+Batch 448 Results: 6721451
+Batch 449 Results: 6592302
+Batch 450 Results: 6773984
+Batch 451 Results: 6741142
+Batch 452 Results: 6809981
+Batch 453 Results: 6684295
+Batch 454 Results: 6786477
+Batch 455 Results: 6796088
+Batch 456 Results: 6659244
+Batch 457 Results: 6862556
+Batch 458 Results: 6766525
+Batch 459 Results: 6743225
+Batch 460 Results: 6703026
+Batch 461 Results: 6684910
+Batch 462 Results: 6637385
+Batch 463 Results: 6733350
+Batch 464 Results: 6658106
+Batch 465 Results: 6736893
+Batch 466 Results: 6676429
+Batch 467 Results: 6682619
+Batch 468 Results: 6830334
+Batch 469 Results: 6823521
+Batch 470 Results: 6719266
+Batch 471 Results: 6768674
+Batch 472 Results: 6828293
+Batch 473 Results: 6742682
+Batch 474 Results: 6765930
+Batch 475 Results: 6654580
+Batch 476 Results: 6710334
+Batch 477 Results: 6778137
+Batch 478 Results: 6810853
+Batch 479 Results: 6845499
+Batch 480 Results: 6738642
+Batch 481 Results: 6834985
+Batch 482 Results: 6646987
+Batch 483 Results: 6666104
+Batch 484 Results: 6625852
+Batch 485 Results: 6674878
+Batch 486 Results: 6633300
+Batch 487 Results: 6498846
+Batch 488 Results: 6865341
+Batch 489 Results: 6774043
+Batch 490 Results: 6807905
+Batch 491 Results: 6661958
+Batch 492 Results: 6767765
+Batch 493 Results: 6795194
+Batch 494 Results: 6711089
+Batch 495 Results: 6790381
+Batch 496 Results: 6676442
+Batch 497 Results: 6710186
+Batch 498 Results: 6706103
+Batch 499 Results: 6692316
+Batch 500 Results: 6695691
+Batch 501 Results: 6723568
+Batch 502 Results: 6747981
+Batch 503 Results: 6749635
+Batch 504 Results: 6660040
+Batch 505 Results: 6755343
+Batch 506 Results: 6807218
+Batch 507 Results: 6702505
+Batch 508 Results: 6685145
+Batch 509 Results: 6701435
+Batch 510 Results: 6748661
+Batch 511 Results: 6733662
+Batch 512 Results: 6739362
+Batch 513 Results: 6736156
+Batch 514 Results: 6662764
+Batch 515 Results: 6843358
+Batch 516 Results: 6701667
+Batch 517 Results: 6730104
+Batch 518 Results: 6698913
+Batch 519 Results: 6652178
+Batch 520 Results: 6859647
+Batch 521 Results: 6729437
+Batch 522 Results: 6712114
+Batch 523 Results: 6701359
+Batch 524 Results: 6836315
+Batch 525 Results: 6692329
+Batch 526 Results: 6590987
+Batch 527 Results: 6721319
+Batch 528 Results: 6823776
+Batch 529 Results: 6797809
+Batch 530 Results: 6641129
+Batch 531 Results: 6811166
+Batch 532 Results: 6612231
+Batch 533 Results: 6696085
+Batch 534 Results: 6748315
+Batch 535 Results: 6732843
+Batch 536 Results: 6602441
+Batch 537 Results: 6733859
+Batch 538 Results: 6736561
+Batch 539 Results: 6684306
+Batch 540 Results: 6738256
+Batch 541 Results: 6775392
+Batch 542 Results: 6663745
+Batch 543 Results: 6647537
+Batch 544 Results: 6742270
+Batch 545 Results: 6721931
+Batch 546 Results: 6776256
+Batch 547 Results: 6688658
+Batch 548 Results: 6825662
+Batch 549 Results: 6746096
+Batch 550 Results: 6683798
+Batch 551 Results: 6714154
+Batch 552 Results: 6724921
+Batch 553 Results: 6665429
+Batch 554 Results: 6727556
+Batch 555 Results: 6797308
+Batch 556 Results: 6707165
+Batch 557 Results: 6683990
+Batch 558 Results: 6740330
+Batch 559 Results: 6796531
+Batch 560 Results: 6678956
+Batch 561 Results: 6756997
+Batch 562 Results: 6695672
+Batch 563 Results: 6735901
+Batch 564 Results: 6701760
+Batch 565 Results: 6839641
+Batch 566 Results: 6670158
+Batch 567 Results: 6684346
+Batch 568 Results: 6673530
+Batch 569 Results: 6702141
+Batch 570 Results: 6826898
+Batch 571 Results: 6739565
+Batch 572 Results: 6743140
+Batch 573 Results: 6817223
+Batch 574 Results: 6649142
+Batch 575 Results: 6822495
+Batch 576 Results: 6621162
+Batch 577 Results: 6699241
+Batch 578 Results: 6636522
+Batch 579 Results: 6726519
+Batch 580 Results: 6768896
+Batch 581 Results: 6759384
+Batch 582 Results: 6653967
+Batch 583 Results: 6712034
+Batch 584 Results: 6809828
+Batch 585 Results: 6740315
+Batch 586 Results: 6697397
+Batch 587 Results: 6856018
+Batch 588 Results: 5331855
+Total results Set Size: 2829176458 
+Kernel Time: 4239.500699
+Node Laucnher time: 4275.437482
+Total Time: 4278.670234
+
+Time to read in file: 2.912996
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.055580 
+*********************************
+
+Predicted calcsPerSecond: 1270791330
+SubGraph 0 Layer 0 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.000000, Actual Time: 0.074285
+Build Time: 0.074285, Calc Time: 95216.261823, reduction -95216.261823
+############################################
+Predicted calcsPerSecond: 3821598072
+SubGraph 0 Layer 1 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.074285, Actual Time: 0.257632
+Build Time: 0.257632, Calc Time: 31662.147018, reduction 63554.114805
+############################################
+Predicted calcsPerSecond: 7645485015
+SubGraph 0 Layer 2 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.257632, Actual Time: 0.478989
+Build Time: 0.478989, Calc Time: 15826.334073, reduction 15835.812945
+############################################
+Predicted calcsPerSecond: 13380228595
+SubGraph 0 Layer 3 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.478989, Actual Time: 0.396606
+Build Time: 0.396606, Calc Time: 9043.193780, reduction 6783.140294
+############################################
+Predicted calcsPerSecond: 21984049951
+SubGraph 0 Layer 4 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.396606, Actual Time: 0.357755
+Build Time: 0.357755, Calc Time: 5503.990405, reduction 3539.203374
+############################################
+Predicted calcsPerSecond: 34888686789
+SubGraph 0 Layer 5 Selecting RP 35 with Nodes: 2 and calcs: 121000000000000 and stdev 1927893897728.000000:: Predicted time: 0.357755, Actual Time: 0.366330
+Build Time: 0.366330, Calc Time: 3468.172956, reduction 2035.817449
+############################################
+Final graph has 2 nodes, 121000000000000 calcs total
+Node Construct time: 10.621280
+Batchs: 555
+Batch 0 Results: 14934999
+Batch 1 Results: 15285953
+Batch 2 Results: 15214132
+Batch 3 Results: 14873319
+Batch 4 Results: 15238221
+Batch 5 Results: 15000551
+Batch 6 Results: 15069882
+Batch 7 Results: 15086510
+Batch 8 Results: 15437304
+Batch 9 Results: 15308065
+Batch 10 Results: 14669123
+Batch 11 Results: 15025408
+Batch 12 Results: 15151301
+Batch 13 Results: 15157386
+Batch 14 Results: 14884220
+Batch 15 Results: 15118616
+Batch 16 Results: 14836850
+Batch 17 Results: 14857656
+Batch 18 Results: 15109130
+Batch 19 Results: 14946962
+Batch 20 Results: 15110893
+Batch 21 Results: 14982472
+Batch 22 Results: 15338287
+Batch 23 Results: 15027696
+Batch 24 Results: 14985929
+Batch 25 Results: 15196838
+Batch 26 Results: 14758415
+Batch 27 Results: 14760684
+Batch 28 Results: 15209486
+Batch 29 Results: 14937907
+Batch 30 Results: 15106012
+Batch 31 Results: 14974867
+Batch 32 Results: 14873851
+Batch 33 Results: 14939549
+Batch 34 Results: 14840191
+Batch 35 Results: 14879575
+Batch 36 Results: 15056495
+Batch 37 Results: 14802360
+Batch 38 Results: 15062985
+Batch 39 Results: 15194168
+Batch 40 Results: 15174088
+Batch 41 Results: 15165630
+Batch 42 Results: 14911113
+Batch 43 Results: 15261637
+Batch 44 Results: 15172102
+Batch 45 Results: 15103220
+Batch 46 Results: 15172345
+Batch 47 Results: 15029471
+Batch 48 Results: 14965449
+Batch 49 Results: 14860196
+Batch 50 Results: 15125698
+Batch 51 Results: 15138531
+Batch 52 Results: 15319145
+Batch 53 Results: 14966017
+Batch 54 Results: 15256393
+Batch 55 Results: 15149360
+Batch 56 Results: 15056040
+Batch 57 Results: 14916455
+Batch 58 Results: 14948563
+Batch 59 Results: 14748785
+Batch 60 Results: 15097599
+Batch 61 Results: 15214985
+Batch 62 Results: 14794264
+Batch 63 Results: 14911343
+Batch 64 Results: 14881664
+Batch 65 Results: 14979238
+Batch 66 Results: 15178778
+Batch 67 Results: 14937482
+Batch 68 Results: 14735705
+Batch 69 Results: 14976367
+Batch 70 Results: 14868451
+Batch 71 Results: 14897257
+Batch 72 Results: 15007202
+Batch 73 Results: 15056820
+Batch 74 Results: 15145102
+Batch 75 Results: 15011412
+Batch 76 Results: 14910916
+Batch 77 Results: 14842197
+Batch 78 Results: 15113672
+Batch 79 Results: 15033539
+Batch 80 Results: 15063425
+Batch 81 Results: 15035979
+Batch 82 Results: 15129945
+Batch 83 Results: 15084676
+Batch 84 Results: 14676275
+Batch 85 Results: 15346411
+Batch 86 Results: 15074311
+Batch 87 Results: 15258204
+Batch 88 Results: 14958587
+Batch 89 Results: 14946221
+Batch 90 Results: 15269579
+Batch 91 Results: 14858621
+Batch 92 Results: 15158225
+Batch 93 Results: 14908529
+Batch 94 Results: 15217802
+Batch 95 Results: 15117683
+Batch 96 Results: 15117181
+Batch 97 Results: 15284760
+Batch 98 Results: 15132837
+Batch 99 Results: 14849387
+Batch 100 Results: 14926970
+Batch 101 Results: 15002538
+Batch 102 Results: 14938520
+Batch 103 Results: 15049703
+Batch 104 Results: 15159826
+Batch 105 Results: 15354024
+Batch 106 Results: 15005008
+Batch 107 Results: 14992810
+Batch 108 Results: 15096206
+Batch 109 Results: 14894499
+Batch 110 Results: 15136720
+Batch 111 Results: 14811772
+Batch 112 Results: 14892320
+Batch 113 Results: 14940269
+Batch 114 Results: 15153027
+Batch 115 Results: 14966000
+Batch 116 Results: 14858259
+Batch 117 Results: 15012463
+Batch 118 Results: 15023414
+Batch 119 Results: 14936228
+Batch 120 Results: 14968421
+Batch 121 Results: 15239178
+Batch 122 Results: 15171096
+Batch 123 Results: 14799200
+Batch 124 Results: 15038787
+Batch 125 Results: 14988110
+Batch 126 Results: 15246962
+Batch 127 Results: 15039473
+Batch 128 Results: 15047042
+Batch 129 Results: 15041748
+Batch 130 Results: 14916731
+Batch 131 Results: 15225373
+Batch 132 Results: 14960679
+Batch 133 Results: 14902129
+Batch 134 Results: 14707245
+Batch 135 Results: 14875305
+Batch 136 Results: 15103510
+Batch 137 Results: 14697022
+Batch 138 Results: 15103604
+Batch 139 Results: 14946660
+Batch 140 Results: 14951784
+Batch 141 Results: 14770122
+Batch 142 Results: 14697243
+Batch 143 Results: 14900864
+Batch 144 Results: 14817358
+Batch 145 Results: 14939896
+Batch 146 Results: 15053496
+Batch 147 Results: 15266538
+Batch 148 Results: 15090407
+Batch 149 Results: 14930835
+Batch 150 Results: 14931992
+Batch 151 Results: 14918878
+Batch 152 Results: 14942208
+Batch 153 Results: 14943103
+Batch 154 Results: 14859485
+Batch 155 Results: 14788833
+Batch 156 Results: 14990226
+Batch 157 Results: 15024148
+Batch 158 Results: 14919790
+Batch 159 Results: 15137315
+Batch 160 Results: 14887618
+Batch 161 Results: 15130120
+Batch 162 Results: 14928073
+Batch 163 Results: 15177387
+Batch 164 Results: 14832383
+Batch 165 Results: 15037908
+Batch 166 Results: 14859384
+Batch 167 Results: 15058663
+Batch 168 Results: 15065540
+Batch 169 Results: 15014065
+Batch 170 Results: 15009305
+Batch 171 Results: 15030617
+Batch 172 Results: 15017985
+Batch 173 Results: 14598676
+Batch 174 Results: 15260968
+Batch 175 Results: 15058989
+Batch 176 Results: 15016500
+Batch 177 Results: 15326871
+Batch 178 Results: 15148542
+Batch 179 Results: 15308632
+Batch 180 Results: 15252350
+Batch 181 Results: 14946759
+Batch 182 Results: 15015446
+Batch 183 Results: 14959936
+Batch 184 Results: 14922397
+Batch 185 Results: 15035504
+Batch 186 Results: 15161926
+Batch 187 Results: 14802908
+Batch 188 Results: 15060474
+Batch 189 Results: 15081380
+Batch 190 Results: 15094104
+Batch 191 Results: 15057924
+Batch 192 Results: 15159710
+Batch 193 Results: 14959808
+Batch 194 Results: 15048323
+Batch 195 Results: 15099604
+Batch 196 Results: 14912597
+Batch 197 Results: 15107744
+Batch 198 Results: 15231960
+Batch 199 Results: 15017933
+Batch 200 Results: 15069748
+Batch 201 Results: 15002105
+Batch 202 Results: 15125457
+Batch 203 Results: 14936011
+Batch 204 Results: 15166065
+Batch 205 Results: 14896947
+Batch 206 Results: 15277605
+Batch 207 Results: 14899063
+Batch 208 Results: 15030236
+Batch 209 Results: 15140700
+Batch 210 Results: 14996521
+Batch 211 Results: 15071139
+Batch 212 Results: 14866536
+Batch 213 Results: 15136874
+Batch 214 Results: 15245155
+Batch 215 Results: 15218888
+Batch 216 Results: 14963897
+Batch 217 Results: 14962792
+Batch 218 Results: 15320036
+Batch 219 Results: 15131253
+Batch 220 Results: 14924620
+Batch 221 Results: 15217043
+Batch 222 Results: 15089456
+Batch 223 Results: 15206489
+Batch 224 Results: 15007951
+Batch 225 Results: 14745023
+Batch 226 Results: 1488780

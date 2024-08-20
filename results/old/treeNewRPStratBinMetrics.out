@@ -1,0 +1,351 @@
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=90 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+MSD ________________________________________________________________
+MSD ________________________________________________________________
+
+Time to read in file: 0.275520
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.007600 
+*********************************
+
+Selected RPs: 16, 13, 2, 2, 5, 7
+Selected 6 reference points
+Layer 0 sumqrs: 31060026403.000000 BinCount: 56 AverageBinsCount: 14315.000000, nonEmpty: 36
+Layer 1 sumqrs: 23756219057.000000 BinCount: 936 AverageBinsCount: 1937.000000, nonEmpty: 266
+Layer 2 sumqrs: 17272191865.000000 BinCount: 5852 AverageBinsCount: 548.000000, nonEmpty: 939
+Layer 3 sumqrs: 12740425243.000000 BinCount: 22536 AverageBinsCount: 229.000000, nonEmpty: 2247
+Layer 4 sumqrs: 8749845617.000000 BinCount: 40446 AverageBinsCount: 126.000000, nonEmpty: 4085
+Layer 5 sumqrs: 6673929462.000000 BinCount: 110295 AverageBinsCount: 71.000000, nonEmpty: 7174
+
+Time to read in file: 0.117121
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.009130 
+*********************************
+
+Selected RPs: 16, 11, 7, 8, 12, 6
+Selected 6 reference points
+Layer 0 sumqrs: 36768422687.000000 BinCount: 47 AverageBinsCount: 16624.000000, nonEmpty: 31
+Layer 1 sumqrs: 29163543593.000000 BinCount: 496 AverageBinsCount: 2513.000000, nonEmpty: 205
+Layer 2 sumqrs: 22753827001.000000 BinCount: 4510 AverageBinsCount: 700.000000, nonEmpty: 736
+Layer 3 sumqrs: 15898320845.000000 BinCount: 16192 AverageBinsCount: 276.000000, nonEmpty: 1863
+Layer 4 sumqrs: 12481123691.000000 BinCount: 44712 AverageBinsCount: 145.000000, nonEmpty: 3531
+Layer 5 sumqrs: 8674252701.000000 BinCount: 70620 AverageBinsCount: 88.000000, nonEmpty: 5834
+
+Time to read in file: 0.103824
+
+Number points: 515345 
+Number Dimensions: 90 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.011334 
+*********************************
+
+Selected RPs: 16, 13, 2, 8, 12, 7
+Selected 6 reference points
+Layer 0 sumqrs: 45084231779.000000 BinCount: 38 AverageBinsCount: 20613.000000, nonEmpty: 25
+Layer 1 sumqrs: 36893322853.000000 BinCount: 475 AverageBinsCount: 3390.000000, nonEmpty: 152
+Layer 2 sumqrs: 27769756755.000000 BinCount: 2432 AverageBinsCount: 1122.000000, nonEmpty: 459
+Layer 3 sumqrs: 20753676963.000000 BinCount: 8262 AverageBinsCount: 488.000000, nonEmpty: 1055
+Layer 4 sumqrs: 15956097163.000000 BinCount: 21100 AverageBinsCount: 243.000000, nonEmpty: 2118
+Layer 5 sumqrs: 12143642357.000000 BinCount: 42360 AverageBinsCount: 143.000000, nonEmpty: 3601
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=49 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+Wave __________________________________________________
+Wave __________________________________________________
+
+Time to read in file: 0.077097
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.005400 
+*********************************
+
+Selected RPs: 17, 12, 5, 15, 13, 7
+Selected 6 reference points
+Layer 0 sumqrs: 5545126636.000000 BinCount: 141 AverageBinsCount: 4499.000000, nonEmpty: 64
+Layer 1 sumqrs: 6897830421.000000 BinCount: 1600 AverageBinsCount: 1507.000000, nonEmpty: 191
+Layer 2 sumqrs: 5028916122.000000 BinCount: 4775 AverageBinsCount: 607.000000, nonEmpty: 474
+Layer 3 sumqrs: 3808342023.000000 BinCount: 11850 AverageBinsCount: 311.000000, nonEmpty: 926
+Layer 4 sumqrs: 2621410267.000000 BinCount: 22224 AverageBinsCount: 153.000000, nonEmpty: 1879
+Layer 5 sumqrs: 1983300343.000000 BinCount: 45096 AverageBinsCount: 78.000000, nonEmpty: 3686
+
+Time to read in file: 0.038585
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.007020 
+*********************************
+
+Selected RPs: 17, 12, 5, 15, 10, 7
+Selected 6 reference points
+Layer 0 sumqrs: 7181157557.000000 BinCount: 110 AverageBinsCount: 5759.000000, nonEmpty: 50
+Layer 1 sumqrs: 9165445189.000000 BinCount: 1000 AverageBinsCount: 2322.000000, nonEmpty: 124
+Layer 2 sumqrs: 6850165259.000000 BinCount: 2604 AverageBinsCount: 1039.000000, nonEmpty: 277
+Layer 3 sumqrs: 5192804418.000000 BinCount: 5263 AverageBinsCount: 569.000000, nonEmpty: 506
+Layer 4 sumqrs: 4146917433.000000 BinCount: 10120 AverageBinsCount: 335.000000, nonEmpty: 859
+Layer 5 sumqrs: 3001363544.000000 BinCount: 16321 AverageBinsCount: 183.000000, nonEmpty: 1570
+
+Time to read in file: 0.033993
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.008358 
+*********************************
+
+Selected RPs: 17, 12, 5, 8, 13, 7
+Selected 6 reference points
+Layer 0 sumqrs: 8298124444.000000 BinCount: 93 AverageBinsCount: 6697.000000, nonEmpty: 43
+Layer 1 sumqrs: 11909337195.000000 BinCount: 774 AverageBinsCount: 3063.000000, nonEmpty: 94
+Layer 2 sumqrs: 7804794419.000000 BinCount: 1692 AverageBinsCount: 1404.000000, nonEmpty: 205
+Layer 3 sumqrs: 6023101049.000000 BinCount: 3280 AverageBinsCount: 748.000000, nonEmpty: 385
+Layer 4 sumqrs: 5037391842.000000 BinCount: 6545 AverageBinsCount: 411.000000, nonEmpty: 700
+Layer 5 sumqrs: 4025085941.000000 BinCount: 11900 AverageBinsCount: 239.000000, nonEmpty: 1200
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=57 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+BIGCROSS____________________________________________________________
+BIGCROSS____________________________________________________________
+
+Time to read in file: 11.272689
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.013100 
+*********************************
+
+Selected RPs: 32, 16, 14, 7, 12, 13
+Selected 6 reference points
+Layer 0 sumqrs: 888251505116.000000 BinCount: 79 AverageBinsCount: 152898.000000, nonEmpty: 76
+Layer 1 sumqrs: 124032896312.000000 BinCount: 7144 AverageBinsCount: 3761.000000, nonEmpty: 3089
+Layer 2 sumqrs: 105913290218.000000 BinCount: 46335 AverageBinsCount: 1314.000000, nonEmpty: 8837
+Layer 3 sumqrs: 73634326126.000000 BinCount: 159066 AverageBinsCount: 615.000000, nonEmpty: 18873
+Layer 4 sumqrs: 53592665136.000000 BinCount: 264222 AverageBinsCount: 399.000000, nonEmpty: 29076
+Layer 5 sumqrs: 43468063176.000000 BinCount: 494292 AverageBinsCount: 264.000000, nonEmpty: 43863
+
+Time to read in file: 10.998420
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.019940 
+*********************************
+
+Selected RPs: 32, 16, 14, 7, 7, 4
+Selected 6 reference points
+Layer 0 sumqrs: 1404376034708.000000 BinCount: 53 AverageBinsCount: 232406.000000, nonEmpty: 50
+Layer 1 sumqrs: 280844198360.000000 BinCount: 3150 AverageBinsCount: 8481.000000, nonEmpty: 1370
+Layer 2 sumqrs: 294119345720.000000 BinCount: 16440 AverageBinsCount: 3621.000000, nonEmpty: 3209
+Layer 3 sumqrs: 194453945286.000000 BinCount: 41717 AverageBinsCount: 1840.000000, nonEmpty: 6313
+Layer 4 sumqrs: 150739363930.000000 BinCount: 82069 AverageBinsCount: 1198.000000, nonEmpty: 9692
+Layer 5 sumqrs: 105662726560.000000 BinCount: 106612 AverageBinsCount: 847.000000, nonEmpty: 13715
+
+Time to read in file: 11.190007
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.028100 
+*********************************
+
+Selected RPs: 32, 16, 14, 7, 7, 11
+Selected 6 reference points
+Layer 0 sumqrs: 2104256768444.000000 BinCount: 39 AverageBinsCount: 322786.000000, nonEmpty: 36
+Layer 1 sumqrs: 550387445222.000000 BinCount: 1656 AverageBinsCount: 16229.000000, nonEmpty: 716
+Layer 2 sumqrs: 629963521174.000000 BinCount: 7160 AverageBinsCount: 7904.000000, nonEmpty: 1470
+Layer 3 sumqrs: 442863168580.000000 BinCount: 16170 AverageBinsCount: 4331.000000, nonEmpty: 2683
+Layer 4 sumqrs: 334308223452.000000 BinCount: 26830 AverageBinsCount: 2743.000000, nonEmpty: 4235
+Layer 5 sumqrs: 267024809530.000000 BinCount: 42350 AverageBinsCount: 2076.000000, nonEmpty: 5595
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=18 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+SUSY ________________________________________________________________
+SUSY ________________________________________________________________
+
+Time to read in file: 0.540387
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.017030 
+*********************************
+
+Selected RPs: 32, 0, 0, 8, 8, 2
+Selected 6 reference points
+Layer 0 sumqrs: 3438212662689.000000 BinCount: 9 AverageBinsCount: 833333.000000, nonEmpty: 6
+Layer 1 sumqrs: 1138919495768.000000 BinCount: 180 AverageBinsCount: 40983.000000, nonEmpty: 122
+Layer 2 sumqrs: 370349444204.000000 BinCount: 3782 AverageBinsCount: 5353.000000, nonEmpty: 934
+Layer 3 sumqrs: 116205902032.000000 BinCount: 27086 AverageBinsCount: 1199.000000, nonEmpty: 4168
+Layer 4 sumqrs: 38647083264.000000 BinCount: 83360 AverageBinsCount: 313.000000, nonEmpty: 15946
+Layer 5 sumqrs: 18769781026.000000 BinCount: 350812 AverageBinsCount: 116.000000, nonEmpty: 42795
+
+Time to read in file: 0.224106
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.020780 
+*********************************
+
+Selected RPs: 32, 0, 0, 8, 15, 2
+Selected 6 reference points
+Layer 0 sumqrs: 4679848328790.000000 BinCount: 8 AverageBinsCount: 1000000.000000, nonEmpty: 5
+Layer 1 sumqrs: 1651558418103.000000 BinCount: 125 AverageBinsCount: 58139.000000, nonEmpty: 86
+Layer 2 sumqrs: 625407147330.000000 BinCount: 2236 AverageBinsCount: 8488.000000, nonEmpty: 589
+Layer 3 sumqrs: 224369782244.000000 BinCount: 14136 AverageBinsCount: 2096.000000, nonEmpty: 2385
+Layer 4 sumqrs: 85914315980.000000 BinCount: 81090 AverageBinsCount: 535.000000, nonEmpty: 9330
+Layer 5 sumqrs: 36963438234.000000 BinCount: 167940 AverageBinsCount: 194.000000, nonEmpty: 25732
+
+Time to read in file: 0.297920
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.025555 
+*********************************
+
+Selected RPs: 36, 24, 4, 4, 9, 3
+Selected 6 reference points
+Layer 0 sumqrs: 6192951602186.000000 BinCount: 7 AverageBinsCount: 1250000.000000, nonEmpty: 4
+Layer 1 sumqrs: 2295757795482.000000 BinCount: 128 AverageBinsCount: 57471.000000, nonEmpty: 87
+Layer 2 sumqrs: 1087381478360.000000 BinCount: 1740 AverageBinsCount: 11655.000000, nonEmpty: 429
+Layer 3 sumqrs: 444564365964.000000 BinCount: 13728 AverageBinsCount: 2351.000000, nonEmpty: 2126
+Layer 4 sumqrs: 220234223390.000000 BinCount: 46772 AverageBinsCount: 980.000000, nonEmpty: 5099
+Layer 5 sumqrs: 103580018944.000000 BinCount: 101980 AverageBinsCount: 375.000000, nonEmpty: 13326
+rm -f build/main build/*.o
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DMAXRP=6 -DDIM=28 -DBS=256 -DKB=1024 -DTPP=1 -DILP=4 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+HIGGS ________________________________________________________________
+HIGGS ________________________________________________________________
+
+Time to read in file: 2.698237
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.049186 
+*********************************
+
+Selected RPs: 1, 11, 3, 4, 3, 8
+Selected 6 reference points
+Layer 0 sumqrs: 47863055452331.000000 BinCount: 9 AverageBinsCount: 1833333.000000, nonEmpty: 6
+Layer 1 sumqrs: 34556005046804.000000 BinCount: 60 AverageBinsCount: 423076.000000, nonEmpty: 26
+Layer 2 sumqrs: 21732265954624.000000 BinCount: 260 AverageBinsCount: 126436.000000, nonEmpty: 87
+Layer 3 sumqrs: 13377999309972.000000 BinCount: 870 AverageBinsCount: 42471.000000, nonEmpty: 259
+Layer 4 sumqrs: 8239266895398.000000 BinCount: 2590 AverageBinsCount: 20257.000000, nonEmpty: 543
+Layer 5 sumqrs: 4770944399282.000000 BinCount: 5973 AverageBinsCount: 8750.000000, nonEmpty: 1257
+
+Time to read in file: 0.837792
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.055580 
+*********************************
+
+Selected RPs: 9, 5, 3, 2, 1, 14
+Selected 6 reference points
+Layer 0 sumqrs: 49002463873517.000000 BinCount: 9 AverageBinsCount: 1833333.000000, nonEmpty: 6
+Layer 1 sumqrs: 34762594309644.000000 BinCount: 54 AverageBinsCount: 407407.000000, nonEmpty: 27
+Layer 2 sumqrs: 22864793917122.000000 BinCount: 243 AverageBinsCount: 139240.000000, nonEmpty: 79
+Layer 3 sumqrs: 15397375963792.000000 BinCount: 790 AverageBinsCount: 57591.000000, nonEmpty: 191
+Layer 4 sumqrs: 9894007455574.000000 BinCount: 1910 AverageBinsCount: 25700.000000, nonEmpty: 428
+Layer 5 sumqrs: 6895304684054.000000 BinCount: 3852 AverageBinsCount: 13349.000000, nonEmpty: 824
+
+Time to read in file: 2.651579
+
+Number points: 11000000 
+Number Dimensions: 28 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.063117 
+*********************************
+
+Selected RPs: 11, 5, 16, 5, 10, 3
+Selected 6 reference points
+Layer 0 sumqrs: 49866283315825.000000 BinCount: 9 AverageBinsCount: 1833333.000000, nonEmpty: 6
+Layer 1 sumqrs: 39354349440602.000000 BinCount: 54 AverageBinsCount: 478260.000000, nonEmpty: 23
+Layer 2 sumqrs: 25723302797789.000000 BinCount: 253 AverageBinsCount: 152777.000000, nonEmpty: 72
+Layer 3 sumqrs: 17185541520168.000000 BinCount: 576 AverageBinsCount: 67073.000000, nonEmpty: 164
+Layer 4 sumqrs: 11765121196606.000000 BinCount: 1804 AverageBinsCount: 32640.000000, nonEmpty: 337
+Layer 5 sumqrs: 8135393385733.000000 BinCount: 3033 AverageBinsCount: 17543.000000, nonEmpty: 627
+Completed!

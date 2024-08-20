@@ -24,7 +24,7 @@ unsigned int buildNodeNet(double * data,
     unsigned long long int  calcsPerSecond;
 
     unsigned int tempRPCalc = ceil(pow(1+epsilon,20))*3 + 10;
-    const unsigned int rPPerLayer = tempRPCalc < 100 ? tempRPCalc:100;
+    const unsigned int rPPerLayer = RPPERLAYER; //tempRPCalc < 100 ? tempRPCalc:100;
     std::cerr << rPPerLayer << " ";
 
 
@@ -65,13 +65,13 @@ unsigned int buildNodeNet(double * data,
         double * RPArray = createRPArray(data, rPPerLayer, dim, numPoints);
     
         std::vector<std::vector<struct Node>> layerNodes;
-        layerNodes.resize(rPPerLayer);
+        layerNodes.resize(rPPerLayer+NUMIDIM);
         unsigned long long int lowestDistCalcs = ULLONG_MAX;
         unsigned int bestRP = 0;
 
         
 
-        unsigned int * allBinNumber = (unsigned int * )malloc(sizeof(unsigned int)*numPoints*rPPerLayer);
+        unsigned int * allBinNumber = (unsigned int * )malloc(sizeof(unsigned int)*numPoints*(rPPerLayer+NUMIDIM));
 
         //create bin number arrays on device
         unsigned int  * d_binNumber;
@@ -102,6 +102,10 @@ unsigned int buildNodeNet(double * data,
 
         double cT2 = omp_get_wtime();
 
+
+
+
+
         if(i==0){
             calcsPerSecond = (unsigned long long int) numPoints*rPPerLayer / (cT2-cT1) * sqrt(dim) / (floor(pow(1+epsilon, 20))*10); //(sqrt(numPoints*pow(dim,2))/(1000*dim));//CALC_MULTI;
         } else {
@@ -119,9 +123,33 @@ unsigned int buildNodeNet(double * data,
         cudaFree(d_RP);
 
 
+        // int randosum = 0;
+        // create dimensional partitions
+        for(unsigned int j = 0; j < NUMIDIM; j++){
+            for(unsigned int k = 0; k < numPoints; k++){
+                allBinNumber[numPoints*(rPPerLayer+j)+k] = ceil((data[k*dim+j]+0.0000001)/ epsilon);
+                // randosum += allBinNumber[numPoints*(rPPerLayer+j)+k];
+
+            }
+            
+        }
+        // std::cout << NUMIDIM << std::endl;
+        // std::cout << numPoints << std::endl;
+        //    std::cout << randosum << std::endl;
+
+   
+        // for( int blob = 0; blob < rPPerLayer+NUMIDIM; blob++){
+        //     for( int bob = 0; bob < numPoints; bob++){
+        //         randosum += allBinNumber[numPoints*blob+bob];
+        //     }
+        // // }
+        // randosum+=allBinNumber[numPoints*(rPPerLayer+NUMIDIM-1)+numPoints-1];
+
+     
+
         std::vector<std::vector<struct Node>> tempGraph;
 
-        // itterate through all of the subgraphs
+        // itterate through all of the subgraphs 
         unsigned int numSubs;
         if(subGraph.size() == 0){
             numSubs = 1;
@@ -133,10 +161,12 @@ unsigned int buildNodeNet(double * data,
         // printf("Num subs to gen: %u\n", numSubs);
         for(unsigned int n = 0; n < numSubs ; n++){
             unsigned long long int subLowestDistCalcs = ULLONG_MAX;
+            double lowestStdDev = 0;
+            bool firstCheck = true;
 
 
             #pragma omp parallel for num_threads(rPPerLayer)
-            for(unsigned int j = 0; j < rPPerLayer; j++){
+            for(unsigned int j = 0; j < rPPerLayer+NUMIDIM; j++){
                 // need to compare num dist calcs for different potental RP
                 std::vector<struct Node> tempNodes;// subGraph[n];
                 unsigned int tempNumNodes = 0;
@@ -162,13 +192,22 @@ unsigned int buildNodeNet(double * data,
                 // printf("check: %llu\n", tempNodes[0].numCalcs);
                 
                 unsigned long long numCalcs = totalNodeCalcs(layerNodes[j], tempNumNodes);
-                // unsigned long long sumSqrs = nodeSumSqrs(layerNodes[j], tempNumNodes);
-                // printf("    Layer %d for RP %d has Nodes: %u with calcs: %llu\n", i, j, tempNumNodes, numCalcs);
+                double stdDev = 0;
+                double averageNode = numPoints*1.0 / layerNodes[j].size();
+                for(unsigned int k = 0; k < layerNodes[j].size(); k++){
+                    stdDev += (layerNodes[j][k].numNodePoints - averageNode)*(layerNodes[j][k].numNodePoints - averageNode);
+                }
 
+                // unsigned long long sumSqrs = nodeSumSqrs(layerNodes[j], tempNumNodes);
+                // printf("    Layer %d for RP %d has Nodes: %u with calcs: %llu and stdev: %f \n", i, j, tempNumNodes, numCalcs, stdDev);
+            
                 #pragma omp critical
                 {
-                    if(numCalcs < subLowestDistCalcs){
+                    // if(numCalcs < subLowestDistCalcs || firstCheck){
+                    if(stdDev < lowestStdDev || firstCheck){
+                        firstCheck = false;
                         subLowestDistCalcs = numCalcs;
+                        lowestStdDev = stdDev;
                         bestRP = j;
                         // layerNodes = tempNodes;
                         numNodes = tempNumNodes;
@@ -185,7 +224,7 @@ unsigned int buildNodeNet(double * data,
             free(allBinNumber);
 
 
-            printf("SubGraph %u Layer %d Selecting RP %d with Nodes: %u and calcs: %llu :: ", n, i, bestRP, numNodes, subLowestDistCalcs);
+            printf("SubGraph %u Layer %d Selecting RP %d with Nodes: %u and calcs: %llu and stdev %f:: ", n, i, bestRP, numNodes, subLowestDistCalcs, lowestStdDev);
             
             #if SUBG
             std::vector<std::vector<struct Node>> layerSubGraphs = genSubGraphs(layerNodes[bestRP]);
@@ -229,8 +268,8 @@ unsigned int buildNodeNet(double * data,
         printf("Build Time: %f, Calc Time: %f, reduction %f\n############################################\n", predictedNodeTime, calcTime, timeReduction);
         // if(i > MINRP && ( newNodes.size()*1.0 / nodePerSecond *10> lowestDistCalcs*1.0 / calcsPerSecondDyn || i >= MAXRP)){ 
         //if(i >= MINRP && ( predictedNodeTime > timeReduction || i >= MAXRP)){ 
-        if(i >= MINRP &&  (1.0*lowestDistCalcs / numPoints / numPoints < 0.5 || calcRatio > 0.99) && ( predictedNodeTime > timeReduction || i >= MAXRP)){ 
-
+        // if(i >= MINRP &&  (1.0*lowestDistCalcs / numPoints / numPoints < 0.5 || calcRatio > 0.99) && ( predictedNodeTime > timeReduction || i >= MAXRP)){ 
+        if( i >= MAXRP){
             // printf("\nPrevious Calcs: %llu, Current: %llu, ratio: %f\n", previousDistCalcs, lowestDistCalcs, calcRatio);
             // printf("Previous Nodes: %u, Current Nodes: %u, ratio: %f\n",numPreviousNodes, newNodes.size(), nodeRatio);
             numSplits = i+1;
@@ -330,7 +369,7 @@ unsigned int initNodes(double * data,
     cudaSetDevice(CUDA_DEVICE);
     std::vector<struct Node> newNodes;
 
-    thrust::sort_by_key(thrust::omp::par, &binNumber[0], &binNumber[numPoints], &pointArray[0]);
+    thrust::sort_by_key(thrust::omp::par, binNumber, binNumber+numPoints, pointArray);
 
 
 
@@ -433,7 +472,12 @@ unsigned int splitNodes(unsigned int * allBinNumbers, //the reference point used
     // go through each node and split
     for(unsigned int i = 0; i < numNodes; i++){
 
-        if(nodes[i].numCalcs < MAX_CALCS_PER_NODE*1000000/*MIN_NODE_SIZE */ ){
+        #if USE_MIN_CALC
+        if(nodes[i].numCalcs <  MIN_CALCS_PER_NODE/*MIN_CALCS_SIZE */ ){
+        #else
+        if(nodes[i].numNodePoints <  MINBINSIZE/*MIN_NODE_SIZE */ ){
+
+        #endif
             std::vector<struct Node> tempNodes;
             tempNodes.push_back(newNode(nodes[i].numNodePoints, &(nodes[i].nodePoints[0]), nodes[i], (unsigned int) -1, 0 ) );
             tempNodes[0].split = false;

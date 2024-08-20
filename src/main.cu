@@ -5,7 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <vector>
 
 
 #include "include/tree.cuh"
@@ -29,22 +32,50 @@ int main(int argc, char*argv[]){
 
 	double time0 = omp_get_wtime(); //start initial timer
 
-	//read in file from binary, only works with doubles if file saved as doubles
-	std::ifstream file(	filename, std::ios::in | std::ios::binary);
-	file.seekg(0, std::ios::end); 
-	size_t size = file.tellg();  
-	file.seekg(0, std::ios::beg); 
-	char * read_buffer = (char*)malloc(sizeof(char)*size);
-	file.read(read_buffer, size*sizeof(double));
-	file.close();
+	// std::string sFileName(filename);
+	// char * ext = strrchr(filename, '.');
+	
+	double* A;
+	unsigned int numPoints;
+	// if(&ext[1] == "bin" ){
 
+		std::ifstream file(	filename, std::ios::in | std::ios::binary);
+		file.seekg(0, std::ios::end); 
+		size_t size = file.tellg();  
+		file.seekg(0, std::ios::beg); 
+		char * read_buffer = (char*)malloc(sizeof(char)*size);
+		file.read(read_buffer, size*sizeof(double));
+		file.close();
+		A = (double*)read_buffer;
+		numPoints = size/sizeof(double)/dim;
+		
+	// } else {
+		// FILE *fptr; 
+		// fptr = fopen(filename, "r");
+		// if (fptr == NULL)
+		// {
+		// 	printf("No such File\n");
+		// 	exit(0);
+		// }
+		// double check = 0;
+		
+		// std::vector<double> data1;
+
+		// while( fscanf(fptr, "%lf, ", &check) == 1 || fscanf(fptr, "%lf ", &check) == 1)
+		// {
+		// 	data1.push_back(check);
+		// }
+		// fclose(fptr);
+		// numPoints = data1.size() / dim;
+		// A = &data1[0];
+	// }
 
 	double time00 = omp_get_wtime();
 	printf("\nTime to read in file: %f\n", time00-time0);
 
-	double* A = (double*)read_buffer;//reinterpret as doubles
+	// double* A = (double*)read_buffer;//reinterpret as doubles
 
-	unsigned int numPoints = size/sizeof(double)/dim; // calculate number of points based on the siez of the input
+	// unsigned int numPoints = size/sizeof(double)/dim; // calculate number of points based on the siez of the input
 
 	// can set a subset of the data for easier debugging
 	//////////////
@@ -242,6 +273,7 @@ int main(int argc, char*argv[]){
 
 	if(ERRORPRINT && BINMETRICS) fprintf(stderr,"%u %u %f %f ", minBinSize, maxBinSize, sumSqError, stdDevBins);
 	}
+
 
 	// checking that the last bin size is not negative or zero and that the tree has every data point in it
 	printf("Last Layer Bin Count: %d\nTree Check: %d\n",binSizes[numLayers-1], tree[numLayers-1][binSizes[numLayers-1]-1]);

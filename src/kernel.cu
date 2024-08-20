@@ -292,8 +292,6 @@ void GPUTreeTraversal(unsigned int tid,
 }
 
 
-
-
 __device__
 int GPUDepthSearch( unsigned int * tree, //pointer to the tree built with buildTree()
                     unsigned int * binSizes,
@@ -1240,4 +1238,25 @@ void searchKernelCOSStree(const unsigned int batch_num,
 			// }
 		// }
 	}
+}
+
+__global__
+void dumbBrute(const unsigned int batch_num,
+    double * data, // this is the imported data
+    const unsigned int numPoints, // total number of points
+    unsigned int * pointA, // an array which will store the first point in a pair
+    unsigned int * pointB, // an array vector that will store a second point in a pair)
+    const unsigned int dim, //the number of dimensions
+    const double epsilon,
+    unsigned long long int * key_value_index) //a simple counter to keep track of how many results in a batch
+{
+    const unsigned int tid = blockIdx.x*blockDim.x+threadIdx.x;
+    const int point = (tid+(BLOCK_SIZE*KERNEL_BLOCKS*TPP)*(batch_num))/(TPP);
+    for(unsigned int i = 0; i < numPoints; i++){
+        if (distanceCheck(epsilon, dim, data, point, i, numPoints)){
+                unsigned long long int index = atomicAdd(key_value_index,(unsigned long long int)1);
+                pointA[index] = point; //stores the first point Number
+                pointB[index] = i; // this stores the coresponding point number to form a pair
+            }
+    }
 }

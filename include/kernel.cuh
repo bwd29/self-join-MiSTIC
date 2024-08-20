@@ -298,3 +298,14 @@ void searchKernelCOSStree(const unsigned int batch_num,
                     unsigned int * binSizes,
                     unsigned int * binAmounts,
                     const unsigned int lastLayerOffset);
+
+
+__global__
+void dumbBrute(const unsigned int batch_num,
+    double * data, // this is the imported data
+    const unsigned int numPoints, // total number of points
+    unsigned int * pointA, // an array which will store the first point in a pair
+    unsigned int * pointB, // an array vector that will store a second point in a pair)
+    const unsigned int dim, //the number of dimensions
+    const double epsilon,
+    unsigned long long int * key_value_index); //a simple counter to keep track of how many results in a batch

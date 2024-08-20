@@ -12,7 +12,7 @@ typedef struct Node{
     unsigned int nodeIndex;
 
     //the index of neighbor nodes in the array
-    std::vector<unsigned int> neighborIndex;
+    std::vector<unsigned int> neighborIndex; 
 
     //the point numbres in this node
     std::vector<unsigned int> nodePoints;

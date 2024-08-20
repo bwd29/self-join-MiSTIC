@@ -1,0 +1,79 @@
+rm -f build/main build/*.o
+nvcc  -DDIM=18 -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DDIM=18 -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DDIM=18 -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DDIM=18 -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DDIM=18 -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DDIM=18 -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DDIM=18 -DBS=256 -DKB=1024 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+
+Time to read in file: 0.536286
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Reference Points: 7 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using dynamic searching
+Distance Threshold: 0.017030 
+*********************************
+
+==WARNING== Note: Running with unmodified GPU clocks. If not controlled otherwise, profiling results may be inconsistent.
+==PROF== Connected to process 253227 (/home/bwd29/self-join/build/main)
+==PROF== Profiling "nodeByPoint5": 0%
+==WARNING== Backing up device memory in system memory. Kernel replay might be slow. Consider using application replay to avoid memory save-and-restore.
+....50%....100% - 33 passes
+Predicted calcsPerSecond: 5707702747
+SubGraph 0 Layer 0 Selecting RP 34 with Nodes: 5 and calcs: 14755074659050 and stdev 526196533532.000000:: Predicted time: 0.000000, Actual Time: 0.014393
+Build Time: 0.014393, Calc Time: 2585.116169, reduction -2585.116169
+############################################
+Predicted calcsPerSecond: 17145203400
+SubGraph 0 Layer 1 Selecting RP 33 with Nodes: 30 and calcs: 8887447420466 and stdev 385959963610.666687:: Predicted time: 0.014393, Actual Time: 1.699670
+Build Time: 1.699670, Calc Time: 518.363487, reduction 2066.752682
+############################################
+Predicted calcsPerSecond: 34329780111
+SubGraph 0 Layer 2 Selecting RP 35 with Nodes: 146 and calcs: 5292841868160 and stdev 137519662743.671265:: Predicted time: 1.699670, Actual Time: 0.834341
+Build Time: 0.834341, Calc Time: 154.176399, reduction 364.187088
+############################################
+Predicted calcsPerSecond: 60066837598
+SubGraph 0 Layer 3 Selecting RP 32 with Nodes: 691 and calcs: 3397357504304 and stdev 38962671011.641129:: Predicted time: 0.834341, Actual Time: 0.569871
+Build Time: 0.569871, Calc Time: 56.559620, reduction 97.616779
+############################################
+Predicted calcsPerSecond: 98609906569
+SubGraph 0 Layer 4 Selecting RP 36 with Nodes: 1399 and calcs: 2556382592316 and stdev 11623374253.516796:: Predicted time: 0.569871, Actual Time: 0.196457
+Build Time: 0.196457, Calc Time: 25.924196, reduction 30.635423
+############################################
+Predicted calcsPerSecond: 156559957381
+SubGraph 0 Layer 5 Selecting RP 6 with Nodes: 1604 and calcs: 2544915441984 and stdev 10882991575.281780:: Predicted time: 0.196457, Actual Time: 0.134411
+Build Time: 0.134411, Calc Time: 16.255213, reduction 9.668984
+############################################
+Final graph has 1604 nodes, 2544915441984 calcs total
+Node Construct time: 6.221238
+Batchs: 20
+Batch 0 Results: 53075455
+Batch 1 Results: 58532734
+Batch 2 Results: 72966546
+Batch 3 Results: 77668230
+Batch 4 Results: 71974341
+Batch 5 Results: 73303983
+Batch 6 Results: 60101835
+Batch 7 Results: 68134076
+Batch 8 Results: 64755519
+Batch 9 Results: 69001613
+Batch 10 Results: 61888562
+Batch 11 Results: 70094049
+Batch 12 Results: 74720169
+Batch 13 Results: 67416289
+Batch 14 Results: 68328783
+Batch 15 Results: 61827585
+Batch 16 Results: 69452813
+Batch 17 Results: 64945394
+Batch 18 Results: 65135656
+Batch 19 Results: 3207618
+Total results Set Size: 1276531250 
+Kernel Time: 138.412470
+Node Laucnher time: 145.880149
+Total Time: 146.779268
+==PROF== Disconnected from process 253227
+==PROF== Report: /home/bwd29/self-join/profileSUSYNODE.out.ncu-rep
+Completed!

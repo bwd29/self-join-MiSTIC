@@ -3609,7 +3609,7 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
     for(unsigned int i = 0; i < numLayers; i++){
         totalBinNumber += binSizes[i];
     }
-    const unsigned int lastLayerOffset = totalBinNumber - binSizes[numLayers-1];
+    // const unsigned int lastLayerOffset = totalBinNumber - binSizes[numLayers-1];
 
     printf("Total Bin Count in Tree: %u\n", totalBinNumber);
 
@@ -3752,8 +3752,8 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
     }
 
     const unsigned int d_numPoints = numPoints;
-    const unsigned int d_arrayCounter = nonEmptyBins;
-    const unsigned int d_numLayers = numLayers;
+    // const unsigned int d_arrayCounter = nonEmptyBins;
+    // const unsigned int d_numLayers = numLayers;
     const unsigned int d_dim = dim;
     const double d_epsilon2 = epsilon*epsilon;
 
@@ -3771,26 +3771,37 @@ struct neighborTable * launchCOSS(unsigned int ** tree, // a pointer to the tree
 
         const int d_batch_num = i;
 
-        searchKernelCOSStree<<<totalBlocks,BLOCK_SIZE, 0, stream[tid]>>>(
-			d_batch_num,
+        #if BRUTE
+        dumbBrute<<<totalBlocks,BLOCK_SIZE, 0, stream[tid]>>>(
+            d_batch_num,
             d_data,
-			d_numPoints,
-			d_pointA[tid],
+            d_numPoints,
+            d_pointA[tid],
 			d_pointB[tid],
-			d_binNumbers,
-			&d_keyValueIndex[i],
-			d_pointArray,
-			d_arrayCounter,
-			d_numLayers,
-			d_dim,
+            d_dim,
 			d_epsilon2,
-			d_pointBinIndex,
-            d_addressStorageSpace[tid],
-            d_tree,
-            d_binSizes,
-            d_binAmounts,   
-            lastLayerOffset);
-
+			&d_keyValueIndex[i]);
+        #else
+        // searchKernelCOSStree<<<totalBlocks,BLOCK_SIZE, 0, stream[tid]>>>(
+		// 	d_batch_num,
+        //     d_data,
+		// 	d_numPoints,
+		// 	d_pointA[tid],
+		// 	d_pointB[tid],
+		// 	d_binNumbers,
+		// 	&d_keyValueIndex[i],
+		// 	d_pointArray,
+		// 	d_arrayCounter,
+		// 	d_numLayers,
+		// 	d_dim,
+		// 	d_epsilon2,
+		// 	d_pointBinIndex,
+        //     d_addressStorageSpace[tid],
+        //     d_tree,
+        //     d_binSizes,
+        //     d_binAmounts,   
+        //     lastLayerOffset);
+        #endif
 
         cudaStreamSynchronize(stream[tid]);
         // assert(cudaSuccess == cudaGetLastError());

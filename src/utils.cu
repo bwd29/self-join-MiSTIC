@@ -39,7 +39,7 @@ unsigned int * stddev( double * A, unsigned int dim, unsigned int num_points) {
 		devmean /= num_points;
 		deviation[i] = sqrt(devmean);
 	}
-	thrust::sort_by_key(deviation, &deviation[dim-1], dimension);
+	thrust::sort_by_key(deviation, &deviation[dim], dimension);
 	double *deviationret = (double*)malloc(sizeof(double) * dim);
 	unsigned int *dimensionret = (unsigned int*)malloc(sizeof(unsigned int) * dim);
 	for(unsigned int i = 0; i < dim; i++){

@@ -390,6 +390,8 @@ unsigned int buildTree(unsigned int *** rbins, //this will be where the tree its
 			}
 			for(unsigned int j = 0; j < layerBinCount[i]; j++){
 				sumSqrsTemp[i] += (layerBins[i][j] - averageNonEmptyBinCountTemp[i]) * (layerBins[i][j] - averageNonEmptyBinCountTemp[i]);
+				// sumSqrsTemp[i] += (layerBins[i][j]) * (layerBins[i][j]);
+
 			}
 
 		}

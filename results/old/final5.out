@@ -1,846 +1,1147 @@
 rm -f build/main build/*.o
-nvcc  -DMAX_CALCS_PER_NODE=256 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
-nvcc  -DMAX_CALCS_PER_NODE=256 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
-nvcc  -DMAX_CALCS_PER_NODE=256 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -Xcompiler -std=c++03 -c -o build/kernel.o src/kernel.cu
-nvcc  -DMAX_CALCS_PER_NODE=256 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
-nvcc  -DMAX_CALCS_PER_NODE=256 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
-nvcc  -DMAX_CALCS_PER_NODE=256 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
-nvcc  -DMAX_CALCS_PER_NODE=256 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/main.o src/main.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/launcher.o src/launcher.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/kernel.o src/kernel.cu
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/nodes.o src/nodes.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/tree.o src/tree.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -c -o build/utils.o src/utils.cu -lm
+nvcc  -DCALC_MULTI=1.5 -DBS=256 -DCMP=14 -DCPB=115 -lcuda -Xcompiler -fopenmp -arch=compute_80 -code=sm_80 -O3 -I. -o build/main build/main.o build/launcher.o build/kernel.o build/nodes.o build/tree.o build/utils.o
 MSD ________________________________________________________________
 MSD ________________________________________________________________
 
-Time to read in file: 0.297508
+Time to read in file: 0.311080
 
 Number points: 515345 
 Number Dimensions: 90 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.007000 
 *********************************
 
-Predicted calcsPerSecond: 9125192386
-SubGraph 0 Layer 0 Selecting RP 1 with Nodes: 21 and calcs: 170979007977 :: Predicted time: 0.000000, Actual Time: 0.026573
-Build Time: 0.026573, Calc Time: 18.737030, reduction -18.737030
+Predicted calcsPerSecond: 12611455361
+SubGraph 0 Layer 0 Selecting RP 7 with Nodes: 20 and calcs: 183576628971 :: Predicted time: 0.000000, Actual Time: 0.015400
+Build Time: 0.015400, Calc Time: 14.556340, reduction -14.556340
 ############################################
-Predicted calcsPerSecond: 9128326010
-SubGraph 0 Layer 1 Selecting RP 3 with Nodes: 52 and calcs: 149939760245 :: Predicted time: 0.026573, Actual Time: 0.059381
-Build Time: 0.059381, Calc Time: 16.425767, reduction 2.311263
+Predicted calcsPerSecond: 37975374210
+SubGraph 0 Layer 1 Selecting RP 6 with Nodes: 70 and calcs: 165336559787 :: Predicted time: 0.015400, Actual Time: 0.035538
+Build Time: 0.035538, Calc Time: 4.353784, reduction 10.202556
 ############################################
-Predicted calcsPerSecond: 9134607968
-SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 100 and calcs: 139200595557 :: Predicted time: 0.059381, Actual Time: 0.039475
-Build Time: 0.039475, Calc Time: 15.238814, reduction 1.186953
+Predicted calcsPerSecond: 75939037461
+SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 132 and calcs: 157118153693 :: Predicted time: 0.035538, Actual Time: 0.014445
+Build Time: 0.014445, Calc Time: 2.069004, reduction 2.284780
 ############################################
-Predicted calcsPerSecond: 9125402907
-SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 161 and calcs: 130253427857 :: Predicted time: 0.039475, Actual Time: 0.024140
-Build Time: 0.024140, Calc Time: 14.273718, reduction 0.965096
+Predicted calcsPerSecond: 132960160099
+SubGraph 0 Layer 3 Selecting RP 5 with Nodes: 223 and calcs: 152639963385 :: Predicted time: 0.014445, Actual Time: 0.013431
+Build Time: 0.013431, Calc Time: 1.148013, reduction 0.920991
 ############################################
-Predicted calcsPerSecond: 9134128301
-SubGraph 0 Layer 4 Selecting RP 1 with Nodes: 242 and calcs: 124670409489 :: Predicted time: 0.024140, Actual Time: 0.027234
-Build Time: 0.027234, Calc Time: 13.648857, reduction 0.624861
+Predicted calcsPerSecond: 218486117833
+SubGraph 0 Layer 4 Selecting RP 8 with Nodes: 368 and calcs: 148981876065 :: Predicted time: 0.013431, Actual Time: 0.014979
+Build Time: 0.014979, Calc Time: 0.681883, reduction 0.466130
 ############################################
-Predicted calcsPerSecond: 9135751771
-SubGraph 0 Layer 5 Selecting RP 29 with Nodes: 340 and calcs: 120439196589 :: Predicted time: 0.027234, Actual Time: 0.028564
-Build Time: 0.028564, Calc Time: 13.183283, reduction 0.465574
+Predicted calcsPerSecond: 346762466212
+SubGraph 0 Layer 5 Selecting RP 8 with Nodes: 488 and calcs: 145424344799 :: Predicted time: 0.014979, Actual Time: 0.016131
+Build Time: 0.016131, Calc Time: 0.419377, reduction 0.262505
 ############################################
-Predicted calcsPerSecond: 9141242135
-SubGraph 0 Layer 6 Selecting RP 3 with Nodes: 410 and calcs: 118040357201 :: Predicted time: 0.028564, Actual Time: 0.026925
-Build Time: 0.026925, Calc Time: 12.912945, reduction 0.270337
+Predicted calcsPerSecond: 539193877137
+SubGraph 0 Layer 6 Selecting RP 5 with Nodes: 689 and calcs: 140762516913 :: Predicted time: 0.016131, Actual Time: 0.019258
+Build Time: 0.019258, Calc Time: 0.261061, reduction 0.158316
 ############################################
-Predicted calcsPerSecond: 9131670818
-SubGraph 0 Layer 7 Selecting RP 27 with Nodes: 552 and calcs: 116242427543 :: Predicted time: 0.026925, Actual Time: 0.036427
-Build Time: 0.036427, Calc Time: 12.729590, reduction 0.183355
+Predicted calcsPerSecond: 827786413828
+SubGraph 0 Layer 7 Selecting RP 8 with Nodes: 930 and calcs: 137392205497 :: Predicted time: 0.019258, Actual Time: 0.032097
+Build Time: 0.032097, Calc Time: 0.165975, reduction 0.095086
 ############################################
-Predicted calcsPerSecond: 9134297990
-SubGraph 0 Layer 8 Selecting RP 1 with Nodes: 644 and calcs: 114775513913 :: Predicted time: 0.036427, Actual Time: 0.042918
-Build Time: 0.042918, Calc Time: 12.565335, reduction 0.164255
+Predicted calcsPerSecond: 1260659941051
+SubGraph 0 Layer 8 Selecting RP 9 with Nodes: 1152 and calcs: 134665486015 :: Predicted time: 0.032097, Actual Time: 0.048097
+Build Time: 0.048097, Calc Time: 0.106821, reduction 0.059154
 ############################################
-Predicted calcsPerSecond: 9136230289
-SubGraph 0 Layer 9 Selecting RP 13 with Nodes: 779 and calcs: 113736904751 :: Predicted time: 0.042918, Actual Time: 0.045752
-Build Time: 0.045752, Calc Time: 12.448997, reduction 0.116338
+Predicted calcsPerSecond: 1909933698577
+SubGraph 0 Layer 9 Selecting RP 0 with Nodes: 1389 and calcs: 133491906381 :: Predicted time: 0.048097, Actual Time: 0.049231
+Build Time: 0.049231, Calc Time: 0.069893, reduction 0.036928
 ############################################
-Predicted calcsPerSecond: 9134274930
-SubGraph 0 Layer 10 Selecting RP 2 with Nodes: 892 and calcs: 112294931405 :: Predicted time: 0.045752, Actual Time: 0.064721
-Build Time: 0.064721, Calc Time: 12.293798, reduction 0.155199
-############################################
-Predicted calcsPerSecond: 9126513911
-SubGraph 0 Layer 11 Selecting RP 3 with Nodes: 979 and calcs: 111751608717 :: Predicted time: 0.064721, Actual Time: 0.060029
-Build Time: 0.060029, Calc Time: 12.244720, reduction 0.049078
-############################################
-Final graph has 979 nodes, 111751608717 calcs total
-Node Construct time: 1.384691
-Total Number of Batches: 6 , with calcs per threads: 10000
+Final graph has 1389 nodes, 133491906381 calcs total
+Node Construct time: 0.378269
+Batchs: 4
 Total results Set Size: 65915313 
-Node Laucnher time: 3.905376
-Total Time: 4.353054
+Node Laucnher time: 3.445719
+Total Time: 3.932594
 
-Time to read in file: 0.093879
+Time to read in file: 0.095679
 
 Number points: 515345 
 Number Dimensions: 90 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.007525 
 *********************************
 
-Predicted calcsPerSecond: 9116452732
-SubGraph 0 Layer 0 Selecting RP 1 with Nodes: 20 and calcs: 177585998311 :: Predicted time: 0.000000, Actual Time: 0.026088
-Build Time: 0.026088, Calc Time: 19.479726, reduction -19.479726
+Predicted calcsPerSecond: 12603995160
+SubGraph 0 Layer 0 Selecting RP 7 with Nodes: 20 and calcs: 189831662657 :: Predicted time: 0.000000, Actual Time: 0.015403
+Build Time: 0.015403, Calc Time: 15.061229, reduction -15.061229
 ############################################
-Predicted calcsPerSecond: 9131541218
-SubGraph 0 Layer 1 Selecting RP 5 with Nodes: 68 and calcs: 158803937551 :: Predicted time: 0.026088, Actual Time: 0.079389
-Build Time: 0.079389, Calc Time: 17.390705, reduction 2.089021
+Predicted calcsPerSecond: 38009673952
+SubGraph 0 Layer 1 Selecting RP 6 with Nodes: 70 and calcs: 175762616019 :: Predicted time: 0.015403, Actual Time: 0.032872
+Build Time: 0.032872, Calc Time: 4.624155, reduction 10.437075
 ############################################
-Predicted calcsPerSecond: 9137400360
-SubGraph 0 Layer 2 Selecting RP 3 with Nodes: 112 and calcs: 148625324851 :: Predicted time: 0.079389, Actual Time: 0.029294
-Build Time: 0.029294, Calc Time: 16.265603, reduction 1.125102
+Predicted calcsPerSecond: 76041867328
+SubGraph 0 Layer 2 Selecting RP 9 with Nodes: 126 and calcs: 169081919973 :: Predicted time: 0.032872, Actual Time: 0.017246
+Build Time: 0.017246, Calc Time: 2.223537, reduction 2.400618
 ############################################
-Predicted calcsPerSecond: 9135278892
-SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 173 and calcs: 138039412237 :: Predicted time: 0.029294, Actual Time: 0.026888
-Build Time: 0.026888, Calc Time: 15.110585, reduction 1.155017
+Predicted calcsPerSecond: 133087883536
+SubGraph 0 Layer 3 Selecting RP 8 with Nodes: 216 and calcs: 164422804263 :: Predicted time: 0.017246, Actual Time: 0.014476
+Build Time: 0.014476, Calc Time: 1.235445, reduction 0.988092
 ############################################
-Predicted calcsPerSecond: 9137527917
-SubGraph 0 Layer 4 Selecting RP 7 with Nodes: 239 and calcs: 133551295451 :: Predicted time: 0.026888, Actual Time: 0.026486
-Build Time: 0.026486, Calc Time: 14.615692, reduction 0.494893
+Predicted calcsPerSecond: 218639355757
+SubGraph 0 Layer 4 Selecting RP 8 with Nodes: 357 and calcs: 160025171257 :: Predicted time: 0.014476, Actual Time: 0.015900
+Build Time: 0.015900, Calc Time: 0.731914, reduction 0.503531
 ############################################
-Predicted calcsPerSecond: 9147425499
-SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 329 and calcs: 128253786953 :: Predicted time: 0.026486, Actual Time: 0.026641
-Build Time: 0.026641, Calc Time: 14.020752, reduction 0.594940
+Predicted calcsPerSecond: 346992283467
+SubGraph 0 Layer 5 Selecting RP 8 with Nodes: 479 and calcs: 157084741167 :: Predicted time: 0.015900, Actual Time: 0.015594
+Build Time: 0.015594, Calc Time: 0.452704, reduction 0.279210
 ############################################
-Predicted calcsPerSecond: 9097058536
-SubGraph 0 Layer 6 Selecting RP 1 with Nodes: 404 and calcs: 126325934239 :: Predicted time: 0.026641, Actual Time: 0.051360
-Build Time: 0.051360, Calc Time: 13.886459, reduction 0.134293
+Predicted calcsPerSecond: 539500706421
+SubGraph 0 Layer 6 Selecting RP 5 with Nodes: 682 and calcs: 151384894551 :: Predicted time: 0.015594, Actual Time: 0.019727
+Build Time: 0.019727, Calc Time: 0.280602, reduction 0.172102
 ############################################
-Predicted calcsPerSecond: 9101989158
-SubGraph 0 Layer 7 Selecting RP 3 with Nodes: 527 and calcs: 124245408061 :: Predicted time: 0.051360, Actual Time: 0.061322
-Build Time: 0.061322, Calc Time: 13.650358, reduction 0.236102
+Predicted calcsPerSecond: 828273337734
+SubGraph 0 Layer 7 Selecting RP 8 with Nodes: 934 and calcs: 147540455935 :: Predicted time: 0.019727, Actual Time: 0.034496
+Build Time: 0.034496, Calc Time: 0.178130, reduction 0.102472
 ############################################
-Predicted calcsPerSecond: 9088579299
-SubGraph 0 Layer 8 Selecting RP 1 with Nodes: 614 and calcs: 122408976845 :: Predicted time: 0.061322, Actual Time: 0.061753
-Build Time: 0.061753, Calc Time: 13.468439, reduction 0.181919
+Predicted calcsPerSecond: 1261417925724
+SubGraph 0 Layer 8 Selecting RP 9 with Nodes: 1138 and calcs: 144806274733 :: Predicted time: 0.034496, Actual Time: 0.054580
+Build Time: 0.054580, Calc Time: 0.114796, reduction 0.063334
 ############################################
-Predicted calcsPerSecond: 9097242718
-SubGraph 0 Layer 9 Selecting RP 5 with Nodes: 735 and calcs: 121297176863 :: Predicted time: 0.061753, Actual Time: 0.045191
-Build Time: 0.045191, Calc Time: 13.333400, reduction 0.135039
+Predicted calcsPerSecond: 1911109084428
+SubGraph 0 Layer 9 Selecting RP 7 with Nodes: 1353 and calcs: 144136810775 :: Predicted time: 0.054580, Actual Time: 0.046499
+Build Time: 0.046499, Calc Time: 0.075421, reduction 0.039376
 ############################################
-Predicted calcsPerSecond: 9110976062
-SubGraph 0 Layer 10 Selecting RP 2 with Nodes: 860 and calcs: 119801941169 :: Predicted time: 0.045191, Actual Time: 0.057890
-Build Time: 0.057890, Calc Time: 13.149188, reduction 0.184212
-############################################
-Predicted calcsPerSecond: 9128180235
-SubGraph 0 Layer 11 Selecting RP 2 with Nodes: 935 and calcs: 119279995101 :: Predicted time: 0.057890, Actual Time: 0.060493
-Build Time: 0.060493, Calc Time: 13.067226, reduction 0.081962
-############################################
-Predicted calcsPerSecond: 9116558980
-SubGraph 0 Layer 12 Selecting RP 4 with Nodes: 1057 and calcs: 118752402897 :: Predicted time: 0.060493, Actual Time: 0.068461
-Build Time: 0.068461, Calc Time: 13.026012, reduction 0.041215
-############################################
-Final graph has 1057 nodes, 118752402897 calcs total
-Node Construct time: 1.680424
-Total Number of Batches: 6 , with calcs per threads: 10000
+Final graph has 1353 nodes, 144136810775 calcs total
+Node Construct time: 0.413247
+Batchs: 4
 Total results Set Size: 121384099 
-Node Laucnher time: 4.848944
-Total Time: 5.302515
+Node Laucnher time: 4.117685
+Total Time: 4.609723
 
-Time to read in file: 0.083694
+Time to read in file: 0.081823
 
 Number points: 515345 
 Number Dimensions: 90 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.008050 
 *********************************
 
-Predicted calcsPerSecond: 9125011031
-SubGraph 0 Layer 0 Selecting RP 2 with Nodes: 20 and calcs: 185481056983 :: Predicted time: 0.000000, Actual Time: 0.026073
-Build Time: 0.026073, Calc Time: 20.326667, reduction -20.326667
+Predicted calcsPerSecond: 12655384170
+SubGraph 0 Layer 0 Selecting RP 7 with Nodes: 18 and calcs: 199263370923 :: Predicted time: 0.000000, Actual Time: 0.014381
+Build Time: 0.014381, Calc Time: 15.745344, reduction -15.745344
 ############################################
-Predicted calcsPerSecond: 9132031729
-SubGraph 0 Layer 1 Selecting RP 2 with Nodes: 42 and calcs: 166529333641 :: Predicted time: 0.026073, Actual Time: 0.049351
-Build Time: 0.049351, Calc Time: 18.235738, reduction 2.090929
+Predicted calcsPerSecond: 38041303848
+SubGraph 0 Layer 1 Selecting RP 6 with Nodes: 64 and calcs: 185655730559 :: Predicted time: 0.014381, Actual Time: 0.035198
+Build Time: 0.035198, Calc Time: 4.880372, reduction 10.864971
 ############################################
-Predicted calcsPerSecond: 9136223811
-SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 79 and calcs: 155820953273 :: Predicted time: 0.049351, Actual Time: 0.028867
-Build Time: 0.028867, Calc Time: 17.055291, reduction 1.180447
+Predicted calcsPerSecond: 76095740649
+SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 110 and calcs: 175585617591 :: Predicted time: 0.035198, Actual Time: 0.013914
+Build Time: 0.013914, Calc Time: 2.307430, reduction 2.572942
 ############################################
-Predicted calcsPerSecond: 9135987076
-SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 134 and calcs: 145513907653 :: Predicted time: 0.028867, Actual Time: 0.028107
-Build Time: 0.028107, Calc Time: 15.927552, reduction 1.127739
+Predicted calcsPerSecond: 133192935226
+SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 194 and calcs: 171262973821 :: Predicted time: 0.013914, Actual Time: 0.014139
+Build Time: 0.014139, Calc Time: 1.285826, reduction 1.021604
 ############################################
-Predicted calcsPerSecond: 9136230969
-SubGraph 0 Layer 4 Selecting RP 7 with Nodes: 192 and calcs: 141241553471 :: Predicted time: 0.028107, Actual Time: 0.031562
-Build Time: 0.031562, Calc Time: 15.459499, reduction 0.468053
+Predicted calcsPerSecond: 218737699303
+SubGraph 0 Layer 4 Selecting RP 8 with Nodes: 319 and calcs: 166161080035 :: Predicted time: 0.014139, Actual Time: 0.014789
+Build Time: 0.014789, Calc Time: 0.759636, reduction 0.526190
 ############################################
-Predicted calcsPerSecond: 9137810091
-SubGraph 0 Layer 5 Selecting RP 29 with Nodes: 278 and calcs: 137161531399 :: Predicted time: 0.031562, Actual Time: 0.030146
-Build Time: 0.030146, Calc Time: 15.010329, reduction 0.449170
+Predicted calcsPerSecond: 347092769739
+SubGraph 0 Layer 5 Selecting RP 8 with Nodes: 425 and calcs: 161961421915 :: Predicted time: 0.014789, Actual Time: 0.014543
+Build Time: 0.014543, Calc Time: 0.466623, reduction 0.293013
 ############################################
-Predicted calcsPerSecond: 9138719522
-SubGraph 0 Layer 6 Selecting RP 2 with Nodes: 346 and calcs: 134817972417 :: Predicted time: 0.030146, Actual Time: 0.034985
-Build Time: 0.034985, Calc Time: 14.752392, reduction 0.257937
+Predicted calcsPerSecond: 539604290520
+SubGraph 0 Layer 6 Selecting RP 5 with Nodes: 595 and calcs: 158374119997 :: Predicted time: 0.014543, Actual Time: 0.019126
+Build Time: 0.019126, Calc Time: 0.293500, reduction 0.173122
 ############################################
-Predicted calcsPerSecond: 9138535309
-SubGraph 0 Layer 7 Selecting RP 7 with Nodes: 436 and calcs: 132743661635 :: Predicted time: 0.034985, Actual Time: 0.029744
-Build Time: 0.029744, Calc Time: 14.525704, reduction 0.226688
+Predicted calcsPerSecond: 828364947009
+SubGraph 0 Layer 7 Selecting RP 8 with Nodes: 833 and calcs: 155809130817 :: Predicted time: 0.019126, Actual Time: 0.028101
+Build Time: 0.028101, Calc Time: 0.188092, reduction 0.105408
 ############################################
-Predicted calcsPerSecond: 9135247791
-SubGraph 0 Layer 8 Selecting RP 3 with Nodes: 541 and calcs: 131109349511 :: Predicted time: 0.029744, Actual Time: 0.039778
-Build Time: 0.039778, Calc Time: 14.352030, reduction 0.173674
+Predicted calcsPerSecond: 1261560087303
+SubGraph 0 Layer 8 Selecting RP 9 with Nodes: 1030 and calcs: 153822140391 :: Predicted time: 0.028101, Actual Time: 0.042252
+Build Time: 0.042252, Calc Time: 0.121930, reduction 0.066162
 ############################################
-Predicted calcsPerSecond: 9119288566
-SubGraph 0 Layer 9 Selecting RP 5 with Nodes: 633 and calcs: 129554467405 :: Predicted time: 0.039778, Actual Time: 0.037445
-Build Time: 0.037445, Calc Time: 14.206642, reduction 0.145388
+Predicted calcsPerSecond: 1911357551079
+SubGraph 0 Layer 9 Selecting RP 2 with Nodes: 1244 and calcs: 152949464533 :: Predicted time: 0.042252, Actual Time: 0.067684
+Build Time: 0.067684, Calc Time: 0.080021, reduction 0.041909
 ############################################
-Predicted calcsPerSecond: 9127570729
-SubGraph 0 Layer 10 Selecting RP 1 with Nodes: 717 and calcs: 128112137793 :: Predicted time: 0.037445, Actual Time: 0.048345
-Build Time: 0.048345, Calc Time: 14.035732, reduction 0.170910
-############################################
-Predicted calcsPerSecond: 9129438145
-SubGraph 0 Layer 11 Selecting RP 5 with Nodes: 815 and calcs: 127509754523 :: Predicted time: 0.048345, Actual Time: 0.041465
-Build Time: 0.041465, Calc Time: 13.966879, reduction 0.068854
-############################################
-Predicted calcsPerSecond: 9096165881
-SubGraph 0 Layer 12 Selecting RP 4 with Nodes: 937 and calcs: 126893182915 :: Predicted time: 0.041465, Actual Time: 0.058544
-Build Time: 0.058544, Calc Time: 13.950183, reduction 0.016695
-############################################
-Final graph has 937 nodes, 126893182915 calcs total
-Node Construct time: 1.470453
-Total Number of Batches: 7 , with calcs per threads: 10000
+Final graph has 1244 nodes, 152949464533 calcs total
+Node Construct time: 0.389176
+Batchs: 5
 Total results Set Size: 207932133 
-Node Laucnher time: 5.190356
-Total Time: 5.644268
+Node Laucnher time: 5.465237
+Total Time: 5.953664
 
-Time to read in file: 0.082388
+Time to read in file: 0.083599
 
 Number points: 515345 
 Number Dimensions: 90 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.008575 
 *********************************
 
-Predicted calcsPerSecond: 9115334874
-SubGraph 0 Layer 0 Selecting RP 1 with Nodes: 18 and calcs: 191503325863 :: Predicted time: 0.000000, Actual Time: 0.025090
-Build Time: 0.025090, Calc Time: 21.008918, reduction -21.008918
+Predicted calcsPerSecond: 12639968747
+SubGraph 0 Layer 0 Selecting RP 7 with Nodes: 16 and calcs: 206353037959 :: Predicted time: 0.000000, Actual Time: 0.013388
+Build Time: 0.013388, Calc Time: 16.325439, reduction -16.325439
 ############################################
-Predicted calcsPerSecond: 9128066640
-SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 49 and calcs: 171407693957 :: Predicted time: 0.025090, Actual Time: 0.059259
-Build Time: 0.059259, Calc Time: 18.778094, reduction 2.230824
+Predicted calcsPerSecond: 38001876397
+SubGraph 0 Layer 1 Selecting RP 6 with Nodes: 59 and calcs: 193093821163 :: Predicted time: 0.013388, Actual Time: 0.037100
+Build Time: 0.037100, Calc Time: 5.081165, reduction 11.244273
 ############################################
-Predicted calcsPerSecond: 9132937917
-SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 90 and calcs: 162186495633 :: Predicted time: 0.059259, Actual Time: 0.028036
-Build Time: 0.028036, Calc Time: 17.758414, reduction 1.019680
+Predicted calcsPerSecond: 76047303421
+SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 98 and calcs: 180599511557 :: Predicted time: 0.037100, Actual Time: 0.013552
+Build Time: 0.013552, Calc Time: 2.374831, reduction 2.706334
 ############################################
-Predicted calcsPerSecond: 9133264049
-SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 132 and calcs: 153896234755 :: Predicted time: 0.028036, Actual Time: 0.025066
-Build Time: 0.025066, Calc Time: 16.850081, reduction 0.908334
+Predicted calcsPerSecond: 133095757195
+SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 175 and calcs: 177539661997 :: Predicted time: 0.013552, Actual Time: 0.014770
+Build Time: 0.014770, Calc Time: 1.333924, reduction 1.040907
 ############################################
-Predicted calcsPerSecond: 9093298168
-SubGraph 0 Layer 4 Selecting RP 7 with Nodes: 191 and calcs: 149372026937 :: Predicted time: 0.025066, Actual Time: 0.027641
-Build Time: 0.027641, Calc Time: 16.426606, reduction 0.423474
+Predicted calcsPerSecond: 218608742191
+SubGraph 0 Layer 4 Selecting RP 8 with Nodes: 293 and calcs: 173771798089 :: Predicted time: 0.014770, Actual Time: 0.014300
+Build Time: 0.014300, Calc Time: 0.794899, reduction 0.539026
 ############################################
-Predicted calcsPerSecond: 9110130033
-SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 267 and calcs: 144365349703 :: Predicted time: 0.027641, Actual Time: 0.027484
-Build Time: 0.027484, Calc Time: 15.846684, reduction 0.579922
+Predicted calcsPerSecond: 346895483233
+SubGraph 0 Layer 5 Selecting RP 8 with Nodes: 394 and calcs: 171066065879 :: Predicted time: 0.014300, Actual Time: 0.014235
+Build Time: 0.014235, Calc Time: 0.493134, reduction 0.301764
 ############################################
-Predicted calcsPerSecond: 9120139975
-SubGraph 0 Layer 6 Selecting RP 5 with Nodes: 337 and calcs: 142197738717 :: Predicted time: 0.027484, Actual Time: 0.030235
-Build Time: 0.030235, Calc Time: 15.591618, reduction 0.255066
+Predicted calcsPerSecond: 539391874245
+SubGraph 0 Layer 6 Selecting RP 5 with Nodes: 541 and calcs: 167269845641 :: Predicted time: 0.014235, Actual Time: 0.015334
+Build Time: 0.015334, Calc Time: 0.310108, reduction 0.183026
 ############################################
-Predicted calcsPerSecond: 9117623861
-SubGraph 0 Layer 7 Selecting RP 21 with Nodes: 426 and calcs: 140138131293 :: Predicted time: 0.030235, Actual Time: 0.040906
-Build Time: 0.040906, Calc Time: 15.370028, reduction 0.221590
+Predicted calcsPerSecond: 828117085621
+SubGraph 0 Layer 7 Selecting RP 8 with Nodes: 764 and calcs: 164188390869 :: Predicted time: 0.015334, Actual Time: 0.026465
+Build Time: 0.026465, Calc Time: 0.198267, reduction 0.111841
 ############################################
-Predicted calcsPerSecond: 9122546259
-SubGraph 0 Layer 8 Selecting RP 1 with Nodes: 503 and calcs: 138226646201 :: Predicted time: 0.040906, Actual Time: 0.032284
-Build Time: 0.032284, Calc Time: 15.152200, reduction 0.217828
+Predicted calcsPerSecond: 1261194182851
+SubGraph 0 Layer 8 Selecting RP 9 with Nodes: 955 and calcs: 162143662123 :: Predicted time: 0.026465, Actual Time: 0.039584
+Build Time: 0.039584, Calc Time: 0.128564, reduction 0.069704
 ############################################
-Predicted calcsPerSecond: 9113461703
-SubGraph 0 Layer 9 Selecting RP 5 with Nodes: 606 and calcs: 136966545987 :: Predicted time: 0.032284, Actual Time: 0.041436
-Build Time: 0.041436, Calc Time: 15.029036, reduction 0.123164
+Predicted calcsPerSecond: 1910811886600
+SubGraph 0 Layer 9 Selecting RP 2 with Nodes: 1191 and calcs: 161383961921 :: Predicted time: 0.039584, Actual Time: 0.059787
+Build Time: 0.059787, Calc Time: 0.084458, reduction 0.044105
 ############################################
-Predicted calcsPerSecond: 9121560882
-SubGraph 0 Layer 10 Selecting RP 2 with Nodes: 701 and calcs: 135444387367 :: Predicted time: 0.041436, Actual Time: 0.051177
-Build Time: 0.051177, Calc Time: 14.848817, reduction 0.180219
-############################################
-Predicted calcsPerSecond: 9129913037
-SubGraph 0 Layer 11 Selecting RP 5 with Nodes: 788 and calcs: 134820601791 :: Predicted time: 0.051177, Actual Time: 0.046670
-Build Time: 0.046670, Calc Time: 14.766910, reduction 0.081907
-############################################
-Predicted calcsPerSecond: 9130837239
-SubGraph 0 Layer 12 Selecting RP 4 with Nodes: 893 and calcs: 133877040557 :: Predicted time: 0.046670, Actual Time: 0.056652
-Build Time: 0.056652, Calc Time: 14.662077, reduction 0.104833
-############################################
-Predicted calcsPerSecond: 9127423623
-SubGraph 0 Layer 13 Selecting RP 11 with Nodes: 998 and calcs: 133407766973 :: Predicted time: 0.056652, Actual Time: 0.081152
-Build Time: 0.081152, Calc Time: 14.616147, reduction 0.045930
-############################################
-Final graph has 998 nodes, 133407766973 calcs total
-Node Construct time: 1.736405
-Total Number of Batches: 7 , with calcs per threads: 10000
+Final graph has 1191 nodes, 161383961921 calcs total
+Node Construct time: 0.361000
+Batchs: 5
 Total results Set Size: 335507787 
-Node Laucnher time: 6.358848
-Total Time: 6.811827
+Node Laucnher time: 7.227255
+Total Time: 7.719719
 
-Time to read in file: 0.081143
+Time to read in file: 0.083675
 
 Number points: 515345 
 Number Dimensions: 90 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.009100 
 *********************************
 
-Predicted calcsPerSecond: 9108670886
-SubGraph 0 Layer 0 Selecting RP 1 with Nodes: 17 and calcs: 197994635393 :: Predicted time: 0.000000, Actual Time: 0.024602
-Build Time: 0.024602, Calc Time: 21.736940, reduction -21.736940
+Predicted calcsPerSecond: 12627457577
+SubGraph 0 Layer 0 Selecting RP 7 with Nodes: 17 and calcs: 209203030487 :: Predicted time: 0.000000, Actual Time: 0.013893
+Build Time: 0.013893, Calc Time: 16.567312, reduction -16.567312
 ############################################
-Predicted calcsPerSecond: 9119575554
-SubGraph 0 Layer 1 Selecting RP 6 with Nodes: 49 and calcs: 181875047541 :: Predicted time: 0.024602, Actual Time: 0.067368
-Build Time: 0.067368, Calc Time: 19.943368, reduction 1.793573
+Predicted calcsPerSecond: 37973445448
+SubGraph 0 Layer 1 Selecting RP 6 with Nodes: 56 and calcs: 197362554829 :: Predicted time: 0.013893, Actual Time: 0.032807
+Build Time: 0.032807, Calc Time: 5.197383, reduction 11.369929
 ############################################
-Predicted calcsPerSecond: 9125372259
-SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 84 and calcs: 171686978723 :: Predicted time: 0.067368, Actual Time: 0.031083
-Build Time: 0.031083, Calc Time: 18.814244, reduction 1.129124
+Predicted calcsPerSecond: 75961607149
+SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 90 and calcs: 188217475395 :: Predicted time: 0.032807, Actual Time: 0.013126
+Build Time: 0.013126, Calc Time: 2.477797, reduction 2.719586
 ############################################
-Predicted calcsPerSecond: 9130547124
-SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 130 and calcs: 161509391333 :: Predicted time: 0.031083, Actual Time: 0.025249
-Build Time: 0.025249, Calc Time: 17.688906, reduction 1.125338
+Predicted calcsPerSecond: 132928739958
+SubGraph 0 Layer 3 Selecting RP 5 with Nodes: 146 and calcs: 184646635049 :: Predicted time: 0.013126, Actual Time: 0.013399
+Build Time: 0.013399, Calc Time: 1.389065, reduction 1.088733
 ############################################
-Predicted calcsPerSecond: 9133507813
-SubGraph 0 Layer 4 Selecting RP 10 with Nodes: 180 and calcs: 158263732995 :: Predicted time: 0.025249, Actual Time: 0.033783
-Build Time: 0.033783, Calc Time: 17.327815, reduction 0.361091
+Predicted calcsPerSecond: 218400212212
+SubGraph 0 Layer 4 Selecting RP 3 with Nodes: 220 and calcs: 181414143081 :: Predicted time: 0.013399, Actual Time: 0.013063
+Build Time: 0.013063, Calc Time: 0.830650, reduction 0.558415
 ############################################
-Predicted calcsPerSecond: 9142890661
-SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 239 and calcs: 153631739617 :: Predicted time: 0.033783, Actual Time: 0.024165
-Build Time: 0.024165, Calc Time: 16.803410, reduction 0.524405
+Predicted calcsPerSecond: 346585448092
+SubGraph 0 Layer 5 Selecting RP 8 with Nodes: 308 and calcs: 179200033545 :: Predicted time: 0.013063, Actual Time: 0.012784
+Build Time: 0.012784, Calc Time: 0.517044, reduction 0.313606
 ############################################
-Predicted calcsPerSecond: 9130197112
-SubGraph 0 Layer 6 Selecting RP 5 with Nodes: 305 and calcs: 150912123855 :: Predicted time: 0.024165, Actual Time: 0.088940
-Build Time: 0.088940, Calc Time: 16.528901, reduction 0.274509
+Predicted calcsPerSecond: 538928604718
+SubGraph 0 Layer 6 Selecting RP 5 with Nodes: 432 and calcs: 175301282197 :: Predicted time: 0.012784, Actual Time: 0.015412
+Build Time: 0.015412, Calc Time: 0.325277, reduction 0.191767
 ############################################
-Predicted calcsPerSecond: 9136833681
-SubGraph 0 Layer 7 Selecting RP 21 with Nodes: 381 and calcs: 148504604619 :: Predicted time: 0.088940, Actual Time: 0.029014
-Build Time: 0.029014, Calc Time: 16.253399, reduction 0.275502
+Predicted calcsPerSecond: 827423247705
+SubGraph 0 Layer 7 Selecting RP 8 with Nodes: 643 and calcs: 172343239337 :: Predicted time: 0.015412, Actual Time: 0.022037
+Build Time: 0.022037, Calc Time: 0.208289, reduction 0.116988
 ############################################
-Predicted calcsPerSecond: 9139452794
-SubGraph 0 Layer 8 Selecting RP 3 with Nodes: 453 and calcs: 146949992211 :: Predicted time: 0.029014, Actual Time: 0.029747
-Build Time: 0.029747, Calc Time: 16.078642, reduction 0.174757
+Predicted calcsPerSecond: 1260168445054
+SubGraph 0 Layer 8 Selecting RP 9 with Nodes: 815 and calcs: 170315083025 :: Predicted time: 0.022037, Actual Time: 0.034897
+Build Time: 0.034897, Calc Time: 0.135153, reduction 0.073136
 ############################################
-Predicted calcsPerSecond: 9138807691
-SubGraph 0 Layer 9 Selecting RP 1 with Nodes: 521 and calcs: 145596069185 :: Predicted time: 0.029747, Actual Time: 0.035014
-Build Time: 0.035014, Calc Time: 15.931626, reduction 0.147016
+Predicted calcsPerSecond: 1909208646198
+SubGraph 0 Layer 9 Selecting RP 2 with Nodes: 999 and calcs: 169623324023 :: Predicted time: 0.034897, Actual Time: 0.041949
+Build Time: 0.041949, Calc Time: 0.088845, reduction 0.046308
 ############################################
-Predicted calcsPerSecond: 9121371370
-SubGraph 0 Layer 10 Selecting RP 8 with Nodes: 615 and calcs: 144351421993 :: Predicted time: 0.035014, Actual Time: 0.040792
-Build Time: 0.040792, Calc Time: 15.825627, reduction 0.105999
+Predicted calcsPerSecond: 2882837240118
+SubGraph 0 Layer 10 Selecting RP 9 with Nodes: 1156 and calcs: 167172564607 :: Predicted time: 0.041949, Actual Time: 0.062654
+Build Time: 0.062654, Calc Time: 0.057989, reduction 0.030856
 ############################################
-Predicted calcsPerSecond: 9103810215
-SubGraph 0 Layer 11 Selecting RP 2 with Nodes: 697 and calcs: 143807192601 :: Predicted time: 0.040792, Actual Time: 0.043934
-Build Time: 0.043934, Calc Time: 15.796374, reduction 0.029253
-############################################
-Final graph has 697 nodes, 143807192601 calcs total
-Node Construct time: 1.423127
-Total Number of Batches: 8 , with calcs per threads: 10000
+Final graph has 1156 nodes, 167172564607 calcs total
+Node Construct time: 0.399209
+Batchs: 5
 Total results Set Size: 514928275 
-Node Laucnher time: 7.186663
-Total Time: 7.637816
+Node Laucnher time: 8.641350
+Total Time: 9.128077
+Wave __________________________________________________
+Wave __________________________________________________
+
+Time to read in file: 0.121229
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.002000 
+*********************************
+
+Predicted calcsPerSecond: 26248950218
+SubGraph 0 Layer 0 Selecting RP 6 with Nodes: 35 and calcs: 19306208971 :: Predicted time: 0.000000, Actual Time: 0.018931
+Build Time: 0.018931, Calc Time: 0.735504, reduction -0.735504
+############################################
+Predicted calcsPerSecond: 79656546384
+SubGraph 0 Layer 1 Selecting RP 3 with Nodes: 107 and calcs: 16642027887 :: Predicted time: 0.018931, Actual Time: 0.031628
+Build Time: 0.031628, Calc Time: 0.208922, reduction 0.526582
+############################################
+Predicted calcsPerSecond: 159657770473
+SubGraph 0 Layer 2 Selecting RP 9 with Nodes: 230 and calcs: 14272707349 :: Predicted time: 0.031628, Actual Time: 0.007157
+Build Time: 0.007157, Calc Time: 0.089396, reduction 0.119527
+############################################
+Predicted calcsPerSecond: 279715619286
+SubGraph 0 Layer 3 Selecting RP 8 with Nodes: 320 and calcs: 13569342585 :: Predicted time: 0.007157, Actual Time: 0.006008
+Build Time: 0.006008, Calc Time: 0.048511, reduction 0.040884
+############################################
+Predicted calcsPerSecond: 459867254079
+SubGraph 0 Layer 4 Selecting RP 1 with Nodes: 389 and calcs: 13191861115 :: Predicted time: 0.006008, Actual Time: 0.004725
+Build Time: 0.004725, Calc Time: 0.028686, reduction 0.019825
+############################################
+Predicted calcsPerSecond: 729943154064
+SubGraph 0 Layer 5 Selecting RP 4 with Nodes: 471 and calcs: 12827273671 :: Predicted time: 0.004725, Actual Time: 0.005927
+Build Time: 0.005927, Calc Time: 0.017573, reduction 0.011113
+############################################
+Predicted calcsPerSecond: 1135220366854
+SubGraph 0 Layer 6 Selecting RP 7 with Nodes: 552 and calcs: 12540821743 :: Predicted time: 0.005927, Actual Time: 0.007563
+Build Time: 0.007563, Calc Time: 0.011047, reduction 0.006526
+############################################
+Final graph has 552 nodes, 12540821743 calcs total
+Node Construct time: 0.101637
+Batchs: 2
+Total results Set Size: 11651957 
+Node Laucnher time: 0.310665
+Total Time: 0.444581
+
+Time to read in file: 0.037302
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.003250 
+*********************************
+
+Predicted calcsPerSecond: 25840807280
+SubGraph 0 Layer 0 Selecting RP 6 with Nodes: 23 and calcs: 28308546571 :: Predicted time: 0.000000, Actual Time: 0.012954
+Build Time: 0.012954, Calc Time: 1.095498, reduction -1.095498
+############################################
+Predicted calcsPerSecond: 78884583375
+SubGraph 0 Layer 1 Selecting RP 3 with Nodes: 62 and calcs: 25374330053 :: Predicted time: 0.012954, Actual Time: 0.023228
+Build Time: 0.023228, Calc Time: 0.321664, reduction 0.773834
+############################################
+Predicted calcsPerSecond: 158323252242
+SubGraph 0 Layer 2 Selecting RP 9 with Nodes: 159 and calcs: 22929400563 :: Predicted time: 0.023228, Actual Time: 0.008113
+Build Time: 0.008113, Calc Time: 0.144826, reduction 0.176838
+############################################
+Predicted calcsPerSecond: 277461646897
+SubGraph 0 Layer 3 Selecting RP 6 with Nodes: 225 and calcs: 22314999235 :: Predicted time: 0.008113, Actual Time: 0.004795
+Build Time: 0.004795, Calc Time: 0.080426, reduction 0.064401
+############################################
+Predicted calcsPerSecond: 455913717952
+SubGraph 0 Layer 4 Selecting RP 1 with Nodes: 267 and calcs: 21969082163 :: Predicted time: 0.004795, Actual Time: 0.005006
+Build Time: 0.005006, Calc Time: 0.048187, reduction 0.032239
+############################################
+Predicted calcsPerSecond: 724002518949
+SubGraph 0 Layer 5 Selecting RP 4 with Nodes: 323 and calcs: 21247095993 :: Predicted time: 0.005006, Actual Time: 0.004979
+Build Time: 0.004979, Calc Time: 0.029347, reduction 0.018840
+############################################
+Predicted calcsPerSecond: 1126101384405
+SubGraph 0 Layer 6 Selecting RP 7 with Nodes: 392 and calcs: 20498671483 :: Predicted time: 0.004979, Actual Time: 0.006013
+Build Time: 0.006013, Calc Time: 0.018203, reduction 0.011143
+############################################
+Predicted calcsPerSecond: 1729289715955
+SubGraph 0 Layer 7 Selecting RP 2 with Nodes: 474 and calcs: 20090910051 :: Predicted time: 0.006013, Actual Time: 0.007651
+Build Time: 0.007651, Calc Time: 0.011618, reduction 0.006585
+############################################
+Final graph has 474 nodes, 20090910051 calcs total
+Node Construct time: 0.111767
+Batchs: 2
+Total results Set Size: 27340089 
+Node Laucnher time: 0.434796
+Total Time: 0.572431
+
+Time to read in file: 0.027096
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.004500 
+*********************************
+
+Predicted calcsPerSecond: 26248557345
+SubGraph 0 Layer 0 Selecting RP 6 with Nodes: 16 and calcs: 35741385681 :: Predicted time: 0.000000, Actual Time: 0.009431
+Build Time: 0.009431, Calc Time: 1.361651, reduction -1.361651
+############################################
+Predicted calcsPerSecond: 79798121175
+SubGraph 0 Layer 1 Selecting RP 3 with Nodes: 39 and calcs: 32908382771 :: Predicted time: 0.009431, Actual Time: 0.017904
+Build Time: 0.017904, Calc Time: 0.412395, reduction 0.949256
+############################################
+Predicted calcsPerSecond: 160055781846
+SubGraph 0 Layer 2 Selecting RP 9 with Nodes: 98 and calcs: 30363805951 :: Predicted time: 0.017904, Actual Time: 0.007621
+Build Time: 0.007621, Calc Time: 0.189708, reduction 0.222688
+############################################
+Predicted calcsPerSecond: 280666197045
+SubGraph 0 Layer 3 Selecting RP 6 with Nodes: 151 and calcs: 29743929521 :: Predicted time: 0.007621, Actual Time: 0.005440
+Build Time: 0.005440, Calc Time: 0.105976, reduction 0.083731
+############################################
+Predicted calcsPerSecond: 461474664867
+SubGraph 0 Layer 4 Selecting RP 1 with Nodes: 211 and calcs: 29323029901 :: Predicted time: 0.005440, Actual Time: 0.005222
+Build Time: 0.005222, Calc Time: 0.063542, reduction 0.042434
+############################################
+Predicted calcsPerSecond: 732771995649
+SubGraph 0 Layer 5 Selecting RP 4 with Nodes: 274 and calcs: 28759009885 :: Predicted time: 0.005222, Actual Time: 0.005446
+Build Time: 0.005446, Calc Time: 0.039247, reduction 0.024295
+############################################
+Predicted calcsPerSecond: 1139452086969
+SubGraph 0 Layer 6 Selecting RP 7 with Nodes: 327 and calcs: 27986584451 :: Predicted time: 0.005446, Actual Time: 0.005451
+Build Time: 0.005451, Calc Time: 0.024561, reduction 0.014685
+############################################
+Predicted calcsPerSecond: 1749424969704
+SubGraph 0 Layer 7 Selecting RP 2 with Nodes: 383 and calcs: 27348486011 :: Predicted time: 0.005451, Actual Time: 0.006132
+Build Time: 0.006132, Calc Time: 0.015633, reduction 0.008929
+############################################
+Predicted calcsPerSecond: 2664505317510
+SubGraph 0 Layer 8 Selecting RP 7 with Nodes: 432 and calcs: 26972148387 :: Predicted time: 0.006132, Actual Time: 0.006423
+Build Time: 0.006423, Calc Time: 0.010123, reduction 0.005510
+############################################
+Final graph has 432 nodes, 26972148387 calcs total
+Node Construct time: 0.118165
+Batchs: 2
+Total results Set Size: 47254879 
+Node Laucnher time: 0.610070
+Total Time: 0.746955
+
+Time to read in file: 0.026304
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.005750 
+*********************************
+
+Predicted calcsPerSecond: 25894888230
+SubGraph 0 Layer 0 Selecting RP 6 with Nodes: 14 and calcs: 41081661583 :: Predicted time: 0.000000, Actual Time: 0.008451
+Build Time: 0.008451, Calc Time: 1.586478, reduction -1.586478
+############################################
+Predicted calcsPerSecond: 78957670831
+SubGraph 0 Layer 1 Selecting RP 3 with Nodes: 33 and calcs: 38766736397 :: Predicted time: 0.008451, Actual Time: 0.014651
+Build Time: 0.014651, Calc Time: 0.490981, reduction 1.095496
+############################################
+Predicted calcsPerSecond: 158814768067
+SubGraph 0 Layer 2 Selecting RP 0 with Nodes: 71 and calcs: 36736085627 :: Predicted time: 0.014651, Actual Time: 0.010725
+Build Time: 0.010725, Calc Time: 0.231314, reduction 0.259667
+############################################
+Predicted calcsPerSecond: 278619285645
+SubGraph 0 Layer 3 Selecting RP 6 with Nodes: 107 and calcs: 36268500713 :: Predicted time: 0.010725, Actual Time: 0.005297
+Build Time: 0.005297, Calc Time: 0.130172, reduction 0.101142
+############################################
+Predicted calcsPerSecond: 458411853598
+SubGraph 0 Layer 4 Selecting RP 7 with Nodes: 152 and calcs: 36084964543 :: Predicted time: 0.005297, Actual Time: 0.005048
+Build Time: 0.005048, Calc Time: 0.078717, reduction 0.051455
+############################################
+Predicted calcsPerSecond: 728041904166
+SubGraph 0 Layer 5 Selecting RP 0 with Nodes: 203 and calcs: 35432606095 :: Predicted time: 0.005048, Actual Time: 0.005957
+Build Time: 0.005957, Calc Time: 0.048668, reduction 0.030049
+############################################
+Predicted calcsPerSecond: 1132510842387
+SubGraph 0 Layer 6 Selecting RP 7 with Nodes: 251 and calcs: 34518281867 :: Predicted time: 0.005957, Actual Time: 0.004462
+Build Time: 0.004462, Calc Time: 0.030479, reduction 0.018189
+############################################
+Predicted calcsPerSecond: 1739124863664
+SubGraph 0 Layer 7 Selecting RP 3 with Nodes: 292 and calcs: 34035722965 :: Predicted time: 0.004462, Actual Time: 0.004628
+Build Time: 0.004628, Calc Time: 0.019571, reduction 0.010909
+############################################
+Predicted calcsPerSecond: 2649071648260
+SubGraph 0 Layer 8 Selecting RP 8 with Nodes: 337 and calcs: 33503806629 :: Predicted time: 0.004628, Actual Time: 0.005488
+Build Time: 0.005488, Calc Time: 0.012647, reduction 0.006923
+############################################
+Predicted calcsPerSecond: 4013883969954
+SubGraph 0 Layer 9 Selecting RP 2 with Nodes: 381 and calcs: 33208110599 :: Predicted time: 0.005488, Actual Time: 0.005462
+Build Time: 0.005462, Calc Time: 0.008273, reduction 0.004374
+############################################
+Final graph has 381 nodes, 33208110599 calcs total
+Node Construct time: 0.120449
+Batchs: 2
+Total results Set Size: 93070851 
+Node Laucnher time: 1.000131
+Total Time: 1.137995
+
+Time to read in file: 0.027224
+
+Number points: 287999 
+Number Dimensions: 49 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.007000 
+*********************************
+
+Predicted calcsPerSecond: 26185508842
+SubGraph 0 Layer 0 Selecting RP 4 with Nodes: 12 and calcs: 46791777979 :: Predicted time: 0.000000, Actual Time: 0.007435
+Build Time: 0.007435, Calc Time: 1.786934, reduction -1.786934
+############################################
+Predicted calcsPerSecond: 79637401768
+SubGraph 0 Layer 1 Selecting RP 3 with Nodes: 27 and calcs: 45423682395 :: Predicted time: 0.007435, Actual Time: 0.013035
+Build Time: 0.013035, Calc Time: 0.570381, reduction 1.216553
+############################################
+Predicted calcsPerSecond: 159774496273
+SubGraph 0 Layer 2 Selecting RP 0 with Nodes: 50 and calcs: 41875238799 :: Predicted time: 0.013035, Actual Time: 0.007718
+Build Time: 0.007718, Calc Time: 0.262090, reduction 0.308292
+############################################
+Predicted calcsPerSecond: 280130372713
+SubGraph 0 Layer 3 Selecting RP 6 with Nodes: 81 and calcs: 41574422249 :: Predicted time: 0.007718, Actual Time: 0.005424
+Build Time: 0.005424, Calc Time: 0.148411, reduction 0.113679
+############################################
+Predicted calcsPerSecond: 460476963708
+SubGraph 0 Layer 4 Selecting RP 7 with Nodes: 116 and calcs: 41341054625 :: Predicted time: 0.005424, Actual Time: 0.004830
+Build Time: 0.004830, Calc Time: 0.089779, reduction 0.058632
+############################################
+Predicted calcsPerSecond: 731181773238
+SubGraph 0 Layer 5 Selecting RP 4 with Nodes: 172 and calcs: 40721602577 :: Predicted time: 0.004830, Actual Time: 0.005334
+Build Time: 0.005334, Calc Time: 0.055693, reduction 0.034086
+############################################
+Predicted calcsPerSecond: 1137149816881
+SubGraph 0 Layer 6 Selecting RP 7 with Nodes: 221 and calcs: 39966889181 :: Predicted time: 0.005334, Actual Time: 0.005118
+Build Time: 0.005118, Calc Time: 0.035147, reduction 0.020546
+############################################
+Predicted calcsPerSecond: 1746100966218
+SubGraph 0 Layer 7 Selecting RP 2 with Nodes: 270 and calcs: 39280184573 :: Predicted time: 0.005118, Actual Time: 0.005440
+Build Time: 0.005440, Calc Time: 0.022496, reduction 0.012651
+############################################
+Predicted calcsPerSecond: 2659406616355
+SubGraph 0 Layer 8 Selecting RP 7 with Nodes: 317 and calcs: 38854633955 :: Predicted time: 0.005440, Actual Time: 0.005751
+Build Time: 0.005751, Calc Time: 0.014610, reduction 0.007886
+############################################
+Predicted calcsPerSecond: 4029290318763
+SubGraph 0 Layer 9 Selecting RP 2 with Nodes: 358 and calcs: 38579200535 :: Predicted time: 0.005751, Actual Time: 0.004979
+Build Time: 0.004979, Calc Time: 0.009575, reduction 0.005036
+############################################
+Predicted calcsPerSecond: 6084325060882
+SubGraph 0 Layer 10 Selecting RP 9 with Nodes: 397 and calcs: 38429493289 :: Predicted time: 0.004979, Actual Time: 0.006630
+Build Time: 0.006630, Calc Time: 0.006316, reduction 0.003259
+############################################
+Final graph has 397 nodes, 38429493289 calcs total
+Node Construct time: 0.133085
+Batchs: 2
+Total results Set Size: 290127035 
+Node Laucnher time: 2.106974
+Total Time: 2.247613
+BIGCROSS____________________________________________________________
+BIGCROSS____________________________________________________________
+
+Time to read in file: 12.499300
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.001000 
+*********************************
+
+Predicted calcsPerSecond: 3627827984
+SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 238 and calcs: 2597617832404 :: Predicted time: 0.000000, Actual Time: 0.189941
+Build Time: 0.189941, Calc Time: 716.025634, reduction -716.025634
+############################################
+Predicted calcsPerSecond: 10888346038
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 23688 and calcs: 104603099286 :: Predicted time: 0.189941, Actual Time: 73.359627
+Build Time: 73.359627, Calc Time: 9.606886, reduction 706.418748
+############################################
+Predicted calcsPerSecond: 21781315893
+SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 23688 and calcs: 104603099286 :: Predicted time: 73.359627, Actual Time: 0.356314
+Build Time: 0.356314, Calc Time: 4.802423, reduction 4.804463
+############################################
+Predicted calcsPerSecond: 38120112808
+SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 23688 and calcs: 104603099286 :: Predicted time: 0.356314, Actual Time: 0.163821
+Build Time: 0.163821, Calc Time: 2.744040, reduction 2.058384
+############################################
+Predicted calcsPerSecond: 62629535524
+SubGraph 0 Layer 4 Selecting RP 1 with Nodes: 23688 and calcs: 104603099286 :: Predicted time: 0.163821, Actual Time: 0.154297
+Build Time: 0.154297, Calc Time: 1.670188, reduction 1.073852
+############################################
+Predicted calcsPerSecond: 99391141383
+SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 23688 and calcs: 104603099286 :: Predicted time: 0.154297, Actual Time: 0.333508
+Build Time: 0.333508, Calc Time: 1.052439, reduction 0.617749
+############################################
+Predicted calcsPerSecond: 154533468579
+SubGraph 0 Layer 6 Selecting RP 1 with Nodes: 23688 and calcs: 104603099286 :: Predicted time: 0.333508, Actual Time: 0.170321
+Build Time: 0.170321, Calc Time: 0.676896, reduction 0.375543
+############################################
+Predicted calcsPerSecond: 237250195027
+SubGraph 0 Layer 7 Selecting RP 1 with Nodes: 23688 and calcs: 104603099286 :: Predicted time: 0.170321, Actual Time: 0.159404
+Build Time: 0.159404, Calc Time: 0.440898, reduction 0.235998
+############################################
+Predicted calcsPerSecond: 361324803712
+SubGraph 0 Layer 8 Selecting RP 9 with Nodes: 23688 and calcs: 104603099286 :: Predicted time: 0.159404, Actual Time: 0.247825
+Build Time: 0.247825, Calc Time: 0.289499, reduction 0.151399
+############################################
+Final graph has 23688 nodes, 104603099286 calcs total
+Node Construct time: 6.295303
+Batchs: 45
+Total results Set Size: 41137474 
+Node Laucnher time: 12.128994
+Total Time: 18.613020
+
+Time to read in file: 4.340079
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.005750 
+*********************************
+
+Predicted calcsPerSecond: 3632256634
+SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 42 and calcs: 14858815844412 :: Predicted time: 0.000000, Actual Time: 0.091855
+Build Time: 0.091855, Calc Time: 4090.794606, reduction -4090.794606
+############################################
+Predicted calcsPerSecond: 10897595953
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 811 and calcs: 3271062562812 :: Predicted time: 0.091855, Actual Time: 8.642857
+Build Time: 8.642857, Calc Time: 300.163685, reduction 3790.630920
+############################################
+Predicted calcsPerSecond: 21797511396
+SubGraph 0 Layer 2 Selecting RP 3 with Nodes: 5443 and calcs: 1764281091728 :: Predicted time: 8.642857, Actual Time: 1.479123
+Build Time: 1.479123, Calc Time: 80.939565, reduction 219.224120
+############################################
+Predicted calcsPerSecond: 38148803020
+SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 13447 and calcs: 1105190298376 :: Predicted time: 1.479123, Actual Time: 0.725993
+Build Time: 0.725993, Calc Time: 28.970510, reduction 51.969055
+############################################
+Predicted calcsPerSecond: 62675647218
+SubGraph 0 Layer 4 Selecting RP 9 with Nodes: 20101 and calcs: 991095867116 :: Predicted time: 0.725993, Actual Time: 0.774664
+Build Time: 0.774664, Calc Time: 15.813093, reduction 13.157417
+############################################
+Predicted calcsPerSecond: 99461111022
+SubGraph 0 Layer 5 Selecting RP 2 with Nodes: 28507 and calcs: 888636082788 :: Predicted time: 0.774664, Actual Time: 1.770190
+Build Time: 1.770190, Calc Time: 8.934508, reduction 6.878586
+############################################
+Predicted calcsPerSecond: 154637642880
+SubGraph 0 Layer 6 Selecting RP 6 with Nodes: 34942 and calcs: 830513347868 :: Predicted time: 1.770190, Actual Time: 1.704850
+Build Time: 1.704850, Calc Time: 5.370706, reduction 3.563802
+############################################
+Predicted calcsPerSecond: 237409305159
+SubGraph 0 Layer 7 Selecting RP 2 with Nodes: 38520 and calcs: 819446371836 :: Predicted time: 1.704850, Actual Time: 2.290308
+Build Time: 2.290308, Calc Time: 3.451619, reduction 1.919088
+############################################
+Final graph has 38520 nodes, 819446371836 calcs total
+Node Construct time: 10.286978
+Batchs: 45
+Total results Set Size: 539888914 
+Node Laucnher time: 30.522888
+Total Time: 37.077699
+
+Time to read in file: 11.401450
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.010500 
+*********************************
+
+Predicted calcsPerSecond: 3633899870
+SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 23 and calcs: 26848717990992 :: Predicted time: 0.000000, Actual Time: 0.082323
+Build Time: 0.082323, Calc Time: 7388.403355, reduction -7388.403355
+############################################
+Predicted calcsPerSecond: 10897842361
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 268 and calcs: 10099799244588 :: Predicted time: 0.082323, Actual Time: 4.367483
+Build Time: 4.367483, Calc Time: 926.770540, reduction 6461.632815
+############################################
+Predicted calcsPerSecond: 21795024532
+SubGraph 0 Layer 2 Selecting RP 3 with Nodes: 1274 and calcs: 7608063356026 :: Predicted time: 4.367483, Actual Time: 1.005280
+Build Time: 1.005280, Calc Time: 349.073402, reduction 577.697138
+############################################
+Predicted calcsPerSecond: 38136161142
+SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 3273 and calcs: 5932513921150 :: Predicted time: 1.005280, Actual Time: 0.589836
+Build Time: 0.589836, Calc Time: 155.561382, reduction 193.512020
+############################################
+Predicted calcsPerSecond: 62652166798
+SubGraph 0 Layer 4 Selecting RP 9 with Nodes: 5945 and calcs: 5427724575834 :: Predicted time: 0.589836, Actual Time: 0.425370
+Build Time: 0.425370, Calc Time: 86.632671, reduction 68.928710
+############################################
+Predicted calcsPerSecond: 99427656915
+SubGraph 0 Layer 5 Selecting RP 3 with Nodes: 10732 and calcs: 4926157357362 :: Predicted time: 0.425370, Actual Time: 0.632546
+Build Time: 0.632546, Calc Time: 49.545142, reduction 37.087530
+############################################
+Predicted calcsPerSecond: 154587168448
+SubGraph 0 Layer 6 Selecting RP 6 with Nodes: 17004 and calcs: 4088453747288 :: Predicted time: 0.632546, Actual Time: 1.206932
+Build Time: 1.206932, Calc Time: 26.447562, reduction 23.097580
+############################################
+Predicted calcsPerSecond: 237326311839
+SubGraph 0 Layer 7 Selecting RP 2 with Nodes: 23803 and calcs: 3754315349682 :: Predicted time: 1.206932, Actual Time: 1.933110
+Build Time: 1.933110, Calc Time: 15.819212, reduction 10.628350
+############################################
+Predicted calcsPerSecond: 361433846631
+SubGraph 0 Layer 8 Selecting RP 5 with Nodes: 32066 and calcs: 3571948619268 :: Predicted time: 1.933110, Actual Time: 3.015957
+Build Time: 3.015957, Calc Time: 9.882718, reduction 5.936495
+############################################
+Predicted calcsPerSecond: 547601003025
+SubGraph 0 Layer 9 Selecting RP 5 with Nodes: 40019 and calcs: 3376939190814 :: Predicted time: 3.015957, Actual Time: 4.757056
+Build Time: 4.757056, Calc Time: 6.166788, reduction 3.715930
+############################################
+Final graph has 40019 nodes, 3376939190814 calcs total
+Node Construct time: 13.903418
+Batchs: 45
+Total results Set Size: 1686078098 
+Node Laucnher time: 46.815983
+Total Time: 53.290308
+
+Time to read in file: 11.534616
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.015250 
+*********************************
+
+Predicted calcsPerSecond: 3632079088
+SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 16 and calcs: 38407496513486 :: Predicted time: 0.000000, Actual Time: 0.078858
+Build Time: 0.078858, Calc Time: 10574.520979, reduction -10574.520979
+############################################
+Predicted calcsPerSecond: 10900500573
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 137 and calcs: 19462295866268 :: Predicted time: 0.078858, Actual Time: 2.310608
+Build Time: 2.310608, Calc Time: 1785.449736, reduction 8789.071243
+############################################
+Predicted calcsPerSecond: 21796385716
+SubGraph 0 Layer 2 Selecting RP 3 with Nodes: 526 and calcs: 16624354097264 :: Predicted time: 2.310608, Actual Time: 1.054701
+Build Time: 1.054701, Calc Time: 762.711502, reduction 1022.738233
+############################################
+Predicted calcsPerSecond: 38143656480
+SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 1266 and calcs: 14190056459318 :: Predicted time: 1.054701, Actual Time: 0.545419
+Build Time: 0.545419, Calc Time: 372.016156, reduction 390.695346
+############################################
+Predicted calcsPerSecond: 62661362043
+SubGraph 0 Layer 4 Selecting RP 7 with Nodes: 2191 and calcs: 12896487790010 :: Predicted time: 0.545419, Actual Time: 0.452561
+Build Time: 0.452561, Calc Time: 205.812440, reduction 166.203716
+############################################
+Predicted calcsPerSecond: 99439064325
+SubGraph 0 Layer 5 Selecting RP 2 with Nodes: 3750 and calcs: 12126370870472 :: Predicted time: 0.452561, Actual Time: 0.454108
+Build Time: 0.454108, Calc Time: 121.947757, reduction 83.864682
+############################################
+Predicted calcsPerSecond: 154601267622
+SubGraph 0 Layer 6 Selecting RP 6 with Nodes: 6909 and calcs: 10295402472760 :: Predicted time: 0.454108, Actual Time: 0.484946
+Build Time: 0.484946, Calc Time: 66.593260, reduction 55.354497
+############################################
+Predicted calcsPerSecond: 237349700430
+SubGraph 0 Layer 7 Selecting RP 2 with Nodes: 10487 and calcs: 9460909037594 :: Predicted time: 0.484946, Actual Time: 0.716602
+Build Time: 0.716602, Calc Time: 39.860632, reduction 26.732629
+############################################
+Predicted calcsPerSecond: 361467474702
+SubGraph 0 Layer 8 Selecting RP 5 with Nodes: 15392 and calcs: 9105840424422 :: Predicted time: 0.716602, Actual Time: 1.389044
+Build Time: 1.389044, Calc Time: 25.191313, reduction 14.669319
+############################################
+Predicted calcsPerSecond: 547650624645
+SubGraph 0 Layer 9 Selecting RP 4 with Nodes: 20498 and calcs: 8644977772460 :: Predicted time: 1.389044, Actual Time: 2.434174
+Build Time: 2.434174, Calc Time: 15.785571, reduction 9.405742
+############################################
+Predicted calcsPerSecond: 826927220679
+SubGraph 0 Layer 10 Selecting RP 1 with Nodes: 27662 and calcs: 8359857038628 :: Predicted time: 2.434174, Actual Time: 3.844783
+Build Time: 3.844783, Calc Time: 10.109544, reduction 5.676027
+############################################
+Predicted calcsPerSecond: 1245841845331
+SubGraph 0 Layer 11 Selecting RP 1 with Nodes: 35261 and calcs: 7820263606618 :: Predicted time: 3.844783, Actual Time: 5.828513
+Build Time: 5.828513, Calc Time: 6.277092, reduction 3.832452
+############################################
+Final graph has 35261 nodes, 7820263606618 calcs total
+Node Construct time: 16.766494
+Batchs: 45
+Total results Set Size: 4751938200 
+Node Laucnher time: 85.252818
+Total Time: 91.715425
+
+Time to read in file: 11.397042
+
+Number points: 11620300 
+Number Dimensions: 57 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.020000 
+*********************************
+
+Predicted calcsPerSecond: 3628862628
+SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 13 and calcs: 49549044055612 :: Predicted time: 0.000000, Actual Time: 0.077421
+Build Time: 0.077421, Calc Time: 13654.152591, reduction -13654.152591
+############################################
+Predicted calcsPerSecond: 10893131973
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 87 and calcs: 30358995027672 :: Predicted time: 0.077421, Actual Time: 2.697404
+Build Time: 2.697404, Calc Time: 2786.984965, reduction 10867.167627
+############################################
+Predicted calcsPerSecond: 21790257480
+SubGraph 0 Layer 2 Selecting RP 3 with Nodes: 290 and calcs: 27499515099076 :: Predicted time: 2.697404, Actual Time: 1.067962
+Build Time: 1.067962, Calc Time: 1262.009645, reduction 1524.975320
+############################################
+Predicted calcsPerSecond: 38131362138
+SubGraph 0 Layer 3 Selecting RP 1 with Nodes: 642 and calcs: 24357590834274 :: Predicted time: 1.067962, Actual Time: 0.635130
+Build Time: 0.635130, Calc Time: 638.781031, reduction 623.228613
+############################################
+Predicted calcsPerSecond: 62647251204
+SubGraph 0 Layer 4 Selecting RP 9 with Nodes: 1190 and calcs: 22968433901368 :: Predicted time: 0.635130, Actual Time: 0.474118
+Build Time: 0.474118, Calc Time: 366.631152, reduction 272.149879
+############################################
+Predicted calcsPerSecond: 99417427623
+SubGraph 0 Layer 5 Selecting RP 2 with Nodes: 1939 and calcs: 21729563915914 :: Predicted time: 0.474118, Actual Time: 0.450891
+Build Time: 0.450891, Calc Time: 218.568962, reduction 148.062191
+############################################
+Predicted calcsPerSecond: 154575636343
+SubGraph 0 Layer 6 Selecting RP 6 with Nodes: 3479 and calcs: 18562133111582 :: Predicted time: 0.450891, Actual Time: 0.504790
+Build Time: 0.504790, Calc Time: 120.084468, reduction 98.484493
+############################################
+Predicted calcsPerSecond: 237312554913
+SubGraph 0 Layer 7 Selecting RP 2 with Nodes: 5329 and calcs: 17589751622112 :: Predicted time: 0.504790, Actual Time: 0.489144
+Build Time: 0.489144, Calc Time: 74.120611, reduction 45.963857
+############################################
+Predicted calcsPerSecond: 361422170424
+SubGraph 0 Layer 8 Selecting RP 5 with Nodes: 8173 and calcs: 16996420126066 :: Predicted time: 0.489144, Actual Time: 0.779321
+Build Time: 0.779321, Calc Time: 47.026501, reduction 27.094110
+############################################
+Predicted calcsPerSecond: 547580176186
+SubGraph 0 Layer 9 Selecting RP 5 with Nodes: 10919 and calcs: 16203516022126 :: Predicted time: 0.779321, Actual Time: 1.388267
+Build Time: 1.388267, Calc Time: 29.591130, reduction 17.435371
+############################################
+Predicted calcsPerSecond: 826819993615
+SubGraph 0 Layer 10 Selecting RP 7 with Nodes: 14093 and calcs: 15981587196434 :: Predicted time: 1.388267, Actual Time: 2.068597
+Build Time: 2.068597, Calc Time: 19.328980, reduction 10.262150
+############################################
+Predicted calcsPerSecond: 1245679587139
+SubGraph 0 Layer 11 Selecting RP 1 with Nodes: 19487 and calcs: 14891661762538 :: Predicted time: 2.068597, Actual Time: 3.011928
+Build Time: 3.011928, Calc Time: 11.954649, reduction 7.374331
+############################################
+Predicted calcsPerSecond: 1873967988747
+SubGraph 0 Layer 12 Selecting RP 2 with Nodes: 23834 and calcs: 14468244011840 :: Predicted time: 3.011928, Actual Time: 3.968685
+Build Time: 3.968685, Calc Time: 7.720646, reduction 4.234002
+############################################
+Predicted calcsPerSecond: 2816394157768
+SubGraph 0 Layer 13 Selecting RP 5 with Nodes: 28404 and calcs: 14084426052936 :: Predicted time: 3.968685, Actual Time: 5.209216
+Build Time: 5.209216, Calc Time: 5.000872, reduction 2.719775
+############################################
+Final graph has 28404 nodes, 14084426052936 calcs total
+Node Construct time: 20.622678
+Batchs: 45
+Total results Set Size: 12151386442 
+Node Laucnher time: 151.537080
+Total Time: 157.979964
 SUSY ________________________________________________________________
 SUSY ________________________________________________________________
 
-Time to read in file: 0.530593
+Time to read in file: 0.590595
 
 Number points: 5000000 
 Number Dimensions: 18 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.010000 
 *********************************
 
-Predicted calcsPerSecond: 57740110985
-SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 33 and calcs: 8418473200814 :: Predicted time: 0.000000, Actual Time: 0.027522
-Build Time: 0.027522, Calc Time: 145.799394, reduction -145.799394
+Predicted calcsPerSecond: 23603095918
+SubGraph 0 Layer 0 Selecting RP 3 with Nodes: 45 and calcs: 9252521533778 :: Predicted time: 0.000000, Actual Time: 0.026519
+Build Time: 0.026519, Calc Time: 392.004573, reduction -392.004573
 ############################################
-Predicted calcsPerSecond: 57821539431
-SubGraph 0 Layer 1 Selecting RP 7 with Nodes: 353 and calcs: 3497975033714 :: Predicted time: 0.027522, Actual Time: 3.922331
-Build Time: 3.922331, Calc Time: 60.496055, reduction 85.303339
+Predicted calcsPerSecond: 70811584930
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 268 and calcs: 4463820499526 :: Predicted time: 0.026519, Actual Time: 1.168036
+Build Time: 1.168036, Calc Time: 63.037997, reduction 328.966576
 ############################################
-Predicted calcsPerSecond: 57473470460
-SubGraph 0 Layer 2 Selecting RP 10 with Nodes: 1363 and calcs: 1887923908542 :: Predicted time: 3.922331, Actual Time: 0.396667
-Build Time: 0.396667, Calc Time: 32.848615, reduction 27.647440
+Predicted calcsPerSecond: 141709350901
+SubGraph 0 Layer 2 Selecting RP 2 with Nodes: 1800 and calcs: 2349652080722 :: Predicted time: 1.168036, Actual Time: 0.666684
+Build Time: 0.666684, Calc Time: 16.580784, reduction 46.457214
 ############################################
-Predicted calcsPerSecond: 57352113887
-SubGraph 0 Layer 3 Selecting RP 24 with Nodes: 4268 and calcs: 1109194232320 :: Predicted time: 0.396667, Actual Time: 0.412434
-Build Time: 0.412434, Calc Time: 19.340076, reduction 13.508539
+Predicted calcsPerSecond: 247718936239
+SubGraph 0 Layer 3 Selecting RP 7 with Nodes: 5168 and calcs: 1362057799846 :: Predicted time: 0.666684, Actual Time: 0.346083
+Build Time: 0.346083, Calc Time: 5.498400, reduction 11.082384
 ############################################
-Predicted calcsPerSecond: 57292028779
-SubGraph 0 Layer 4 Selecting RP 17 with Nodes: 10669 and calcs: 691841921532 :: Predicted time: 0.412434, Actual Time: 2.877110
-Build Time: 2.877110, Calc Time: 12.075710, reduction 7.264366
+Predicted calcsPerSecond: 406990022727
+SubGraph 0 Layer 4 Selecting RP 0 with Nodes: 14220 and calcs: 807402867858 :: Predicted time: 0.346083, Actual Time: 0.546445
+Build Time: 0.546445, Calc Time: 1.983839, reduction 3.514561
 ############################################
-Predicted calcsPerSecond: 57571180352
-SubGraph 0 Layer 5 Selecting RP 10 with Nodes: 14029 and calcs: 611929908276 :: Predicted time: 2.877110, Actual Time: 2.289753
-Build Time: 2.289753, Calc Time: 10.629101, reduction 1.446609
+Predicted calcsPerSecond: 645952185229
+SubGraph 0 Layer 5 Selecting RP 2 with Nodes: 25366 and calcs: 592422186892 :: Predicted time: 0.546445, Actual Time: 2.074679
+Build Time: 2.074679, Calc Time: 0.917130, reduction 1.066709
 ############################################
-Final graph has 14029 nodes, 611929908276 calcs total
-Node Construct time: 8.443949
-Total Number of Batches: 11 , with calcs per threads: 29179
+Final graph has 25366 nodes, 592422186892 calcs total
+Node Construct time: 2.970257
+Batchs: 20
 Total results Set Size: 30844186 
-Node Laucnher time: 17.782469
-Total Time: 18.712912
+Node Laucnher time: 11.197631
+Total Time: 12.083952
 
-Time to read in file: 0.177239
+Time to read in file: 0.592321
 
 Number points: 5000000 
 Number Dimensions: 18 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.012750 
 *********************************
 
-Predicted calcsPerSecond: 57553759683
-SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 26 and calcs: 10500822904818 :: Predicted time: 0.000000, Actual Time: 0.024057
-Build Time: 0.024057, Calc Time: 182.452423, reduction -182.452423
+Predicted calcsPerSecond: 23534157346
+SubGraph 0 Layer 0 Selecting RP 3 with Nodes: 37 and calcs: 11429170531610 :: Predicted time: 0.000000, Actual Time: 0.022531
+Build Time: 0.022531, Calc Time: 485.641800, reduction -485.641800
 ############################################
-Predicted calcsPerSecond: 57772288546
-SubGraph 0 Layer 1 Selecting RP 7 with Nodes: 234 and calcs: 5350701213742 :: Predicted time: 0.024057, Actual Time: 3.716777
-Build Time: 3.716777, Calc Time: 92.617089, reduction 89.835334
+Predicted calcsPerSecond: 70697300938
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 182 and calcs: 6734020104378 :: Predicted time: 0.022531, Actual Time: 0.736618
+Build Time: 0.736618, Calc Time: 95.251445, reduction 390.390354
 ############################################
-Predicted calcsPerSecond: 57490259593
-SubGraph 0 Layer 2 Selecting RP 10 with Nodes: 833 and calcs: 3396799579366 :: Predicted time: 3.716777, Actual Time: 0.776614
-Build Time: 0.776614, Calc Time: 59.084784, reduction 33.532305
+Predicted calcsPerSecond: 141632241075
+SubGraph 0 Layer 2 Selecting RP 2 with Nodes: 1095 and calcs: 4188070845002 :: Predicted time: 0.736618, Actual Time: 0.622603
+Build Time: 0.622603, Calc Time: 29.570039, reduction 65.681407
 ############################################
-Predicted calcsPerSecond: 57364813455
-SubGraph 0 Layer 3 Selecting RP 21 with Nodes: 2613 and calcs: 2253629337336 :: Predicted time: 0.776614, Actual Time: 0.567943
-Build Time: 0.567943, Calc Time: 39.285918, reduction 19.798867
+Predicted calcsPerSecond: 247963739305
+SubGraph 0 Layer 3 Selecting RP 7 with Nodes: 2932 and calcs: 2860668606134 :: Predicted time: 0.622603, Actual Time: 0.246699
+Build Time: 0.246699, Calc Time: 11.536641, reduction 18.033398
 ############################################
-Predicted calcsPerSecond: 57311068897
-SubGraph 0 Layer 4 Selecting RP 0 with Nodes: 6132 and calcs: 1487761860056 :: Predicted time: 0.567943, Actual Time: 0.482007
-Build Time: 0.482007, Calc Time: 25.959416, reduction 13.326502
+Predicted calcsPerSecond: 407904529141
+SubGraph 0 Layer 4 Selecting RP 0 with Nodes: 7895 and calcs: 1942600253566 :: Predicted time: 0.246699, Actual Time: 0.496016
+Build Time: 0.496016, Calc Time: 4.762390, reduction 6.774251
 ############################################
-Predicted calcsPerSecond: 57321768815
-SubGraph 0 Layer 5 Selecting RP 24 with Nodes: 10534 and calcs: 1216095745372 :: Predicted time: 0.482007, Actual Time: 1.877436
-Build Time: 1.877436, Calc Time: 21.215252, reduction 4.744164
+Predicted calcsPerSecond: 647502566611
+SubGraph 0 Layer 5 Selecting RP 5 with Nodes: 17371 and calcs: 1473205604688 :: Predicted time: 0.496016, Actual Time: 1.743059
+Build Time: 1.743059, Calc Time: 2.275212, reduction 2.487178
 ############################################
-Predicted calcsPerSecond: 57613817070
-SubGraph 0 Layer 6 Selecting RP 20 with Nodes: 14894 and calcs: 1110690896942 :: Predicted time: 1.877436, Actual Time: 3.224964
-Build Time: 3.224964, Calc Time: 19.278204, reduction 1.937048
+Predicted calcsPerSecond: 1006780334143
+SubGraph 0 Layer 6 Selecting RP 0 with Nodes: 33642 and calcs: 1021042386366 :: Predicted time: 1.743059, Actual Time: 3.768308
+Build Time: 3.768308, Calc Time: 1.014166, reduction 1.261046
 ############################################
-Final graph has 14894 nodes, 1110690896942 calcs total
-Node Construct time: 10.575255
-Total Number of Batches: 11 , with calcs per threads: 52961
+Final graph has 33642 nodes, 1021042386366 calcs total
+Node Construct time: 5.606088
+Batchs: 20
 Total results Set Size: 162647128 
-Node Laucnher time: 30.446546
-Total Time: 31.284853
+Node Laucnher time: 20.447588
+Total Time: 21.338408
 
-Time to read in file: 0.641103
+Time to read in file: 0.615087
 
 Number points: 5000000 
 Number Dimensions: 18 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.015500 
 *********************************
 
-Predicted calcsPerSecond: 57775458769
-SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 21 and calcs: 12434365277642 :: Predicted time: 0.000000, Actual Time: 0.021515
-Build Time: 0.021515, Calc Time: 215.218806, reduction -215.218806
+Predicted calcsPerSecond: 23390851363
+SubGraph 0 Layer 0 Selecting RP 3 with Nodes: 31 and calcs: 13395358731288 :: Predicted time: 0.000000, Actual Time: 0.019556
+Build Time: 0.019556, Calc Time: 572.675125, reduction -572.675125
 ############################################
-Predicted calcsPerSecond: 57662526153
-SubGraph 0 Layer 1 Selecting RP 7 with Nodes: 174 and calcs: 7362802992060 :: Predicted time: 0.021515, Actual Time: 2.768806
-Build Time: 2.768806, Calc Time: 127.687833, reduction 87.530974
+Predicted calcsPerSecond: 70460396802
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 132 and calcs: 9117255368160 :: Predicted time: 0.019556, Actual Time: 0.570656
+Build Time: 0.570656, Calc Time: 129.395459, reduction 443.279666
 ############################################
-Predicted calcsPerSecond: 57911601591
-SubGraph 0 Layer 2 Selecting RP 10 with Nodes: 570 and calcs: 5219733777494 :: Predicted time: 2.768806, Actual Time: 0.870430
-Build Time: 0.870430, Calc Time: 90.132782, reduction 37.555050
+Predicted calcsPerSecond: 140974647130
+SubGraph 0 Layer 2 Selecting RP 2 with Nodes: 690 and calcs: 6363069505748 :: Predicted time: 0.570656, Actual Time: 0.533796
+Build Time: 0.533796, Calc Time: 45.136268, reduction 84.259190
 ############################################
-Predicted calcsPerSecond: 57451027571
-SubGraph 0 Layer 3 Selecting RP 21 with Nodes: 1721 and calcs: 3796393734818 :: Predicted time: 0.870430, Actual Time: 0.871151
-Build Time: 0.871151, Calc Time: 66.080519, reduction 24.052263
+Predicted calcsPerSecond: 247237223434
+SubGraph 0 Layer 3 Selecting RP 7 with Nodes: 1830 and calcs: 4859550775202 :: Predicted time: 0.533796, Actual Time: 0.236128
+Build Time: 0.236128, Calc Time: 19.655417, reduction 25.480851
 ############################################
-Predicted calcsPerSecond: 57547574302
-SubGraph 0 Layer 4 Selecting RP 17 with Nodes: 4441 and calcs: 2710780966490 :: Predicted time: 0.871151, Actual Time: 1.603549
-Build Time: 1.603549, Calc Time: 47.105043, reduction 18.975476
+Predicted calcsPerSecond: 406184904432
+SubGraph 0 Layer 4 Selecting RP 0 with Nodes: 4854 and calcs: 3672208791808 :: Predicted time: 0.236128, Actual Time: 0.282252
+Build Time: 0.282252, Calc Time: 9.040732, reduction 10.614685
 ############################################
-Predicted calcsPerSecond: 57577940752
-SubGraph 0 Layer 5 Selecting RP 28 with Nodes: 7922 and calcs: 2152085411886 :: Predicted time: 1.603549, Actual Time: 1.247224
-Build Time: 1.247224, Calc Time: 37.376908, reduction 9.728135
+Predicted calcsPerSecond: 644987752099
+SubGraph 0 Layer 5 Selecting RP 7 with Nodes: 10412 and calcs: 2949508544612 :: Predicted time: 0.282252, Actual Time: 0.954009
+Build Time: 0.954009, Calc Time: 4.572968, reduction 4.467764
 ############################################
-Predicted calcsPerSecond: 57502551417
-SubGraph 0 Layer 6 Selecting RP 10 with Nodes: 11524 and calcs: 1937497947988 :: Predicted time: 1.247224, Actual Time: 2.571569
-Build Time: 2.571569, Calc Time: 33.694121, reduction 3.682787
+Predicted calcsPerSecond: 1003273817436
+SubGraph 0 Layer 6 Selecting RP 0 with Nodes: 21352 and calcs: 2247429756096 :: Predicted time: 0.954009, Actual Time: 2.034074
+Build Time: 2.034074, Calc Time: 2.240096, reduction 2.332872
 ############################################
-Predicted calcsPerSecond: 57385126351
-SubGraph 0 Layer 7 Selecting RP 6 with Nodes: 15695 and calcs: 1737323516914 :: Predicted time: 2.571569, Actual Time: 6.529102
-Build Time: 6.529102, Calc Time: 30.274805, reduction 3.419316
+Predicted calcsPerSecond: 1540438978158
+SubGraph 0 Layer 7 Selecting RP 7 with Nodes: 33324 and calcs: 1917610110382 :: Predicted time: 2.034074, Actual Time: 7.242998
+Build Time: 7.242998, Calc Time: 1.244847, reduction 0.995250
 ############################################
-Final graph has 15695 nodes, 1737323516914 calcs total
-Node Construct time: 15.608456
-Total Number of Batches: 11 , with calcs per threads: 82842
+Final graph has 33324 nodes, 1917610110382 calcs total
+Node Construct time: 8.967854
+Batchs: 20
 Total results Set Size: 655680946 
-Node Laucnher time: 53.132818
-Total Time: 53.976839
+Node Laucnher time: 37.911902
+Total Time: 38.801751
 
-Time to read in file: 0.568071
+Time to read in file: 0.550749
 
 Number points: 5000000 
 Number Dimensions: 18 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.018250 
 *********************************
 
-Predicted calcsPerSecond: 57441864105
-SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 19 and calcs: 14196403216390 :: Predicted time: 0.000000, Actual Time: 0.020579
-Build Time: 0.020579, Calc Time: 247.143846, reduction -247.143846
+Predicted calcsPerSecond: 23448621242
+SubGraph 0 Layer 0 Selecting RP 3 with Nodes: 27 and calcs: 15135797980210 :: Predicted time: 0.000000, Actual Time: 0.017546
+Build Time: 0.017546, Calc Time: 645.487759, reduction -645.487759
 ############################################
-Predicted calcsPerSecond: 57835206064
-SubGraph 0 Layer 1 Selecting RP 7 with Nodes: 139 and calcs: 9414195657546 :: Predicted time: 0.020579, Actual Time: 1.892082
-Build Time: 1.892082, Calc Time: 162.776210, reduction 84.367636
+Predicted calcsPerSecond: 70562667751
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 107 and calcs: 11454876209568 :: Predicted time: 0.017546, Actual Time: 0.589443
+Build Time: 0.589443, Calc Time: 162.336212, reduction 483.151547
 ############################################
-Predicted calcsPerSecond: 57950491267
-SubGraph 0 Layer 2 Selecting RP 10 with Nodes: 411 and calcs: 7212039502524 :: Predicted time: 1.892082, Actual Time: 0.867416
-Build Time: 0.867416, Calc Time: 124.451741, reduction 38.324470
+Predicted calcsPerSecond: 141157018575
+SubGraph 0 Layer 2 Selecting RP 2 with Nodes: 516 and calcs: 8685196839854 :: Predicted time: 0.589443, Actual Time: 0.545522
+Build Time: 0.545522, Calc Time: 61.528622, reduction 100.807590
 ############################################
-Predicted calcsPerSecond: 57397924479
-SubGraph 0 Layer 3 Selecting RP 21 with Nodes: 1205 and calcs: 5622394954396 :: Predicted time: 0.867416, Actual Time: 0.303510
-Build Time: 0.303510, Calc Time: 97.954674, reduction 26.497067
+Predicted calcsPerSecond: 247080533259
+SubGraph 0 Layer 3 Selecting RP 7 with Nodes: 1254 and calcs: 7173248098356 :: Predicted time: 0.545522, Actual Time: 0.217192
+Build Time: 0.217192, Calc Time: 29.032025, reduction 32.496597
 ############################################
-Predicted calcsPerSecond: 57365275977
-SubGraph 0 Layer 4 Selecting RP 17 with Nodes: 3138 and calcs: 4276393365038 :: Predicted time: 0.303510, Actual Time: 1.579339
-Build Time: 1.579339, Calc Time: 74.546723, reduction 23.407950
+Predicted calcsPerSecond: 406338491211
+SubGraph 0 Layer 4 Selecting RP 5 with Nodes: 2693 and calcs: 5865805367034 :: Predicted time: 0.217192, Actual Time: 0.229923
+Build Time: 0.229923, Calc Time: 14.435761, reduction 14.596263
 ############################################
-Predicted calcsPerSecond: 57650226745
-SubGraph 0 Layer 5 Selecting RP 28 with Nodes: 5730 and calcs: 3548878322848 :: Predicted time: 1.579339, Actual Time: 1.378945
-Build Time: 1.378945, Calc Time: 61.558792, reduction 12.987931
+Predicted calcsPerSecond: 645222731491
+SubGraph 0 Layer 5 Selecting RP 7 with Nodes: 6370 and calcs: 4742780887678 :: Predicted time: 0.229923, Actual Time: 0.561581
+Build Time: 0.561581, Calc Time: 7.350610, reduction 7.085151
 ############################################
-Predicted calcsPerSecond: 57793177372
-SubGraph 0 Layer 6 Selecting RP 10 with Nodes: 8694 and calcs: 3234788957744 :: Predicted time: 1.378945, Actual Time: 2.982215
-Build Time: 2.982215, Calc Time: 55.971814, reduction 5.586978
+Predicted calcsPerSecond: 1003184295189
+SubGraph 0 Layer 6 Selecting RP 0 with Nodes: 13014 and calcs: 3939508060450 :: Predicted time: 0.561581, Actual Time: 1.062801
+Build Time: 1.062801, Calc Time: 3.927003, reduction 3.423607
 ############################################
-Predicted calcsPerSecond: 57753506223
-SubGraph 0 Layer 7 Selecting RP 6 with Nodes: 12960 and calcs: 2847032557936 :: Predicted time: 2.982215, Actual Time: 5.531530
-Build Time: 5.531530, Calc Time: 49.296272, reduction 6.675542
+Predicted calcsPerSecond: 1540281191134
+SubGraph 0 Layer 7 Selecting RP 7 with Nodes: 22301 and calcs: 3395773793056 :: Predicted time: 1.062801, Actual Time: 5.361158
+Build Time: 5.361158, Calc Time: 2.204645, reduction 1.722358
 ############################################
-Predicted calcsPerSecond: 57606546136
-SubGraph 0 Layer 8 Selecting RP 0 with Nodes: 18997 and calcs: 2649571420480 :: Predicted time: 5.531530, Actual Time: 10.716953
-Build Time: 10.716953, Calc Time: 45.994277, reduction 3.301995
-############################################
-Final graph has 18997 nodes, 2649571420480 calcs total
-Node Construct time: 22.666571
-Total Number of Batches: 11 , with calcs per threads: 126341
+Final graph has 22301 nodes, 3395773793056 calcs total
+Node Construct time: 6.077647
+Batchs: 20
 Total results Set Size: 2072898048 
-Node Laucnher time: 90.441325
-Total Time: 91.318435
+Node Laucnher time: 60.933089
+Total Time: 61.824556
+
+Time to read in file: 0.551504
+
+Number points: 5000000 
+Number Dimensions: 18 
+Number Concurent Streams: 2
+Block Size: 256, Kernel Blocks: 1024
+Using using binary searches
+Distance Threshold: 0.021000 
+*********************************
+
+Predicted calcsPerSecond: 23595928090
+SubGraph 0 Layer 0 Selecting RP 3 with Nodes: 25 and calcs: 16710487315948 :: Predicted time: 0.000000, Actual Time: 0.016521
+Build Time: 0.016521, Calc Time: 708.193687, reduction -708.193687
+############################################
+Predicted calcsPerSecond: 70865390652
+SubGraph 0 Layer 1 Selecting RP 1 with Nodes: 84 and calcs: 13675154994808 :: Predicted time: 0.016521, Actual Time: 0.447929
+Build Time: 0.447929, Calc Time: 192.973677, reduction 515.220010
+############################################
+Predicted calcsPerSecond: 141774369489
+SubGraph 0 Layer 2 Selecting RP 2 with Nodes: 381 and calcs: 11031821578482 :: Predicted time: 0.447929, Actual Time: 0.424128
+Build Time: 0.424128, Calc Time: 77.812524, reduction 115.161152
+############################################
+Predicted calcsPerSecond: 248389301043
+SubGraph 0 Layer 3 Selecting RP 5 with Nodes: 858 and calcs: 9543859619438 :: Predicted time: 0.424128, Actual Time: 0.235021
+Build Time: 0.235021, Calc Time: 38.422990, reduction 39.389534
+############################################
+Predicted calcsPerSecond: 408543624931
+SubGraph 0 Layer 4 Selecting RP 5 with Nodes: 1780 and calcs: 7800498101764 :: Predicted time: 0.235021, Actual Time: 0.212713
+Build Time: 0.212713, Calc Time: 19.093428, reduction 19.329562
+############################################
+Predicted calcsPerSecond: 648070962241
+SubGraph 0 Layer 5 Selecting RP 8 with Nodes: 4518 and calcs: 6910477082212 :: Predicted time: 0.212713, Actual Time: 0.421858
+Build Time: 0.421858, Calc Time: 10.663149, reduction 8.430279
+############################################
+Predicted calcsPerSecond: 1007591410690
+SubGraph 0 Layer 6 Selecting RP 0 with Nodes: 8516 and calcs: 6136206787916 :: Predicted time: 0.421858, Actual Time: 0.715335
+Build Time: 0.715335, Calc Time: 6.089975, reduction 4.573173
+############################################
+Predicted calcsPerSecond: 1547167688526
+SubGraph 0 Layer 7 Selecting RP 7 with Nodes: 15141 and calcs: 5415275441220 :: Predicted time: 0.715335, Actual Time: 4.117512
+Build Time: 4.117512, Calc Time: 3.500122, reduction 2.589853
+############################################
+Final graph has 15141 nodes, 5415275441220 calcs total
+Node Construct time: 4.555160
+Batchs: 24
+Total results Set Size: 5457260816 
+Node Laucnher time: 103.442557
+Total Time: 104.338131
 HIGGS ________________________________________________________________
 HIGGS ________________________________________________________________
 
-Time to read in file: 2.813647
+Time to read in file: 2.847465
 
 Number points: 11000000 
 Number Dimensions: 28 
 Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
+Block Size: 256, Kernel Blocks: 1024
 Using using binary searches
 Distance Threshold: 0.010000 
 *********************************
 
-Predicted calcsPerSecond: 25461878406
-SubGraph 0 Layer 0 Selecting RP 1 with Nodes: 27 and calcs: 38474612440442 :: Predicted time: 0.000000, Actual Time: 0.082081
-Build Time: 0.082081, Calc Time: 1511.067323, reduction -1511.067323
+Predicted calcsPerSecond: 7727623734
+SubGraph 0 Layer 0 Selecting RP 5 with Nodes: 32 and calcs: 42104168338524 :: Predicted time: 0.000000, Actual Time: 0.038711
+Build Time: 0.038711, Calc Time: 5448.527230, reduction -5448.527230
 ############################################
-Predicted calcsPerSecond: 25472644858
-SubGraph 0 Layer 1 Selecting RP 24 with Nodes: 288 and calcs: 15715134701718 :: Predicted time: 0.082081, Actual Time: 10.835028
-Build Time: 10.835028, Calc Time: 616.941617, reduction 894.125706
+Predicted calcsPerSecond: 23194275454
+SubGraph 0 Layer 1 Selecting RP 5 with Nodes: 269 and calcs: 18372049484402 :: Predicted time: 0.038711, Actual Time: 2.773915
+Build Time: 2.773915, Calc Time: 792.094132, reduction 4656.433098
 ############################################
-Predicted calcsPerSecond: 25475390612
-SubGraph 0 Layer 2 Selecting RP 3 with Nodes: 1636 and calcs: 8588696641998 :: Predicted time: 10.835028, Actual Time: 5.143860
-Build Time: 5.143860, Calc Time: 337.136995, reduction 279.804622
+Predicted calcsPerSecond: 46410641119
+SubGraph 0 Layer 2 Selecting RP 8 with Nodes: 1719 and calcs: 9673067454340 :: Predicted time: 2.773915, Actual Time: 1.411805
+Build Time: 1.411805, Calc Time: 208.423483, reduction 583.670649
 ############################################
-Predicted calcsPerSecond: 25462776998
-SubGraph 0 Layer 3 Selecting RP 8 with Nodes: 7289 and calcs: 4262445864858 :: Predicted time: 5.143860, Actual Time: 3.965345
-Build Time: 3.965345, Calc Time: 167.399097, reduction 169.737899
+Predicted calcsPerSecond: 81217710477
+SubGraph 0 Layer 3 Selecting RP 2 with Nodes: 10437 and calcs: 5810597997992 :: Predicted time: 1.411805, Actual Time: 1.480586
+Build Time: 1.480586, Calc Time: 71.543484, reduction 136.879998
 ############################################
-Predicted calcsPerSecond: 25468773448
-SubGraph 0 Layer 4 Selecting RP 12 with Nodes: 22106 and calcs: 2447697780346 :: Predicted time: 3.965345, Actual Time: 5.253221
-Build Time: 5.253221, Calc Time: 96.105837, reduction 71.293260
+Predicted calcsPerSecond: 133431029910
+SubGraph 0 Layer 4 Selecting RP 8 with Nodes: 28771 and calcs: 3310219936912 :: Predicted time: 1.480586, Actual Time: 2.269330
+Build Time: 2.269330, Calc Time: 24.808472, reduction 46.735013
 ############################################
-Predicted calcsPerSecond: 25473635719
-SubGraph 0 Layer 5 Selecting RP 10 with Nodes: 40327 and calcs: 1857084187168 :: Predicted time: 5.253221, Actual Time: 11.924948
-Build Time: 11.924948, Calc Time: 72.902204, reduction 23.203633
+Predicted calcsPerSecond: 211759533106
+SubGraph 0 Layer 5 Selecting RP 9 with Nodes: 63613 and calcs: 2201816006492 :: Predicted time: 2.269330, Actual Time: 9.033932
+Build Time: 9.033932, Calc Time: 10.397718, reduction 14.410753
 ############################################
-Predicted calcsPerSecond: 25471304446
-SubGraph 0 Layer 6 Selecting RP 0 with Nodes: 45098 and calcs: 1821534431444 :: Predicted time: 11.924948, Actual Time: 13.129090
-Build Time: 13.129090, Calc Time: 71.513198, reduction 1.389006
+Predicted calcsPerSecond: 329230960101
+SubGraph 0 Layer 6 Selecting RP 8 with Nodes: 116922 and calcs: 1669932158756 :: Predicted time: 9.033932, Actual Time: 23.016483
+Build Time: 23.016483, Calc Time: 5.072221, reduction 5.325498
 ############################################
-Final graph has 45098 nodes, 1821534431444 calcs total
-Node Construct time: 39.541206
-Total Number of Batches: 11 , with calcs per threads: 86857
+Final graph has 116922 nodes, 1669932158756 calcs total
+Node Construct time: 22.521626
+Batchs: 42
 Total results Set Size: 11566498 
-Node Laucnher time: 84.431307
-Total Time: 87.531220
-
-Time to read in file: 2.819789
-
-Number points: 11000000 
-Number Dimensions: 28 
-Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
-Using using binary searches
-Distance Threshold: 0.044125 
-*********************************
-
-Predicted calcsPerSecond: 25469779294
-SubGraph 0 Layer 0 Selecting RP 1 with Nodes: 6 and calcs: 110598613851622 :: Predicted time: 0.000000, Actual Time: 0.071560
-Build Time: 0.071560, Calc Time: 4342.346770, reduction -4342.346770
-############################################
-Predicted calcsPerSecond: 25486993932
-SubGraph 0 Layer 1 Selecting RP 11 with Nodes: 26 and calcs: 103998730589066 :: Predicted time: 0.071560, Actual Time: 1.658980
-Build Time: 1.658980, Calc Time: 4080.462799, reduction 261.883971
-############################################
-Predicted calcsPerSecond: 25496416915
-SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 89 and calcs: 99109835016698 :: Predicted time: 1.658980, Actual Time: 1.581220
-Build Time: 1.581220, Calc Time: 3887.206400, reduction 193.256398
-############################################
-Predicted calcsPerSecond: 25497309199
-SubGraph 0 Layer 3 Selecting RP 8 with Nodes: 193 and calcs: 95442911695824 :: Predicted time: 1.581220, Actual Time: 1.268672
-Build Time: 1.268672, Calc Time: 3743.254276, reduction 143.952124
-############################################
-Predicted calcsPerSecond: 25496436931
-SubGraph 0 Layer 4 Selecting RP 16 with Nodes: 444 and calcs: 92334987186474 :: Predicted time: 1.268672, Actual Time: 1.222793
-Build Time: 1.222793, Calc Time: 3621.485913, reduction 121.768363
-############################################
-Predicted calcsPerSecond: 25500289360
-SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 856 and calcs: 88985512159024 :: Predicted time: 1.222793, Actual Time: 1.455975
-Build Time: 1.455975, Calc Time: 3489.588330, reduction 131.897583
-############################################
-Predicted calcsPerSecond: 25487807656
-SubGraph 0 Layer 6 Selecting RP 12 with Nodes: 1517 and calcs: 86396149261892 :: Predicted time: 1.455975, Actual Time: 1.415963
-Build Time: 1.415963, Calc Time: 3389.705008, reduction 99.883322
-############################################
-Predicted calcsPerSecond: 25482898009
-SubGraph 0 Layer 7 Selecting RP 21 with Nodes: 2792 and calcs: 84137347516698 :: Predicted time: 1.415963, Actual Time: 1.668567
-Build Time: 1.668567, Calc Time: 3301.718175, reduction 87.986833
-############################################
-Predicted calcsPerSecond: 25477812546
-SubGraph 0 Layer 8 Selecting RP 10 with Nodes: 4920 and calcs: 82094134204948 :: Predicted time: 1.668567, Actual Time: 4.055457
-Build Time: 4.055457, Calc Time: 3222.181420, reduction 79.536755
-############################################
-Predicted calcsPerSecond: 25489532932
-SubGraph 0 Layer 9 Selecting RP 1 with Nodes: 7674 and calcs: 80390481896320 :: Predicted time: 4.055457, Actual Time: 6.833387
-Build Time: 6.833387, Calc Time: 3153.862494, reduction 68.318926
-############################################
-Predicted calcsPerSecond: 25478801933
-SubGraph 0 Layer 10 Selecting RP 1 with Nodes: 11458 and calcs: 78946858341098 :: Predicted time: 6.833387, Actual Time: 10.605334
-Build Time: 10.605334, Calc Time: 3098.531028, reduction 55.331466
-############################################
-Predicted calcsPerSecond: 25479719359
-SubGraph 0 Layer 11 Selecting RP 7 with Nodes: 16454 and calcs: 77699785103000 :: Predicted time: 10.605334, Actual Time: 24.851932
-Build Time: 24.851932, Calc Time: 3049.475703, reduction 49.055325
-############################################
-Predicted calcsPerSecond: 25483153314
-SubGraph 0 Layer 12 Selecting RP 13 with Nodes: 23101 and calcs: 76266141080208 :: Predicted time: 24.851932, Actual Time: 42.874378
-Build Time: 42.874378, Calc Time: 2992.806272, reduction 56.669430
-############################################
-Predicted calcsPerSecond: 25487803684
-SubGraph 0 Layer 13 Selecting RP 11 with Nodes: 31351 and calcs: 75000902914410 :: Predicted time: 42.874378, Actual Time: 77.471835
-Build Time: 77.471835, Calc Time: 2942.619295, reduction 50.186977
-############################################
-Final graph has 31351 nodes, 75000902914410 calcs total
-Node Construct time: 165.916707
-Total Number of Batches: 194 , with calcs per threads: 200000
-Total results Set Size: 808812334 
-Node Laucnher time: 3273.753833
-Total Time: 3276.952507
-Tiny____________________________________________________
-Tiny____________________________________________________
-
-Time to read in file: 20.898753
-
-Number points: 5000000 
-Number Dimensions: 384 
-Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
-Using using binary searches
-Distance Threshold: 0.200000 
-*********************************
-
-Predicted calcsPerSecond: 4087165122
-SubGraph 0 Layer 0 Selecting RP 1 with Nodes: 17 and calcs: 9224939816732 :: Predicted time: 0.000000, Actual Time: 0.727675
-Build Time: 0.727675, Calc Time: 2257.050924, reduction -2257.050924
-############################################
-Predicted calcsPerSecond: 4085862564
-SubGraph 0 Layer 1 Selecting RP 8 with Nodes: 48 and calcs: 7840667873660 :: Predicted time: 0.727675, Actual Time: 1.385266
-Build Time: 1.385266, Calc Time: 1918.974941, reduction 338.075983
-############################################
-Predicted calcsPerSecond: 4085725103
-SubGraph 0 Layer 2 Selecting RP 15 with Nodes: 106 and calcs: 7377417081640 :: Predicted time: 1.385266, Actual Time: 1.305837
-Build Time: 1.305837, Calc Time: 1805.656743, reduction 113.318198
-############################################
-Predicted calcsPerSecond: 4085294251
-SubGraph 0 Layer 3 Selecting RP 12 with Nodes: 202 and calcs: 7022932445454 :: Predicted time: 1.305837, Actual Time: 1.160726
-Build Time: 1.160726, Calc Time: 1719.076280, reduction 86.580462
-############################################
-Predicted calcsPerSecond: 4083319077
-SubGraph 0 Layer 4 Selecting RP 8 with Nodes: 384 and calcs: 6735231515362 :: Predicted time: 1.160726, Actual Time: 1.230563
-Build Time: 1.230563, Calc Time: 1649.450212, reduction 69.626069
-############################################
-Predicted calcsPerSecond: 4084099510
-SubGraph 0 Layer 5 Selecting RP 5 with Nodes: 638 and calcs: 6534022110300 :: Predicted time: 1.230563, Actual Time: 1.233836
-Build Time: 1.233836, Calc Time: 1599.868489, reduction 49.581723
-############################################
-Predicted calcsPerSecond: 4084672826
-SubGraph 0 Layer 6 Selecting RP 19 with Nodes: 1021 and calcs: 6359988323256 :: Predicted time: 1.233836, Actual Time: 1.151024
-Build Time: 1.151024, Calc Time: 1557.037392, reduction 42.831097
-############################################
-Predicted calcsPerSecond: 4083330023
-SubGraph 0 Layer 7 Selecting RP 20 with Nodes: 1560 and calcs: 6208738948084 :: Predicted time: 1.151024, Actual Time: 1.727645
-Build Time: 1.727645, Calc Time: 1520.508730, reduction 36.528662
-############################################
-Predicted calcsPerSecond: 4083579637
-SubGraph 0 Layer 8 Selecting RP 22 with Nodes: 2214 and calcs: 6087934887758 :: Predicted time: 1.727645, Actual Time: 1.219276
-Build Time: 1.219276, Calc Time: 1490.832904, reduction 29.675826
-############################################
-Predicted calcsPerSecond: 4084038178
-SubGraph 0 Layer 9 Selecting RP 10 with Nodes: 3045 and calcs: 5977318916336 :: Predicted time: 1.219276, Actual Time: 1.587066
-Build Time: 1.587066, Calc Time: 1463.580568, reduction 27.252336
-############################################
-Predicted calcsPerSecond: 4082798951
-SubGraph 0 Layer 10 Selecting RP 22 with Nodes: 4003 and calcs: 5893720737942 :: Predicted time: 1.587066, Actual Time: 1.501363
-Build Time: 1.501363, Calc Time: 1443.549097, reduction 20.031471
-############################################
-Predicted calcsPerSecond: 4083015651
-SubGraph 0 Layer 11 Selecting RP 15 with Nodes: 5279 and calcs: 5813577140566 :: Predicted time: 1.501363, Actual Time: 2.807944
-Build Time: 2.807944, Calc Time: 1423.843952, reduction 19.705145
-############################################
-Predicted calcsPerSecond: 4083575943
-SubGraph 0 Layer 12 Selecting RP 11 with Nodes: 6559 and calcs: 5743208533804 :: Predicted time: 2.807944, Actual Time: 3.641050
-Build Time: 3.641050, Calc Time: 1406.416487, reduction 17.427465
-############################################
-Predicted calcsPerSecond: 4084124112
-SubGraph 0 Layer 13 Selecting RP 25 with Nodes: 8088 and calcs: 5686258821244 :: Predicted time: 3.641050, Actual Time: 4.106103
-Build Time: 4.106103, Calc Time: 1392.283551, reduction 14.132936
-############################################
-Predicted calcsPerSecond: 4084082426
-SubGraph 0 Layer 14 Selecting RP 14 with Nodes: 10025 and calcs: 5632896220190 :: Predicted time: 4.106103, Actual Time: 7.006877
-Build Time: 7.006877, Calc Time: 1379.231767, reduction 13.051784
-############################################
-Predicted calcsPerSecond: 4084690290
-SubGraph 0 Layer 15 Selecting RP 0 with Nodes: 12398 and calcs: 5571955399542 :: Predicted time: 7.006877, Actual Time: 9.854680
-Build Time: 9.854680, Calc Time: 1364.107191, reduction 15.124575
-############################################
-Predicted calcsPerSecond: 4085386118
-SubGraph 0 Layer 16 Selecting RP 1 with Nodes: 14807 and calcs: 5519763148086 :: Predicted time: 9.854680, Actual Time: 13.917689
-Build Time: 13.917689, Calc Time: 1351.099502, reduction 13.007690
-############################################
-Final graph has 14807 nodes, 5519763148086 calcs total
-Node Construct time: 80.668518
-Total Number of Batches: 14 , with calcs per threads: 200000
-Total results Set Size: 53619112 
-Node Laucnher time: 590.662421
-Total Time: 613.242796
-
-Time to read in file: 20.774576
-
-Number points: 5000000 
-Number Dimensions: 384 
-Number Concurent Streams: 2
-Block Size: 1024, Kernel Blocks: 2048
-Using using binary searches
-Distance Threshold: 0.260000 
-*********************************
-
-Predicted calcsPerSecond: 4085368230
-SubGraph 0 Layer 0 Selecting RP 1 with Nodes: 13 and calcs: 11630594670776 :: Predicted time: 0.000000, Actual Time: 0.725991
-Build Time: 0.725991, Calc Time: 2846.890174, reduction -2846.890174
-############################################
-Predicted calcsPerSecond: 4084686913
-SubGraph 0 Layer 1 Selecting RP 2 with Nodes: 35 and calcs: 9979815098384 :: Predicted time: 0.725991, Actual Time: 1.052920
-Build Time: 1.052920, Calc Time: 2443.226448, reduction 403.663726
-############################################
-Predicted calcsPerSecond: 4084435088
-SubGraph 0 Layer 2 Selecting RP 1 with Nodes: 63 and calcs: 9445249401844 :: Predicted time: 1.052920, Actual Time: 1.072086
-Build Time: 1.072086, Calc Time: 2312.498350, reduction 130.728098
-############################################
-Predicted calcsPerSecond: 4085392379
-SubGraph 0 Layer 3 Selecting RP 4 with Nodes: 127 and calcs: 9021966705664 :: Predicted time: 1.072086, Actual Time: 1.022919
-Build Time: 1.022919, Calc Time: 2208.347661, reduction 104.150689
-############################################
-Predicted calcsPerSecond: 4085059594
-SubGraph 0 Layer 4 Selecting RP 4 with Nodes: 201 and calcs: 8808623706572 :: Predicted time: 1.022919, Actual Time: 0.878028
-Build Time: 0.878028, Calc Time: 2156.302375, reduction 52.045286
-############################################
-Predicted calcsPerSecond: 4084381356
-SubGraph 0 Layer 5 Selecting RP 1 with Nodes: 316 and calcs: 8616349060122 :: Predicted time: 0.878028, Actual Time: 1.264779
-Build Time: 1.264779, Calc Time: 2109.584857, reduction 46.717518
-############################################
-Predicted calcsPerSecond: 4083338104
-SubGraph 0 Layer 6 Selecting RP 19 with Nodes: 493 and calcs: 8437667598510 :: Predicted time: 1.264779, Actual Time: 1.170069
-Build Time: 1.170069, Calc Time: 2066.365161, reduction 43.219696
-############################################
-Predicted calcsPerSecond: 4083358288
-SubGraph 0 Layer 7 Selecting RP 4 with Nodes: 677 and calcs: 8292934923006 :: Predicted time: 1.170069, Actual Time: 1.452566
-Build Time: 1.452566, Calc Time: 2030.910427, reduction 35.454734
-############################################
-Predicted calcsPerSecond: 4084111712
-SubGraph 0 Layer 8 Selecting RP 13 with Nodes: 948 and calcs: 8147654638230 :: Predicted time: 1.452566, Actual Time: 1.159234
-Build Time: 1.159234, Calc Time: 1994.963706, reduction 35.946720
-############################################
-Predicted calcsPerSecond: 4083854248
-SubGraph 0 Layer 9 Selecting RP 25 with Nodes: 1302 and calcs: 8052471643868 :: Predicted time: 1.159234, Actual Time: 0.923012
-Build Time: 0.923012, Calc Time: 1971.782330, reduction 23.181377
-############################################
-Predicted calcsPerSecond: 4083002759
-SubGraph 0 Layer 10 Selecting RP 2 with Nodes: 1738 and calcs: 7969538263960 :: Predicted time: 0.923012, Actual Time: 1.058809
-Build Time: 1.058809, Calc Time: 1951.881675, reduction 19.900655
-############################################
-Predicted calcsPerSecond: 4083029142
-SubGraph 0 Layer 11 Selecting RP 9 with Nodes: 2221 and calcs: 7902396270990 :: Predicted time: 1.058809, Actual Time: 1.031096
-Build Time: 1.031096, Calc Time: 1935.424901, reduction 16.456774
-############################################
-Predicted calcsPerSecond: 4082649022
-SubGraph 0 Layer 12 Selecting RP 12 with Nodes: 2911 and calcs: 7830926351132 :: Predicted time: 1.031096, Actual Time: 1.267169
-Build Time: 1.267169, Calc Time: 1918.099329, reduction 17.325571
-############################################
-Predicted calcsPerSecond: 4082953822
-SubGraph 0 Layer 13 Selecting RP 15 with Nodes: 3609 and calcs: 7771179286178 :: Predicted time: 1.267169, Actual Time: 1.617465
-Build Time: 1.617465, Calc Time: 1903.322845, reduction 14.776484
-############################################
-Predicted calcsPerSecond: 4083943943
-SubGraph 0 Layer 14 Selecting RP 23 with Nodes: 4412 and calcs: 7716412005110 :: Predicted time: 1.617465, Actual Time: 2.313573
-Build Time: 2.313573, Calc Time: 1889.451009, reduction 13.871836
-############################################
-Predicted calcsPerSecond: 4083917246
-SubGraph 0 Layer 15 Selecting RP 0 with Nodes: 5605 and calcs: 7658762634780 :: Predicted time: 2.313573, Actual Time: 3.817835
-Build Time: 3.817835, Calc Time: 1875.347166, reduction 14.103843
-############################################
-Predicted calcsPerSecond: 4084424520
-SubGraph 0 Layer 16 Selecting RP 1 with Nodes: 6981 and calcs: 7589788619512 :: Predicted time: 3.817835, Actual Time: 4.417165
-Build Time: 4.417165, Calc Time: 1858.227171, reduction 17.119996
-############################################
-Predicted calcsPerSecond: 4083797027
-SubGraph 0 Layer 17 Selecting RP 7 with Nodes: 8307 and calcs: 7543994951202 :: Predicted time: 4.417165, Actual Time: 7.177092
-Build Time: 7.177092, Calc Time: 1847.299193, reduction 10.927978
-############################################
-Predicted calcsPerSecond: 4084336122
-SubGraph 0 Layer 18 Selecting RP 1 with Nodes: 9941 and calcs: 7501052037308 :: Predicted time: 7.177092, Actual Time: 8.836256
-Build Time: 8.836256, Calc Time: 1836.541316, reduction 10.757877
-############################################
-Predicted calcsPerSecond: 4084141200
-SubGraph 0 Layer 19 Selecting RP 28 with Nodes: 11610 and calcs: 7461690334312 :: Predicted time: 8.836256, Actual Time: 11.180209
-Build Time: 11.180209, Calc Time: 1826.991274, reduction 9.550042
-############################################
-Final graph has 11610 nodes, 7461690334312 calcs total
-Node Construct time: 82.710577
-Total Number of Batches: 19 , with calcs per threads: 200000
-Total results Set Size: 181164422 
-Node Laucnher time: 1087.580685
-Total Time: 1110.348826
-Completed!
+Node Laucnher time: 55.941237
+Total Time: 58.992906
